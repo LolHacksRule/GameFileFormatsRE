@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: LocaToolBin.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Viewing of Chimera Entertainment's serialized localization files from LocaTool.
+//  Category: Deserializing
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct LocaToolData {
+    struct StringEntry {
+        //if (NotEpicLocaBalDataFlag)
+        //{
+            
+        //}
+        byte chunkStart;
+        byte strIDSize;
+        char stringID[strIDSize];
+        byte end;
+        byte strSize;
+        char stringData[strSize];
+        if (NotEpicLocaBalDataFlag)
+        {
+            byte endByte;
+            byte contentSize;
+        }
+    } strEntry;
+};
+
+
+local byte NotEpicLocaBalDataFlag <hidden = true> = 0;
+
+if (!NotEpicLocaBalDataFlag)
+{
+    struct LocaBalDataLocaToolBin {
+        byte contentStart;
+        byte chunkByteSize;
+        byte dummy[3];
+        LocaToolData LTD;
+    } LocaToolBalData[2];
+}
+
+else
+
+{
+    struct LocaToolBin {
+        byte contentStart;
+        byte langSize;
+        char language[langSize];
+        byte endbyte;
+        byte chunkSize;
+        LocaToolData LTD;
+    } LocaToolBinData;
+}

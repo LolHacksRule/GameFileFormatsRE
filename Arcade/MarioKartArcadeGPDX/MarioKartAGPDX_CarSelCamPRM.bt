@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX Character Selection Camera Parameters
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: CHR_SEL_CAM_PRM
+//      ID Bytes: CHR_SEL_CAM_PRM
+//      History: 
+//------------------------------------------------
+
+local uint isRev1 < hidden = true > = 1;
+
+if (isRev1)
+{
+    struct MKCarSelPrmRev1
+    {
+        struct Rev1Header {
+            string    header; //CHAR_SEL_CAM_PRM
+        } header;
+        float   dummy2; //Always 0
+        float   floatVal1[9];
+    } mkcarselprmRev1[5];
+    string chr;
+}
+
+if (isRev1 != 1)
+{
+    struct MKCarSelPrm
+    {
+        struct Header {
+            string    header; //CHAR_SEL_CAM_PRM
+        } header;
+        float   dummy2; //Always 0
+        float   floatVal1[9];
+    } mkcarselprm;
+}
+//IN REV 1, MULTIPLE CHR_SEL_CAM_PRM VALUES ARE PRESENT

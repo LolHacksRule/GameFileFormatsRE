@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Nintendo Modern/Xeen Inc (2011+) Arcade CSV binaries *.MATTR (LM), *.BIN, *_PARAM.BIN, *.ABT, *.NGW (LM), *.VMD, *.EFD (MKDX)
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the scripts.
+//      Category: Deserializing 
+//      File Mask: excel_header
+//      ID Bytes: excel_header
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    excelHeader[12]; //657863656C5F686561646572 (excel_header)
+    char    unk[1]; //MKDX appears to have this set to 02 on some files, primarily 00, might be version idk
+    char    padding[3]; //should be 20
+    int     valueCount; //How many param values are present in the file
+    char    morePadding[4]; //Should be six nulls
+} header;
+
+struct DataTable {
+    char    aValue[64]; //Float, or string afaik
+} dataTable[(uint)(header.valueCount)];
+
+//There's no EOF mark

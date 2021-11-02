@@ -1,0 +1,266 @@
+//-----------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//   File: ExientXGSEnginePakFile.bt
+//   Authors: LolHacksRule with inspiration of XPK2.bms
+//   Version: 1
+//   Purpose: Stufying of the XGSPAK format
+//   Category: Game Archive 
+//   File Mask:
+//   ID Bytes:
+//   History: 
+//------------------------------------------------
+
+/*
+XGSPAK VX only works with games using XGS Engine VX, using different versions with them is likely a bad idea as devs can only use one of the three.
+XGSPAKV1 can be used with ZLib or Raw content.
+Haven't really looked at XGSPAKV0
+Works nearly perfect on PAKs without folders
+*/
+
+local uint i < hidden = true > = 0;
+
+local uint i2 < hidden = true > = 0;
+
+typedef enum < byte > {
+    Version0 = 0, //NFS Wii/Trilogy 3DS/DLS
+    Version1 = 1, //ABGO V1/ABTF, AB Console Ports
+    Version2 = 2, //ABGO V2+
+}
+PakVersion;
+
+typedef enum < int32 > {
+    RawContent = 0, //ABGO v1.0.0 (iOS), Various
+    ZLib = 1, //ABGO/ABTF
+    LZ4 = 2, //Furby/F1 Series
+}
+PakCompressionType;
+
+struct XGSPakFile {
+    struct Header {
+        char BigEndianChecker[3];
+        if (BigEndianChecker == "XPK") {
+            BigEndian();
+            FSkip(-3); //Go back to 0
+            char magic[3] < bgcolor = cLtAqua > ; //XPK/KPX
+            PakVersion pakVersion < bgcolor = cYellow > ;
+        } else {
+            FSkip(-3);
+            LittleEndian();
+            PakVersion pakVersion < bgcolor = cYellow > ;
+            char magic[3] < bgcolor = cLtAqua > ; //XPK/KPX
+        }
+        if (pakVersion == Version0) {
+            //isBigEndian == true;
+            Printf("NFS Hot Persuit Wii/AB Trilogy 3DS (XGSPAK V0)");
+            //BigEndian();
+        } else if (pakVersion == Version1) {
+            //isBigEndian == false;
+            Printf("Angry Birds Go! (XGSPAK V1)");
+            LittleEndian();
+        } else if (pakVersion == Version2) {
+            //isBigEndian == false;
+            Printf("Angry Birds Go! v1+ (XGSPAK V2)");
+            LittleEndian();
+        }
+
+        if (magic == "XPK") {
+            //isBigEndian == true;
+            Printf(" Big Endian with.");
+            BigEndian();
+        } else if (magic == "KPX") {
+            //isBigEndian == false;
+            Printf(" Little Endian with");
+            LittleEndian();
+        }
+        int32 folderCnt < bgcolor = cRed > ; // -1
+        int32 fileCnt < bgcolor = cGreen > ; // -1
+        int32 fileContentTblSize;
+        if (pakVersion == Version2) {
+            PakCompressionType pakCompressionFlag < bgcolor = cPurple > ;
+            if (pakCompressionFlag == RawContent) {
+                //isBigEndian == true;
+                Printf(" Raw Content\n");
+                //BigEndian();
+            } else if (pakCompressionFlag == ZLib) {
+                //isBigEndian == false;
+                Printf(" ZLib Compression\n");
+                //LittleEndian();
+            } else if (pakCompressionFlag == LZ4) {
+                //isBigEndian == false;
+                Printf(" LZ4 Compression\n");
+                //LittleEndian();
+            }
+        } else if (pakVersion == Version1) {
+            int32 unknownBytes;
+        }
+    }
+    XGSPakHdr < bgcolor = cBlue > ;
+    struct FolderBase {
+        //int32 dummy[4];
+        if (XGSPakHdr.folderCnt > 255) {
+            int32 dummy[4];
+        }
+        if (XGSPakHdr.fileCnt > 255) {
+            int32 dummy[4];
+        }
+        if (XGSPakHdr.fileContentTblSize > 255) {
+            //int32 dummy[4];
+        }
+
+        if (XGSPakHdr.pakVersion == Version1) {
+            int32 anotherDummy;
+            int32 fileCntAgainLol; //Different on BE?
+            //LittleEndian();
+        }
+        if (XGSPakHdr.pakVersion == Version0) {
+            int32 anotherDummy;
+            int32 fileCntAgainLol; //Different on BE?
+            //LittleEndian();
+        }
+        if (XGSPakHdr.pakVersion == Version2) {
+            int32 anotherDummy;
+            int32 fileCntAgainLol; //Different on BE?
+        }
+        //LittleEndian();
+        //int32 soon;
+        //int32 unk;
+    }
+    XGSPakFolderBase<bgcolor = cRed>;
+    if (XGSPakHdr.pakVersion == Version0) {
+        int32 pad[4];
+    }
+    if (XGSPakHdr.pakVersion == Version1) {
+        int32 pad[1];
+    }
+    if (XGSPakHdr.pakVersion == Version2) {
+        int32 pad;
+        struct FolderBase2 {
+            int32 theFolder;
+            int32 unklol[2];
+            int32 folderCnt; //? 1 Seems to mean none
+        } XGSFolderBase2;
+    } else if (XGSPakHdr.pakVersion == Version2) {
+        int32 pad;
+    }
+    struct ContentMetaBase {
+        if (XGSPakHdr.pakVersion == Version0) {
+            int32 decompressedFileSize;
+            int32 fileOffset;
+            int32 folderID;
+            int32 crc32;
+            int32 compressedFileSize;
+            int32 dummyBytes;
+            //int32 dummyBytes2;
+        } else if (XGSPakHdr.pakVersion == Version1) {
+            int32 dmy[2];
+            int32 fid;
+            int32 db;
+            int32 strBsize; //0 = 0, 1/+ expands this, excludes the last file
+            int32 db2;
+            //int32 dmy2[3];
+            int32 fileSize;
+            int32 fileOffset;
+            //int32 folderID;
+            //int32 crc32; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
+            //int32 unk;
+            //int32 dummy;
+            //int32 dummy;
+            //int32 pad2[2];
+            //if (XGSPakHdr.pakVersion == Version2)
+            //{
+            //int32 pad2;
+            //}
+        } else if (XGSPakHdr.pakVersion == Version2) {
+            int32 dummy;
+            //int32 unk[2];
+            int32 strBsize; //0 = 0, 1/+ expands this, the last one ?
+            int32 db;
+            if (XGSPakHdr.pakCompressionFlag == RawContent) {
+                int32 fileSize;
+            }
+            else
+            {
+                int32 decompressedFileSize;
+            }
+            int32 fileOffset;
+            int32 folderID;
+            int32 morepad;
+            int32 compressedFileSize;
+            //int32 padAgain[3];
+        }
+        //else {
+        //int32 againMorePadding;
+        //int32 fileSize;
+        //int32 fileOffset;
+        //int32 folderID;
+        //int32 crc32;
+        //}
+    }
+    XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
+    if (XGSPakHdr.pakVersion == Version2) {
+        int32 dummy;
+    }
+    if (XGSPakHdr.pakVersion == Version1) {
+        byte dbytes[16]<bgcolor = cRed>;
+    }
+    struct PakStringContent {
+        for (i = 0; i < XGSPakHdr.fileCnt; i++) {
+            struct PakString {
+                string theContentName;
+                //if (XGSPakHdr.pakVersion == Version1)
+                //{
+                //int32 anotherDummy;
+                //LittleEndian();
+                //}
+                //int32 soon;
+                //int32 unk;
+            } pakStr;
+        }
+    }
+    pakStrTbl<bgcolor = cGreen>;
+    //FSkip(1); //fix if possible
+    struct PakContent {
+        FSeek(XGSPakContentMeta.fileOffset);
+        if (XGSPakHdr.pakVersion == Version2) {
+            if (XGSPakHdr.pakCompressionFlag == RawContent) {
+                for (i = 0; i < XGSPakHdr.fileCnt; i++) {
+                    struct TheRawFile
+                    {
+                        byte theRawContent[XGSPakContentMeta.fileSize];
+                    } theRaw;
+                }
+            } else if (XGSPakHdr.pakCompressionFlag == ZLib) {
+                for (i = 0; i < XGSPakHdr.fileCnt; i++) {
+                //isBigEndian == false;
+                    struct ZlibCompressedFile
+                    {
+                        byte theZlibCompressedContent[XGSPakContentMeta.compressedFileSize];
+                    } zlib;
+                    //LittleEndian();
+                }
+            } else if (XGSPakHdr.pakCompressionFlag == LZ4) {
+                for (i = 0; i < XGSPakHdr.fileCnt; i++) {
+                //isBigEndian == false;
+                    struct LZ4CompressedFile
+                    {
+                        byte theLZ4CompressedContent[XGSPakContentMeta.compressedFileSize];
+                    } lz4;
+                    //LittleEndian();
+                }
+            }
+        } else {
+            //byte paddingByte;
+            byte theContent[XGSPakContentMeta.fileSize]; //No valid way to check compression on v1
+        }
+        //if (XGSPakHdr.pakVersion == Version1)
+        //{
+        //int32 anotherDummy;
+        //LittleEndian();
+        //}
+        //int32 soon;
+        //int32 unk;
+    }
+    XGSPakContent<bgcolor = cPurple>;
+}
+XGSPak;

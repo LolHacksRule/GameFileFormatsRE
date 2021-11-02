@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapSexyTex.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Encoded Texture 
+//      File Mask: SEXYTEX
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+LittleEndian();
+
+struct Header {
+    char    sexyTexHeader[7]<bgcolor=cGreen>; //Should be SEXYTEX
+    char    padding[5]<bgcolor=cRed>; //should be 00
+} header;
+
+
+struct TexMetaData {
+    uint    texWidth<bgcolor=cBlue>; //Width
+    uint    texHeight<bgcolor=cLtBlue>;
+    uint    texFmt<bgcolor=cPurple>; //03 = RGBA4444, 02 = RGBA8888
+    uint    unknown2<bgcolor=cRed>;
+    uint    unknown3<bgcolor=cRed>;
+    uint    zLibCompressedTexSize<bgcolor=cRed>;
+    char    morePadding[12]<bgcolor=cRed>;
+} texMetaDataTable;
+
+struct CompTex {
+    ubyte CompTexData[texMetaDataTable.zLibCompressedTexSize]<bgcolor=cGreen>;
+} dataSection;

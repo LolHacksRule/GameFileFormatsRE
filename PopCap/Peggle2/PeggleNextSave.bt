@@ -1,0 +1,65 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//		File: PeggleNextSave.bt
+//	 Authors: LolHacksRule
+//	 Version: ?
+//	 Purpose: Gets data out of your Peggle 2 savegame.
+//	Category: Deserializing
+// File Mask: 
+//	ID Bytes: 
+//	 History: 
+//------------------------------------------------
+
+//I have only tested X360 saves, not sure what effects this can have on PS4/XOne saves
+
+LittleEndian();
+
+struct Peggle2Save {
+	struct Header {
+		long   saveVersion;
+		byte   soundVolume;
+		byte   musicVolume;
+		byte   colorblindMode;
+		byte   screenSize;
+		int    lastPlayedLevel;
+		//byte	 nothing[11];
+		//byte	 unknownValue;
+		int    nothing;
+		//byte	 nothing2[6];
+		int    nothing2;
+		byte   unknownValue2;
+		byte   nothing3[6];
+		byte   unknownValue3;
+		byte   nothing4[7];
+		byte   unknownValue4;
+		byte   nothing5[3];
+		byte   unknownValue5;
+		byte   nothing6[7];
+		byte   unknownValue6;
+		byte   nothing7[2];
+		byte   unknownValue7;
+		byte   nothing8[1];
+		byte   unknownValue8;
+		byte   nothing9[3];
+		byte   unknownValue9;
+		byte   nothing10[3];
+		int    unknownValue10;
+	} saveFileHeader;
+	struct LevelScoreTable {
+		int32 levelObjectiveFlag; //02: No objectives, 0A: Objective 1, 3A: All objectives complete, 22: Objective 3
+		int32 levelScore;
+	} levelScoreTable[(119)];
+	struct UnknownData {
+	    int    nothingYetAgain;
+		int    notAClue;
+		byte   notAClue2[5];
+		byte   someValue[3];
+        int    probablyZero;
+        int    probablyOne;
+        int    someOtherValue;
+        int    yetAnother;
+        int    yetAnother2;
+        int16  what;
+	} unknownData;
+} saveFile;

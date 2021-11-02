@@ -1,0 +1,30 @@
+//---------------------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: MesBinMeta.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading of *Mes.bin format
+//  Category: Metadata
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//---------------------------------------------------------------
+
+struct ML3MsgBin
+{
+    struct Hdr
+    {
+        int16 dummy;
+        int32 messageBinFileCnt;
+        int16 unk;
+        int32 messageMetaBinByteSize;
+        int16 dummy2;
+        int16 messageBinFileCntMinus1;
+    } header;
+    struct MsgMeta
+    {
+        int32 msgFileOffset; //First should be 0 because the first is obv at offset 0
+        int32 msgFileByteSize;
+    } msgMeta[header.messageBinFileCnt];
+} ML3MesBin;

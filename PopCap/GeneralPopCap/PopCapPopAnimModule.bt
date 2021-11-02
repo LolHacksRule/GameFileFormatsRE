@@ -1,0 +1,59 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapPopAnimModule.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary PAM (Pop/PopCap Animation Module) files.
+//      Category: Deserializing 
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+typedef enum <byte> {
+			True = 1,
+			False = 0,
+} TrueFalseFlag;
+
+struct PopCapPAM {
+    struct Header {
+        int32   magic;
+        int32   version;
+    } HDR;
+
+    if (HDR.magic != -1158669996)
+    {
+        Printf("Incorrect header.");
+        break;
+    }
+
+    if (HDR.version > 5)
+    {
+        Printf("PopAnim not supported.");
+        break;
+    }
+    
+    struct AnimInfo {
+        byte animRate;
+        short x;
+        short y;
+        short width;
+        short height;
+        short n2;
+        for (i = 0; i < n2; i++)
+        {
+            struct File {
+                int32 strLen;
+                char stringShort[strLen];
+                long id;
+                int32 strLenLongStr;
+                char longStr[strLenLongStr];
+                long width;
+                long height;
+            } FileInfo;
+        }
+    } animInfo<bgcolor = cBlue>;
+} PAM;

@@ -1,0 +1,148 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapResourceStreamBin.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of PopCap's new archive format.
+//      Category: Game Archive
+//      File Mask: rsb1
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+local int newRsb <hidden=true> = 0;
+
+typedef enum <int32> {
+			RGB565 = 1,
+			BARG4444 = 0,
+} ImageFormat;
+
+typedef struct ResourceGroupFile
+        {
+            char hdr[4];
+            int32 rsgVer;
+            int32 null[2];
+            int32 unk;
+            int32 dOff;
+            int32 dOff2;
+            int32 dDSize;
+            int32 dDSize2;
+            int32 null2;
+            if (dDSize <= 0)
+            {
+                int32 fOff;
+                int32 cFSize;
+                int32 dFSize2;
+            }
+            else
+            {
+                Printf("\nRawFile\n");
+                int32 fSize;
+                int32 null3[2];
+            }
+            int32 megaDummy[5];
+            int32 dLen;
+            int32 dirOffst;
+            int32 moredum[3];
+            byte  fData[dLen];
+            FSkip(-24);
+            int32 compressed;
+            if (compressed)
+            {
+                int32 offst;
+                int32 decompLen;
+                ImageFormat ImgFmt;
+                int32 dumagain[2];
+                int32 texWidth;
+                int32 texHeight;
+            }
+            FSeek(rsb1Hdr.firstResGroupDataOffst);
+            byte pad[dOff];
+            if (compressed)
+            {
+                byte zlibCompressed[cFSize];
+            }
+            else
+            {
+                byte rawFile[fSize];
+            }
+        } rsg;
+
+struct ResourceStreamBin
+{
+    struct ResBinHeader
+    {
+        char header[4]<bgcolor = cBlue>;
+    
+        if (header == "rsb1")
+        {
+            BigEndian();
+            Printf("PS3/X360 Resource Stream Binary\n");
+        }
+        if (header == "1bsr")
+        {
+            LittleEndian();
+            Printf("Android/iOS/PS4 Resource Stream Binary\n");
+        }
+        int32 version<bgcolor = cYellow>;
+        if (version == 4)
+        {
+            local int newRsb = 1;
+            Printf("Version 4");
+        }
+        int32 dummy;
+        int32 firstResGroupDataOffst<bgcolor = cPurple>;
+        int32 firstStrTblSize<bgcolor = cLtBlue>;
+        int32 firstStrTblOffst<bgcolor = cGreen>; //70 or 108 for ZR
+        int32 unk[2];
+        //int32 unk4;
+        //int32 unk5; //CC
+        int32 thirdResGroupSize<bgcolor = cYellow>;
+        int32 thirdResGroupOffst<bgcolor = cWhite>;
+        int32 resGroupFileCnt<bgcolor = cAqua>;
+        //int32 firstResGroupEntries<bgcolor = cWhite>;
+        int32 firstResGroupOffst<bgcolor = cWhite>;
+        int32 firstResGroupSize<bgcolor = cGreen>;
+        int32 secondResGroupSize<bgcolor = cGreen>;
+        int32 secondResGroupStrTblOffst<bgcolor = cWhite>;
+        int32 thirdResGroupEntries;
+        int32 fourthResGroupOffst;
+        int32 fourthResGroupSize;
+        int32 fifthResGroupEntries;
+        int32 fifthResGroupOffst;
+        int32 fifthResGroupSize;
+        int32 sixthResGroupOffst;
+        int32 seventhResGroupOffst;
+        //int32 unk5;
+    } rsb1Hdr;
+    //struct StringTable
+    //{
+        //wchar_t str[9];
+    //} rsbStrings;
+        //int32 
+        FSeek(rsb1Hdr.firstStrTblOffst);
+        byte    firstStrTbl[rsb1Hdr.firstStrTblSize];
+        /*for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+        {
+            struct RSGFileOffst
+            {
+                string fName;
+                byte dBytes[116];
+                int32 fOff;
+                int32 size;
+                byte  dbytes2[68];
+            } rsgfOff[rsb1Hdr.resGroupFileCnt];
+        }*/
+        //FSeek(rsb1Hdr.firstResGroupOffst);
+        byte thirdResGroup[rsb1Hdr.thirdResGroupSize];
+        //byte firstResGroup[rsb1Hdr.firstResGroupSize];
+        //byte secondResGroup[rsb1Hdr.secondResGroupSize];
+        //byte fourthResGroup[rsb1Hdr.fourthResGroupSize];
+        //FSkip(50);
+        FSeek(rsb1Hdr.firstResGroupDataOffst);
+        rsg resGroup1;
+        FSeek(rsb1Hdr.secondResGroupStrTblOffst);
+        byte secondResGroup[rsb1Hdr.secondResGroupSize];
+    
+} popCapResourceStreamBinary;

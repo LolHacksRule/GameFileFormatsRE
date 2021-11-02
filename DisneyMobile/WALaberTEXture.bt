@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: WALaberTEXture.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Getting information out of a WALTEX file
+//      Category: Binary Metadata
+//      File Mask: WALT
+//      ID Bytes: WALT
+//      History: 
+//------------------------------------------------
+char    header[4]; //WALT
+char    version[1]; //01
+char    imageFormat[1]; //01 = RGBA8888, 02 = ?, 03 = RGBA4444
+
+///////////////////
+//Apparently some games swap these two so manually swap them if they're incorrect.
+char    textureWidth[2];
+char    textureHeight[2];
+///////////////////
+
+char    padding[6];

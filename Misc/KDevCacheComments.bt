@@ -1,0 +1,144 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: KDevCacheComments.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of KDev's comments cache.
+//      Category: Meta
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+//TESTED ON AB ARCADE's SRC COMPILATION FILES!
+//TODO! Figure out how to detect comment types
+
+local int i <hidden=true> = 0;
+//local int maxComments <hidden=true> = 525;
+
+LittleEndian();
+FSeek(2123325);
+
+struct KDevCommentsCache
+{
+    struct CommentStrTbl
+    {
+        struct OGLCommentTbl
+        {
+            for (i = 0; i < 525; i++)
+            {
+                struct OGLComment
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } OGLcomment;
+            }
+        } OGLcomments;
+        FSeek(2228196);
+        struct JSampleCommentTbl
+        {
+            for (i = 0; i < 222; i++)
+            {
+                struct JSampleComments
+                {
+                    int16 byteSize;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } jSampleComment;
+            }
+        } jSampleComments;
+        struct PlayMechanixStringTableP1
+        {
+            for (i = 0; i < 527; i++)
+            {
+                struct PlayMechanixP1Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP1Comment;
+            }
+        } PMP1Comments;
+        FSeek(2333067);
+        struct PlayMechanixStringTableP2
+        {
+            for (i = 0; i < 689; i++)
+            {
+                struct PlayMechanixP2Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP2Comment;
+            }
+        } PMP2Comments;
+        FSeek(2437938);
+        struct PlayMechanixStringTableP3
+        {
+            for (i = 0; i < 544; i++)
+            {
+                struct PlayMechanixP3Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP3Comment;
+            }
+        } PMP3Comments;
+        FSeek(2542809);
+        struct PlayMechanixStringTableP4
+        {
+            for (i = 0; i < 462; i++)
+            {
+                struct PlayMechanixP4Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP4Comment;
+            }
+        } PMP4Comments;
+        FSeek(2647680);
+        struct PlayMechanixStringTableP5
+        {
+            for (i = 0; i < 415; i++)
+            {
+                struct PlayMechanixP5Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP5Comment;
+            }
+        } PMP5Comments;
+        FSeek(2857422);
+        struct PlayMechanixStringTableP6
+        {
+            for (i = 0; i < 415; i++)
+            {
+                struct PlayMechanixP6Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP6Comment;
+            }
+        } PMP6Comments;
+        FSeek(2962293);
+        struct PlayMechanixStringTableP7
+        {
+            for (i = 0; i < 332; i++)
+            {
+                struct PlayMechanixP7Comments
+                {
+                    int16 byteSize<hidden=true>;
+                    char commentStr[byteSize];
+                    int16 dummy <hidden=true>;
+                } PMP7Comment;
+            }
+        } PMP7Comments;
+    } KDevcomments;
+} KDevCacheEnd;
+//int

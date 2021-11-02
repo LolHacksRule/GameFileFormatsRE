@@ -1,0 +1,71 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: KDevCacheStringIdx
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the string index binary of KDev.
+//      Category: Meta
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+//TESTED ON AB ARCADE!
+//TODO! Figure out how to detect comment types
+
+local int i <hidden=true> = 0;
+local int isStringIdx<hidden=true> = 0;
+//local int maxComments <hidden=true> = 525;
+
+LittleEndian();
+FSeek(2123325);
+
+struct KDevStringIdxCache
+{
+    struct StrIdxStrTbl
+    {
+        struct StrTbl
+        {
+            for (i = 0; i < 2; i++)
+            {
+                struct Str
+                {
+                    int32 byteSize<hidden=true>;
+                    int32 dummy <hidden=true>;
+                    char  SrcStr[byteSize];
+                    int16 dummy2<hidden=true>;
+                    int16 padBytes;
+                } StrStrings;
+                FSkip(StrStrings.padBytes);
+            }
+            FSkip(-33);
+            for (i = 0; i < 2; i++)
+            {
+                struct Str2
+                {
+                    int32 byteSize<hidden=true>;
+                    int32 dummy <hidden=true>;
+                    char  SrcStr[byteSize];
+                    int16 dummy2<hidden=true>;
+                    //int16 padBytes;
+                } StrStrings2;
+                //FSkip(StrStrings2.padBytes);
+            }
+            FSkip(46);
+            for (i = 0; i < 3; i++)
+            {
+                struct Str3
+                {
+                    int32 byteSize<hidden=true>;
+                    int32 dummy <hidden=true>;
+                    char  SrcStr[byteSize];
+                    int16 dummy2<hidden=true>;
+                    int16 padBytes;
+                } StrStrings3;
+                //FSkip(StrStrings3.padBytes);
+            }
+        } StrTblStrs;
+    } KDevcomments;
+} KDevCacheEnd;
+//int

@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapPPF.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of PopCap's proprietary PPF (PopCap PopParticle File?) file format.
+//      Category: Deserializing 
+//      File Mask: PPF
+//      ID Bytes: PPF
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    ppfHeader[4]<bgcolor=cGreen>; //Should be PPF
+    char    version[1]<bgcolor=cBlue>; //CAM100
+    char    padding[4]<bgcolor=cRed>; //should be 00
+    byte    particleCnt[1]<bgcolor=cLtBlue>; //Amount of parameters
+    char    dummy[3];
+    //uint    dummy;
+    //char    particleSize[1];
+    //string  ptclName;
+    //char    endOfPtclName[3];
+} header;
+
+struct ParticleDataTable {
+    struct ParticleStringTable {
+        byte    particleSize;
+        string  ptclName;
+    } pDataStrTbl;
+} pDataTbl;
+
+//char    header[4];
+//char    version[1];
+//char    padding[6];
+//char    particleCnt[1];
+//char    dummy[1];
+//char    particleSize[1];
+//string  ptclName;
+//char    endOfPtclName[3];

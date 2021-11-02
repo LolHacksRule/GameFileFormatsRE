@@ -1,0 +1,37 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapPOPFX.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the POPFX shader binary.
+//      Category: Deserializing 
+//      File Mask: xcfp/pcfx
+//      ID Bytes: PPF
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/PC/XBOX 360) or fxcp (PS4/iOS/Android)
+    BigEndian();
+struct uIntTable {
+        uint theUint;
+    } uIntTbl;
+    
+    //char    particleSize[1];
+    //string  ptclName;
+    //char    endOfPtclName[3];
+} header;
+
+struct CompiledShaderTable {
+    ubyte shader[shaderMetaDataTable.shaderSize]<bgcolor=cGreen>;
+} CST;
+
+//char    header[4];
+//char    version[1];
+//char    padding[6];
+//char    particleCnt[1];
+//char    dummy[1];
+//char    particleSize[1];
+//string  ptclName;
+//char    endOfPtclName[3];

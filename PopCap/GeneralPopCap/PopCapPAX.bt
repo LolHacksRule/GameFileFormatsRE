@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapPAX.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of PAX files from a related library (PopCap AELib/Additive X?)) known as AELib in the proprietary version of the PopCap (SexyApp/Sexy App) Framework.
+//      Category: Deserializing 
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
+
+typedef enum <byte> {
+			True = 1,
+			False = 0,
+} TrueFalseFlag;
+
+struct PopCapPAX {
+    struct Header {
+        int32   unk;
+        int32   texCnt;
+    } HDR;
+    
+    struct FileList {
+        for (i = 0; i < HDR.texCnt; i++)
+        {
+            struct File {
+                int32 strLen;
+                char stringShort[strLen];
+                long id;
+                int32 strLenLongStr;
+                char longStr[strLenLongStr];
+                long width;
+                long height;
+            } FileInfo;
+        }
+    } flst<bgcolor = cBlue>;
+        
+    struct Compositions {
+        int32 unk3;
+        if (unk3 != 1)
+        {
+            break;
+        }
+        int32 strLen2;
+        char lyrName[strLen2]; //idk this has a max of 32
+        long width;
+        long height;
+        int32 compCnt;
+        int32 maxDuration;
+        for (i = 0; i < compCnt; i++)
+        {
+            struct Composition {
+                int32 unk3;
+                TrueFalseFlag flag;
+                if (flag == True)
+                {
+                    TrueFalseFlag flag2;
+                    long   unk4;
+                    int32  strLen3;
+                    char   strShort[strLen3];
+                    int32  strLen4;
+                    char   strTxt[strLen4];
+                    int32  startFrame;
+                    int32  unk5;
+                    int32  unk6;
+                    int32  lyrOffst;
+                    if (HDR.unk >= 5)
+                    {
+                        TrueFalseFlag isAdditive;
+                    }
+                    if (flag2 == True)
+                    {
+                        struct Layer {
+                            int32 idk;
+                        } NestedLayer;
+                    }
+                    else
+                    struct NestedComposition {
+                    } NestedCompositionInfo;
+                }
+            } CompositionInfo;
+        }
+    } CompositionLst;
+} PAX;
