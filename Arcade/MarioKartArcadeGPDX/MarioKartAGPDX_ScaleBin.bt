@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX *SCALE.BIN
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: 
+//      ID Bytes: 
+//      History: 
+//------------------------------------------------
+
+float   floatVal1; //Mario?
+float   floatVal2; //Luigi?
+float   floatVal3;
+float   floatVal4;
+float   floatVal5;
+float   floatVal6;
+float   floatVal7;
+float   floatVal8;
+float   floatVal9;
+float   floatVal10;
+float   floatVal11;
+float   floatVal12;
+float   floatVal13;
+float   floatVal14;
+float   floatVal15;
+float   floatVal16;
+float   floatVal17;

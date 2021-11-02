@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine [xeen]) Curved Line Binary *.XECLN, *.BIN
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: LINE
+//      ID Bytes: LINE
+//      History: Xeen Inc.
+//------------------------------------------------
+
+struct Header {
+    char    header[4]; //LINE
+    int     unknown;
+    int     routeGroup; //Route groups
+    int     routePoints; //Route points
+} header;
+
+struct RoutePointDataTable {
+    float   pointPos[3];
+    float   unknown0;
+    float   unknown1;
+    float   unknown2;
+    float   unknown3;
+    float   unknown4;
+    int     unknown5;
+    int     routeGroupIdx;
+} routePointData[(uint)(header.routePoints)];

@@ -1,0 +1,16 @@
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine) *.SAII
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: SAI
+//      ID Bytes: SAI
+//      History: 
+//------------------------------------------------
+
+char    header[3]; //SAI
+char    unk[1]; //sometimes 2
+char    param1[32]; //idk what value this is
+//There's no endmark

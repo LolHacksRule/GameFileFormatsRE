@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX KART SELection PaRaMeters
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: CHR_SEL_PRM
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    header[16]; //KART_SEL_PRM
+} header;
+
+struct CharSelPrmDataTable {
+    uint    null;
+    struct CharSelPrmData {
+        float value<bgcolor=cPurple>; //idk what value this is
+    } charPrmData[64];
+} charSelPrmDataTable;

@@ -1,0 +1,16 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Luigi's Mansion Arcade PLacement Data File
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: PLDF
+//      ID Bytes: PLDF
+//      History: 
+//------------------------------------------------
+
+char    header[4];
+int     dummy; //0*0000 * = 1 or 2
+float   floatVal[39];

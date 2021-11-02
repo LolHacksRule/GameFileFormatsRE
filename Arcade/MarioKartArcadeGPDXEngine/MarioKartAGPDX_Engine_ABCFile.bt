@@ -1,0 +1,19 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine) *.ABC
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: ABCT
+//      ID Bytes: ABCT
+//      History: 
+//------------------------------------------------
+
+char    header[4]; //ABCT
+char    unk[1]; //01
+char    padding[3]; //should be 00
+char    paramCnt[1];
+char    morePadding[7]; // 00
+char    paramFloatValue[64]; //Always ends with 0000803F

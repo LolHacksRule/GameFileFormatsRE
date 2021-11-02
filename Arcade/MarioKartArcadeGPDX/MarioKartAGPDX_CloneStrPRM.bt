@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX Clone (AI) Kart Steering Parameters
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: CLONE_STR_PRM
+//      ID Bytes: CLONE_STR_PRM
+//      History: 
+//------------------------------------------------
+
+char    header[13];
+char    dummy[3];
+float   floatVal1;
+float   floatVal2;
+float   floatVal3;
+float   floatVal4;
+float   floatVal5;
+float   floatVal6;
+float   floatVal7;
+float   floatVal8;
+float   floatVal9;
+float   floatVal10;
+float   floatVal11;
+float   floatVal12;
+float   floatVal13;
+float   floatVal14;
+float   floatVal15;
+float   floatVal16;
+float   floatVal17;
+float   floatVal18;
+float   floatVal19;
+float   floatVal20;
+float   floatVal21;
+float   floatVal22;
+float   floatVal23;
+float   floatVal24;

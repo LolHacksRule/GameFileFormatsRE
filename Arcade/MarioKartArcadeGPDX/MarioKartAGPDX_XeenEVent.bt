@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (xeen) EVent *.XEV
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: .XEV
+//      ID Bytes: .XEV
+//      History: 
+//------------------------------------------------
+
+
+struct Header {
+    char    xeenEvent[4]; //.XEV
+    int     eventCount; //Highest I've seen was 70
+    uint    unk;
+    uint    unk2;
+} header;
+
+struct DataTable {
+    struct EventData {
+        char    eventType - 1; //LAP, KITE, DASH, COIN, SIGN, BIGJUMP, SWITCH, DAOut, DAIn, STEERFX, DSS
+    } eventData;
+    char    aValue[47]; //Float, or string afaik
+} dataTable[(uint)(header.eventCount)];

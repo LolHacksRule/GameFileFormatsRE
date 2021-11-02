@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: MarioKartAGPDX_Engine_ConditionsFile.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Getting data out of a COND/CONDitions binary.
+//      Category: Data
+//      File Mask: COND
+//      ID Bytes: 
+//      History: Mario Kart Arcade GP DX (Engine)
+//      Developer: Xeen Inc.?
+//------------------------------------------------
+
+struct Header {
+    char    cond[4]<bgcolor=cGreen>; //COND
+    uint    paramCount<bgcolor=cLtBlue>; //Amount of parameters
+} header;
+
+struct ConditionDataTable {
+    uint    condSize;
+    struct ConditionList {
+        char    conditionName[condSize]<bgcolor=cPurple>; //idk what value this is
+    } conditionListData[(uint)(header.paramCount)];
+    //uint unknown;
+    struct ConditionDataValues {
+        char    conditionValue[condSize]<bgcolor=cPurple>; //idk what value this is
+    } conditionValueListData[(uint)(header.paramCount)];
+} conditionData;
+
+//There's no endmark

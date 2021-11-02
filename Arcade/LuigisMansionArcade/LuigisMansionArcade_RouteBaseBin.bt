@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: LuigisMansionArcade_RBB.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Getting data out of a RBB/Route Base Binary(?) binary.
+//      Category: Data
+//      File Mask: rbb_v0.6
+//      ID Bytes: 7262625F762E36
+//      History:
+//      Developer: Xeen Inc.?
+//------------------------------------------------
+
+struct Header {
+    char    rbbHeader[8]<bgcolor=cGreen>;
+    byte    fileDataCnt<bgcolor=cBlue>; //Amount of file references
+    char    null[3];
+} header;
+
+struct RouteBinDataValueTable {
+    struct RouteBinStringData {
+        byte    fileStrSize;
+        char    null[3];
+        char    fileString[fileStrSize]<bgcolor=cPurple>; //idk what value this is
+        byte    filePathStrSize;
+        char    null2[3];
+        char    filePathString[filePathStrSize]<bgcolor=cPurple>;
+    } routeBinStringData[(uint)(header.fileDataCnt)];
+    struct RouteBinFloatData {
+        char    null[3];
+        float   value[camStr]<bgcolor=cPurple>; //idk what value this is
+    } routeBinFloatData[(uint)(header.fileDataCnt)];
+} routeBinDataValueTable;
+
+//There's no endmark

@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX Kart Size Parameters
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: KART_SIZE_PRM
+//      ID Bytes: KART_SIZE_PRM
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    header[16]; //KART_SIZE_PRM
+} header;
+
+struct CharSelPrmDataTable {
+    //uint    null;
+    struct CharSelPrmData {
+        float value<bgcolor=cPurple>; //idk what value this is
+    } charPrmData[26];
+} charSelPrmDataTable;

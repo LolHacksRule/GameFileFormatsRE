@@ -1,0 +1,20 @@
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine) ANM
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: ANM
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    uint    nothing;
+    char    animFileHeader[3];
+    byte    nothing2;
+    uint    unknown;
+    uint    animNameCnt;
+    
+} header;

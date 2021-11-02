@@ -1,0 +1,31 @@
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine) PARAMeters *.PARAM
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    uint     animFileCnt;
+} header;
+
+struct DataTable {
+    uint    strSize;
+    struct StringData {
+        char    name[strSize]<bgcolor=cPurple>;
+    } animFileStringData;
+    struct LaterStringData {
+        char    name[strSize]<bgcolor=cGreen>;
+    } laterAnimFileStringData[(uint)(header.animFileCnt - 1)];
+    struct DummyData {
+        float    param<bgcolor=cBlue>;
+    } dummyData[(uint)(header.animFileCnt)];
+    struct FloatValueData {
+        float    param<bgcolor=cYellow>; //idk what value this is  
+    } floatValueData[(uint)(header.animFileCnt)];
+} dataTable;

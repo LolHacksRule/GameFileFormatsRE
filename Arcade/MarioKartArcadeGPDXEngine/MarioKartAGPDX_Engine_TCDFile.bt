@@ -1,0 +1,54 @@
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (Engine) Texture Control/Condition Data (?) *.TCD
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: TCD
+//      ID Bytes: TCD
+//      History: 
+//------------------------------------------------
+
+//char    header[3]; //TCD
+//char    unk[1]; //20
+//int     unk2; //idk what value this is
+//int     unk3; //idk what value this is
+//int     unk4; //idk what value this is
+
+/////WIP
+
+struct Header {
+    char    header[3]<bgcolor=cGreen>; //TCD
+    char    unk[1]<bgcolor=cRed>; //20
+    uint    textureCount<bgcolor=cBlue>; //Must be 01+
+    uint    packsCount<bgcolor=cPurple>; //Must be 01+
+} header;
+
+struct TextureControlMetadataTable {
+    struct Metadata {
+        int packMetaDataSize<bgcolor=cPurple>; //idk what value this is
+    } metaData[(uint)(header.packsCount)];
+} textureControlMetadataTable;
+
+//struct DummyData {
+        //float    param[3]<bgcolor=cBlue>;
+    //} dummyData;
+
+struct FloatData {
+        float    param[header.packsCount + header.textureCount]<bgcolor=cBlue>;
+    } floatData[(uint)(header.packsCount + header.textureCount)];
+
+struct TextureControlDataStringTable {
+    struct TexturePackData {
+        string packName<bgcolor=cPurple>; //idk what value this is
+    } textureControlData[(uint)(header.packsCount)];
+    struct TextureData {
+        string textureName<bgcolor=cGreen>;
+    } textureData[(uint)(header.textureCount)];
+} textureControlDataStringTable;
+
+//There's no endmark
+
+//char    unknown[1]<bgcolor=cRed>; //should be 00
+    //uint    paramCount<bgcolor=cLtBlue>; //Amount of parameters

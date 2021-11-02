@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade GP DX EGG SLoT Parameters
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: EGGSLT_PARAM
+//      ID Bytes: EGGSLT_PARAM
+//      History: 
+//------------------------------------------------
+
+struct Header {
+    char    eggSlotParamHeader[12];
+    uint    unknown;
+} header;
+
+struct EggSlotParamTable {
+    struct EggSlotParamData {
+        float value<bgcolor=cPurple>; //idk what value this is
+    } eggSlotParamData[195];
+} eggSlotParamTable;
