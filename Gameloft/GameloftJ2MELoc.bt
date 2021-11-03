@@ -11,13 +11,13 @@
 //   History: 
 //------------------------------------------------
 
-//This may work on GL Java games too but idk
+//This may work on most GL Java games too but idk
 
 local int i <hidden=true> = 0;
 
 //MANUALFLAGS IF THE FORMAT IS DIFFERENT
 
-local int stringSizeTblIsBeforeText <hidden=true> = 0;
+local int stringSizeTblIsBeforeText <hidden=true> = 1;
 
 local int hasBytesBeforeText <hidden=true> = 0;
 
@@ -99,10 +99,10 @@ struct J2MELoc
             int32 stringOffstCnt;
             for (i = 0; i < stringOffstCnt; i++)
             {
-                struct StringOffst
+                struct StringOffst2
                 {
                     int32 soff;
-                } stringOff;
+                } stringOff2;
             }
         } offsts<bgcolor = cYellow>;
     }
