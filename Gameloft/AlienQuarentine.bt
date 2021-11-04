@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: AlienQuarentineLoc.bt
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//TESTED ON GL CLASSICS, NOT SURE IF THIS WORKS ON THE JAVA ORIGINAL
+//Also works on Block Breaker 3/Cannonrats!
+
+local int isBlockBreaker3 <hidden=true> = 0;
+
+LittleEndian();
+if (isBlockBreaker3)
+{
+    byte fNum;
+    int32 strOffsts;
+    int32 strOffst[strOffsts];
+}
+else
+{
+    int16 unk;
+    int32 unk2;
+    int32 strOffst;
+    int32 fsize;
+    int16 unk3;
+    int32 stringOffstTblSize;
+    int32 stringOffstTbl[stringOffstTblSize];
+    if (fNum >= 2)
+    {
+        string theStr;
+    }
+}
+
