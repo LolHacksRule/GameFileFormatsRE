@@ -1,0 +1,112 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngineLocale.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading of XGS Localization, a little harder but readable
+//  Category: Localization
+// File Mask: XGSL
+//  ID Bytes: 5847534C
+//   History: 
+//------------------------------------------------
+
+//Ver 1 appears to be identical to 2, without the font table
+//Ver 0 uses unicode
+
+local int i <hidden=true> = 0;
+
+struct XGSL
+{
+    LittleEndian();
+    struct HDR
+    {
+        char XGSL[4];
+        int32 dmy;
+        int32 ver; //guess
+        int32 localizationEntries;
+    } hdr<bgcolor = cRed>;
+    struct Meta
+    {
+        int32 strCnt;
+        int32 FileSize;
+        if (hdr.ver >= 2)
+        {
+            int32 fontTblOffset;
+            int32 unk5;
+        }
+        struct LocMeta
+        {
+            int32 strSize;
+            int32 unk;
+        } loc[hdr.localizationEntries];
+    } meta<bgcolor = cBlue>;
+    //int32 StrIDTblBSize;
+    //int32 unk6;
+    //int32 ENGBsize;
+    //int32 unk7;
+    //int32 rusbsize;
+    //int32 Unk;
+    struct Strings
+    {
+        for (i = 0; i < meta.strCnt * hdr.localizationEntries; i++)
+        {
+            struct String
+            {
+                if (hdr.ver >= 1)
+                {
+                    string theStr;
+                }
+                else
+                {
+                    wstring theWStr;
+                }
+            } localizedString;
+        }
+    } strings<bgcolor = cGreen>;
+    /*struct Strings
+    {
+        for (i = 0; i < strCnt; i++)
+        {
+            struct StrIDTbl
+            {
+                string st;
+            } strids;
+        }
+        for (i = 0; i < strCnt; i++)
+        {
+            struct ENStrTbl
+            {
+                string st;
+            } ENstrids;
+        }
+        for (i = 0; i < strCnt; i++)
+        {
+            struct RUStrTbl
+            {
+                string st;
+            } RUstrids;
+        }
+    } strings;*/
+    if (hdr.ver == 2)
+    {
+        struct FontTbl
+        {
+            int32 fntFiles;
+            for (i = 0; i < 99; i++) //temp until 
+            {
+                struct FontStrs
+                {
+                    uint16 strSize;
+                    char str[strSize];
+                } font;
+            }
+            byte dbytes[2];
+        } ftbl;
+    }
+    
+    //byte Version;
+    
+    //uint64 StringCnt;
+    Printf("XGS Locale\nVersion: TODO\nStrings: TODO\n");
+} XGSLocale;
