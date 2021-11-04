@@ -11,6 +11,7 @@
 //   History: 
 //------------------------------------------------
 
+//DEPRECATED FOR V2
 //This may work on most GL Java games too but idk
 
 local int i <hidden=true> = 0;
@@ -44,7 +45,7 @@ struct J2MELoc
             int16 stringTblCntv2;
             int32 OffstTblOffst;
         }
-    } hdr<bgcolor = cGreen>;
+    } hdr<bgcolor = cRed>;
     
     struct StringTblMeta
     {
@@ -117,7 +118,8 @@ struct J2MELoc
                 //byte text[strtblmeta.meta.bSizeOrNextStrTbl];
             //}
             //char theText [strtblmeta.strOffsts.stringOff.soff]; //todo figure out how to get the text by offset
+            string theStr;
         } thestrtbl;
         //byte text2[100062];
-    } strtbl;
+    } strtbl<bgcolor = cGreen>;
 } GLJ2MELoc;

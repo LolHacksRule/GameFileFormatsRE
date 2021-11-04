@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftSoulOfDarknessLoc.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+LittleEndian();
+int16 strtblcnt;
+int32 unk2;
+int32 tblSize[strtblcnt];
+int32 fsize;
+int16 unk3;
+int16 unk4;
+byte b;
+byte b2;
+int16 unk5[2];
+
+for (i = 0; i < 114; i++)
+{
+    struct String
+    {
+        byte bsize;
+        string a;
+        //char str[bsize];
+    } s;
+}
+FSkip(7);
+for (i = 0; i < 110; i++)
+{
+    struct String2
+    {
+        byte bsize;
+        string a;
+        //char str[bsize];
+    } s2;
+}

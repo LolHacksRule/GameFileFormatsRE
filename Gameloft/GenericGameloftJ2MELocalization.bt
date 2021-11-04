@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GenericGameloftJ2MELocalization.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Reading of generic/simple localization files
+
+local int i <hidden=true> = 0;
+
+//manual flags: Please change this if the file has a byte before the string count and/or splits strings with nulls
+
+local int hasFileNum <hidden=true> = 1;
+
+local int splitsByZeroes <hidden=true> = 0;
+
+LittleEndian();
+
+struct GenericGLJ2MELoc
+{
+    if (hasFileNum == 1)
+    {
+        byte fileNumOrUnkByte;
+    }
+    if (splitsByZeroes == 1)
+    {
+        int16 notsure;
+    }
+    int32 stringCnt;
+    if (splitsByZeroes == 1)
+    {
+        int16 stringOffst[stringCnt-2]<bgcolor = cYellow>;
+        byte dbyte;
+        for (i = 0; i < stringCnt; i++)
+        {
+            struct StringTbl
+            {
+                string dividedstr<bgcolor = cGreen>;
+            } strtbl;
+        }
+    }
+    else
+    {
+        int32 stringOffst[stringCnt];
+        string str;
+    }
+    //char theString[stringOffst];
+    //for (i = 0; i < 0; i++)
+    //{
+        //struct StringTbl
+        //{
+            //char tblStr; //TODO figure out how to point to offsets
+            
+        //} strTbl;
+    //}
+} genericGLJ2MELoc;

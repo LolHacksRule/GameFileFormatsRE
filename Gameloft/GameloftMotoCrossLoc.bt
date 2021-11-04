@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftMotoCrossLoc.bt
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Locallization of Motocross, maybe this can be used with J2ME loc, gotta check this
+
+local int i <hidden=true> = 0;
+
+LittleEndian();
+
+typedef struct GLMotoCrossLocTbl
+{
+    int16 unk2;
+    int32 stringOffstCnt;
+    int32 stringOffst[stringOffstCnt];
+    string theStrings;
+} GLMotoCrossLocTbl;
+
+struct GLMotoCrossLocFile
+{
+    struct Header
+    {
+        int16 stringTableCnt;
+        int32 locTblOffst;
+        int32 stringTblOffst[stringTableCnt-1];
+    } hdr;
+    for (i = 0; i < hdr.stringTableCnt-1; i++)
+    {
+        GLMotoCrossLocTbl locaTbl;
+        FSkip(-4);
+    }
+} GLMotoCrossLoc;
