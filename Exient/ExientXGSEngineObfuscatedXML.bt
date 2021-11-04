@@ -1,0 +1,48 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngineObfuscatedXML.vt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: This format is really this easy bruh, the only thing hard is the bottom
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+struct XOXXML
+{
+    LittleEndian();
+    struct Header
+    {
+        char XOX[3];
+        byte Version;
+        
+        uint64 StringCnt;
+        Printf("XGS Obfuscated XML\nVersion: " + Version + "\nStrings: TODO");
+    } hdr<bgcolor = cRed>;
+    struct XMLStringMetaTbl
+    {
+        for (i = 0; i < hdr.StringCnt; i++)
+        {
+            struct XMLStringBSize
+            {
+                int32 bsize;
+            } xstrBSize<bgcolor = cYellow>;
+        }
+    } XMLMetaTbl;
+    struct XMLString
+    {
+        for (i = 0; i < hdr.StringCnt; i++)
+        {
+            struct TheXMLSTR
+            {
+                string XMLStr;
+            } THEXMLSTR;
+        }
+    } XSTR<bgcolor = cGreen>;
+    string XMLEnd<bgcolor = cBlue>;
+} XMLObf;

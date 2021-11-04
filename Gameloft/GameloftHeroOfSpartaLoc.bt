@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftHeroOfSpartaLoc.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+typedef struct StrTbl
+{
+    struct TblOffsts
+    {
+        int32 stringOffstCnt;
+        int32 stringOffsts[stringOffstCnt];
+    } offsts<bgcolor = cYellow>;
+    struct theStrTbl
+    {
+          string theStr; //todo: figure out how to get the text by offset
+    } thestrtbl;
+} strtbl;
+
+LittleEndian();
+struct loc
+{
+    struct Hdr
+    {
+        byte unkb;
+        int32 strTbls;
+        //FSkip(1);
+        byte db;
+        //byte unkb2[3];
+        //int16 unk;
+        //int32 dmy;
+        //int16 unk2;
+        //int16 dmy2;
+        int32 strTblOff[strTbls-1];
+    } hdr;
+    for (i = 0; i < hdr.strTbls; i++)
+    {
+        strtbl t;
+        FSkip(-2);
+    }
+}lfile;

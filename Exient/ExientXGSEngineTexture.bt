@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//   File: Exient XGS Engine .XGT
+//   Authors: LolHacksRule
+//------------------------------------------------
+
+LittleEndian();
+
+typedef enum <int32> {
+	RGBA4444 = 2,
+    RGBA4444_2 = 3,
+    RGBA8888 = 4,
+    DXT1 = 8,
+    PVR_UNK = 11,
+    PVRTC_4PP_RGB = 16,
+    DXT1_2 = 24,
+    DXT5 = 26,
+    PVRTC_4PP_RGB_v2 = 30,
+    PVRTC_4PP_RGB_v3 = 31,    
+    ETC1 = 35,
+    ASTC_UNK = 37,
+    UNKNOWN = 252,
+    //IsLE = 0xFFFE,
+} texFmt;
+
+struct XGSTexture {
+    struct XGSTexHdr {
+        char magic[4]; //XGST
+        int16 dataOffset;
+        int16 headerSize;
+        byte numMips;
+        byte flag1;
+        byte flag2;
+        byte flag3;
+        //char format[4];
+        texFmt format;
+        int16 width;
+        int16 height;
+        int16 width2;
+        int16 height2;
+        int32 zero;
+        int32 dataSize;
+    } hdr;
+    byte thetex[hdr.dataSize]<bgcolor=cGreen>;
+} XGSTex;

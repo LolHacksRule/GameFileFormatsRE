@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftKOFightersLoc.bt
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Reading of KO Fighters' localization
+
+local int i <hidden=true> = 0;
+
+typedef struct StrTbl
+{
+    int32 strCnt;
+    int32 strOff[strCnt]<bgcolor = cYellow>;
+    string strTbl<bgcolor = cGreen>;
+} strtbl;
+
+LittleEndian();
+struct KOFighter
+{
+    struct Header
+    {
+        int32 unk;
+        byte d;
+        int32 strTblOffst;
+        int32 unk3[unk-2];
+    } hdr;
+    for (i = 0; i < 4; i++)
+    {
+        strtbl thestr;
+        FSkip(-2);
+    }
+} koFighter;

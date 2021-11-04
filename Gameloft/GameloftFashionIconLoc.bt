@@ -1,0 +1,38 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftFashionIconLoc.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+local int i <hidden=true> = 0;
+
+LittleEndian();
+
+typedef struct StringTbls
+{
+    int16 d;
+    int32 strCnt;
+    int32 strOff[strCnt];
+    string t;
+} stringTbls;
+
+struct FashionIconLoc
+{
+    struct Header
+    {
+        int16 stringTblCnt;
+        int32 unk2;
+        int32 o[stringTblCnt-1];
+    } hdr;
+    for (i = 0; i < hdr.stringTblCnt; i++)
+    {
+        stringTbls s;
+        FSkip(-5);
+    }
+} loc;
