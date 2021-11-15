@@ -7,40 +7,47 @@
 
 LittleEndian();
 
-typedef enum <int32> {
+typedef enum <int16> {
 	RGBA4444 = 2,
-    RGBA4444_2 = 3,
+    RGBA4444_2_OR_RGBA8888 = 3,
     RGBA8888 = 4,
+    UNKNOWN = 5,
     DXT1 = 8,
     PVR_UNK = 11,
-    PVRTC_4PP_RGB = 16,
+    PVRTC_4PP_RGB = 16, //May need to swap these two
+    PVRTC_4PP_RGBA = 17,
+    DXT1_OR_ETC1 = 24,
+    UNKNOWN2 = 24,
     DXT1_2 = 24,
     DXT5 = 26,
     PVRTC_4PP_RGB_v2 = 30,
     PVRTC_4PP_RGB_v3 = 31,    
     ETC1 = 35,
     ASTC_UNK = 37,
-    UNKNOWN = 252,
+    UNKNOWN3 = 252,
     //IsLE = 0xFFFE,
 } texFmt;
 
 struct XGSTexture {
     struct XGSTexHdr {
         char magic[4]; //XGST
-        int16 dataOffset;
-        int16 headerSize;
+        byte dataOffset;
+        byte compilationDummy; //?
+        int16 headerSize; //?
+        //byte dmy;
         byte numMips;
         byte flag1;
         byte flag2;
-        byte flag3;
+        byte flag3; //Dummy?
         //char format[4];
         texFmt format;
+        int16 UNK2;
         int16 width;
         int16 height;
         int16 width2;
         int16 height2;
-        int32 zero;
+        int32 UNK3;
         int32 dataSize;
-    } hdr;
+    } hdr<bgcolor=cPurple>;
     byte thetex[hdr.dataSize]<bgcolor=cGreen>;
 } XGSTex;

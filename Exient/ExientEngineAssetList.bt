@@ -1,0 +1,88 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngineAssetList.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: Reading of XGS Asset Lists
+//  Category: Reverse Engineering
+// File Mask: XAL
+//  ID Bytes: 58414C
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+LittleEndian();
+
+struct XGSAssetList
+{
+    struct XGSHdr
+    {
+        string XALHdr;
+        int16 unk;
+        int16 ver<bgcolor = cPurple>;
+        int32 fileCnt<bgcolor = cYellow>;
+        int16 padByteFlag;
+        Printf("XGS Asset List");
+        if (padByteFlag == 0)
+        {
+            Printf(" (LOCAL/CACHE/CDN)\nFiles:\n");
+        }
+        if (ver == 8)
+        {
+            byte hasDuplicatedMD5;
+            Printf("Version: 8");
+        }
+        else
+        {
+            Printf(" (GAME) \nFiles:\n");
+        }
+    } XGSHeader<bgcolor = cRed>;
+    struct Files
+    {
+        for (i = 0; i < XGSHeader.fileCnt; i++)
+        {
+            struct File
+            {
+                int16 nameBSize;
+                int32 unknown;
+                //byte dmy2[3];
+                byte MD5[16]<bgcolor = cPurple>;
+                if (XGSHeader.ver == 8)
+                {
+                    if (XGSHeader.hasDuplicatedMD5)
+                    {
+                        byte MD5Again[16]<bgcolor = cPurple>;
+                    }
+                    else
+                    {
+                        byte dmy2[16];
+                    }
+                }
+                else 
+                {
+                    byte MD5Again[16];
+                }
+                int32 fSize<bgcolor = cBlue>;
+                byte d[10];
+                int64 what;
+                int32 dmy9;
+                char theFile[nameBSize]<bgcolor = cGreen>;
+                Printf(theFile + "\n");
+                //FSkip(-2);
+            } aFile;
+        }
+    } Fend;
+    if (XGSHeader.padByteFlag != 0)
+    {
+        byte pad[66*XGSHeader.padByteFlag]<bgcolor = cRed>; //Padding is compiled from devs in non-cache files
+    }
+    byte end[4];
+} XAL<bgcolor = cBlue>;
+//byte dmy2[3];
+//byte unk2;
+//byte unk3[3];
+//int32 someCnt;
+//int32 unk4;
+//string theStr;

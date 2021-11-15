@@ -1,15 +1,17 @@
 //-----------------------------------------------------
 //--- 010 Editor v8.0.1 Binary Template
 //
-//   File: ExientXGSEnginePakFile.bt
-//   Authors: LolHacksRule (with inspiration of XPK2.bms)
-//   Version: 1
-//   Purpose: Studying of the XGSPAK format
-//   Category: Game Archive 
-//   File Mask:
-//   ID Bytes:
+//   File: Exient XGS Engine .PAK
+//   Authors: LolHacksRule with inspiration of XPK2.bms
+//   Version: 
+//   Purpose: 
+//  Category: Reverse Engineering
+// File Mask: x/0*XPK
+//  ID Bytes: 
 //   History: 
-//------------------------------------------------
+//-----------------------------------------------------
+
+//PUBLIC VERSION v1
 
 /*
 XGSPAK VX only works with games using XGS Engine VX, using different versions with them is likely a bad idea as devs can only use one of the three.
@@ -18,9 +20,14 @@ Haven't really looked at XGSPAKV0
 Works nearly perfect on PAKs without folders
 */
 
-local uint i < hidden = true > = 0;
+/*
+TODO:
+Fix XGSPAKV0
+Fix XGSPAK with folders
+Detect multiple files using different filesizes
+*/
 
-local uint i2 < hidden = true > = 0;
+local uint i < hidden = true > = 0;
 
 typedef enum < byte > {
     Version0 = 0, //NFS Wii/Trilogy 3DS/DLS
@@ -138,7 +145,14 @@ struct XGSPakFile {
         struct FolderBase2 {
             int32 theFolder;
             int32 unklol[2];
-            int32 folderCnt; //? 1 Seems to mean none
+            if (XGSPakHdr.folderCnt <= 1)
+            {
+                int32 fileCnt;
+            }
+            else
+            {
+                int32 folderCnt; //? 1 Seems to mean none
+            }
         } XGSFolderBase2;
     } else if (XGSPakHdr.pakVersion == Version2) {
         int32 pad;
@@ -156,7 +170,7 @@ struct XGSPakFile {
             int32 dmy[2];
             int32 fid;
             int32 db;
-            int32 strBsize; //0 = 0, 1/+ expands this, excludes the last file
+            int32 strBsize; //0 = 0 for the first, later expand this, excludes the last file
             int32 db2;
             //int32 dmy2[3];
             int32 fileSize;
