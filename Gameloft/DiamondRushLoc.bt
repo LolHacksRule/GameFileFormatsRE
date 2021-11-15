@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: DiamondRushLoc.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//TESTED ON GL CLASSICS, NOT SURE IF THIS WORKS ON THE JAVA ORIGINAL
+//Works pretty well with files without that damn table at the beginning
+
+local int isNotTextYet <hidden=true> = 0;
+
+local int i <hidden=true> = 0;
+
+LittleEndian();
+
+int32 unk;
+byte dmy;
+int32 strTblOffst;
+//byte dmy2;
+if (isNotTextYet)
+{
+    int32 unk;
+    int16 unk2;
+    int32 unk3;
+    int16 dmy;
+    int16 idk;
+    int32 idk;
+    //int32 offst[unk3];
+    //int16 strBSize;
+    //string theStr;
+}
+string theStr;

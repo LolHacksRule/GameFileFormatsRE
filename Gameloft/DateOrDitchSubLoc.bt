@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: DateOrDitchSubLoc.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//TESTED ON GL CLASSICS, NOT SURE IF THIS WORKS ON THE JAVA ORIGINAL
+
+local int i <hidden=true> = 0;
+
+LittleEndian();
+struct DateOrDateSubLoc
+{
+    int32 unk;
+    int32 strTblBSize;
+    int32 fSize;
+    int16 unk;
+    int32 stringCnt;
+    int32 off[stringCnt];
+    for (i = 0; i < 1511-7; i++)
+    {
+        struct StringTbl
+        {
+            //string text;
+            //char theText [strtblmeta.strOffsts.stringOff.soff]; //todo figure out how to get the text by offset
+        } thestrtbl;
+    }
+} DOrDSubLoc;

@@ -1,0 +1,125 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: Gameloft J2ME-Era Localization (WIP)
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Translation
+//  Category: Reverse Engineering
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//DEPRECATED FOR V2
+//This may work on most GL Java games too but idk
+
+local int i <hidden=true> = 0;
+
+//MANUALFLAGS IF THE FORMAT IS DIFFERENT
+
+local int stringSizeTblIsBeforeText <hidden=true> = 1;
+
+local int hasBytesBeforeText <hidden=true> = 0;
+
+LittleEndian();
+
+struct J2MELoc
+{
+    struct Hdr
+    {
+        FSkip(2);
+        int32 unk<hidden=true>; //version? Pretty sure G Loft used int16 but let's use int32 when necessary to make it easier
+        //int16 unk2;
+        FSkip(-6);
+        if (unk == 1)
+        {
+            int16 stringtblCnt;
+            int32 ver;
+            int32 textoffst;
+        }
+        if (unk == 2)
+        {
+            int16 unknown; //idk
+            int32 ver;
+            int16 stringTblCntv2;
+            int32 OffstTblOffst;
+        }
+    } hdr<bgcolor = cRed>;
+    
+    struct StringTblMeta
+    {
+        if (hdr.ver == 1)
+        {
+            //int16 unktextoffst;
+            for (i = 0; i < hdr.stringtblCnt; i++)
+            {
+                struct Meta
+                {
+                    //uint16 dmy<hidden=true>;
+                    //uint16 bSizeOrNextStrTbl; 
+                    int32 bSizeOrNextStrTbl;
+                } meta;
+            }            
+            if (stringSizeTblIsBeforeText == 1)
+            {
+                struct StringOffsets
+                {
+                    byte unk;
+                    //byte dmy; //COMMENT THIS OUT IF NEEDED
+                    int32 stringOffstCnt;
+                    for (i = 0; i < stringOffstCnt; i++)
+                    struct StringOffst
+                    {
+                        int32 soff;
+                    } stringOff;
+                } strOffsts;
+            }
+            //byte dummy;
+            //int16 unk;
+        }
+        if (hdr.ver == 2)
+        {
+            for (i = 0; i < hdr.stringTblCntv2; i++)
+            {
+                struct Metav2
+                {
+                    //uint16 dmy<hidden=true>;
+                    //uint16 bSizeOrNextStrTbl; 
+                    int32 bSizeOrNextStrTbl;
+                } metav2;
+            }
+        }
+    } strtblmeta<bgcolor = cPurple>;
+    
+    if (hdr.ver == 2)
+    {
+        int16 dmy; //?
+        struct TblOffsts
+        {
+            int32 stringOffstCnt;
+            for (i = 0; i < stringOffstCnt; i++)
+            {
+                struct StringOffst2
+                {
+                    int32 soff;
+                } stringOff2;
+            }
+        } offsts<bgcolor = cYellow>;
+    }
+    
+    struct StringTbl
+    {
+        struct theStrTbl
+        {
+            //FSeek(0);
+            //if (hdr.ver == 1)
+            //{
+                //byte text[strtblmeta.meta.bSizeOrNextStrTbl];
+            //}
+            //char theText [strtblmeta.strOffsts.stringOff.soff]; //todo figure out how to get the text by offset
+            string theStr;
+        } thestrtbl;
+        //byte text2[100062];
+    } strtbl<bgcolor = cGreen>;
+} GLJ2MELoc;
