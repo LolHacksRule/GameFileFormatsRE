@@ -1,10 +1,10 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: GameloftBubbleBash2SamsungCabFile.bt
+//      File: GameloftBubbleBash2SamsungBarFile.bt
 //   Authors: LolHacksRule
 //   Version: 
-//   Purpose: 
+//   Purpose: Getting data out of data.bar
 //  Category: 
 // File Mask: 
 //  ID Bytes: 
@@ -14,7 +14,7 @@
 local int i <hidden=true> = 0;
 BigEndian();
 
-struct BubbleBash2SamsungCAB
+struct BubbleBash2SamsungBAR
 {
     //FSkip(1);
     int16 fileCnt;
