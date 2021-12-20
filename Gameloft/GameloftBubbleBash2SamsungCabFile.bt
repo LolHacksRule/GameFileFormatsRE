@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: GameloftBubbleBash2SamsungCabFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+BigEndian();
+
+struct BubbleBash2SamsungCAB
+{
+    //FSkip(1);
+    int16 fileCnt;
+    FSkip(1);
+    struct FileMetaTable
+    {
+        Printf("Files:\n");
+        for (i = 0; i < fileCnt; i++)
+        {
+            struct FileMeta
+            {
+                byte strSize;
+                char fName[strSize];
+                Printf(fName + "\n");
+                int32 FileOff;
+                int32 FileBSize;
+            } fmta<bgcolor = cGreen>;
+            FSkip(1);
+        }
+        FSkip(-1);
+    } fmt;
+    struct FileDataTable
+    {
+        for (i = 0; i < fileCnt; i++)
+        {
+            struct FileData
+            {
+                //byte FileDataBytes[fmt.fmta.FileBSize[i]]; TODO I HAVE NO CLUE HOW THIS WORKS IN 010
+            } fdata<bgcolor = cYellow>;
+        }
+    } fdt;
+} bb2ss;
