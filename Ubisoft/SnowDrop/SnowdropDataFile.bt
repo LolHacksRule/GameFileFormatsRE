@@ -1,0 +1,120 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: SnowdropDataFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: Reading the file
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//SDFToc:
+//Header: 95%
+//SDFDataInfo: 100%
+//SDFMetaData: 95%
+//DDSHeaderData: 45%
+//SDFDictData: 100%
+//SDFDataEnder: 95%
+
+//Seems to work best with v22 SDF but idk, todo DDS data identification and unk data
+
+local uint i < hidden = true > = 0;
+local uint i2 < hidden = true > = 0;
+
+typedef enum < uint32 > {
+    SDFToc = 1414743383,
+    SDFData = 1196574018,
+} SDFType;
+
+LittleEndian();
+
+SDFType UbiSDFType<bgcolor = cBlue>;
+uint32 ver<bgcolor = cGreen>;
+if (UbiSDFType == SDFToc)
+{
+    struct SnowdropDataFileTableOfContents
+    {
+        uint32 uncompSize;
+        uint32 compSize;
+        uint32 firstSDFDataID;
+        uint32 SDFDataCnt;
+        uint32 DDSHdrCnt;
+        string massive;
+        uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
+        string ubisoft;
+        FSkip(1);
+        struct SDFDataInfo
+        {
+            struct SDFDataFileSizes
+            {
+                for (i = 0; i < SDFDataCnt; i++)
+                {
+                    struct SDFDataFileSize
+                    {
+                        uint32 FSize;
+                    } sdffsize;
+                }
+                string massive;
+            } sdffs;
+            struct SDFDataMetaData
+            {
+                for (i2 = 0; i2 < SDFDataCnt; i2++)
+                {
+                    struct SDFMetaDataInfo
+                    {
+                        uint64 unk[4];
+                        string ubisoft;
+                    } sdfmi;
+                }
+                //FSkip(-2);
+            } sdfmd;
+        } sdfDataInfo;
+        /*struct DDSHeaderData
+        {
+            for (i2 = 0; i2 < DDSHdrCnt; i2++)
+            {
+                struct DDSHeader
+                {
+                    uint32 DDSHeaderSize;
+                    byte DDSFileHdr[DDSHeaderSize];
+                    /*byte unk[26]; //hack bad
+                    if (i2 >= 1)
+                    {
+                        //for (i2 = i2; i2 < i2; i2++)
+                        //{
+                            FSkip(4);
+                        //}
+                    }
+                } dds<bgcolor = cBlack>;
+            }
+        } ddshdrs;*/
+        FSeek(2169);
+        //FSeek(534557);
+        //FSeek(18197);
+        struct SDFDictData
+        {
+            byte CompressedData[compSize];
+        } sdfDict;
+        struct SDFTOCEnder
+        {
+            string massive;
+            uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
+            string ubisoft;
+        } sdfTOCEnder;
+    } sdfTableOfContentsFile<bgcolor = cLtBlue>;
+}
+
+if (UbiSDFType == SDFData)
+{
+    struct SDFDataFile
+    {
+        string massive;
+        uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
+        string ubisoft;
+    } sdfDataFile;
+}
+
+//if (UbiSDFType == SDFToc)
