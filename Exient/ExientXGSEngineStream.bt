@@ -1,0 +1,61 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//   File: Exient XGS Engine .STM
+//   Authors: LolHacksRule
+//------------------------------------------------
+
+//WIP!
+
+local uint i<hidden=true> = 0;
+local uint i2<hidden=true> = 0;
+local uint i3<hidden=true> = 0;
+local uint i4<hidden=true> = 0;
+
+//ONLY TESTED ON ANGRY BIRDS GO, ANGRY BIRDS TRANFORMERS AND FURBY CONNECT WORLD
+
+typedef enum <int32> {
+    FMT_METADATADAT = 2,
+    FMT_DAT         = 3,
+    FMT_TEX         = 4,
+	FMT_MP1         = 5,
+    FMT_QO2         = 6,
+    FMT_QO3         = 7,
+    FMT_EN          = 10, //Seems to only be used in Furby Connect World
+} texFmt;
+
+LittleEndian();
+
+struct XGSStream
+{
+    char STMEHdr[4]; //STME
+    byte unk; //ver?
+    byte dmy2[3]; //seems to be 010101
+    byte unk2;
+    byte unk3[3];
+    int32 entryCnt;
+    struct Entries
+    {
+        {
+            struct Entry
+            {
+                texFmt contentType;
+                string theFileName;
+                if (unk == 18)
+                {
+                    FSkip(2);
+                }
+                if (unk == 21)
+                {
+                    FSkip(19);
+                }
+                else
+                {
+                    FSkip(15);
+                }
+                int32 fOff;
+                int32 fSize;
+            } entry;
+        }
+    } entries;
+} STME;
