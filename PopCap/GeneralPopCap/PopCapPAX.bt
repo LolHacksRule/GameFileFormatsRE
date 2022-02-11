@@ -11,6 +11,10 @@
 //      History: 
 //------------------------------------------------
 
+//It's funny how this is in a library but specific to Zuma's Revenge
+
+//WIP!
+
 local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;
 
@@ -22,9 +26,9 @@ typedef enum <byte> {
 struct PopCapPAX {
     struct Header {
         int32   unk;
+        Printf("Textures:\n");
         int32   texCnt;
     } HDR;
-    
     struct FileList {
         for (i = 0; i < HDR.texCnt; i++)
         {
@@ -34,6 +38,7 @@ struct PopCapPAX {
                 long id;
                 int32 strLenLongStr;
                 char longStr[strLenLongStr];
+                Printf("%s\n", longStr);
                 long width;
                 long height;
             } FileInfo;
@@ -72,8 +77,8 @@ struct PopCapPAX {
                     if (HDR.unk >= 5)
                     {
                         TrueFalseFlag isAdditive;
-                    }
-                    if (flag2 == True)
+                    }   
+                    /*if (flag2 == True)
                     {
                         struct Layer {
                             int32 idk;
@@ -82,8 +87,33 @@ struct PopCapPAX {
                     else
                     struct NestedComposition {
                     } NestedCompositionInfo;
+                    if (flag2 == True)
+                    {
+                        for (i = 0; i < HDR.texCnt; i++)
+                        {
+                            int
+                        }
+                    }*/
+                    struct Layer
+                    {
+                        int32 unk;
+                        //while (unk != 9)
+                        //{
+                            double dbl1;
+                            double dbl2;
+                            int32 unk2;
+                            long unklong3;
+                            TrueFalseFlag flag3;
+                            int32 loopType;
+                            int32 loopFrame;
+                            //long l;
+                            int32 u;
+                            double dbl3[4];
+                            int32 u3;
+                        //}
+                    } lyr;
                 }
             } CompositionInfo;
         }
-    } CompositionLst;
+    } CompositionData;
 } PAX;
