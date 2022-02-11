@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i <hidden = true> = 0;
+
+struct GLAucklandLoc
+{
+    int32 StrCnt;
+    for( i = 0; i < StrCnt; i++ )
+    {
+        struct TextString
+        {
+            int32 strIdBSize<hidden=true>;
+            char StrID[strIdBSize];
+            int32 stringBSize<hidden=true>;
+            if (stringBSize == 0)
+            {
+                break;
+            }
+            wchar_t lString[stringBSize];
+        } ts;
+    }
+}glAucklandLoc;

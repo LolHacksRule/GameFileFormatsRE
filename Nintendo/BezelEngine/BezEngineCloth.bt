@@ -1,0 +1,77 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: BZEngCloth.bt
+//   Authors: LHR
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+typedef struct CommonNinNXHdr
+{
+    char hdr[8];
+    byte micro;
+    byte minor;
+    byte major[2];
+    int16 endian;
+    byte alignment;
+    byte addressSize;
+    int32 fNameOffst;
+    int16 flags;
+    int16 firstBlockOffst;
+    int32 relocBlockOffst;
+    int32 fsize;
+} ninNXHdr;
+
+struct Cloth
+{
+    struct Header
+    {
+        ninNXHdr theHdr;
+    } hdr<comment="Common NX Hdr">;
+    struct Content
+    {
+        int64 RootBoneNameOffset<comment="Root Bone Name Offset">;
+        int64 clothPtclTblOffst<comment="Cloth Particle Table Offset">;
+        int64 clothStructureOffst<comment="Cloth Structure Table Offset">;
+        float vStiff<comment="Vertical Stiffness">;
+        float hStiff<comment="Horizontal Stiffness">;
+        float sStiff<comment="Shearing Stiffness">;
+        float bStiff<comment="Bending Stiffness">;
+        byte clothPtclCnt<comment="Cloth Particle Count">;
+        byte clothPtclTblNodeByteCnt<comment="Bytecount of Cloth Particle Groups?">; //?
+        byte dmy2;
+        byte disableCollDetection<comment="Disable Collision Detection, 1 = ON, 2 = OFF">;;
+        float selfCollDist<comment="Self Collision Distance">;
+        float selfCollStiff<comment="Self Collision Stiffness">;
+        float simFreq<comment="Simulation Frequency">;
+        float stiffFreq<comment="Stiffness Frequency">;
+        float windDrag<comment="Wind Drag">;
+        float windLift<comment="Wind Lift">;;
+        byte  vpSetting<comment="Virtual Particle Setting">;
+        FSeek(clothPtclTblOffst);
+        //if 0, let's safely assume there's no cloth structure
+        if (clothStructureOffst > 0)
+        {
+            struct ClothParticles
+            {
+                float invMass[2]<comment="Inverted Mass (x2)">;
+                int32 boneId<comment="Bone ID">;
+                //int64 dmy;
+            } clothPtcls[clothPtclCnt]<comment="Cloth Particles">;
+            byte clothStructure[48]<comment="Cloth Structure (in bytes)">;
+        }
+        FSeek(RootBoneNameOffset); //Go to root bone name
+        int16 strSize<hidden=true>;
+        string RootBoneName<comment="Root Bone Name">;
+        FSeek(hdr.theHdr.fNameOffst);
+        //int16 fNameStrSize;
+        string fnameStr<comment="Should be NoName">;
+    } content<comment="Bezel Cloth Config Bin Content">;
+} cloth<comment="Binary NintendoWare Bezel Engine Cloth Config">;

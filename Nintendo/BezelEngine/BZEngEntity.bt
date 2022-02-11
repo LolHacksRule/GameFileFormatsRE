@@ -1,0 +1,172 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: BZEngEntity.bt
+//   Authors: LHR
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+typedef enum <byte>
+{
+    IsNotStatic = 0x0,
+    IsStatic = 0x1,
+} isStatic;
+
+typedef enum <byte>
+{
+    IsNotTrigger = 0x0,
+    IsTrigger = 0x1,
+} isTrigger;
+
+typedef enum <int64>
+{
+    ComGroup = 7,
+    ComCollision = 168,
+    //IsStatic = 0x1,
+} componentType;
+
+typedef enum <byte>
+{
+    All,
+    None,
+    Default,
+    Character,
+    Static,
+    Debris,
+    HitCollisionAttack,
+    HitCollisionDamage,
+    PhysicalAnimation,
+    User1,
+    User2,
+    User3,
+    User4,
+    User5,
+    User6,
+    User7,
+    User8,
+} collisionLayer;
+
+typedef enum <byte>
+{
+    Invalid,
+    //Debris, //already mentioned in above so ignore
+    RobustDebris,
+    Moving = 3,
+    Critical,
+    Bullet,
+} collisionQuality;
+
+LittleEndian();
+
+typedef struct EntityContent
+{
+    char ENTY[4];
+    int32 StrTblOffst[2];
+    int32 dmy;
+    byte entyGUID[16];
+    int64 entyNameOffst;
+    //FSeek(entyNameOfft);
+    //int16 bSize;
+    //char str[bSize];
+    int64 prmOffTbl;
+    if (prmOffTbl == 0)
+    {
+        int64 dbytes[3];
+        break; //Kill Enty detection as no other params are found
+    }
+    else
+    {
+        int64 dmy2[2];
+        int16 componentCnt;
+        byte dmy3;
+        isStatic isEntityStatic;
+        int32 dmy4;
+        int64 prmTbl;
+        for (i = 0; i < componentCnt; i++)
+        {
+            componentType ComponentType;
+            if (ComponentType == ComCollision)
+            {
+                struct ComCollisionTbl
+                {
+                    int64 unk[2];
+                    isTrigger IsTrigger;
+                    collisionLayer CollisionLayer;
+                    collisionQuality CollisionQuality;
+                    byte dbytes[5];
+                } cc;
+            }
+            if (ComponentType == ComGroup)
+            {
+                struct ComGroupTbl
+                {
+                    int64 nextEntyOffstTblOffst;
+                    if (nextEntyOffstTblOffst == 0)
+                    {
+                        int64 pad; //assume its padding as no enty offst doesn't make sense
+                        break;
+                    }
+                    int64 unk;
+                    int64 nextEntyOffst;
+                } cg;
+            }
+            
+        }
+    }           
+} enty<comment="Entity Chunk">;
+
+typedef struct CommonNinNXHdr
+{
+    char hdr[8];
+    byte micro;
+    byte minor;
+    byte major[2];
+    int16 endian;
+    byte alignment;
+    byte addressSize;
+    int32 fNameOffst;
+    int16 flags;
+    int16 firstBlockOffst;
+    int32 relocBlockOffst;
+    int32 fsize;
+} ninNXHdr;
+
+struct Entity
+{
+    struct Header
+    {
+        ninNXHdr theHdr;
+    } hdr<comment="Common NX Hdr">;
+    struct Content
+    {
+        int64 entityChunkOffst;
+        int64 unk;
+        int64 entityBlockOffst;
+        enty theEntity;
+        struct TheNextBlock
+        {
+            for (i = 0; i < 99; i++)
+            {
+                char nextBlockType[4]<hidden=true>;
+                if (nextBlockType == "ENTY")
+                {
+                    FSkip(-4);
+                    enty theNextEntity;
+                }
+                //FSkip(4);
+                if (nextBlockType == "_STR")
+                {
+                    //FSkip(-4);
+                    break;
+                }
+            }
+        } tnb;
+    } content<comment="Bezel Entity Bin Content">;
+} entity<comment="Binary NintendoWare Bezel Engine Entity">;

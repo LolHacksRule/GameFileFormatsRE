@@ -1,0 +1,37 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ABGOV1_GHOST.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+struct ABGhost
+{
+    struct HDR
+    {
+        int64 unk;
+        string KartName;
+        //if (unk == 206158430208)
+        //{
+            //int32 unknown[3];
+        //}
+        FSeek(40);
+        string CharName;
+    } hdr;
+    FSeek(112);
+    struct Ghost
+    {
+        float unk[5];
+        int32 cnt;
+        int32 unk;
+        float c[cnt];
+    } ghost;
+} ghost10;
