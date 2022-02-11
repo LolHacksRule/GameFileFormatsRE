@@ -55,5 +55,7 @@ struct PopCapPAM {
                 long height;
             } FileInfo;
         }
+        short unk;
+        TrueFalseFlag Flag;
     } animInfo<bgcolor = cBlue>;
 } PAM;
