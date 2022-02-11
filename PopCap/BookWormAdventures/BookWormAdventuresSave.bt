@@ -1,0 +1,237 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: BookWormAdventuresSave.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
+local int i3 <hidden=true> = 0;
+
+typedef enum <int32> {
+    Int32,
+	Float,
+    Boolean,
+    String,
+    Int16,
+} valueType;
+
+typedef enum <byte> {
+    False,
+	True,
+} boolChecker;
+
+//TODO DETECT ARRAYS
+
+/*
+Bookworm Adventures Save Data params
+
+AllowGems: Allow the use of Gems.
+AllowGoldBar: ?
+AllowHealthBar: ?
+AllowItems: ?
+AllowXPBar: ?
+BeatdownMultiplier: ?
+CompletedChapters: ?
+CurrentBook: Current Book (2+ bypasses tutorial).
+CurrentChapter: Current Chapter.
+CurrentStage: Current Stage.
+CompletedChapters: Completed chapters.
+DefenseLevel: Defense level of Lex.
+DidGoldenFleece: Did get the Golden Fleece.
+DisableTips: ?
+EnablePips: ?
+EnabledMiniGames: Enabled mini games.
+
+MaxHealth: Max health of Lex.
+mNum: ?
+mCanPlay: ?
+mBook: ?
+EnemyAttackRates: ?
+Claw: ?
+
+UnlockedBestiary: Unlocked Tome of Knowledge
+*/
+
+struct BookWormAdventuresSave
+{
+    Printf("Bookworm Adventures Save:\n\n");
+    struct SaveParameters
+    {
+        for (i = 0; i < 90; i++)
+        {
+            struct SaveParam
+            {
+                int16 stringSize;
+                char stringData[stringSize];
+                if (stringData != "GridState")
+                {
+                    Printf(stringData + " = ");
+                }
+                valueType theValueType;
+                if (theValueType == 0)
+                {
+                    
+                    int32 theInt32;
+                    if (stringData == "mBook")
+                    {
+                        int16 unkmLetterInt16;
+                        Printf("%d, %d\n", theInt32, unkmLetterInt16);
+                    }
+                    if (stringData == "mStage")
+                    {
+                        int16 unkmStageInt16;
+                        Printf("%d, %d\n", theInt32, unkmStageInt16);
+                    }
+                    if (stringData == "mChapter") //I hate this
+                    {
+                        int16 unkmChapterInt16[2]; //Unsure
+                        int32 unkmChapterInt32[2]; //Unsure
+                        Printf("%d, %d, %d, %d, %d\n", theInt32, unkmChapterInt16[0], unkmChapterInt16[1], unkmChapterInt32[0], unkmChapterInt32[1]);
+                    }
+                    else
+                    {
+                        Printf("%d\n", theInt32);
+                    }
+                }
+                if (theValueType == 1)
+                {
+                    int16 floatStringSize;
+                    char floatString[floatStringSize];
+                }
+                if (theValueType == 2) //EASY
+                {
+                    boolChecker theBool;
+                    if (theBool == 1)
+                    {
+                        Printf("true,\n");
+                    }
+                    else
+                    {
+                        Printf("false,\n");
+                    }
+                }
+                if (theValueType == 3)
+                {
+                    int16 paramStringSize;
+                    char paramString[paramStringSize];
+                    /*
+                    if (stringData == "mLetter") //hell
+                    {
+                        if (i != 32)
+                        {
+                            if (i != 20 && i != 24 && i != 28)
+                            {
+                                FSkip(12);
+                            }
+                            else
+                            {
+                                FSkip(22);
+                            }
+                        }
+                    }*/
+                    if (stringData == "mSeed" || stringData == "mWord")
+                    {
+                        int16 theWordInt16;
+                    }
+                }
+                if (theValueType == 4)
+                {
+                    if (stringData == "EnemyTopWords")
+                    {
+                        int16 theFiveInt16[5];
+                        //Printf("%d, %d, %d, %d, %d\n", theFiveInt16[0], theFiveInt16[1], theFiveInt16[2], theFiveInt16[3], theFiveInt16[4]);
+                        Printf("\n");
+                    }
+                    else if (stringData == "GridState")
+                    {
+                        struct GridStateParams
+                        {
+                            int16 theGridStateInt16s[11];
+                            struct LetterParams
+                            {
+                                for (i2 = 0; i2 < 16; i2++) 
+                                {
+                                    struct LetterParam
+                                    {
+                                        Printf("GridState[%d] = ", i2);
+                                        int16 letterParamSize;
+                                        char letterParamName[letterParamSize];
+                                        valueType theLetterValueTypeShouldBeString;
+                                        int16 letterStringSize;
+                                        char theLetter[letterStringSize];
+                                        //Printf("""");
+                                        Printf("%s\n", theLetter);
+                                        //Printf("""");
+                                        if (i2 != 3 && i2 != 7 && i2 != 11)
+                                        {
+                                            if (i2 != 15)
+                                            {
+                                                FSkip(12); //?
+                                            }
+                                        }
+                                        else
+                                        {
+                                            FSkip(22); //?
+                                        }
+                                    } lPrm;
+                                }
+                            } letterParams;
+                        } gridStateParams;
+                    }
+                    else if (stringData == "Items")
+                    {
+                        int16 theItemInt16s[5];
+                        Printf("INCOMPLETE\n");
+                    }
+                    else if (stringData == "Last5HP")
+                    {
+                        int16 theLast5HPInt16s[14];
+                        Printf("INCOMPLETE\n");
+                    }
+                    else if (stringData == "mSeenSeeds")
+                    {
+                        int16 themSeenSeedsInt16s[6];
+                        Printf("INCOMPLETE\n");
+                    }
+                    else if (stringData == "mSeenWords")
+                    {
+                        int16 themSeenWordsInt16s[5];
+                        int16 wordSize;
+                        char word[wordSize];
+                    }
+                    else if (stringData == "SecretsFound")
+                    {
+                        int16 theSecretsFoundInt16s[5];
+                        int16 secretWordSize;
+                        char secretWord[secretWordSize];
+                    }
+                    else if (stringData == "SeenArrowHints")
+                    {
+                        int16 theSeenArrowHintsInt16s[14];
+                    }
+                    else if (stringData == "SeenStageDialog")
+                    {
+                        int16 theSeenStageDialogInt16s[6];
+                    }
+                    else if (stringData == "TM_Treasures")
+                    {
+                        int16 theTM_TreasuresInt16s[5];
+                    }
+                    else
+                    {
+                        int16 theInt16;
+                        Printf("%d\n", theInt16);
+                    }
+                }
+            } saveParam;
+        }
+    } saveParams;
+} BWAFile;
