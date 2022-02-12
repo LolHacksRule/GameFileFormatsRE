@@ -12,11 +12,21 @@
 //------------------------------------------------
 
 local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
 
 typedef enum <byte> {
-			True = 1,
-			False = 0,
+	True = 1,
+    False = 0,
 } TrueFalseFlag;
+
+typedef enum <ubyte> {
+	HasRemoves = 1,
+	HasAdds = 2,
+    HasMoves = 4,
+    HasFrameName = 8,
+    HasStop = 16,
+    HasCommands = 32,
+} PopAnimFrameFlag;
 
 struct PopCapPAM {
     struct Header {
@@ -38,24 +48,65 @@ struct PopCapPAM {
     
     struct AnimInfo {
         byte animRate;
-        short x;
-        short y;
-        short width;
-        short height;
-        short n2;
-        for (i = 0; i < n2; i++)
+        short animRectX; //Divide by 20
+        short animRectY; //Divide by 20
+        short animRectWidth; //Divide by 20
+        short animRectHeight; //Divide by 20
+        short numImages;
+        
+        for (i = 0; i < numImages; i++)
         {
-            struct File {
-                int32 strLen;
+            struct Image {
+                
+                short strLen;
                 char stringShort[strLen];
-                long id;
-                int32 strLenLongStr;
-                char longStr[strLenLongStr];
-                long width;
-                long height;
-            } FileInfo;
+                //long id;
+                if (HDR.version >= 4)
+                {
+                    short origWidth;
+                    short origHeight;
+                }
+                if (HDR.version == 1)
+                {
+                    short unk[3];
+                }
+                else
+                {
+                    long  TransformA;
+                    long  TransformB;
+                    long  TransformC;
+                    long  TransformD;
+                    short TransformX;
+                    short TransformY;
+                }
+            } ImageInfo;
         }
-        short unk;
-        TrueFalseFlag Flag;
+        short numSprites;
+        struct SpriteDefinitions
+        {
+            for (i = 0; i < numSprites; i++)
+            {
+                struct SpriteDefinition
+                {
+                    if (HDR.version >= 4)
+                    {
+                        short strLen;
+                        char stringShort[strLen];
+                        int32 animRate;
+                    }
+                    short numOfFrames;
+                    if (HDR.version >= 5)
+                    {
+                        short workAreaStart;
+                        short workAreaDuration;
+                    }
+                    for (i2 = 0; i2 < numOfFrames; i2++)
+                    {
+                        PopAnimFrameFlag flag;
+                    }
+                } spriteDef;
+            }
+        } SpriteInfo;
+        TrueFalseFlag hasMainSpriteDefinition;
     } animInfo<bgcolor = cBlue>;
 } PAM;
