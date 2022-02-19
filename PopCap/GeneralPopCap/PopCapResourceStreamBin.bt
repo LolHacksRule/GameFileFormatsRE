@@ -1,73 +1,149 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: PopCapResourceStreamBin.bt
+//      File: PopCap Resource Stream Binary
 //      Authors: LolHacksRule
 //      Version: 1
-//      Purpose: Gets data out of PopCap's new archive format.
-//      Category: Game Archive
+//      Purpose: Gets data out of the binary.
+//      Category: Meta
 //      File Mask: rsb1
 //      ID Bytes:
 //      History: 
 //------------------------------------------------
 
-local int newRsb <hidden=true> = 0;
+/*
+General Format Info:
+https://github.com/TwinKleS-C/PvZTool/blob/53be6e2364381515b8d4b37c4f51fe562a20034d/src/pvztool.c https://github.com/Nineteendo/PVZ2tools/blob/183078174f3bda15bd06f7fefd0cbf4ebb8bf4e8/OBBEdit/README.md
+http://www.watto.org/specs.html?specs=Archive_RSB_1BSR
+*/
+
+//Tested on various.
+
+local int ver4Rsb <hidden=true> = 0;
+local int i <hidden=true> = 0;
 
 typedef enum <int32> {
-			RGB565 = 1,
-			BARG4444 = 0,
+	BRGA4444,
+    RGB565,
+    DXT3 = 5,
+    //ETC2 = ?
 } ImageFormat;
 
+typedef enum <int32> {
+    Resident,
+	GPU_Transfer,
+    Transient
+} ResType;
+
+typedef struct SubGroupInfo
+{
+    byte subGroupInfoData[rsb1Hdr.resGroupInfoTableItemSize];
+} subGroupInfo;
+
+typedef struct ResGroupInfo
+{
+    byte subGroupInfoData[rsb1Hdr.resGroupFileNameTableItemSize];
+} resGroupInfo;
+
+typedef struct AutoPool
+{
+    //byte autoPoolData[rsb1Hdr.AutoPoolTableItemSize];
+    string thePoolName;
+    FSkip(128 - sizeof thePoolName); 
+    int32 resGroupFileOffset;
+    int32 resGroupFileSize;
+    int32 autoPoolNum;
+    int32 commonSize; //3?
+    int32 cFileLocation;
+    int32 cFileMemSize;
+    //int32 dFileLocation;
+    //int32 dFileFileSize;
+    //int32 dFileMemSize;
+} autoPool;
+
+typedef struct PTXInfo
+{
+    if (rsb1Hdr.ptxInfoTableItemSize == 16)
+    {
+        int32 width;
+        int32 height;
+        int32 pitch;
+        ImageFormat textureFormat;
+    }
+    else
+    {
+        int32 width;
+        int32 height;
+        int32 pitch;
+        byte ptxInfoData[rsb1Hdr.ptxInfoTableItemSize-12];
+    }
+    /**/
+} ptxInfo;
+
 typedef struct ResourceGroupFile
-        {
-            char hdr[4];
-            int32 rsgVer;
-            int32 null[2];
-            int32 unk;
-            int32 dOff;
-            int32 dOff2;
-            int32 dDSize;
-            int32 dDSize2;
-            int32 null2;
-            if (dDSize <= 0)
-            {
-                int32 fOff;
-                int32 cFSize;
-                int32 dFSize2;
-            }
-            else
-            {
-                Printf("\nRawFile\n");
-                int32 fSize;
-                int32 null3[2];
-            }
-            int32 megaDummy[5];
-            int32 dLen;
-            int32 dirOffst;
-            int32 moredum[3];
-            byte  fData[dLen];
-            FSkip(-24);
-            int32 compressed;
-            if (compressed)
-            {
-                int32 offst;
-                int32 decompLen;
-                ImageFormat ImgFmt;
-                int32 dumagain[2];
-                int32 texWidth;
-                int32 texHeight;
-            }
-            FSeek(rsb1Hdr.firstResGroupDataOffst);
-            byte pad[dOff];
-            if (compressed)
-            {
-                byte zlibCompressed[cFSize];
-            }
-            else
-            {
-                byte rawFile[fSize];
-            }
-        } rsg;
+{
+    char hdr[4];
+    int32 rsgVer; //Should be same as hdr
+    int32 verMinor;
+    int32 tSize; //Dummy?
+    int32 dCmnSize;
+    int32 dataOff;
+    int32 decDataSizeResident[2];
+    FSkip(4);
+    int32 FSizeInGPU[2];
+    if (decDataLen[0] <= 0 || decDataLen[1] <= 0)
+    {
+        Printf("\nResource Group is compressed\n");
+        int32 fileOff;
+        int32 compressedFileDataSize;
+        int32 decFileDataSize;
+    }
+    else
+    {
+        Printf("\nRawFile\n");
+        int32 fSize;
+        int32 null3[2];
+    }
+    FSkip(20);
+    int32 directoryDataLen;
+    int32 directoryOffset;
+    FSkip(12);
+    byte  fData[directoryDataLen];
+    //FSkip(-256);
+    FSkip(fileOff);
+    if (decDataLen[0] <= 0 || decDataLen[1] <= 0)
+    {
+        byte compressedFile[compressedFileDataSize];
+    }
+    else
+    {
+        byte rawFile[fSize];
+    }
+    //WIP
+    //struct ResourceFile
+    /*
+    FSkip(-24);
+    int32 compressed;
+    if (compressed)
+    {
+        int32 offst;
+        int32 decompLen;
+        ImageFormat ImgFmt;
+        int32 dumagain[2];
+        int32 texWidth;
+        int32 texHeight;
+    }
+    FSeek(rsb1Hdr.firstResGroupDataOffst);
+    byte pad[dOff];
+    if (compressed)
+    {
+        byte zlibCompressed[cFSize];
+    }
+    else*/
+    //{
+        //byte rawFile[fSize];
+    //}
+} rsg;
 
 struct ResourceStreamBin
 {
@@ -85,64 +161,124 @@ struct ResourceStreamBin
             LittleEndian();
             Printf("Android/iOS/PS4 Resource Stream Binary\n");
         }
-        int32 version<bgcolor = cYellow>;
+        int32 version<bgcolor = cYellow>; //4 = PVZ2+, 3 = Console Ports/BejClassic/Peggle2
         if (version == 4)
         {
-            local int newRsb = 1;
+            local int ver4Rsb<hidden=true>  = 1;
             Printf("Version 4");
         }
-        int32 dummy;
-        int32 firstResGroupDataOffst<bgcolor = cPurple>;
-        int32 firstStrTblSize<bgcolor = cLtBlue>;
-        int32 firstStrTblOffst<bgcolor = cGreen>; //70 or 108 for ZR
-        int32 unk[2];
-        //int32 unk4;
-        //int32 unk5; //CC
-        int32 thirdResGroupSize<bgcolor = cYellow>;
-        int32 thirdResGroupOffst<bgcolor = cWhite>;
+        int32 verMinor;
+        int32 resGroupFileTableOffset<bgcolor = cPurple>;
+        int32 strTblSize<bgcolor = cWhite>;
+        int32 strTblOffset<bgcolor = cWhite>; //70 or 108 for V3
+        FSkip(8);
+        int32 resGroupFileNameUnicode32TableSize<bgcolor = cYellow>;
+        int32 resGroupFileNameUnicode32TableOffset<bgcolor = cYellow>;
         int32 resGroupFileCnt<bgcolor = cAqua>;
-        //int32 firstResGroupEntries<bgcolor = cWhite>;
-        int32 firstResGroupOffst<bgcolor = cWhite>;
-        int32 firstResGroupSize<bgcolor = cGreen>;
-        int32 secondResGroupSize<bgcolor = cGreen>;
-        int32 secondResGroupStrTblOffst<bgcolor = cWhite>;
-        int32 thirdResGroupEntries;
-        int32 fourthResGroupOffst;
-        int32 fourthResGroupSize;
-        int32 fifthResGroupEntries;
-        int32 fifthResGroupOffst;
-        int32 fifthResGroupSize;
-        int32 sixthResGroupOffst;
-        int32 seventhResGroupOffst;
+        int32 resGroupFileNameTableUTF8Offset<bgcolor = cGreen>;
+        int32 resGroupFileNameTableItemSize<bgcolor = cGreen>;
+        int32 resGroupInfoTableEntryCnt<bgcolor = cPurple>;
+        int32 resGroupInfoTableOffset<bgcolor = cPurple>;
+        int32 resGroupInfoTableItemSize<bgcolor = cPurple>;
+        int32 resGroupListSize<bgcolor = cBlack>;
+        int32 resGroupListOffset<bgcolor = cBlack>;
+        int32 AutoPoolTableResGroupEntryCnt<bgcolor = cRed>; //Should be identical to resGroupFileCnt
+        int32 AutoPoolTableOffset<bgcolor = cRed>;
+        int32 AutoPoolTableItemSize<bgcolor = cRed>;
+        int32 ptxInfoTableEntryCnt<bgcolor = cLtRed>;
+        int32 ptxInfoTableOffset<bgcolor = cLtRed>;
+        int32 ptxInfoTableItemSize<bgcolor = cLtRed>;
+        int32 eighthResGroupOffst;
+        int32 unk2;
+        int32 fileStringTableUTF8Offset;
+        if (ver4Rsb)
+        {
+            int32 tenthResGroupOffst; //?
+        }
         //int32 unk5;
     } rsb1Hdr;
     //struct StringTable
     //{
         //wchar_t str[9];
     //} rsbStrings;
-        //int32 
-        FSeek(rsb1Hdr.firstStrTblOffst);
-        byte    firstStrTbl[rsb1Hdr.firstStrTblSize];
-        /*for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+    //int32 
+    byte StringTable[rsb1Hdr.strTblSize]<bgcolor = cLtBlue>;
+    byte SubGroupList[rsb1Hdr.resGroupFileNameUnicode32TableSize]<bgcolor = cYellow>;
+    struct SubGroupInfoTable
+    {
+        for (i = 0; i < rsb1Hdr.resGroupInfoTableEntryCnt; i++)
         {
-            struct RSGFileOffst
+            subGroupInfo SubGroupInfoBlock<bgcolor = cGreen>;
+        }
+    } subg;
+    byte ResGroupList[rsb1Hdr.resGroupListSize]<bgcolor = cBlack>;
+    struct ResGroupInfoTable
+    {
+        for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+        {
+            resGroupInfo ResGroupInfoBlock<bgcolor = cPurple>;
+        }
+    } resginfotbl;
+    struct AutoPoolTable
+    {
+        for (i = 0; i < rsb1Hdr.AutoPoolTableResGroupEntryCnt; i++)
+        {
+            autoPool AutoPoolBlock<bgcolor = cRed>;
+        }
+    } autoPoolTbl;
+    struct PTXInfoTable
+    {
+        for (i = 0; i < rsb1Hdr.ptxInfoTableEntryCnt; i++)
+        {
+            ptxInfo PTXInfoBlock<bgcolor = cLtRed>;
+        }
+    } ptxInfoTbl;
+    if (rsb1Hdr.fileStringTableUTF8Offset != 0)
+    {
+        FSeek(rsb1Hdr.fileStringTableUTF8Offset+1);
+        struct UTF8StringTable
+        {
+            /*for (i = 0; i < 47642; i++)
             {
-                string fName;
-                byte dBytes[116];
-                int32 fOff;
-                int32 size;
-                byte  dbytes2[68];
-            } rsgfOff[rsb1Hdr.resGroupFileCnt];
-        }*/
-        //FSeek(rsb1Hdr.firstResGroupOffst);
-        byte thirdResGroup[rsb1Hdr.thirdResGroupSize];
-        //byte firstResGroup[rsb1Hdr.firstResGroupSize];
-        //byte secondResGroup[rsb1Hdr.secondResGroupSize];
-        //byte fourthResGroup[rsb1Hdr.fourthResGroupSize];
-        //FSkip(50);
-        FSeek(rsb1Hdr.firstResGroupDataOffst);
-        rsg resGroup1;
-        FSeek(rsb1Hdr.secondResGroupStrTblOffst);
-        byte secondResGroup[rsb1Hdr.secondResGroupSize];
-    
+                struct UTF8String
+                {
+                    string tstr;
+                } utf8str;
+            }*/
+        } utf8strtbl;
+    }
+    /*if (ver4Rsb)
+    {
+        if (rsb1Hdr.eighthResGroupOffst == rsb1Hdr.tenthResGroupOffst) //
+        {
+            FSeek(rsb1Hdr.fileStringTableUTF8Offset+1);
+            string a;
+        }
+    }*/
+    /*for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+    {
+        struct RSGFileOffst
+        {
+            string fName;
+            byte dBytes[116];
+            int32 fOff;
+            int32 size;
+            byte  dbytes2[68];
+        } rsgfOff[rsb1Hdr.resGroupFileCnt];
+    }*/
+    //FSeek(rsb1Hdr.firstResGroupOffst);
+    //byte thirdResGroup[rsb1Hdr.thirdResGroupSize];
+    //byte firstResGroup[rsb1Hdr.firstResGroupSize];
+    //byte secondResGroup[rsb1Hdr.secondResGroupSize];
+    //byte fourthResGroup[rsb1Hdr.fourthResGroupSize];
+    //FSkip(50);
+    //FSeek(rsb1Hdr.firstResGroupDataOffst);
+    /*for (int i = 0; i > rsb1Hdr.resGroupFileCnt; i++)
+    {
+        rsg resourceGroupFile;
+    }*/
+    //rsg resGroup1;
+    //FSeek(rsb1Hdr.secondResGroupStrTblOffst);
+    //byte secondResGroup[rsb1Hdr.secondResGroupSize];
+    //FSeek(rsb1Hdr.thirdResGroupStrTblOffst);
 } popCapResourceStreamBinary;
