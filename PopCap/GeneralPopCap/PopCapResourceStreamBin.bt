@@ -15,6 +15,7 @@
 General Format Info:
 https://github.com/TwinKleS-C/PvZTool/blob/53be6e2364381515b8d4b37c4f51fe562a20034d/src/pvztool.c https://github.com/Nineteendo/PVZ2tools/blob/183078174f3bda15bd06f7fefd0cbf4ebb8bf4e8/OBBEdit/README.md
 http://www.watto.org/specs.html?specs=Archive_RSB_1BSR
+https://github.com/YingFengTingYu/PopStudio
 */
 
 //Tested on various.
@@ -23,11 +24,17 @@ local int ver4Rsb <hidden=true> = 0;
 local int i <hidden=true> = 0;
 
 typedef enum <int32> {
-	BRGA4444,
+	ARGB8888,
     RGB565,
-    DXT3 = 5,
-    //ETC2 = ?
+    DXT3 = 5, //PS4/Xbox 360
+    ETC1_RGB_A8 = 147,
+    RGBA4444_BLOCK = 21 //?
 } ImageFormat;
+
+typedef enum <int32>
+{
+    AlphaFmt_ETC1_RGB_A = 100
+} AlphaFormat;
 
 typedef enum <int32> {
     Resident,
@@ -63,22 +70,36 @@ typedef struct AutoPool
 
 typedef struct PTXInfo
 {
-    if (rsb1Hdr.ptxInfoTableItemSize == 16)
+    int32 width;
+    int32 height;
+    int32 pitch;
+    ImageFormat textureFormat;
+    if (rsb1Hdr.ptxInfoTableItemSize == 24)
     {
-        int32 width;
-        int32 height;
-        int32 pitch;
-        ImageFormat textureFormat;
+        int32 alphaSize;
+        AlphaFormat alphaFormat;
     }
-    else
-    {
-        int32 width;
-        int32 height;
-        int32 pitch;
-        byte ptxInfoData[rsb1Hdr.ptxInfoTableItemSize-12];
-    }
-    /**/
 } ptxInfo;
+
+typedef struct ResListXMLPtxInfo
+{
+    struct Part1
+    {
+        int32 unkxml[4];
+    } rl_xptxhdrpart1;
+    struct Part2
+    {
+        uint16 xmlPTXtype;
+        uint16 xmlPTXflags;
+        uint16 xmlPTXAtlasX;
+        uint16 xmlPTXAtlasY;
+        uint16 xmlPTXAtlasW;
+        uint16 xmlPTXAtlasH;
+        uint16 xmlPTXRows;
+        uint16 xmlPTXCols;
+        int32 offtoPt3;
+    } rl_xptxhdrpart2;
+} resListXmlPTXInfo;
 
 typedef struct ResourceGroupFile
 {
@@ -188,14 +209,13 @@ struct ResourceStreamBin
         int32 ptxInfoTableEntryCnt<bgcolor = cLtRed>;
         int32 ptxInfoTableOffset<bgcolor = cLtRed>;
         int32 ptxInfoTableItemSize<bgcolor = cLtRed>;
-        int32 eighthResGroupOffst;
-        int32 unk2;
-        int32 fileStringTableUTF8Offset;
+        int32 xmlPart1Off;
+        int32 xmlPart2Off;
+        int32 xmlPart3Off;
         if (ver4Rsb)
         {
-            int32 tenthResGroupOffst; //?
+            int32 resourceBinLen; //?
         }
-        //int32 unk5;
     } rsb1Hdr;
     //struct StringTable
     //{
@@ -233,19 +253,10 @@ struct ResourceStreamBin
             ptxInfo PTXInfoBlock<bgcolor = cLtRed>;
         }
     } ptxInfoTbl;
-    if (rsb1Hdr.fileStringTableUTF8Offset != 0)
+    if (rsb1Hdr.xmlPart1Off != 0)
     {
-        FSeek(rsb1Hdr.fileStringTableUTF8Offset+1);
-        struct UTF8StringTable
-        {
-            /*for (i = 0; i < 47642; i++)
-            {
-                struct UTF8String
-                {
-                    string tstr;
-                } utf8str;
-            }*/
-        } utf8strtbl;
+        FSeek(rsb1Hdr.xmlPart1Off);
+        resListXmlPTXInfo resListXML;
     }
     /*if (ver4Rsb)
     {
