@@ -4,8 +4,8 @@
 //      File: PopCapResourceStreamBin.bt
 //      Authors: LolHacksRule
 //      Version: 1
-//      Purpose: Gets data out of the binary.
-//      Category: Meta
+//      Purpose: Gets data out of the binary and groups.
+//      Category: Game Archive
 //      File Mask: rsb1
 //      ID Bytes:
 //      History: 
@@ -111,6 +111,7 @@ typedef struct ResListXMLPtxInfo
 
 typedef struct ResourceStreamGroup
 {
+    isCompressedPTXFile = 0;
     char  hdr[4];
     int32 rsgVerMajor; //Should be same as hdr
     int32 rsgVerMinor;
@@ -148,20 +149,21 @@ typedef struct ResourceStreamGroup
     byte  fileIndex[fileIdxLen-32];
     //FSkip(-256);
     //FSkip(fileOff);
+    int32 isPTX;
     if (dataCmnSize == 1)
     {
         isCompressedPTXFile = 1;
     }
-    int32 isPTX;
-    FSkip(-sizeof fileIndex);
-    FSkip(-96); //go back to RSGP to jump
-    FSkip(dataResidentOff);
     if (isPTX == 1)
     {
         struct PopTextureFile
         {
-            //int32 ?
-            if (isCompressedPTXFile)
+            int32 unknown[7];
+            FSkip(-28);
+            FSkip(-sizeof fileIndex);
+            FSkip(-96); //go back to RSGP to jump
+            FSkip(dataResidentOff);
+            if (isCompressedPTXFile) //PopCap tends to only compress textures so I'm assuming textures are these
             {
                 byte zlibCompressedPTXFiles[dataTransientLocation];
             }
@@ -173,6 +175,9 @@ typedef struct ResourceStreamGroup
     }
     else
     {
+        FSkip(-sizeof fileIndex);
+        FSkip(-96); //go back to RSGP to jump
+        FSkip(dataResidentOff);
         struct ResourceFile
         {
             byte ResourceFiles[dataTransientFileSize];
@@ -312,12 +317,12 @@ struct ResourceStreamBin
             string a;
         }
     }*/
-    FSeek(rsb1Hdr.cmnDataSize);
-    struct ResourceStreamGroups
+    FSeek(rsb1Hdr.cmnDataSize); //Go to RSG files
+    struct ResourceStreamGroupTable
     {
         for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
         {
-            ResourceStreamsGroup ResourceStreamsGroupFile;
+            ResourceStreamsGroup ResourceStreamsGroupFile<bgcolor = cPurple>;
         }
     } rsgps;
     /*for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
