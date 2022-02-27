@@ -22,6 +22,7 @@ https://github.com/YingFengTingYu/PopStudio
 
 local int ver4Rsb <hidden=true> = 0;
 local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
@@ -45,23 +46,31 @@ typedef enum <int32> {
     Transient
 } ResType;
 
-typedef struct SubGroupInfo
+typedef struct SubGroupInfo //Accurate?
 {
-    byte subGroupInfoData[rsb1Hdr.resGroupInfoTableItemSize];
-    /*string thePoolName;
+    //byte subGroupInfoData[subGroupBlockSize];
+    string thePoolName;
     FSkip(128 - sizeof thePoolName); 
     //FSkip(4);
-    for (i = 0; i < 40; i++)
+    for (i2 = 0; i2 < 7; i2++)
     {
-        struct Child
+        struct ChildLang
         {
             int32 idx;
             int32 ratio;
             string lang;
-            FSkip(4);
-        } child;
+            if (sizeof lang == 5)
+            {
+                FSkip(3);
+            }
+            else
+            {
+                FSkip(7);
+            }
+        } childLang;
     }
-    int32 u;*/
+    FSkip(912);
+    int32 childLangNum;
 } subGroupInfo;
 
 typedef struct ResGroupInfo
@@ -254,7 +263,10 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
                     }
                     FSkip(-sizeof ResourceFileContent2);
                     FSkip(dataGPULocation);
-                    byte zlibCompressedFiles[dataTransientLocation];
+                    if (dataTransientLocation != 0)
+                    {
+                        byte zlibCompressedFiles[dataTransientLocation];
+                    }
                 }
                 else
                 {
