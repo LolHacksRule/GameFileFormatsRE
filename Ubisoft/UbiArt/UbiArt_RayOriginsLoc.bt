@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct String
+{
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        wchar_t tstring[stringSize];
+        int32 strID;
+        //Printf("%s(%i)\n", tstring, strID);
+    }
+    else
+    {
+        int32 strID;
+        Printf("String ID %i is empty!\n", strID);
+    }
+} textStr;
+
+typedef struct SoundRefString
+{
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        wchar_t tstring[stringSize];
+        int32 unk;
+        int32 strID;
+    }
+    else
+    {
+        int32 unk;
+        int32 strID;
+    }
+    if (strID == 1)
+    {
+        FSkip(-4);
+    }
+} soundTextStr;
+
+local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
+
+struct UbiArt_RayOriginsLoc
+{
+    BigEndian();
+    int32 langCnt;
+    FSkip(4);
+    struct Languages
+    {
+        for (i = 0; i < langCnt; i++)
+        {
+            struct Lang //0 = English, 1 = French, 2 = Ja
+            {
+                int32 langStrCnt;
+                int32 unk;
+                struct LangText
+                {
+                    for (i2 = 0; i2 < langStrCnt; i2++)
+                    {
+                        textStr theText;
+                    }
+                } ltxt;
+            } l;
+        }
+    } langs;
+    struct SoundReferences
+    {
+        int32 unk; //same as LANG.LTXT.unk
+        for (i = 0; i < 720; i++)
+        {
+            struct SoundRef
+            {
+                FSkip(4);
+                soundTextStr theSoundText;
+                //FSkip(4);
+            } sr;
+        }
+    } s;
+} ua;

@@ -1,0 +1,253 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ZumaCURVFile.bt
+//   Authors: LolHacksRule
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+/*
+General Format Info:
+https://github.com/GScience/ZumaToolPack/blob/master/Zuma%20Curv%E5%88%86%E6%9E%90.docx?raw=true
+https://hclxing.wordpress.com/2017/06/27/reverse-engineering-zuma-deluxes-level-file/
+Mostly decompiled WP7 ver
+*/
+
+//Reads BOTH Zuma Deluxe, Flash and Revenge's curve formats
+
+//V1: ?
+//V2: PC/MAC (Yes)
+//V3: Flash (Yes)
+//V4: ZR_v1 (Yes)
+//V5: ?
+//V6: ZR_v2 (Yes)
+//V7: ZR_v3 (Yes)
+//V8: ZR_v4 (Yes)
+//V9: ?
+//V10: ZR_v5 (Yes)
+//V11: ZR_v6 (Yes)
+//V12: ZR_v7 (Yes)
+//V13: ZR_v8 (Yes)
+//V14: ZR_v9 (Yes)
+//V14: ZR_v10 (Yes)
+
+//TODO: Find the functions of the unk values or manually reverse to see they do, maybe check priority
+
+typedef enum <byte>
+{
+    False,
+    True
+} bool;
+
+typedef enum <byte>
+{
+    Top,
+    Bottom,
+} ZumaCurve_Layer;
+
+typedef struct
+{
+    if (version > 3)
+    {
+        byte unk; //Some float flag, 2 means to use floats, haven't messed with this myself
+        if (hasTunnels || version >= 15)
+        {
+            ZumaCurve_Layer priority;
+        }
+    }
+    if ((version >= 4 && unk >= 2) || (version <= 3 && i == 0)) //Check for Zuma2 curves and enforce the first value is float in Zuma1
+    {
+        float x;
+        float y;
+    }
+    else
+    {
+        byte x;
+        byte y;
+    }
+    if (version < 3)
+    {
+        bool isInTunnel;
+        ZumaCurve_Layer lyr;
+    }
+} Zuma_PathPoint;
+
+typedef struct
+{
+    //float x;
+    //float y;
+    byte X;
+    byte Y;
+    bool isInTunnel;
+    ZumaCurve_Layer lyr;
+} Zuma1_PathPoint;
+
+typedef struct
+{
+    int32 x;
+    int32 y;
+    bool isInTunnel;
+    ZumaCurve_Layer lyr;
+} Zuma1_KeyPoint;
+
+/*typedef enum PowerType
+{
+    PowerType_ProximityBomb,
+	PowerType_SlowDown,
+	PowerType_Accuracy,
+	PowerType_MoveBackwards,
+	PowerType_Lob,
+	PowerType_BombBullet,
+	PowerType_BallEater,
+	PowerType_Cannon,
+	PowerType_ColorNuke,
+	PowerType_Laser,
+	PowerType_Fireball,
+	PowerType_ShieldFrog,
+	PowerType_FreezeBoss,
+	PowerType_GauntletMultBall,
+	PowerType_Max,
+	PowerType_None = 14
+} pwrType;*/
+
+local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
+
+struct ZumaCurveFile
+{
+    char CURV[4];
+    uint32 version;
+    if (version > 2)
+    {
+        struct Zuma2Curve
+        {
+            if (version >= 8)
+            {
+                bool isLinear;
+            }
+            if (version >= 7) //Ver 7+ added level settings
+            {
+                uint32 startDistance;
+                uint32 numBalls;
+                uint32 ballRepeat;
+		        uint32 maxSingle;
+                uint32 numColors;
+                if (version <= 10)
+                {
+                    int32  unkI32;
+                    float  unkF32;
+                }
+                float speed;
+                uint32 slowDist;
+                float accelRate;
+                float maxSpeed;
+                int32 scoreTarget;
+                uint32 skullRotation;
+                uint32 zumaBack;
+                uint32 zumaSlow;
+                if (version >= 13)
+                {
+                    float slowFactor;
+                }
+                else
+                {
+                    local float slowFactor = 4.0;
+                }
+                if (version >= 14)
+                {
+                    uint32 maxClumpSize;
+                }
+                else
+                {
+                    local uint32 maxClumpSize = 10;
+                }
+                struct PowerupTable
+                {
+                    uint32 pwrUpNum;
+                    for (i = 0; i < pwrUpNum; i++)
+                    {
+                        struct Powerup
+                        {
+                            /*if (i == 10)
+                            {
+                                int32 unkDepPwrVal1;
+                                if (version >= 12)
+                                {
+                                    int32 unkDepPwrVal2;
+                                }
+                            }
+                            else*/
+                            {
+                                int32 powUpFreq;
+                                if (version >= 12)
+                                {
+                                    int32 maxNum;
+                                }
+                            }
+                        } pwrUp;
+                    }
+                } pwrUpTbl;
+                if (version >= 12)
+                {
+                    int32 pwrUpChance;
+                }
+                bool drawCurve;
+                bool drawTunnels;
+                bool destroyAll;
+                if (version > 8)
+                {
+                    bool drawPit;
+                }
+                if (version > 9)
+                {
+                    bool dieAtEnd;
+                }
+            }
+            bool hasNoEditType; //Seems no samples I tried set this to true
+            bool hasTunnels;
+            if (!hasNoEditType)
+            {
+                uint32 editType;
+                uint32 unkNum;
+                byte bytesOfEdit[unkNum];
+            }
+            uint32 pathPointCnt;
+            struct Z2PathPoints
+            {
+                for (i = 0; i < pathPointCnt; i++)
+                {
+                    Zuma_PathPoint thePathPointV2;
+                }
+            } Z2_PathPoints;
+        } Z2_CURV;
+    }
+    else
+    {
+        struct Zuma1Curv
+        {
+            int32 unk;
+            int32 keyBlockSize;
+            int32 keyPointCnt;
+            struct KeyPoints
+            {
+                for (i = 0; i < keyPointCnt; i++)
+                {
+                    Zuma1_KeyPoint theKeyPoint;
+                }
+            } kpZ1;
+            int32 pathPointCnt;
+            struct PathPoints
+            {
+                for (i = 0; i < pathPointCnt; i++)
+                {
+                    Zuma_PathPoint thePathPoint;
+                }
+            } Z1_PathPoints;
+        } Z1_CURV;
+    }
+} ZumaCURV;

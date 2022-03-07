@@ -1,0 +1,38 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: UbiArt_RayOriginsAlias.bt
+//   Authors: LolHacksRule
+//   Version: 1.0
+//   Purpose: Reading the file
+//  Category: Metadata
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+struct UbiArt_RayOriginsAlias
+{
+    BigEndian(); //Change this if not Big Endian
+    int64 strCnt; //pretty sure Ubi went with i32 here after the nulls but I'm using i64 to save code
+    struct Strings
+    {
+        for (i = 0; i < strCnt; i++)
+        {
+            struct String
+            {
+                int32 stringSize;
+                wchar_t tstring[stringSize];
+                //dup of above idk
+                int32 stringSize2;
+                wchar_t tstring2[stringSize2];
+                //end dup
+                int32 locationStringSize;
+                wchar_t locationString[locationStringSize];
+                Printf("%s\n", locationString);
+            } tstr;
+        }
+    } strings;
+} ua_rayorigins_alias;

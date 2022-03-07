@@ -1,0 +1,160 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+local int i <hidden=true> = 0;
+
+local int i2 <hidden=true> = 0;
+
+local int hasStrCntFirst <hidden=true> = 1;
+
+LittleEndian();
+
+struct GLClara
+{
+    uint32 hdr;
+    if (hasStrCntFirst)
+    {
+        int32 strCnt;
+    }
+    struct ClaraStrings
+    {
+        if (hasStrCntFirst)
+        {
+            for (i = 0; i < strCnt; i++)
+            {
+                struct Stringv1
+                {
+                    int16 strSize;
+                    char theStr[strSize];
+                } cstr;
+            }
+        }
+        else
+        {
+            for (i = 0; i < 2; i++)
+            {
+                struct Stringv2
+                {
+                    int16 strSize;
+                    char theStr[strSize];
+                    if (!hasStrCntFirst)
+                    {
+                        byte unk;
+                    }
+                } cstr;
+            }
+        }
+    } cstrings;
+    struct ClaraTypes
+    {
+        int16 typeCnt;
+        for (i2 = 0; i2 < typeCnt; i2++)
+        {
+            struct ClaraType
+            {
+                byte type;
+                if (type == 121)
+                {
+                    struct T21
+                    {
+                        int32 stringIdx;
+                        int16 ecnt;
+                        for (i = 0; i < ecnt; i++)
+                        {
+                            int32 e;
+                        }
+                    } t21;
+                }
+            } ctyp;       
+        }
+    } cytps;
+    struct ClaraTemplates
+    {
+        int16 templateCnt;
+        for (i2 = 0; i2 < templateCnt; i2++)
+        {
+            struct ClaraTemplate
+            {
+                byte type;
+                if (type == 116)
+                {
+                    struct T74
+                    {
+                        int32 id;
+                        int32 stringIdx;
+                        byte x;
+                    } t72;
+                }       
+            } ctpl; 
+        } 
+    } ctpls;
+    struct ClaraLibs
+    {
+        int32 libCnt;
+        for (i2 = 0; i2 < libCnt; i2++)
+        {
+            struct ClaraFile
+            {
+                int32 nameIndx;
+                byte type;
+                if (type == 102)
+                {
+                    struct ClaraFolder
+                    {
+                        int32 id;
+                        int32 stringidx;
+                        int16 cnt;
+                        for (i2 = 0; i2 < cnt; i2++)
+                        {
+                            byte type;
+                            /*if (type == 102)
+                            {
+                                
+                            }*/
+                            if (type == 115)
+                            {
+                                struct ParticleSystemPrm
+                                {
+                                    int32 id;
+                                    int32 strIdx;
+                                    int16 ecnt;
+                                    for (i2 = 0; i2 < ecnt; i2++)
+                                    {
+                                        byte type;
+                                        //if (
+                                        int32 inflCnt;
+                                    }
+                                } psprm;
+                            }
+                            if (type == 65)
+                            {
+                                int32 idtmpl;
+                            }
+                            /*if (type == 67)
+                            {
+                                int32 ;
+                            }*/
+                            /*if (type == 69)
+                            {
+                                
+                            }*/
+                            if (type == 73)
+                            {
+                                int32 idtmpl;
+                            }
+                        }
+                    } cfldr;
+                }
+            } cfile;
+        }
+    } clibs;
+} glc;

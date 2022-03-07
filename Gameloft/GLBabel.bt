@@ -1,0 +1,61 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+local int strIDFlag <hidden=true> = 0;
+
+struct GLBabel
+{
+    char Babel[4];
+    int32 unk;
+    int32 checkForLang<hidden=true>;
+    if (checkForLang > 15)
+    {
+        strIDFlag = 1;
+        Printf("Work");
+    }
+    FSkip(-4);
+    if (strIDFlag)
+    {
+        int32 locCnt;
+    }
+    else
+    {
+        int32 langCnt;
+        struct FirstLocStr
+        {
+            int32 strBSize;
+            char theStr[strBSize];
+            int32 unk;
+        } firststr;
+        int32 locCnt;
+        int32 unk;
+    }
+    struct GLBabelStrings
+    {
+        for (i = 0; i < locCnt; i++)
+        {
+            struct GLBabelString
+            {
+                int32 strBSize;
+                char theStr[strBSize];
+                int32 unk;
+            } babelStr;
+        }
+        if (!strIDFlag)
+        {
+            int32 dmy[3];
+        }
+    } babelStrs;
+} GLBBL;
