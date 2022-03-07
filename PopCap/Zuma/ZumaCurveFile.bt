@@ -122,7 +122,7 @@ struct ZumaCurveFile
 {
     char CURV[4];
     uint32 version;
-    if (version > 2)
+    if (version > 3)
     {
         struct Zuma2Curve
         {
@@ -230,16 +230,23 @@ struct ZumaCurveFile
     {
         struct Zuma1Curv
         {
-            int32 unk;
-            int32 keyBlockSize;
-            int32 keyPointCnt;
-            struct KeyPoints
+            bool unkBool[2];
+            if (version != 3)
             {
-                for (i = 0; i < keyPointCnt; i++)
+                FSkip(2);
+            }
+            if (version == 2)
+            {
+                int32 keyBlockSize;
+                int32 keyPointCnt;
+                struct KeyPoints
                 {
-                    Zuma1_KeyPoint theKeyPoint;
-                }
-            } kpZ1;
+                    for (i = 0; i < keyPointCnt; i++)
+                    {
+                        Zuma1_KeyPoint theKeyPoint;
+                    }
+                } kpZ1;
+            }
             int32 pathPointCnt;
             struct PathPoints
             {

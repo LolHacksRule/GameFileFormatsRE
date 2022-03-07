@@ -1,0 +1,81 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: UbiArt_SecureFat.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+typedef struct StringData
+{
+    byte strSize;
+    char theStr[strSize];
+    int32 unk;
+} strData;
+
+typedef struct FSStringData
+{
+    int32 strSize;
+    char theStr[strSize];
+    int16 fileCount;
+    //FSkip(1);
+} fsStrData;
+
+typedef struct FSFNameStringData
+{
+    int32 strSize;
+    char theStr[strSize];
+    int16 unk;
+    int32 unk2;
+    //FSkip(1);
+} fsFileNameStrData;
+
+struct UbiArtSecureFat
+{
+    BigEndian(); //Change if iPhone/etc
+    int32 bundleCount; //Amount of IPK files
+    FSkip(4);
+    struct BundleData
+    {
+        struct BundleStringData
+        {
+            for (i = 0; i < bundleCount; i++)
+            { 
+                strData BundleString;
+            }
+        } bsd;
+    } bd;
+    /*struct UnknownData
+    {
+        int32 vCnt;
+        int16 unk[vCnt];
+    } udata;*/
+    FSkip(260847); //RayLegendsDebugReview
+    struct FileSystemData
+    {
+        int32 dirCnt;
+        struct FileSystemStringData
+        {
+            for (i = 0; i < dirCnt; i++)
+            {
+                fsStrData FileSystemString;
+            }
+        } fssd;
+        int32 fileCnt;
+        int16 unknown;
+        struct FileSystemNameStringData
+        {
+            for (i = 0; i < fileCnt; i++)
+            {
+                fsFileNameStrData FileSystemNameString;
+            }
+        } fsnsd;
+    } fs;
+} UA_SecureFat;
