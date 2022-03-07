@@ -22,7 +22,10 @@ https://github.com/YingFengTingYu/PopStudio
 
 local int ver4Rsb <hidden=true> = 0;
 local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
+//PVZ2 has a header
+local int isPVZ2CompressedPTXFile <hidden=true> = 0;
 
 typedef enum <int32> {
 	ARGB8888,
@@ -43,17 +46,53 @@ typedef enum <int32> {
     Transient
 } ResType;
 
-typedef struct SubGroupInfo
+typedef struct SubGroupInfo //Accurate?
 {
-    byte subGroupInfoData[rsb1Hdr.resGroupInfoTableItemSize];
-    /*string thePoolName;
+    //byte subGroupInfoData[subGroupBlockSize];
+    string thePoolName;
     FSkip(128 - sizeof thePoolName); 
-    FSkip(4);*/
+    //FSkip(4);
+    for (i2 = 0; i2 < 7; i2++)
+    {
+        struct ChildLang
+        {
+            int32 idx;
+            int32 ratio;
+            string lang;
+            if (sizeof lang == 5)
+            {
+                FSkip(3);
+            }
+            else
+            {
+                FSkip(7);
+            }
+        } childLang;
+    }
+    FSkip(912);
+    int32 childLangNum;
 } subGroupInfo;
 
 typedef struct ResGroupInfo
 {
-    byte subGroupInfoData[rsb1Hdr.resGroupFileNameTableItemSize];
+    //byte subGroupInfoData[rsb1Hdr.resGroupFileNameTableItemSize];
+    string thePoolName;
+    FSkip(128 - sizeof thePoolName); 
+    int32 resGroupOffset;
+    int32 resGroupSize;
+    int32 resGroupIdx;
+    int32 flags; //unknown?
+    int32 fileOffsetInResGroup;
+    int32 pt0Off;
+    int32 pt0ZSize;
+    int32 pt0Size;
+    int32 pt0Size2;
+    int32 pt1Off;
+    int32 pt1ZSize;
+    int32 pt1Size;
+    FSkip(20);
+    int32 texCnt;
+    int32 idx;
 } resGroupInfo;
 
 typedef struct AutoPool
@@ -109,9 +148,10 @@ typedef struct ResListXMLPtxInfo
     } rl_xptxhdrpart2;
 } resListXmlPTXInfo;
 
-typedef struct ResourceStreamGroup
+typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting PVZ2's from CDN to work was a doozy
 {
     isCompressedPTXFile = 0;
+    isPVZ2CompressedPTXFile = 0;
     char  hdr[4];
     int32 rsgVerMajor; //Should be same as hdr
     int32 rsgVerMinor;
@@ -122,7 +162,7 @@ typedef struct ResourceStreamGroup
     int32 dataResidentMemSize;
     int32 dataGPULocation;
     int32 dataGPUFileSize;
-    int32 dataGPUMemFileSize;
+    int32 dataGPUMemFileSize; //zlib size?
     int32 dataTransientLocation;
     int32 dataTransientFileSize;
     int32 dataTransientMemFileSize;
@@ -146,7 +186,15 @@ typedef struct ResourceStreamGroup
     int32 texDescOffset;
     int32 texDescSize;
     //FSkip(12);
-    byte  fileIndex[fileIdxLen-32];
+    byte  fileIndex[fileIdxLen];
+    if (dataResidentMemSize == 0 || dataGPULocation == 0)
+    {
+        FSkip(-32);
+    }
+    else
+    {
+        FSkip(-16);
+    }
     //FSkip(-256);
     //FSkip(fileOff);
     int32 isPTX;
@@ -154,63 +202,112 @@ typedef struct ResourceStreamGroup
     {
         isCompressedPTXFile = 1;
     }
-    if (isPTX == 1)
+    if (dataCmnSize == 3)
     {
-        struct PopTextureFile
+        isCompressedPTXFile = 1;
+        isPVZ2CompressedPTXFile = 1;
+    }
+    if (fileIdxLen != 0)
+    {
+        if (isPTX == 1)
         {
-            int32 unknown[7];
-            FSkip(-28);
-            FSkip(-sizeof fileIndex);
-            FSkip(-96); //go back to RSGP to jump
-            FSkip(dataResidentOff);
-            if (isCompressedPTXFile) //PopCap tends to only compress textures so I'm assuming textures are these
+            struct PopTextureFile
             {
-                byte zlibCompressedPTXFiles[dataTransientLocation];
-            }
-            else
+                int32 unk;
+                int32 FSize; //Minus size of PTX HDR?
+                FSkip(12);
+                //int32 unknown[5];
+                int32 texWidth;
+                int32 texHeight;
+                //byte t;
+                FSkip(-sizeof fileIndex);
+                FSkip(-92); //go back to RSGP to jump
+                FSkip(dataResidentOff);
+                if (isCompressedPTXFile) //PopCap tends to commonly compress textures so I'm assuming textures are these
+                {
+                    if (isPVZ2CompressedPTXFile)
+                    {
+                        byte zlibPVZ2CompressedPTXFiles[dataTransientLocation+dataResidentMemSize];
+                    }
+                    else
+                    {
+                        byte zlibCompressedPTXFiles[dataTransientLocation];
+                    }
+                }
+                else
+                {
+                    byte PTXFiles[dataTransientFileSize];
+                }
+            } PopTexture;
+        }
+        else
+        {
+            struct ResourceFile //WIP! DOUBLE CHECK
             {
-                byte PTXFiles[dataTransientFileSize];
-            }
-        } PopTexture;
+                FSkip(4);
+                int32 sizeOfContent1;
+                int32 sizeOfContent2;
+                FSkip(-sizeof fileIndex);
+                FSkip(-92); //go back to RSGP to jump
+                FSkip(dataResidentOff);
+                if (dataCmnSize != 3)
+                {
+                    if (sizeOfContent1 != 0)
+                    {
+                        byte ResourceFileContent1[sizeOfContent1];
+                    }
+                    byte ResourceFileContent2[sizeOfContent2];
+                    if (sizeOfContent1 != 0)
+                    {
+                        FSkip(-sizeof ResourceFileContent1);
+                    }
+                    FSkip(-sizeof ResourceFileContent2);
+                    FSkip(dataGPULocation);
+                    if (dataTransientLocation != 0)
+                    {
+                        byte zlibCompressedFiles[dataTransientLocation];
+                    }
+                }
+                else
+                {
+                    byte PVZ2ZlibCompressedContent[dataResidentMemSize];
+                }
+            } ResFile;
+        }
+        //else
+        //{
+            //byte rawFile[fSize];
+        //}
+        //WIP
+        //struct ResourceFile
+        /*
+        FSkip(-24);
+        int32 compressed;
+        if (compressed)
+        {
+            int32 offst;
+            int32 decompLen;
+            ImageFormat ImgFmt;
+            int32 dumagain[2];
+            int32 texWidth;
+            int32 texHeight;
+        }
+        FSeek(rsb1Hdr.firstResGroupDataOffst);
+        byte pad[dOff];
+        if (compressed)
+        {
+            byte zlibCompressed[cFSize];
+        }
+        else*/
+        //{
+            //byte rawFile[fSize];
+        //}
     }
     else
     {
-        FSkip(-sizeof fileIndex);
-        FSkip(-96); //go back to RSGP to jump
-        FSkip(dataResidentOff);
-        struct ResourceFile
-        {
-            byte ResourceFiles[dataTransientFileSize];
-        } ResFile;
+        Printf("\nResource Stream Group is empty! Skipping...\n");
+        FSkip(dataGPUMemFileSize-64);
     }
-    //else
-    //{
-        //byte rawFile[fSize];
-    //}
-    //WIP
-    //struct ResourceFile
-    /*
-    FSkip(-24);
-    int32 compressed;
-    if (compressed)
-    {
-        int32 offst;
-        int32 decompLen;
-        ImageFormat ImgFmt;
-        int32 dumagain[2];
-        int32 texWidth;
-        int32 texHeight;
-    }
-    FSeek(rsb1Hdr.firstResGroupDataOffst);
-    byte pad[dOff];
-    if (compressed)
-    {
-        byte zlibCompressed[cFSize];
-    }
-    else*/
-    //{
-        //byte rawFile[fSize];
-    //}
 } ResourceStreamsGroup;
 
 struct ResourceStreamBin
@@ -233,11 +330,11 @@ struct ResourceStreamBin
         if (version == 4)
         {
             local int ver4Rsb<hidden=true>  = 1;
-            Printf("Version 4");
+            Printf("Version 4\n");
         }
         else
         {
-            Printf("Version 3");
+            Printf("Version 3\n");
         }
         int32 verMinor;
         int32 cmnDataSize<bgcolor = cPurple>; //Dummy?
@@ -309,14 +406,6 @@ struct ResourceStreamBin
         FSeek(rsb1Hdr.xmlPart1Off);
         resListXmlPTXInfo resListXML;
     }
-    /*if (ver4Rsb)
-    {
-        if (rsb1Hdr.eighthResGroupOffst == rsb1Hdr.tenthResGroupOffst) //
-        {
-            FSeek(rsb1Hdr.fileStringTableUTF8Offset+1);
-            string a;
-        }
-    }*/
     FSeek(rsb1Hdr.cmnDataSize); //Go to RSG files
     struct ResourceStreamGroupTable
     {
@@ -325,30 +414,4 @@ struct ResourceStreamBin
             ResourceStreamsGroup ResourceStreamsGroupFile<bgcolor = cPurple>;
         }
     } rsgps;
-    /*for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
-    {
-        struct RSGFileOffst
-        {
-            string fName;
-            byte dBytes[116];
-            int32 fOff;
-            int32 size;
-            byte  dbytes2[68];
-        } rsgfOff[rsb1Hdr.resGroupFileCnt];
-    }*/
-    //FSeek(rsb1Hdr.firstResGroupOffst);
-    //byte thirdResGroup[rsb1Hdr.thirdResGroupSize];
-    //byte firstResGroup[rsb1Hdr.firstResGroupSize];
-    //byte secondResGroup[rsb1Hdr.secondResGroupSize];
-    //byte fourthResGroup[rsb1Hdr.fourthResGroupSize];
-    //FSkip(50);
-    //FSeek(rsb1Hdr.firstResGroupDataOffst);
-    /*for (int i = 0; i > rsb1Hdr.resGroupFileCnt; i++)
-    {
-        rsg resourceGroupFile;
-    }*/
-    //rsg resGroup1;
-    //FSeek(rsb1Hdr.secondResGroupfileIdxOffst);
-    //byte secondResGroup[rsb1Hdr.secondResGroupSize];
-    //FSeek(rsb1Hdr.thirdResGroupfileIdxOffst);
 } popCapResourceStreamBinary;
