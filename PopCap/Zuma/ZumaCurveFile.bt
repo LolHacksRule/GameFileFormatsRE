@@ -120,36 +120,61 @@ local int i2 <hidden=true> = 0;
 
 struct ZumaCurveFile
 {
-    char CURV[4];
-    uint32 version;
+    char CURV[4]<bgcolor=cGreen>;
+    uint32 version<bgcolor=cPurple>;
     if (version > 3)
     {
+        Printf("Zuma's Revenge! Curve\n");
+        Printf("---------------------\n");
+        Printf("Version: %i\n", version);
         struct Zuma2Curve
         {
             if (version >= 8)
             {
                 bool isLinear;
+                if (isLinear == True)
+                {
+                    Printf("isLinear: True\n");
+                }
+                else
+                {
+                    Printf("isLinear: False\n");
+                }
             }
             if (version >= 7) //Ver 7+ added level settings
             {
+                Printf("------LEVEL PARAM START-----\n");
                 uint32 startDistance;
+                Printf("startDistance: %i\n", startDistance);
                 uint32 numBalls;
+                Printf("numBalls: %i\n", numBalls);
                 uint32 ballRepeat;
+                Printf("ballRepeat: %i\n", ballRepeat);
 		        uint32 maxSingle;
+                Printf("maxSingle: %i\n", maxSingle);
                 uint32 numColors;
+                Printf("numColors: %i\n", numColors);
                 if (version <= 10)
                 {
                     int32  unkI32;
                     float  unkF32;
                 }
                 float speed;
+                Printf("speed: %f\n", speed);
                 uint32 slowDist;
+                Printf("slowDist: %i\n", slowDist);
                 float accelRate;
+                Printf("accelRate: %f\n", accelRate);
                 float maxSpeed;
+                Printf("maxSpeed: %f\n", maxSpeed);
                 int32 scoreTarget;
+                Printf("scoreTarget: %i\n", scoreTarget);
                 uint32 skullRotation;
+                Printf("skullRotation: %i\n", skullRotation);
                 uint32 zumaBack;
+                Printf("zumaBack: %i\n", zumaBack);
                 uint32 zumaSlow;
+                Printf("zumaSlow: %i\n", zumaSlow);
                 if (version >= 13)
                 {
                     float slowFactor;
@@ -158,6 +183,7 @@ struct ZumaCurveFile
                 {
                     local float slowFactor = 4.0;
                 }
+                Printf("slowFactor: %f\n", slowFactor);
                 if (version >= 14)
                 {
                     uint32 maxClumpSize;
@@ -166,11 +192,15 @@ struct ZumaCurveFile
                 {
                     local uint32 maxClumpSize = 10;
                 }
+                Printf("maxClumpSize: %i\n", maxClumpSize);
                 struct PowerupTable
                 {
                     uint32 pwrUpNum;
+                    Printf("pwrUpNum: %i\n", pwrUpNum);
+                    Printf("-------POWERUP PARAM START-------\n");
                     for (i = 0; i < pwrUpNum; i++)
                     {
+                        Printf("--------POWERUP %i START--------\n", i);
                         struct Powerup
                         {
                             /*if (i == 10)
@@ -184,47 +214,112 @@ struct ZumaCurveFile
                             else*/
                             {
                                 int32 powUpFreq;
+                                Printf("powUpFreq: %i\n", powUpFreq);
                                 if (version >= 12)
                                 {
                                     int32 maxNum;
+                                    Printf("maxNum: %i\n", maxNum);
                                 }
                             }
+                        Printf("-----POWERUP %i END-------\n", i);
                         } pwrUp;
                     }
+                    Printf("-----POWERUP PARAM END-----\n");
                 } pwrUpTbl;
                 if (version >= 12)
                 {
                     int32 pwrUpChance;
+                    Printf("pwrUpChance: %i\n", pwrUpChance);
                 }
                 bool drawCurve;
+                if (drawCurve == True)
+                {
+                    Printf("drawCurve: True\n");
+                }
+                else
+                {
+                    Printf("drawCurve: False\n");
+                }
                 bool drawTunnels;
+                if (drawTunnels == True)
+                {
+                    Printf("drawTunnels: True\n");
+                }
+                else
+                {
+                    Printf("drawTunnels: False\n");
+                }
                 bool destroyAll;
+                if (destroyAll == True)
+                {
+                    Printf("destroyAll: True\n");
+                }
+                else
+                {
+                    Printf("destroyAll: False\n");
+                }
                 if (version > 8)
                 {
                     bool drawPit;
+                    if (drawPit == True)
+                    {
+                        Printf("drawPit: True\n");
+                    }
+                    else
+                    {
+                        Printf("drawPit: False\n");
+                    }
                 }
                 if (version > 9)
                 {
                     bool dieAtEnd;
+                    if (dieAtEnd == True)
+                    {
+                        Printf("dieAtEnd: True\n");
+                    }
+                    else
+                    {
+                        Printf("dieAtEnd: False\n");
+                    }
                 }
             }
+            Printf("------LEVEL PARAM END------\n");
             bool hasNoEditType; //Seems no samples I tried set this to true
+            if (hasNoEditType == True)
+            {
+                Printf("hasNoEditType: True\n");
+            }
+            else
+            {
+                Printf("hasNoEditType: False\n");
+            }
             bool hasTunnels;
+            if (hasNoEditType == True)
+            {
+                Printf("hasTunnels: True\n");
+            }
+            else
+            {
+                Printf("hasTunnels: False\n");
+            }
             if (!hasNoEditType)
             {
                 uint32 editType;
+                Printf("editType: %i\n", editType);
                 uint32 unkNum;
+                Printf("unkNum: %i\n", unkNum);
                 byte bytesOfEdit[unkNum];
             }
             uint32 pathPointCnt;
+            Printf("pathPointCnt: %i\n", pathPointCnt);
             struct Z2PathPoints
             {
                 for (i = 0; i < pathPointCnt; i++)
                 {
-                    Zuma_PathPoint thePathPointV2;
+                    Zuma_PathPoint thePathPointV2<bgcolor=cGreen>;
                 }
             } Z2_PathPoints;
-        } Z2_CURV;
+        } Z2_CURV<bgcolor=cBlue>;
     }
     else
     {
@@ -233,7 +328,7 @@ struct ZumaCurveFile
             bool unkBool[2];
             if (version != 3)
             {
-                FSkip(2);
+                FSkip(2); //It's probably two zeroes
             }
             if (version == 2)
             {
