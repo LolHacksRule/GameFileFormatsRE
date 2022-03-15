@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//   File: Exient XGS Engine .ATLAS
+//   Authors: Allen (Original, https://zenhax.com/viewtopic.php?t=12375), LHR (mods)
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+struct XGSTextureAtlas
+{
+    char    magic[5];//XGSTA
+    short   unknown;
+    byte    unknown2;
+    int     unknown3;
+    int     texCnt;
+    int     hash;//??
+    char    atlasName[32];
+    struct SplitTextureInfoList
+    {
+        Printf("Texture Param:\n");
+        for (i = 0; i < texCnt; i++)
+        {
+            Printf("--------TEXTURE %i START--------\n", i);
+            struct InvidualTexInfo
+            {
+                int     hash;//??
+                Printf("hash: %i\n", hash);
+                int     unk;
+                Printf("unk: %i\n", unk);
+                float   scaleX;//scale value. get real coord need * atlas.xgt image width 
+                Printf("X Scale: %f\n", scaleX);
+                float   scaleY;//scale value. get real coord need * atlas.xgt image height 
+                Printf("Y Scale: %f\n", scaleY);
+                float   scaleWidth;//scale value
+                Printf("Scale Width: %f\n", scaleWidth);
+                float   scaleHeight;//scale value
+                Printf("Scale Height: %f\n", scaleHeight);
+                int     textureWidth;
+                Printf("Texture Width: %i\n", textureWidth);
+                int     textureHeight;
+                Printf("Texture Height: %i\n", textureHeight);
+                int     unk1;
+                Printf("unk1: %i\n", unk1);
+                int     unk2;
+                Printf("unk2: %i\n", unk2);
+            } iti;
+            Printf("--------TEXTURE %i END--------\n", i);
+        }
+    } splitTexInfoList;
+    int     texNameDataBlockLength;
+    struct TextureStrings
+    {
+        Printf("Texture Names:\n");
+        for (i = 0; i < texCnt; i++)
+        {
+            struct TextureString
+            {
+                string texName;
+                Printf("Texture %i: %s\n", i, texName);
+            } its;
+        }
+    } splitTexNameList;
+} XGSTA;
