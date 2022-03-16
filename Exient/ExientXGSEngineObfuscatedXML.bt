@@ -22,7 +22,7 @@ struct XOXXML
         byte Version;
         
         uint64 StringCnt;
-        Printf("XGS Obfuscated XML\nVersion: " + Version + "\nStrings: TODO");
+        Printf("XGS Obfuscated XML\nVersion: " + Version + "\nStrings:\n");
     } hdr<bgcolor = cRed>;
     struct XMLStringMetaTbl
     {
@@ -34,15 +34,17 @@ struct XOXXML
             } xstrBSize<bgcolor = cYellow>;
         }
     } XMLMetaTbl;
-    struct XMLString
+    struct XMLStrings
     {
+        //Printf("Strings:\n");
         for (i = 0; i < hdr.StringCnt; i++)
         {
-            struct TheXMLSTR
+            struct XMLString
             {
                 string XMLStr;
+                Printf("%i: %s\n", i, XMLStr);
             } THEXMLSTR;
         }
-    } XSTR<bgcolor = cGreen>;
-    string XMLEnd<bgcolor = cBlue>;
+    } XSTRs<bgcolor = cGreen>;
+    string XMLValueParams<bgcolor = cBlue>; //?
 } XMLObf;
