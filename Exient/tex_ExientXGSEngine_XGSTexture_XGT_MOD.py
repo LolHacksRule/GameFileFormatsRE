@@ -1,5 +1,7 @@
 #Mod by LolHacksRule, Acewell for original script https://www.zenhax.com/download/file.php?id=8466
 #Added support for RGB565, RGBA4444, PVRTC4BPP, ETC2_RGB
+#TODO: Add code to detect swizzle
+#It's not possible to detect Wii U/legacy textures right away so I commented sections that are moddable
 
 from inc_noesis import *
 
@@ -39,19 +41,19 @@ def noepyLoadRGBA(data, texList):
         print("RGB565_Swizzled (WIP!)")
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
         texFmt = noesis.NOESISTEX_RGBA32
-    if imgFmt == 0x1:
+    elif imgFmt == 0x1:
         print("RGB565")
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
         texFmt = noesis.NOESISTEX_RGBA32
     #RGB565
-    if imgFmt == 0x2:
+    elif imgFmt == 0x2:
         print("RGBA4444")
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
         texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444
     elif imgFmt == 0x3:
-        print("RGBA4444 OR RGBA8888")
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
+        print("RGBA4444 OR RGBA8888\nIf it doesn't look right, look at the below comment!")
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4") #COMMENT AND REPLACE WITH "r8 g8 b8 a8" TO WORK WITH WII U/LEGACY RGBA8888 TEXTURES
         texFmt = noesis.NOESISTEX_RGBA32
     #RGBA8888
     elif imgFmt == 0x4:
@@ -60,13 +62,17 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x5:    
         print("UNKNOWN!")
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8")
-        texFmt = noesis.NOESISTEX_RGBA32
-        #return 1
+        #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8")
+        #texFmt = noesis.NOESISTEX_RGBA32
+        return 1
     #R8A8 ???
     elif imgFmt == 0x8:    
-        print("L8A8 (WIP!)")
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8")
+        print("L8A8 OR DXT1 (WIP!)\nIf it doesn't look right, look at the below comment!")
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES
+        texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x0d:    
+        print("LA88_BE (WIP!)")
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT1
     elif imgFmt == 0x18:
