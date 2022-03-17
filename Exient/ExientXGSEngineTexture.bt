@@ -16,14 +16,14 @@ typedef enum <int16> {
     UNKNOWN,                
     LA88                   = 8,  
     PVR_UNK                = 11,
-    PVRTC_4PP_RGB          = 16, //May need to swap these two
-    PVRTC_4PP_RGBA         = 17,
+    PVRTC_4BPP_RGB         = 16, //May need to swap these two
+    PVRTC_4BPP_RGBA,
     DXT1_OR_ETC1           = 24,
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
     DXT5                   = 26,
     PVRTC_4BPP_RGB_v2      = 30,
-    PVRTC_4BPP_RGB_v3      = 31,    
+    PVRTC_4BPP_RGB_v3,    
     ETC2_RGB               = 35,
     ATC                    = 37,  //BC Swizzled?
     ATCA_Interpolated      = 39, //BC Swizzled?

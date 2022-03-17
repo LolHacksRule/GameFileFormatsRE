@@ -15,6 +15,7 @@
 //Ver 0 uses unicode
 
 local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
 
 struct XGSL
 {
@@ -24,22 +25,33 @@ struct XGSL
         char XGSL[4];
         int32 dmy;
         int32 ver; //guess
+        Printf("XGS Locale\nVersion: %i\n", ver);
         int32 localizationEntries;
     } hdr<bgcolor = cRed>;
     struct Meta
     {
         int32 strCnt;
+        Printf("String Count: %i\n", strCnt);
         int32 FileSize;
+        Printf("FileSize: %i\n", FileSize);
         if (hdr.ver >= 2)
         {
             int32 fontTblOffset;
+            Printf("Font Table Offset: %i\n", fontTblOffset);
             int32 unk5;
         }
-        struct LocMeta
+        struct LocMetaTbl
         {
-            int32 strSize;
-            int32 unk;
-        } loc[hdr.localizationEntries];
+            for (i = 0; i < hdr.localizationEntries; i++)
+            {
+                struct LocMeta
+                {
+                    int32 strSize;
+                    Printf("String Block Size [%i]: %i\n", i, strSize);
+                    int32 unk;
+                } locMeta;
+            }
+        } locMetaTbl;
     } meta<bgcolor = cBlue>;
     //int32 StrIDTblBSize;
     //int32 unk6;
@@ -49,20 +61,54 @@ struct XGSL
     //int32 Unk;
     struct Strings
     {
-        for (i = 0; i < meta.strCnt * hdr.localizationEntries; i++)
+        struct StringIDs
         {
-            struct String
+            Printf("-----String IDs-----\n");
+            for (i = 0; i < meta.strCnt; i++)
             {
-                if (hdr.ver >= 1)
+                struct StringID
                 {
-                    string theStr;
-                }
-                else
+                    if (hdr.ver >= 1)
+                    {
+                        string theStrID;
+                        Printf("[%i]: %s\n", i, theStrID);
+                    }
+                    else
+                    {
+                        wstring theWStrID;
+                        Printf("[%i]: %s\n", i, theWStrID);
+                    }
+                } localizedStringID;
+            }
+        } localizedStringIDs;
+        Printf("-----End String IDs-----\n");
+        struct LocalizedStrings
+        {
+            Printf("-----Strings-----\n");
+            for (i = 0; i < hdr.localizationEntries - 1; i++)
+            {
+                struct Language
                 {
-                    wstring theWStr;
-                }
-            } localizedString;
-        }
+                    Printf("[Lang: %i]\n", i);
+                    for (i2 = 0; i2 < meta.strCnt; i2++)
+                    {
+                        struct String
+                        {
+                            if (hdr.ver >= 1)
+                            {
+                                string theStr;
+                                Printf("[%i]: %s\n", i2, theStr);
+                            }
+                            else
+                            {
+                                wstring theWStr;
+                            }
+                        } localizedString;
+                    }
+                } lang;
+            }
+        } locStrings;
+        Printf("-----End of Strings-----\n");
     } strings<bgcolor = cGreen>;
     /*struct Strings
     {
@@ -90,23 +136,27 @@ struct XGSL
     } strings;*/
     if (hdr.ver == 2)
     {
+        Printf("Font Strings\n");
         struct FontTbl
         {
             int32 fntFiles;
-            for (i = 0; i < 99; i++) //temp until 
+            Printf("Font Files: %i\n", fntFiles);
+            for (i = 0; i < fntFiles; i++) //temp until 
             {
                 struct FontStrs
                 {
-                    uint16 strSize;
-                    char str[strSize];
+                    uint16 fontNameStrSize;
+                    char fontNameStr[fontNameStrSize];
+                    uint16 pakStrSize;
+                    char pakStr[pakStrSize];
+                    Printf("[%i]: %s %s \n", i, pakStr, fontNameStr);
                 } font;
+                FSkip(2);
             }
-            byte dbytes[2];
         } ftbl;
     }
     
     //byte Version;
     
     //uint64 StringCnt;
-    Printf("XGS Locale\nVersion: TODO\nStrings: TODO\n");
 } XGSLocale;
