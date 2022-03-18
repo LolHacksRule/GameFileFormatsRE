@@ -45,7 +45,7 @@ PakCompressionType;
 
 struct XGSPakFile {
     struct Header {
-        char BigEndianChecker[3];
+        char BigEndianChecker[3]<hidden=true>;
         if (BigEndianChecker == "XPK") {
             BigEndian();
             FSkip(-3); //Go back to 0
@@ -59,25 +59,25 @@ struct XGSPakFile {
         }
         if (pakVersion == Version0) {
             //isBigEndian == true;
-            Printf("NFS Hot Persuit Wii/AB Trilogy 3DS (XGSPAK V0)");
+            Printf("NFS Hot Persuit Wii/AB Trilogy 3DS (XGSPAK V0)\n");
             //BigEndian();
         } else if (pakVersion == Version1) {
             //isBigEndian == false;
-            Printf("Angry Birds Go! (XGSPAK V1)");
+            Printf("Angry Birds Go! (XGSPAK V1)\n");
             LittleEndian();
         } else if (pakVersion == Version2) {
             //isBigEndian == false;
-            Printf("Angry Birds Go! v1+ (XGSPAK V2)");
+            Printf("Angry Birds Go! v1+ (XGSPAK V2)\n");
             LittleEndian();
         }
 
         if (magic == "XPK") {
             //isBigEndian == true;
-            Printf(" Big Endian with.");
+            Printf("Big Endian");
             BigEndian();
         } else if (magic == "KPX") {
             //isBigEndian == false;
-            Printf(" Little Endian with");
+            Printf("Little Endian");
             LittleEndian();
         }
         int32 folderCnt < bgcolor = cRed > ; // -1
@@ -87,18 +87,19 @@ struct XGSPakFile {
             PakCompressionType pakCompressionFlag < bgcolor = cPurple > ;
             if (pakCompressionFlag == RawContent) {
                 //isBigEndian == true;
-                Printf(" Raw Content\n");
+                Printf(" with Raw Content\n");
                 //BigEndian();
             } else if (pakCompressionFlag == ZLib) {
                 //isBigEndian == false;
-                Printf(" ZLib Compression\n");
+                Printf(" with ZLib Compression\n");
                 //LittleEndian();
             } else if (pakCompressionFlag == LZ4) {
                 //isBigEndian == false;
-                Printf(" LZ4 Compression\n");
+                Printf(" with LZ4 Compression\n");
                 //LittleEndian();
             }
         } else if (pakVersion == Version1) {
+            Printf("\n");
             int32 unknownBytes;
         }
     }
@@ -222,6 +223,7 @@ struct XGSPakFile {
         for (i = 0; i < XGSPakHdr.fileCnt; i++) {
             struct PakString {
                 string theContentName;
+                //Printf("[%i]: %s\n", i, theContentName);
                 //if (XGSPakHdr.pakVersion == Version1)
                 //{
                 //int32 anotherDummy;
@@ -241,7 +243,7 @@ struct XGSPakFile {
                 for (i = 0; i < XGSPakHdr.fileCnt; i++) {
                     struct TheRawFile
                     {
-                        byte theRawContent[XGSPakContentMeta.fileSize];
+                        byte theRawContent[XGSPakContentMeta[i].fileSize];
                     } theRaw;
                 }
             } else if (XGSPakHdr.pakCompressionFlag == ZLib) {
@@ -249,7 +251,7 @@ struct XGSPakFile {
                 //isBigEndian == false;
                     struct ZlibCompressedFile
                     {
-                        byte theZlibCompressedContent[XGSPakContentMeta.compressedFileSize];
+                        byte theZlibCompressedContent[XGSPakContentMeta[i].compressedFileSize];
                     } zlib;
                     //LittleEndian();
                 }
@@ -258,14 +260,20 @@ struct XGSPakFile {
                 //isBigEndian == false;
                     struct LZ4CompressedFile
                     {
-                        byte theLZ4CompressedContent[XGSPakContentMeta.compressedFileSize];
+                        byte theLZ4CompressedContent[XGSPakContentMeta[i].compressedFileSize];
                     } lz4;
                     //LittleEndian();
                 }
             }
         } else {
             //byte paddingByte;
-            byte theContent[XGSPakContentMeta.fileSize]; //No valid way to check compression on v1
+            for (i = 0; i < XGSPakHdr.fileCnt; i++)
+            {
+                struct V1File
+                {
+                    byte theContent[XGSPakContentMeta[i].fileSize];                 } V1FileContent;
+//No valid way to check compression on v1
+            }
         }
         //if (XGSPakHdr.pakVersion == Version1)
         //{

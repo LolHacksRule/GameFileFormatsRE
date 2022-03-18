@@ -20,7 +20,6 @@ struct XOXXML
     {
         char XOX[3];
         byte Version;
-        
         uint64 StringCnt;
         Printf("XGS Obfuscated XML\nVersion: " + Version + "\nStrings:\n");
     } hdr<bgcolor = cRed>;

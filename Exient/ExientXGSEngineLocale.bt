@@ -102,6 +102,7 @@ struct XGSL
                             else
                             {
                                 wstring theWStr;
+                                Printf("[%i]: %s\n", i2, theWStr);
                             }
                         } localizedString;
                     }

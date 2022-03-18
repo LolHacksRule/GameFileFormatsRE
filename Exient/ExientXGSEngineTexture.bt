@@ -16,6 +16,8 @@ typedef enum <int16> {
     UNKNOWN,                
     LA88                   = 8,  
     PVR_UNK                = 11,
+    
+    UNKNOWN_2              = 13, //88 something?
     PVRTC_4BPP_RGB         = 16, //May need to swap these two
     PVRTC_4BPP_RGBA,
     DXT1_OR_ETC1           = 24,
