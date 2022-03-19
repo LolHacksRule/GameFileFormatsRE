@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngine_3DS_Texture3D.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading this rewrite of XGT that was used once
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct Texture3D {
+    struct Tex3DHdr {
+        char magic[3]; //T3D
+        byte unknown;
+        int16 width;
+        int16 height;
+        int16 width2;
+        int16 height2;
+        int32 UNK2[2];
+        int32 dataSize;
+        int16 unk3[2];
+        int32 dmy;
+    } hdr<bgcolor=cPurple>;
+    byte thetex[hdr.dataSize]<bgcolor=cGreen>;
+} XGSTex3D;

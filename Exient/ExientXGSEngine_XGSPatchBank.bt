@@ -1,0 +1,87 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngine_XGSPatchBank.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading of XGS BNK files
+//  Category: 
+// File Mask: XBNK
+//  ID Bytes: 58424E4B
+//   History: 
+//------------------------------------------------
+
+//Version 3 is so laughable it just adds a 64byte string lol
+
+local uint i < hidden = true > = 0;
+local uint forceBreak < hidden = true > = 0;
+
+struct XGSPatchBank
+{
+    char HDR[4];
+    byte BigEndianChecker<hidden=true>;
+    if (BigEndianChecker == 0x00) {
+        BigEndian();
+    } else
+    {
+        LittleEndian();
+    }
+    FSkip(-1);
+    int16 unk;
+    int16 ver;
+    int32 fileCnt;
+    struct Files
+    {
+        for (i = 0; i < fileCnt; i++)
+        {
+            struct File
+            {
+                int32 dataOff;
+                int32 dataSize;
+                int32 dmy;
+                if (ver == 3)
+                {
+                    char  fileName[64];
+                }
+            } file;
+        }
+    } files;
+    byte test<hidden=true>;
+    if (test == 0x43 || test == 0x57 || test == 0x4D && test != 0xFF)
+    {
+        FSkip(-1);
+    }
+    else
+    {
+        //FSkip(-1);
+        for (i = 0; i < 23; i++ )
+        {
+            struct PaddingChecker
+            {
+                if (forceBreak != 1)
+                {
+                    byte nextChar;
+                    if (nextChar != -1) //CWAV, WIIADPCM, MSFC
+                    {
+                        forceBreak = 1;
+                        FSkip(-1);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            } padChk<hidden=true>;
+        }
+    }
+    struct FileData
+    {
+        for (i = 0; i < fileCnt; i++)
+        {
+            struct IndividualFileData
+            {
+                byte theFile[files.file[i].dataSize];
+            } ifd;
+        }
+    } fileData;
+} xbnk;

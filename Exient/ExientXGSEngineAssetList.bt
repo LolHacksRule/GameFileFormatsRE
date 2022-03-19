@@ -71,9 +71,9 @@ struct XGSAssetList
                 char theFile[nameBSize]<bgcolor = cGreen>;
                 Printf(theFile + "\n");
                 //FSkip(-2);
-            } aFile;
+            } HashedFile;
         }
-    } Fend;
+    } HashedFiles;
     if (XGSHeader.padByteFlag != 0)
     {
         byte pad[66*XGSHeader.padByteFlag]<bgcolor = cRed>; //Padding is compiled from devs in non-cache files
