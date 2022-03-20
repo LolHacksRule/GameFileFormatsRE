@@ -15,10 +15,11 @@ local uint i4<hidden=true> = 0;
 //ONLY TESTED ON ANGRY BIRDS GO, ANGRY BIRDS TRANFORMERS AND FURBY CONNECT WORLD
 
 typedef enum <int32> {
+    FMT_PVS         = 1, //General map?
     FMT_METADATADAT = 2,
     FMT_DAT         = 3,
-    FMT_TEX         = 4,
-	FMT_MP1         = 5,
+    FMT_TEX         = 4, //Seemly a texture in V20/ABTF
+	FMT_MP1         = 5, //Seemly a texture in V20/ABTF
     FMT_QO2         = 6,
     FMT_QO3         = 7,
     FMT_EN          = 10, //Seems to only be used in Furby Connect World
@@ -29,19 +30,28 @@ LittleEndian();
 struct XGSStream
 {
     char STMEHdr[4]; //STME
-    byte unk; //ver?
+    byte ver; //ver? Has to be
     byte dmy2[3]; //seems to be 010101
     byte unk2;
     byte unk3[3];
     int32 entryCnt;
     struct Entries
     {
+        for (i = 0; i < entryCnt; i++)
         {
             struct Entry
             {
                 texFmt contentType;
-                string theFileName;
-                if (unk == 18)
+                if (ver > 13)
+                {
+                    char theFileName[36];
+                }
+                else
+                {
+                    string theFileName;
+                    FSkip(1);
+                }
+                /*if (unk == 18)
                 {
                     FSkip(2);
                 }
@@ -52,10 +62,76 @@ struct XGSStream
                 else
                 {
                     FSkip(15);
-                }
+                }*/
                 int32 fOff;
                 int32 fSize;
+                int32 unk[4];
             } entry;
         }
     } entries;
+    /*struct PVSFile
+    {
+        FSkip(4);
+        int32 unknownVal; //Some count?
+        int32 unknownVal2;
+        //FSkip(4);
+        //int32 unknownVal3;
+        struct UnknownStruct
+        {
+            for (i = 0; i < unknownVal2; i++)
+            {
+                struct UnknownSubData
+                {
+                    int32 test;
+                } ud;
+            }
+        } u;
+        int32 unkagain;
+        int32 unknownVal3;
+        struct UnknownStruct2
+        {
+            for (i = 0; i < unknownVal3; i++)
+            {
+                struct UnknownSubData2
+                {
+                    int32 test2;
+                } ud2;
+            }
+        } u2;
+        int32 unknownVal4;
+        struct UnknownStruct3
+        {
+            for (i = 0; i < unknownVal3; i++)
+            {
+                struct UnknownSubData3
+                {
+                    char test2[36];
+                } ud3;
+            }
+        } u3;
+        int32 unknownVal5;
+        struct UnknownStruct4
+        {
+            for (i = 0; i < unknownVal5; i++)
+            {
+                struct UnknownSubData4
+                {
+                    char test3[64];
+                    float floats[16];
+                } ud3;
+            }
+        } u4;
+        int32 unknownVal6;
+        struct UnknownStruct5
+        {
+            for (i = 0; i < unknownVal6; i++)
+            {
+                struct UnknownSubData5
+                {
+                    char test3[64];
+                    float floats[16];
+                } ud5;
+            }
+        } u5;
+    } PVS;*/
 } STME;

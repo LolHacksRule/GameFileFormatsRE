@@ -24,7 +24,8 @@ typedef enum <int16> {
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
     DXT5                   = 26,
-    PVRTC_4BPP_RGB_v2      = 30,
+    PVRTC_2BPP_RGBA        = 29,
+    PVRTC_4BPP_RGB_v2,
     PVRTC_4BPP_RGB_v3,    
     ETC2_RGB               = 35,
     ATC                    = 37,  //BC Swizzled?

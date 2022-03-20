@@ -1,0 +1,29 @@
+# EXTRACTS RAW ASSETS FROM STM (STME)
+# Really doubt it can help with modding unless you bruteforce values with trial and error
+# By LolHacksRule
+
+endian little
+idstring "STME"
+get VER byte
+get DMY threebyte
+get UNK byte
+get UNK2 threebyte
+get FILES long
+for i = 0 < FILES
+   get TEXFMT long
+   getdstring FNAME 36
+   get OFFSET long
+   get FILEBYTESIZE long
+   get UNK3 long
+   get UNK4 long
+   get UNK5 long
+   get UNK6 long
+    putarray 0 i OFFSET
+   log FNAME OFFSET FILEBYTESIZE
+next i
+savepos BASE_OFF
+for i = 0 < FILES
+    getarray FILEBYTESIZE 0 i
+    math FILEBYTESIZE - OFFSET
+    math OFFSET + BASE_OFF
+next i
