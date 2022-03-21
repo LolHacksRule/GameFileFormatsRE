@@ -14,7 +14,7 @@ typedef enum <int16> {
     RGBA4444_2_OR_RGBA8888, 
     RGBA8888,               
     UNKNOWN,                
-    LA88                   = 8,  
+    LA88_OR_DXT1           = 8,  
     PVR_UNK                = 11,
     
     UNKNOWN_2              = 13, //88 something?
