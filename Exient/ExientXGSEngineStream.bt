@@ -19,8 +19,8 @@ typedef enum <int32> {
     FMT_METADATADAT = 2,
     FMT_DAT         = 3,
     FMT_TEX         = 4, //Seemly a texture in V20/ABTF
-	FMT_MP1         = 5, //Seemly a texture in V20/ABTF
-    FMT_QO2         = 6,
+	FMT_MP1         = 5, //Seemly a texture in V20/ABTF / Material
+    FMT_QO2_OR_Q03  = 6, //AB Exient: QO2, F1 2016: Q03
     FMT_QO3         = 7,
     FMT_EN          = 10, //Seems to only be used in Furby Connect World
 } texFmt;
@@ -65,20 +65,20 @@ struct XGSStream
                 }*/
                 int32 fOff;
                 int32 fSize;
-                int32 unk[4];
+                int32 unk[4]; //Q02 has the
             } entry;
         }
     } entries;
-    /*struct PVSFile
+    struct PVSFile
     {
-        FSkip(4);
-        int32 unknownVal; //Some count?
-        int32 unknownVal2;
+        /*//FSkip(4);
+        int32 TOCSize; //Some count?
+        int32 sections;
         //FSkip(4);
         //int32 unknownVal3;
         struct UnknownStruct
         {
-            for (i = 0; i < unknownVal2; i++)
+            for (i = 0; i < sections; i++)
             {
                 struct UnknownSubData
                 {
@@ -132,6 +132,22 @@ struct XGSStream
                     float floats[16];
                 } ud5;
             }
-        } u5;
-    } PVS;*/
+        } u5;*/
+        int32 sections;
+        int32 unk;
+        int32 unk2;
+        int32 PVSCFG;
+        int32 unk3;
+        int32 unk4;
+        struct UnknownStruct
+        {
+            for (i = 0; i < sections; i++)
+            {
+                struct UnknownSubData
+                {
+                    int32 test;
+                } ud;
+            }
+        } u;
+    } PVS;
 } STME;
