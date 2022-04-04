@@ -11,6 +11,18 @@
 //   History: 
 //------------------------------------------------
 
+typedef enum <int32> {
+    RGB565,
+    RGBA5551,
+    RGBA4444,
+    RGBA8888,
+    UNKNOWN_8 = 13,
+    UNKNOWN_44 = 25,
+    UNKNOWN_88,
+    ETC1 = 252,
+    ETC1_RGBA_A4,
+} texFmt;
+
 struct Texture3D {
     struct Tex3DHdr {
         char magic[3]; //T3D
@@ -19,10 +31,11 @@ struct Texture3D {
         int16 height;
         int16 width2;
         int16 height2;
-        int32 UNK2[2];
+        int32 unknown2;
+        texFmt format;
         int32 dataSize;
-        int16 unk3[2];
-        int32 dmy;
+        int16 unknown3[2];
+        int32 unknown4; //Appears on uncompressed or RGBA4444 sometimes
     } hdr<bgcolor=cPurple>;
     byte thetex[hdr.dataSize]<bgcolor=cGreen>;
 } XGSTex3D;

@@ -6,12 +6,17 @@
 //------------------------------------------------
 
 local int i <hidden=true> = 0;
+local int isV1 <hidden=true> = 0;
 
 struct XGSTextureAtlas
 {
     char    magic[5];//XGSTA
     short   unknown;
-    byte    unknown2;
+    byte    version; //version? AB Trilogy 3DS = 2
+    if (version < 5)
+    {
+        isV1 = 1;
+    }
     int     unknown3;
     int     texCnt;
     int     hash;//??
@@ -24,7 +29,7 @@ struct XGSTextureAtlas
             Printf("--------TEXTURE %i START--------\n", i);
             struct InvidualTexInfo
             {
-                int     hash;//??
+                int     hash; //??
                 Printf("hash: %i\n", hash);
                 int     unk;
                 Printf("unk: %i\n", unk);
@@ -40,25 +45,31 @@ struct XGSTextureAtlas
                 Printf("Texture Width: %i\n", textureWidth);
                 int     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
-                int     unk1;
-                Printf("unk1: %i\n", unk1);
-                int     unk2;
-                Printf("unk2: %i\n", unk2);
+                if (isV1 != 1)
+                {
+                    int     unk1;
+                    Printf("unk1: %i\n", unk1);
+                    int     unk2;
+                    Printf("unk2: %i\n", unk2);
+                }
             } iti;
             Printf("--------TEXTURE %i END--------\n", i);
         }
     } splitTexInfoList;
-    int     texNameDataBlockLength;
-    struct TextureStrings
+    if (isV1 != 1)
     {
-        Printf("Texture Names:\n");
-        for (i = 0; i < texCnt; i++)
+        int     texNameDataBlockLength;
+        struct TextureStrings
         {
-            struct TextureString
+            Printf("Texture Names:\n");
+            for (i = 0; i < texCnt; i++)
             {
-                string texName;
-                Printf("Texture %i: %s\n", i, texName);
-            } its;
-        }
-    } splitTexNameList;
+                struct TextureString
+                {
+                    string texName;
+                    Printf("Texture %i: %s\n", i, texName);
+                } its;
+            }
+        } splitTexNameList;
+    }
 } XGSTA;
