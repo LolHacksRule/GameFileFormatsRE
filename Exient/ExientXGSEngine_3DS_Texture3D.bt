@@ -16,11 +16,11 @@ typedef enum <int32> {
     RGBA5551,
     RGBA4444,
     RGBA8888,
-    UNKNOWN_8 = 13,
-    UNKNOWN_44 = 25,
-    UNKNOWN_88,
+    LA88 = 13, //Confirm
+    LA44 = 25,
+    UNKNOWN_88_2, //BGRA?
     ETC1 = 252,
-    ETC1_RGBA_A4,
+    ETC_RGB_A1_ZOrderON,
 } texFmt;
 
 struct Texture3D {
@@ -35,7 +35,7 @@ struct Texture3D {
         texFmt format;
         int32 dataSize;
         int16 unknown3[2];
-        int32 unknown4; //Appears on uncompressed or RGBA4444 sometimes
+        int32 unknown4; //Appears on uncompressed or RGBA4444 sometimes I think, idk
     } hdr<bgcolor=cPurple>;
     byte thetex[hdr.dataSize]<bgcolor=cGreen>;
 } XGSTex3D;
