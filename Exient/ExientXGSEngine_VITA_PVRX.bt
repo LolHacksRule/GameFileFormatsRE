@@ -14,16 +14,13 @@
 //A mod of the PVR format for XGS, only tested on AB Trilogy Vita textures.
 
 typedef enum <byte> {
-    RGBA4444_SWIZZLED = 0,
-    RGBA8888_SWIZZLED = 4,
-    RGBA8888_SWIZZLED_2 = 9,
-	RGBA4444_SWIZZLED_2,
-    RGBA4444_SWIZZLED_3 = 16,
-    RGBA5551_SWIZZLED,
-    RGBA8888_SWIZZLED_3,
-    RGB565_SWIZZLED,
+    ARGB4444 = 0,
+    RGB888 = 4,
+    ARGB4444_2 = 16,
+    ARGB1555,
+    ARGB8888,
+    RGB565,
     PVRTC_4BPP_RGBA = 25,
-    PVRTC_2BPP_RGBA = 29,
 } texFmt;
 
 struct XGSPVRX
@@ -44,7 +41,7 @@ struct XGSPVRX
     {
         char pvrIdentifier[4];
         int32 surfaces;
-        int32 unknown[3];
+        int32 unknown[3]; //Remove these and modify hdrSize to 0x34 to make a PVR that is viewable in PVRTexTool
         byte pvrTextureData[PVRTexDataSize];
     } PVR<bgcolor=cBlue>;
 } PVRX<bgcolor=cPurple>;
