@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngine_VITA_PVRX.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//A mod of the PVR format for XGS, only tested on AB Trilogy Vita textures.
+
+typedef enum <byte> {
+    RGBA4444_SWIZZLED = 0,
+    RGBA8888_SWIZZLED = 4,
+    RGBA8888_SWIZZLED_2 = 9,
+	RGBA4444_SWIZZLED_2,
+    RGBA4444_SWIZZLED_3 = 16,
+    RGBA5551_SWIZZLED,
+    RGBA8888_SWIZZLED_3,
+    RGB565_SWIZZLED,
+    PVRTC_4BPP_RGBA = 25,
+    PVRTC_2BPP_RGBA = 29,
+} texFmt;
+
+struct XGSPVRX
+{
+    int32 hdrSize; //Modified to 64?
+    int32 width;
+    int32 height;
+    int32 mipCnt;
+    texFmt textureFormat;
+    byte flags[3]; //?
+    int32 PVRTexDataSize;
+    int32 bpp;
+    uint32 r;
+    uint32 g;
+    uint32 b;
+    uint32 a;
+    struct PVRTextureXGS
+    {
+        char pvrIdentifier[4];
+        int32 surfaces;
+        int32 unknown[3];
+        byte pvrTextureData[PVRTexDataSize];
+    } PVR<bgcolor=cBlue>;
+} PVRX<bgcolor=cPurple>;
