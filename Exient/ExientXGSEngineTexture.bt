@@ -7,23 +7,38 @@
 
 LittleEndian();
 
+typedef enum <byte> {
+    WIN32_OR_ANDROID, //how would you get Win32
+    PS3, //PlayStation 3
+    iOS,
+    WII,
+    XENON, //Xbox 360
+    iOS_OLD,
+    CTR, //Nintendo 3DS
+    ANDROID_OLD = 9,
+    CAFE = 11, //Wii U
+    ORBIS = 14, //PlayStation 4
+    WINPHONE = 16,
+} platform;
+
 typedef enum <int16> {
-    RGB565_SWIZZLED,             //AB SW Wii?
+    RGB565_SWIZZLED,             //AB SW Console
     RGB565,                      //ABTF
 	RGBA4444,               
-    RGBA4444_2_OR_RGBA8888, //On PS4 this is ARGB8888
+    RGBA4444_2_OR_RGBA8888, //On PS4/X360 this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on Wii U this is RGBA8888, on current iOS it's both
     RGBA8888,               
     UNKNOWN,                
-    LA88_OR_DXT1           = 8,  
+    LA88_OR_DXT1           = 8, //On Wii U/Xbox 360 this is DXT, on Android, this is usually LA88 unless the format is DXT
     PVR_UNK                = 11,
     
-    UNKNOWN_2              = 13, //88 something?
+    UNKNOWN_2              = 13, //88 something? LA88?
     PVRTC_4BPP_RGB         = 16, //May need to swap these two
     PVRTC_4BPP_RGBA,
     DXT1_OR_ETC1           = 24,
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
-    DXT5                   = 26,
+    LA44,
+    DXT5,
     PVRTC_2BPP_RGBA        = 29,
     PVRTC_4BPP_RGB_v2,
     PVRTC_4BPP_RGB_v3,    
@@ -38,7 +53,7 @@ struct XGSTexture {
     struct XGSTexHdr {
         char magic[4]; //XGST
         byte dataOffset;
-        byte compilationDummy; //Version for console? PS4 has this at 14
+        platform compilationPlatform; //Definitely platform, PS4 has this at 14, PS3 has it at 1, Wii U has it set to 11, Wii has this set to 3, 3DS has this set to 6, iOS (new) has this set to 2, iOS (ABGOV1/ABTFV102x) set this to 5, modifying this doesn't do anything
         int16 headerSize; //?
         //byte dmy;
         byte numMips;
