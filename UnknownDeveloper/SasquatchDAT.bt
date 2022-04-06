@@ -1,0 +1,113 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: SasquatchDAT.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int32>
+{
+    Manifest = 1296454484,
+    Texture = 1297236819,
+    BlendAnimManifest = 1296122946,
+    Script = 1230127955,
+    ScriptManifest = 1396920909,
+    RawData = 1380013892,
+    Shader = 1397245010,
+    Scene = 1396919877,
+    Geometry = 1195724621,
+    SceneManifest = 1397116243,
+    ProtosceneManifest = 1347241555,
+    SoundManifest = 1397638221,
+    ParticleManifest = 1346458189,
+    GenMeshManifest = 1195724365,
+    FullScreenEffectManifest = 1179867213,
+    AnimScriptManifest = 1095975757,
+    RawDataManifest = 1380013901,
+    GenMeshData = 1195724356,
+    GenMesh = 1296388936,
+    /*Font_Manifest =
+    GenMeshManifest =
+    FullScreen_Effect_Manifest =
+    AnimScriptManifest =
+    RawDataManifest =
+    Blend_Anim_Manifest =
+    Bone_Anim_Manifest =
+    Both_Scene_Manifest =*/
+} resSet;
+
+local int isX360 = 1;
+local int isPS3 = 0;
+local int dontCheckAgain = 0;
+
+typedef struct CommonBlock
+{
+    int32 unk;
+    int32 ZSize; //Let's use this as platform. PS3 = 0xD, X360 = 0xF
+    if (ZSize == 15 && dontCheckAgain != 1)
+    {
+        isX360 = 1;
+        dontCheckAgain = 1;
+    }
+    if (ZSize == 13 && dontCheckAgain != 1)
+    {
+        isPS3 = 1;
+        dontCheckAgain = 1;
+    }
+    int32 DSize; //48
+    int32 NameSize;
+    int32 zero2;
+    resSet  BlockType;
+    int16 unk2;
+    int16 count1;
+    int16 count2;
+    int16 count3;
+    int32 count4;
+    FSkip((count1 * 4) + (count2 * 4) + (count3 * 8) + (count4 * 8));
+    FSkip(4);
+    if (ZSize == DSize)
+    {
+        byte rawFile[DSize];
+        //FSkip(9);
+    }
+    else
+    {
+        if (isX360)
+        {
+            int16 bChk<hidden=true>;
+            FSkip(-2);
+            if (bChk == 30938)
+            {
+                byte zlibFile[ZSize];
+                //FSkip(sizeof ManifestBlock);
+            }
+        }
+        if (isPS3)
+        {
+            byte deflateFile[ZSize];
+            //FSkip();
+        }
+    }
+} cmnBlock;
+
+//Only tested on Angry Birds Trilogy! Please let me know if other games use this format. I would like to know the developer of the format for sorting if possible.
+
+//Currently this works by run as offset
+
+struct SasquatchDAT
+{
+    BigEndian();
+    cmnBlock theBlock;
+    /*
+    cmnBlk ManifestBlock;
+    */
+    /*FSeek(0);
+    FSkip(ManifestBlock.NameSize * 64);
+    cmnBlk BlendAnimManifestBlock;*/
+} Stream_DAT;
