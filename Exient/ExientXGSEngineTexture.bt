@@ -33,9 +33,15 @@ typedef enum <int16> {
     PVR_UNK                = 11,
     
     UNKNOWN_2              = 13, //88 something? LA88?
+<<<<<<< HEAD
     
     PVRTC_2BPP_RGB         = 15,
     PVRTC_4BPP_RGB, //May need to swap these two
+=======
+
+    PVRTC_UNKNOWN_SWIZZLED = 15,
+    PVRTC_4BPP_RGB         = 16, //May need to swap these two
+>>>>>>> 918535475e5dc8c11cfaea6ca6ed9d5179d6b4de
     PVRTC_4BPP_RGBA,
     DXT1_OR_ETC1           = 24, //On Android this is usually DXT1, old Android has this DXT1 swizzled
     //UNKNOWN2               = 24,
