@@ -22,28 +22,25 @@ typedef enum <byte> {
 } platform;
 
 typedef enum <int16> {
-    RGB565_SWIZZLED,             //AB SW Console
-    RGB565,                      //ABTF
+    RGB565_SWIZZLED,              //AB SW Console
+    RGB565,                       //ABTF
 	RGBA4444,
-    RGBA4444_2_OR_RGBA8888, //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's LA88
+    RGBA4444_2_OR_RGBA8888,       //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's LA88
     RGBA8888,
-    UNKNOWN,                //Paletized RGB5A3
-    LA88_OR_DXT1           = 8, //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually LA88 unless the format is DXT
-    DXT5_SWIZZLED          = 10, //PS3 only?
+    PALLETIZED_RGBA5A3,            //Palletized RGB5A3, AB SW Wii
+    LA88_OR_DXT1           = 8,   //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually LA88 unless the format is DXT
+    DXT5_SWIZZLED          = 10,  //PS3 only?
     PVR_UNK                = 11,
     
-    UNKNOWN_2              = 13, //88 something? LA88?
-<<<<<<< HEAD
+    UNKNOWN_2              = 13,  //88 something? LA88?
     
     PVRTC_2BPP_RGB         = 15,
-    PVRTC_4BPP_RGB, //May need to swap these two
-=======
+    PVRTC_4BPP_RGB,               //May need to swap these two
 
     PVRTC_UNKNOWN_SWIZZLED = 15,
-    PVRTC_4BPP_RGB         = 16, //May need to swap these two
->>>>>>> 918535475e5dc8c11cfaea6ca6ed9d5179d6b4de
+    PVRTC_4BPP_RGB_2         = 16,  //May need to swap these two
     PVRTC_4BPP_RGBA,
-    DXT1_OR_ETC1           = 24, //On Android this is usually DXT1, old Android has this DXT1 swizzled
+    DXT1_OR_ETC1           = 24,  //On Android this is usually DXT1, old Android has this DXT1 swizzled
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
     LA44,
@@ -53,10 +50,10 @@ typedef enum <int16> {
     PVRTC_4BPP_RGB_v3,    
     ETC2_RGB               = 35,
     ATC                    = 37,  //BC Swizzled?
-    ATCA_Interpolated      = 39, //BC Swizzled?
+    ATCA_Interpolated      = 39,  //BC Swizzled?
     ETC2_RGB_2             = 252,
-    
-    ATC_SWIZZLED           = 254,
+    ETC1_RGB_SPLITALPHA,          //Swizzled too, CTR only.
+    ATC_SWIZZLED,
     //IsLE                 = 0xFFFE,
 } texFmt;
 
@@ -73,12 +70,12 @@ struct XGSTexture {
         byte flag3; //Dummy?
         //char format[4];
         texFmt format;
-        int16 UNK2; //Modifying this seems to have no known effect but idk
+        int16 numColors; //Modifying this seems to have no known effect but idk
         int16 width;
         int16 height;
         int16 width2;
         int16 height2;
-        int32 UNK3; //Modifying this affects the game badly, take care
+        int32 paletteSize; //Modifying this affects the game badly, take care
         int32 dataSize;
     } hdr<bgcolor=cPurple>;
     byte thetex[hdr.dataSize]<bgcolor=cGreen>;
