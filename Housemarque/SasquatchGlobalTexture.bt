@@ -1,0 +1,32 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: SasquatchGlobalTextureData.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <byte>
+{
+    BGRA8888 = 0x85,
+    DXT1 = 0x86,
+    DXT5 = 0x88,
+} texFmt;
+
+struct GlobalTexture
+{
+    BigEndian();
+    int32 unk[4];
+    texFmt textureFormat;
+    byte mips;
+    int32 unk3;
+    byte unk4[2];
+    int16 width;
+    int16 height;
+    int32 unk5[4];
+} globalTexture;

@@ -10,14 +10,23 @@
 //      ID Bytes: WALT
 //      History: 
 //------------------------------------------------
+
+typedef enum <byte>
+{
+    RGBA8888 = 0x0,
+    RGBA4444 = 0x3,
+} imageFormat;
+
 char    header[4]; //WALT
-char    version[1]; //01
-char    imageFormat[1]; //01 = RGBA8888, 02 = ?, 03 = RGBA4444
+byte    version; //01
+imageFormat    imgFmt; //01 = RGBA8888, 02 = ?, 03 = RGBA4444
 
 ///////////////////
 //Apparently some games swap these two so manually swap them if they're incorrect.
-char    textureWidth[2];
-char    textureHeight[2];
+ushort    textureWidth;
+ushort    textureHeight;
 ///////////////////
+
+Printf("Format: %i\nWidth: %i\nHeight: %i", imgFmt, textureWidth, textureHeight);
 
 char    padding[6];

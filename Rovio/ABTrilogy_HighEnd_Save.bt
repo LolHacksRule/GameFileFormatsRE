@@ -1,0 +1,81 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ABTrilogy_HighEnd_Save.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i <hidden=true> = 0;
+
+typedef enum <byte>
+{
+    False,
+    True,
+} bool;
+
+typedef enum <int32>
+{
+    Original,
+    Halloween2010_TrickOrTreat,
+    Xmas2010_SeasonsGreedings,
+    HogsAndKisses,
+    GoGreenGetLucky,
+    Easter2010_EasterEggs,
+    SummerPignic,
+    MooncakeFestival,
+    Rio,
+} menuTheme;
+
+struct HighEndTrilogySave
+{
+    //version?
+    BigEndian();
+    int32 unk[2];
+    //version?
+    struct Parameters
+    {
+        for (i; i < 19; i++)
+        {
+            struct Parameter
+            {
+                string param;
+                int32 valueCount;
+                int32 valueBytes;
+                if (param == "Last_Played_Level")
+                {
+                    int32 lastPlayedLevel;
+                }
+                else if (param == "Eagle_Unlocked")
+                {
+                    bool eagleUnlocked;
+                }
+                else if (param == "Speech_Enabled")
+                {
+                    bool speechEnabled;
+                }
+                else if (param == "Menu_Theme")
+                {
+                    menuTheme menuThemeI32;
+                }
+                else if (param == "Gamma")
+                {
+                    float gamma;
+                }
+                else if (param == "Music_Volume")
+                {
+                    float musicVolume;
+                }
+                else
+                {
+                    byte theValueBytes[valueBytes];
+                }
+            } prm;
+        }
+    } prms;
+} SAVEDATA_DAT;

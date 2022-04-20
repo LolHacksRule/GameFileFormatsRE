@@ -13,12 +13,13 @@
 
 typedef enum <int32>
 {
-    Manifest = 1296454484,
+    MasterManifest = 1296454484,
     //BlendAnimManifest = 1296122946,
     Script = 1396920905,
     RawData = 1380013892,
     Shader = 1397245010,
     Scene = 1396919877,
+    Font = 1179602516,
     Geometry = 1195724621,
     SceneManifest = 1397573203,
     ScriptManifest = 1396920909,
@@ -46,14 +47,14 @@ typedef enum <int32>
     Both_Scene_Manifest =*/
 } resSet;
 
-local int isX360 = 1;
-local int isPS3 = 0;
+local int isX360 = 0;
+local int isPS3 = 1;
 local int dontCheckAgain = 0;
 
 typedef struct CommonBlock
 {
     int32 unk;
-    int32 ZSize; //Let's use this as platform. PS3 = 0xD, X360 = 0xF
+    int32 ZSize; //Let's use this as platform for master mfst. PS3 = 0xD, X360 = 0xF
     if (ZSize == 15 && dontCheckAgain != 1)
     {
         isX360 = 1;

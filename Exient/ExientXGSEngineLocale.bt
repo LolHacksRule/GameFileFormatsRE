@@ -149,7 +149,16 @@ struct XGSL
                     uint16 fontNameStrSize;
                     char fontNameStr[fontNameStrSize];
                     uint16 pakStrSize;
-                    char pakStr[pakStrSize];
+                    if (pakStrSize > 1)
+                    {
+                        char pakStr[pakStrSize];
+                        Printf("[%i]: %s %s \n", i, pakStr, fontNameStr);
+                    }
+                    else
+                    {
+                        FSkip(4);
+                        Printf("[%i]: %s \n", i, fontNameStr);
+                    }
                     Printf("[%i]: %s %s \n", i, pakStr, fontNameStr);
                 } font;
                 FSkip(2);

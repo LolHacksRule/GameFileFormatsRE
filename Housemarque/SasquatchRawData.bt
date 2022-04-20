@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: SasquatchRawData.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local int i<hidden=true> = 0;
+
+struct RawData
+{
+    int32 dataOff;
+    int32 fSize;
+    int64 pad;
+    struct TextStrings
+    {
+        for (i = 0; i < 484; i++)
+        {
+            struct TextString
+            {
+                int32 unk;
+                int16 unk2;
+                string textString;
+                Printf("%i:\n%s\n\n", i, textString);
+            } str;
+        }
+    } ts;
+} RAWD;
