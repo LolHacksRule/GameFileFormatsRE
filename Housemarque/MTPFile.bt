@@ -12,11 +12,12 @@
 //------------------------------------------------
 
 local uint i<hidden = true> = 0;
+local uint isWAV<hidden = true> = 0;
 
 struct MTPFile
 {
-    char hdr[4]; //MULA
-    int32 audioFiles;
+    char hdr[4]<bgcolor=cRed>; //MULA
+    int32 audioFiles<bgcolor=cYellow>;
     struct AudioFilesMeta
     {
         for (i; i < audioFiles; i++)
@@ -27,8 +28,8 @@ struct MTPFile
                 int32 OffsetInNameTbl;
             } af;
         }
-    } afs;
-    int32 NameTableSize;
+    } afs<bgcolor=cPurple>;
+    int32 NameTableSize<bgcolor=cGreen>;
     struct NameTable
     {
         for (i = 0; i < audioFiles; i++)
@@ -48,7 +49,7 @@ struct MTPFile
                 }
             } fn;
         }
-    } nt;
+    } nt<bgcolor=cGreen>;
     struct AudioData
     {
         for (i = 0; i < audioFiles; i++)
@@ -57,13 +58,30 @@ struct MTPFile
             {
                 local string theFilename = nt.fn[i].filename;
                 //WIP!
-                int16 tmpChk<hidden=true>; //f me there has to be a better way
-                if (tmpChk > 0)
+                int16 tmpChk; //f me there has to be a better way
+                if (tmpChk > 0 || tmpChk ==-1025) //-1025 is MP3 so check for MP3
                 {
                     FSkip(-2);
                 }
-                byte data[afs.af[i].FSize];
+                byte eByteCheck; //Why
+                if (eByteCheck > 0 || eByteCheck == -1 || eByteCheck == -5) //Check for -1 and -5 for MP3s
+                {
+                    FSkip(-1);
+                }
+                if (eByteCheck == 82)
+                {
+                    isWAV = 1;
+                }
+                if (isWAV)
+                {
+                    byte WAVFileData[afs.af[i].FSize];
+                }
+                else
+                {
+                    byte MP3FileData[afs.af[i].FSize];
+                }
+                isWAV = 0; //reset
             } afd;
         }
     } ad;
-} MTP;
+} MTP<bgcolor=cBlue>;

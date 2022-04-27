@@ -47,8 +47,10 @@ typedef enum <int32>
     Both_Scene_Manifest =*/
 } resSet;
 
+//MANUAL FLAGS:
 local int isX360 = 0;
-local int isPS3 = 1;
+local int isPS3 = 0;
+//END MANUAL FLAGS
 local int dontCheckAgain = 0;
 
 typedef struct CommonBlock

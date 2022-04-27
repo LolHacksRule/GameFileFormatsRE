@@ -39,7 +39,7 @@ typedef struct
 typedef struct
 {
     short stringSize<hidden=true>;
-    if (stringSize > 1)
+    if (stringSize >= 1)
     {
         char theString[stringSize];
     }
@@ -88,7 +88,7 @@ typedef struct
     struct LanguageData
     {
         blockType hdr;
-        DWORD blockSize;
+        DWORD blockDataSize;
         SHORT languageCount;
         struct Languages
         {
@@ -169,7 +169,7 @@ struct KA3DBinary
 {
     BigEndian();
     blockType hdr;
-    DWORD mainBlockFSize;
+    DWORD mainBlockDataSize;
     DWORD tmpChk<hidden=true>;
     FSkip(-4);
     if (tmpChk == Composite)
