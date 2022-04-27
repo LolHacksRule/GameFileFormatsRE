@@ -31,7 +31,8 @@ struct ABGhost
     {
         float unk[5];
         int32 cnt;
-        int32 unk;
-        float c[cnt];
+        int32 unk; //1?
+        float c[(cnt*8 -1)];
+        int32 unk2[8]; //Seems to be padding/dummydata?
     } ghost;
 } ghost10;

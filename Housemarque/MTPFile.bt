@@ -1,0 +1,69 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: MTPFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i<hidden = true> = 0;
+
+struct MTPFile
+{
+    char hdr[4]; //MULA
+    int32 audioFiles;
+    struct AudioFilesMeta
+    {
+        for (i; i < audioFiles; i++)
+        {
+            struct AudioFileMeta
+            {
+                int32 FSize;
+                int32 OffsetInNameTbl;
+            } af;
+        }
+    } afs;
+    int32 NameTableSize;
+    struct NameTable
+    {
+        for (i = 0; i < audioFiles; i++)
+        {
+            struct FileName
+            {
+                string filename;
+                int16 tmpChk<hidden=true>; //Why
+                if (tmpChk > 0)
+                {
+                    FSkip(-2);
+                }
+                byte eByteCheck<hidden=true>; //Why
+                if (eByteCheck > 0)
+                {
+                    FSkip(-1);
+                }
+            } fn;
+        }
+    } nt;
+    struct AudioData
+    {
+        for (i = 0; i < audioFiles; i++)
+        {
+            struct AudioFileData
+            {
+                local string theFilename = nt.fn[i].filename;
+                //WIP!
+                int16 tmpChk<hidden=true>; //f me there has to be a better way
+                if (tmpChk > 0)
+                {
+                    FSkip(-2);
+                }
+                byte data[afs.af[i].FSize];
+            } afd;
+        }
+    } ad;
+} MTP;

@@ -1,0 +1,70 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: EXPFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i<hidden = true> = 0;
+local uint i2<hidden = true> = 0;
+local uint tmp<hidden = true> = 0;
+
+typedef struct
+{
+    int32 stringSize<hidden=true>;
+    if (stringSize > 1)
+    {
+        char theString[stringSize];
+    }
+    else
+    {
+        Printf("String %i is empty!\n", i);
+    }
+} genericString;
+
+typedef struct
+{
+    genericString theSName<hidden=true>;
+    genericString thePName<hidden=true>;
+    //Print the names for convience
+    local string theSequenceName = theSName.theString;
+    if (thePName.stringSize > 1)
+    {
+        local string theParentName = thePName.theString;
+    }
+    int32 frames;
+    for (i2 = 0; i2 < frames; i2++)
+    {
+        struct Frame
+        {
+            float time;
+            float unk1[3]; //?
+            float offsetX;
+            float unk2[3]; //?
+            float offsetY;
+            float unk3[3]; //?
+            float offsetZ;
+        } frame;
+    }
+} seqBlock;
+
+struct Housemarque_ExportedFile
+{
+    BigEndian();
+    genericString theFName;
+    float length;
+    int32 sequences;
+    struct Sequences
+    {
+        for (i; i < sequences; i++)
+        {
+            seqBlock sequenceBlock;
+        }
+    } sequenceBlocks;
+} EXP;

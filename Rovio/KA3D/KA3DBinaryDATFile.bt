@@ -1,0 +1,191 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: KA3DBinaryDATFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Viewing of data files from Rovio's proprietary version of the KA3D Engine (Fusion).
+
+local uint i<hidden = true> = 0;
+local uint i2<hidden = true> = 0;
+
+typedef enum <DWORD>
+{
+    KA3D = 1262564164,
+    KA3D_RVIO = 1381386575,
+    Composite = 1129270608,
+    Text = 1413830740,
+    LanguageData = 1279541588,
+    LabelIDs = 1279870035,
+    TextGroup = 1415071568,
+    Sprite = 1397772884,
+    Font = 1179602516,
+} blockType;
+
+typedef struct
+{
+    blockType contentBlockType;
+    DWORD blockSize;
+    SHORT ver;
+} baseCblk;
+
+typedef struct
+{
+    short stringSize<hidden=true>;
+    if (stringSize > 1)
+    {
+        char theString[stringSize];
+    }
+    else
+    {
+        Printf("String %i is empty!\n", i);
+    }
+} genericString;
+
+typedef struct
+{
+    baseCblk baseHdr;
+    SHORT texCnt;
+    struct TextureData
+    {
+        for (i; i < texCnt; i++)
+        {
+            genericString texNameStr;
+            short subTexCnt;
+            for (i2 = 0; i2 < subTexCnt; i2++)
+            {
+                genericString subTexNameStr;
+                struct SubTexParam
+                {
+                    short unk[2]; //First one is width?
+                    if (hdr == KA3D_RVIO)
+                    {
+                        short unk2;
+                        float unk3[3];
+                        int16 unk4;
+                    }
+                } prm;
+            }
+            if (hdr != KA3D_RVIO)
+            {
+                FSkip(2);
+            }
+        }
+    } tdata;
+    FSkip(2);
+} cmpBlock;
+
+typedef struct
+{
+    baseCblk baseHdr;
+    struct LanguageData
+    {
+        blockType hdr;
+        DWORD blockSize;
+        SHORT languageCount;
+        struct Languages
+        {
+            for (i; i < languageCount; i++)
+            {
+                genericString theLang;
+            }
+        } langs;
+    } LDAT;
+    struct LabelIDs
+    {
+        blockType hdr;
+        DWORD blockSize;
+        SHORT labels;
+        struct LabelIDStrings
+        {
+            for (i = 0; i < labels; i++)
+            {
+                genericString theStr;
+            }
+        } LIDStrings;
+    } LIDS;
+    for (i2 = 0; i2 < LDAT.languageCount; i2++)
+    {
+        struct TextGroupChunk
+        {
+            //local string theLanguage = LDAT.langs[i].theLang[i];
+            blockType hdr;
+            DWORD blockSize;
+            for (i = 0; i < LIDS.labels; i++)
+            {
+                genericString theStr;
+            }
+        } TXGP;
+    }
+} TEXTBlock;
+
+typedef struct
+{
+    baseCblk baseHdr;
+    genericString txtrFNameStr;
+    SHORT maxTextures;
+    for (i = 0; i < maxTextures; i++)
+    {
+        genericString theTexNameStr;
+        struct Param
+        {
+            SHORT xOff;
+            SHORT yOff;
+            SHORT width;
+            SHORT height;
+            SHORT unk2[2];
+        } prm;
+    }
+} SPRTBlock;
+
+typedef struct
+{
+    baseCblk baseHdr;
+    genericString txtrFNameStr;
+    DWORD unk;
+    SHORT maxTextures;
+    for (i = 0; i < maxTextures; i++)
+    {
+        //genericString theTexNameStr;
+        struct TParam2
+        {
+            SHORT xOff;
+            SHORT yOff;
+            SHORT width;
+            SHORT height;
+            SHORT unk2[2];
+        } prm2;
+    }
+} FONTBlock;
+
+struct KA3DBinary
+{
+    BigEndian();
+    blockType hdr;
+    DWORD mainBlockFSize;
+    DWORD tmpChk<hidden=true>;
+    FSkip(-4);
+    if (tmpChk == Composite)
+    {
+        cmpBlock compositeBlock;
+    }
+    if (tmpChk == Text)
+    {
+        TEXTBlock TextBlock;
+    }
+    if (tmpChk == Sprite)
+    {
+        SPRTBlock SpriteBlock;
+    }
+    if (tmpChk == Font)
+    {
+        FONTBlock FontBlock;
+    }
+} KA3D_DAT;
