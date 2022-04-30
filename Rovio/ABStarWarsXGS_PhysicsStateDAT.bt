@@ -1,0 +1,65 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ABStarWarsXGS_PhysicsStateDAT.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Reading of physics state DAT files dumped from debug builds of Angry Birds Star Wars on console (currently PS3, untested on other platforms)
+
+local uint i<hidden = true> = 0;
+local uint doBreak<hidden = true> = 0;
+
+
+typedef struct
+{
+    int32 stringSize<hidden=true>;
+    if (stringSize >= 1)
+    {
+        char theString[stringSize];
+    }
+    else
+    {
+        Printf("End of file!\n");
+        doBreak = 1;
+    }
+} genericString;
+
+typedef struct
+{
+    genericString theBlockName;
+    //68 b
+    if (doBreak == 1)
+    {
+        break; //terminate
+    }
+    float x;
+    float y;
+    float angle;
+    float unk[3]; //?
+    float x2;
+    float y2;
+    float x3;
+    float y3;
+    float angle2;
+    float angle3;
+    float unk2[5]; //?
+} blockData;
+
+struct ABStarWarsPhysicsStateDAT
+{
+    BigEndian();
+    for (i; i < 9999; i++)
+    {
+        if (doBreak != 1)
+        {
+            blockData theBlock; //96 b
+        }
+    }
+} DAT;

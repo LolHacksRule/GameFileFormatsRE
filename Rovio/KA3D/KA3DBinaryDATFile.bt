@@ -32,7 +32,7 @@ typedef enum <DWORD>
 typedef struct
 {
     blockType contentBlockType;
-    DWORD blockSize;
+    DWORD blockSize; //-4
     SHORT ver;
 } baseCblk;
 
@@ -124,7 +124,7 @@ typedef struct
             }
         } TXGP;
     }
-} TEXTBlock;
+} TEXTBlock<bgcolor=cGreen>;
 
 typedef struct
 {
@@ -188,4 +188,4 @@ struct KA3DBinary
     {
         FONTBlock FontBlock;
     }
-} KA3D_DAT;
+} KA3D_DAT<bgcolor=cYellow>;
