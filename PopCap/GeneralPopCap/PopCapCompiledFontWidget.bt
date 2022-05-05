@@ -1,0 +1,108 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i<hidden=true> = 0;
+local uint i2<hidden=true> = 0;
+
+LittleEndian();
+
+typedef enum <byte>
+{
+    False,
+    True,
+} bool;
+
+typedef struct
+{
+    int32 stringSize<hidden=true>;
+    if (stringSize >= 1)
+    {
+        char theString[stringSize];
+    }
+    else
+    {
+        Printf("String %i is empty!\n", i);
+    }
+} genericString;
+
+typedef struct
+{
+    int16 DropShadowKernValue;
+    uint16 unk;
+} DropShadow;
+
+typedef struct
+{
+    uint16 unk5;
+    int32 LayerSetImageMap[4];
+    int32 CharOffsetValue[2];
+    int32 unk6;
+    int32 WidthListValue;
+    int32 unk7;
+} LayerValue;
+
+struct CFW2
+{
+    byte MD5[16]; //MD5 of original TXT file
+    int32 ContentChecker;
+    if (ContentChecker == 3439307281)
+    {
+        break;
+    }
+    else
+    {
+        FSkip(-4);
+    }
+    int32 LayerSetAscent;
+    int32 LayerSetAscentPadding;
+    int32 LayerSetHeight;
+    int32 pad;
+    byte  unk;
+    int32 LayerSetPointSize;
+    int32 unk2;
+    if (unk2 == 1)
+    {
+        int16 unk10;
+        int16 unk11;
+    }    
+    uint32 Layers;
+    //uint16 unk3;
+    for (i = 0; i < 3; i++)
+    {
+        struct LayerName
+        {
+            genericString theLayerName;
+            int32 unk4;
+        } lyrN;
+    }
+    int32 valueGroupCount;
+    //for (i = 0; i < valueGroupCount; i++)
+    //{
+        //DropShadow theDropShadow;
+        /*int32 CharListValue[4];
+        int32 CharOffsetValue[2];
+        int32 unk6;
+        int32 WidthListValue;
+        int32 unk7;*/
+    //}
+    //FSkip(-2);
+    //int32 cntProb;
+    //int32 unk12;
+    for (i = 0; i < valueGroupCount; i++)
+    {
+        LayerValue theLayerValue;
+    }
+    int32 unk8[8];
+    genericString LayerSetImage;
+    FSkip(24);
+} cfw2;

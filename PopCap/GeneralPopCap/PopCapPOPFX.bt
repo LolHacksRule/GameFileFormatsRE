@@ -4,28 +4,47 @@
 //      File: PopCapPOPFX.bt
 //      Authors: LolHacksRule
 //      Version: 1
-//      Purpose: Gets data out of the POPFX shader binary.
+//      Purpose: Gets data out of the binary.
 //      Category: Deserializing 
 //      File Mask: xcfp/pcfx
-//      ID Bytes: PPF
+//      ID Bytes: 70646678
 //      History: 
 //------------------------------------------------
 
-struct Header {
-    char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/PC/XBOX 360) or fxcp (PS4/iOS/Android)
-    BigEndian();
-struct uIntTable {
+struct PopFX {
+    char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/PC/XBOX 360) or fxcp (PS4/iOS/Android/HTML5)
+    if (popFXHeader != "xfcp")
+    {
+        BigEndian();
+        Printf("Big Endian");
+    }
+    else
+    {
+        LittleEndian();
+        Printf("Little Endian");
+    }
+    uint32 version; //? Seems only 1 is known
+    struct UnknownTbl {
         uint theUint;
-    } uIntTbl;
+        uint32 unk2;
+        uint32 u3;
+        uint32 u4[u3];
+    } unkTbl;
     
     //char    particleSize[1];
     //string  ptclName;
     //char    endOfPtclName[3];
-} header;
 
-struct CompiledShaderTable {
-    ubyte shader[shaderMetaDataTable.shaderSize]<bgcolor=cGreen>;
-} CST;
+    struct CompiledShaderTable {
+        int64 unk[4];
+        //FSkip(-4);
+        int64 str;
+        FSkip(4);
+        //ubyte shader[shaderMetaDataTable.shaderSize]<bgcolor=cGreen>;
+    } CST;
+    //FSkip(20);
+    //int64 stringSize;
+    //int64 
 
 //char    header[4];
 //char    version[1];
@@ -35,3 +54,5 @@ struct CompiledShaderTable {
 //char    particleSize[1];
 //string  ptclName;
 //char    endOfPtclName[3];
+
+} pfx;
