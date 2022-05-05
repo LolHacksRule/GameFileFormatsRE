@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: DKCR3DTex.bt
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <ubyte>
+{
+    ABGR8888 = 32, //RGBA8888 alternatively in LE
+    ABGR888,
+    ABGR4444 = 35, //RGBA5551?
+    RGB565 = 36, //RGB5A3?
+    LA88,
+    ETC1 = 40,
+    ETC1A4,
+    LA44,
+    ETC1A4_2,
+    UNK4 = 44, //A4? I4?
+} TextureCompression;
+
+struct DKCR3DTex
+{
+    LittleEndian();
+    uint16 width;
+    uint16 height;
+    byte mips;
+    TextureCompression TexCompType;
+    byte unk2[30]; //idk
+    uint32 texSize;
+    byte pad[88]; //bunch of e3s prob to make the tex offset 0x80
+    byte theTex[texSize];
+} tex;
