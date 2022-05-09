@@ -31,7 +31,7 @@ typedef enum <uint16> {
     RGBA8888,
     PALLETIZED_RGBA5A3,                   //Palletized RGB5A3, AB SW Wii
     AL88_OR_DXT1_OR_RGB565           = 8,           //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
-    DXT5_SWIZZLED          = 10,          //PS3 only?
+    DXT5_SWIZZLED          = 10,          //PS3/WinPhone only?
     PVR_UNK                = 11,
     
     AL88              = 13,               //AL88
