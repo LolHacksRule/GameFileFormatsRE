@@ -3,7 +3,7 @@
 #Added support for AB Star Wars Wii palletized textures (credits to Allen for original code [https://raw.githubusercontent.com/leeao/Noesis-Plugins/master/Textures/tex_AngryBirdsStarWars_Wii_xgt.py])
 #It's not possible to detect Wii U textures rightaway so I commented sections that are moddable
 #Add console checks to ensure decoding works properly
-#Added conversion of r channel to l channel in LA88 format (https://zenhax.com/viewtopic.php?t=7573)
+#Added conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
 #Fixed bugs with decoding X360 RGB565 and RGBA8888 textures
 from inc_noesis import *
 
@@ -116,7 +116,18 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444_OR_RGBA8888
     elif imgFmt == 0x3:
-        if platform == 0x03: #LA88 32BPP Wii texture
+        if platform == 0x00:
+            print("RGBA8888")
+            data = bs.readBytes(dataSize)
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
+            texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x01:
+            print("RGBA8888\nIf it doesn't look right, look at the below comment!")
+            data = bs.readBytes(dataSize)
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
+            texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x03: #LA88 32BPP Wii texture
             data = bs.readBytes(dataSize)
             data = read32RGBA(data, imgWidth, imgHeight, 4,4)
             texFmt = noesis.NOESISTEX_RGBA32
@@ -127,6 +138,10 @@ def noepyLoadRGBA(data, texList):
             print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x09:
+            data = bs.readBytes(dataSize)
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
+            texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0B: #RGBA8888 Wii U
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
@@ -134,12 +149,6 @@ def noepyLoadRGBA(data, texList):
         elif platform == 0x0E or platform == 0x04: #ARGB8888 PS4/X360
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b8 g8 r8 a8")
-            texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x01:
-            print("RGBA8888\nIf it doesn't look right, look at the below comment!")
-            data = bs.readBytes(dataSize)
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
             texFmt = noesis.NOESISTEX_RGBA32
     #RGBA8888
     elif imgFmt == 0x4:
@@ -159,17 +168,23 @@ def noepyLoadRGBA(data, texList):
         if platform == 0x00: #Android
             print("LA88")
             data = bs.readBytes(dataSize)
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
+            #add to convert
+            In = bytearray(data)
+            Out = bytearray(2*len(data))
+            for i in range(3): Out[i::4] = In[0::2]
+            Out[3::4] = In[1::2]
+            data = Out
+            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0B or platform == 0x01 or platform == 0x04: #DXT1 Wii U/PS3
             print("DXT1")
             data = bs.readBytes(dataSize)
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_DXT1
         else:
             data = bs.readBytes(dataSize)
             print("L8A8 OR DXT1 (WIP!)\nIf it doesn't look right, look at the below comment!")
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES#
+            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES#
             texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x0a:
         data = bs.readBytes(dataSize)
@@ -179,7 +194,7 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_DXT5
     elif imgFmt == 0x0d:
         data = bs.readBytes(dataSize)
-        print("LA88_BE (WIP! Red is not the color)")
+        print("AL88")
         #add to convert
         In = bytearray(data)
         Out = bytearray(2*len(data))
