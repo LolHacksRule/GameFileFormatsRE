@@ -5,6 +5,10 @@
 #Add console checks to ensure decoding works properly
 #Added conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
 #Fixed bugs with decoding X360 RGB565 and RGBA8888 textures
+#Add WinPhone detection
+#Add iOS and old iOS detection
+
+#Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
 
 def registerNoesisTypes():
@@ -127,9 +131,18 @@ def noepyLoadRGBA(data, texList):
             #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
             texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x02:
+            print("RGBA4444")
+            data = bs.readBytes(dataSize)
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
+            texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x03: #LA88 32BPP Wii texture
             data = bs.readBytes(dataSize)
             data = read32RGBA(data, imgWidth, imgHeight, 4,4)
+            texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x05:
+            data = bs.readBytes(dataSize)
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x06:
             print("RGBA8888")
@@ -150,6 +163,10 @@ def noepyLoadRGBA(data, texList):
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b8 g8 r8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x10:
+            data = bs.readBytes(dataSize)
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+            texFmt = noesis.NOESISTEX_RGBA32
     #RGBA8888
     elif imgFmt == 0x4:
         data = bs.readBytes(dataSize)
@@ -163,9 +180,9 @@ def noepyLoadRGBA(data, texList):
         textureData = convert8to32(data,palettes,imgWidth,imgHeight)
         texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, textureData, noesis.NOESISTEX_RGBA32))
         return 1
-    #R8A8 ???
+    #LA88
     elif imgFmt == 0x8:
-        if platform == 0x00: #Android
+        if platform == 0x00 or platform == 0x02: #Android
             print("LA88")
             data = bs.readBytes(dataSize)
             #add to convert
@@ -176,7 +193,7 @@ def noepyLoadRGBA(data, texList):
             data = Out
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0B or platform == 0x01 or platform == 0x04: #DXT1 Wii U/PS3
+        elif platform == 0x0B or platform == 0x01 or platform == 0x04 or platform == 0x10: #DXT1 Wii U/PS3/WinPhone
             print("DXT1")
             data = bs.readBytes(dataSize)
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
@@ -186,11 +203,16 @@ def noepyLoadRGBA(data, texList):
             print("L8A8 OR DXT1 (WIP!)\nIf it doesn't look right, look at the below comment!")
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES#
             texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x10:
+        data = bs.readBytes(dataSize)
+        print("PVRTC4BPP_RGB 2")    
+        data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 4)
+        texFmt = noesis.NOESISTEX_RGBA32
+    #DXT5
     elif imgFmt == 0x0a:
         data = bs.readBytes(dataSize)
         print("DXT5")
-        data = bs.readBytes(dataSize)
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+        #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
         texFmt = noesis.NOESISTEX_DXT5
     elif imgFmt == 0x0d:
         data = bs.readBytes(dataSize)
@@ -208,6 +230,16 @@ def noepyLoadRGBA(data, texList):
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8") #TODO#
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
+        texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x0f:
+        data = bs.readBytes(dataSize)
+        print("PVRTC2BPP_RGB (WIP!)")
+        data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 2)
+        texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x11:
+        data = bs.readBytes(dataSize)
+        print("PVRTC4BPP_RGB (WIP!)")
+        data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 4)
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT1
     elif imgFmt == 0x18:
