@@ -5,6 +5,8 @@
 //   Authors: LolHacksRule
 //------------------------------------------------
 
+//todo: Figure out the flags
+
 LittleEndian();
 
 typedef enum <byte> {
@@ -21,40 +23,39 @@ typedef enum <byte> {
     WINPHONE = 16,
 } platform;
 
-typedef enum <int16> {
-    RGB565_SWIZZLED,              //AB SW Console
-    RGB565,                       //ABTF
-	RGBA4444,
-    RGBA4444_2_OR_RGBA8888,       //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's LA88
+typedef enum <uint16> {
+    RGB565_SWIZZLED,                      //AB SW Console
+    RGB565,                               //ABTF
+	RGBA4444,                             //On PS3 this is BGRA8888/ARGB8888?
+    RGBA4444_2_OR_RGBA8888_OR_LA88,       //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's linear indexed 32BPP LA88 with BC swizzle
     RGBA8888,
-    PALLETIZED_RGBA5A3,            //Palletized RGB5A3, AB SW Wii
-    LA88_OR_DXT1           = 8,   //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually LA88 unless the format is DXT
-    DXT5_SWIZZLED          = 10,  //PS3 only?
+    PALLETIZED_RGBA5A3,                   //Palletized RGB5A3, AB SW Wii
+    AL88_OR_DXT1_OR_RGB565           = 8,           //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
+    DXT5_SWIZZLED          = 10,          //PS3 only?
     PVR_UNK                = 11,
     
-    UNKNOWN_2              = 13,  //88 something? LA88?
+    AL88              = 13,               //AL88
     
     PVRTC_2BPP_RGB         = 15,
-    PVRTC_4BPP_RGB,               //May need to swap these two
+    PVRTC_4BPP_RGB,                       //May need to swap these two
 
     PVRTC_UNKNOWN_SWIZZLED = 15,
-    PVRTC_4BPP_RGB_2         = 16,  //May need to swap these two
+    PVRTC_4BPP_RGB_2         = 16,        //May need to swap these two
     PVRTC_4BPP_RGBA,
-    DXT1_OR_ETC1           = 24,  //On Android this is usually DXT1, old Android has this DXT1 swizzled
+    DXT1_OR_ETC1           = 24,          //On Android this is usually DXT1, old Android has this DXT1 swizzled
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
     LA44,
     DXT5,
     PVRTC_2BPP_RGBA        = 29,
-    PVRTC_4BPP_RGB_v2,
+    PVRTC_4BPP_RGB_v2,                    //BC swizzled
     PVRTC_4BPP_RGB_v3,    
     ETC2_RGB               = 35,
-    ATC                    = 37,  //BC Swizzled?
-    ATCA_Interpolated      = 39,  //BC Swizzled?
+    ATC                    = 37,          //BC Swizzled?
+    ATCA_Interpolated      = 39,          //BC Swizzled?
     ETC2_RGB_2             = 252,
-    ETC1_RGB_SPLITALPHA,          //Swizzled too, CTR only.
+    ETC1_RGB_SPLITALPHA,                  //Swizzled too, CTR only.
     ATC_SWIZZLED,
-    //IsLE                 = 0xFFFE,
 } texFmt;
 
 struct XGSTexture {
@@ -62,7 +63,7 @@ struct XGSTexture {
         char magic[4]; //XGST
         byte dataOffset;
         platform compilationPlatform; //Definitely platform, PS4 has this at 14, PS3 has it at 1, Wii U has it set to 11, Wii has this set to 3, 3DS has this set to 6, iOS (new) has this set to 2, iOS (ABGOV1/ABTFV102x) set this to 5, modifying this doesn't do anything
-        int16 headerSize; //?
+        uint16 headerSize; //?
         //byte dmy;
         byte numMips;
         byte flag1;
@@ -70,13 +71,13 @@ struct XGSTexture {
         byte flag3; //Dummy?
         //char format[4];
         texFmt format;
-        int16 numColors; //Modifying this seems to have no known effect but idk
-        int16 width;
-        int16 height;
-        int16 width2;
-        int16 height2;
-        int32 paletteSize; //Modifying this affects the game badly, take care
-        int32 dataSize;
+        uint16 numColors; //Modifying this seems to have no known effect but idk
+        uint16 width;
+        uint16 height;
+        uint16 width2;
+        uint16 height2;
+        uint32 paletteSize; //Modifying this affects the game badly, take care
+        uint32 dataSize;
     } hdr<bgcolor=cPurple>;
     byte thetex[hdr.dataSize]<bgcolor=cGreen>;
 } XGSTex;

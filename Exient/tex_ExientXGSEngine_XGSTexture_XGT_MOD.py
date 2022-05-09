@@ -1,8 +1,9 @@
 #Mod by LolHacksRule, Acewell for original script https://www.zenhax.com/download/file.php?id=8466
 #Added support for RGB565, RGBA4444, PVRTC4BPP, ETC2_RGB
 #Added support for AB Star Wars Wii palletized textures (credits to Allen for original code [https://raw.githubusercontent.com/leeao/Noesis-Plugins/master/Textures/tex_AngryBirdsStarWars_Wii_xgt.py])
-#It's not possible to detect certain textures right away so I commented sections that are moddable
+#It's not possible to detect Wii U textures rightaway so I commented sections that are moddable
 #Add console checks to ensure decoding works properly
+#Added conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
 from inc_noesis import *
 
 def registerNoesisTypes():
@@ -93,6 +94,7 @@ def noepyLoadRGBA(data, texList):
         if platform == 0x06:
             data = bs.readBytes(dataSize)
             data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
         if platform == 0x04:
@@ -107,13 +109,15 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444_OR_RGBA8888
     elif imgFmt == 0x3:
-        if platform == 0x03: #RGBA8888 Paletted Wii texture
+        if platform == 0x03: #LA88 32BPP Wii texture
             data = bs.readBytes(dataSize)
             data = read32RGBA(data, imgWidth, imgHeight, 4,4)
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x06:
+            print("RGBA8888")
             data = bs.readBytes(dataSize)
             #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0B: #RGBA8888 Wii U
@@ -150,7 +154,7 @@ def noepyLoadRGBA(data, texList):
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0B or platform == 0x01 or platform == 0x04: #DXT1 Wii U/PS3/X360
+        elif platform == 0x0B or platform == 0x01 or platform == 0x04: #DXT1 Wii U/PS3
             print("DXT1")
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
@@ -169,11 +173,19 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x0d:
         data = bs.readBytes(dataSize)
         print("LA88_BE (WIP! Red is not the color)")
-        if platform == 0x03: #Wii
-            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,4,8)
-        #elif platform == 0x01:
+        #add to convert
+        In = bytearray(data)
+        Out = bytearray(2*len(data))
+        for i in range(3): Out[i::4] = In[0::2]
+        Out[3::4] = In[1::2]
+        data = Out
+        if platform == 0x03:
+            Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,4,8)
+        elif platform == 0x01:
             #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,8)
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
+            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8") #TODO#
+        else:
+            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT1
     elif imgFmt == 0x18:
@@ -217,7 +229,7 @@ def noepyLoadRGBA(data, texList):
         data = bs.readBytes(dataSize)
         data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
         texFmt = noesis.NOESISTEX_RGBA32
-        print("ETC1_RGB_SPLITALPHA")
+        print("ETC1_RGB_SPLITALPHA\nWIP")
     texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
     return 1
     
