@@ -63,7 +63,7 @@ struct XGSTexture {
     struct XGSTexHdr {
         char magic[4]; //XGST
         byte dataOffset;
-        platform compilationPlatform; //Definitely platform, this has no use when modifying but does help with knowing platform specific compressions, usually
+        platform compilationPlatform; //Definitely platform, this has no use when modifying (except in Edge of Perception) but does help with knowing platform specific compressions, usually
         uint16 headerSize; //?
         //byte dmy;
         byte numMips;

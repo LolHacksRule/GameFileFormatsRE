@@ -107,6 +107,7 @@ struct XGSL
                         } localizedString;
                     }
                 } lang;
+                Printf("[Lang: %i end]\n", i);
             }
         } locStrings;
         Printf("-----End of Strings-----\n");
