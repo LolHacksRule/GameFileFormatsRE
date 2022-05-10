@@ -121,8 +121,9 @@ def noepyLoadRGBA(data, texList):
     #RGBA4444_OR_RGBA8888
     elif imgFmt == 0x3:
         if platform == 0x00:
-            print("RGBA8888")
             data = bs.readBytes(dataSize)
+            print("RGBA8888\nIt's not possible to detect the format for this platform.\nComment the below and replace with the other function to force RGBA4444.")
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 g4 b4 a4")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x01:
