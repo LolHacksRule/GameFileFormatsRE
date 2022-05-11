@@ -18,8 +18,8 @@ local uint forceBreak < hidden = true > = 0;
 
 typedef enum <uint16>
 {
-    MSADPCM = 2,
     OGG = 0xfff0,
+    MSADPCM = 2,
 } codec;
 
 struct XGSPatchBank
@@ -52,17 +52,17 @@ struct XGSPatchBank
             } file;
         }
     } files;
-    if (ver == 3)
+    /*if (ver == 3)
     {
         byte test<hidden=true>;
-        if (test == 0x43 || test == 0x57 || test == 0x4D || test == 0x56 && test != 0xFF)
+        if (test == 0x78)
         {
             FSkip(-1);
         }
         else
         {
             //FSkip(-1);
-            for (i = 0; i < 23; i++ )
+            for (i = 0; i < 10; i++ )
             {
                 struct PaddingChecker
                 {
@@ -82,11 +82,12 @@ struct XGSPatchBank
                 } padChk<hidden=true>;
             }
         }
-    }
+    }*/
     struct FileData
     {
         for (i = 0; i < fileCnt; i++)
         {
+            FSeek(files.file[i].dataOff); //Skip here
             struct IndividualFileData
             {
                 if (ver == 2)
@@ -97,7 +98,12 @@ struct XGSPatchBank
                     uint32 samples;
                     uint16 bulkAlign;
                     uint16 bits;
-                    if (theCodec == OGG)
+                    if (theCodec == 1)
+                    {
+                        uint16 unknown1;
+                        uint16 unknown2;
+                    }
+                    if (theCodec >= OGG)
                     {
                         uint32 PCMSize;
                     }
@@ -105,7 +111,7 @@ struct XGSPatchBank
                     {
                         uint16 RiffMoreASize;
                     }
-                    byte theFile[files.file[i].dataSize-20];
+                    byte theFile[files.file[i].dataSize-20]; //Sub 20 as that's the header size
                 }
                 else
                 {
