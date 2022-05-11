@@ -24,7 +24,10 @@ typedef enum <byte> {
 } texFmt;
 
 typedef enum <byte> {
-    PVRTCAlpha_AND_IsTwiddled = 0x82,
+    HasMipMaps = 0x01,
+    PVRTCAlpha = 0x80,
+    PVRTCAlpha_AND_HasMipMaps,
+    PVRTCAlpha_AND_IsTwiddled,
     PVRTCAlpha_AND_HasMipMaps_AND_IsTwiddled,
 } texbitflag1;
 
@@ -44,10 +47,10 @@ struct XGSPVRX
     byte flag3; //?
     int32 PVRTexDataSize;
     int32 bpp;
-    uint32 r;
-    uint32 g;
-    uint32 b;
-    uint32 a;
+    byte r[4];
+    byte g[4];
+    byte b[4];
+    byte a[4];
     struct PVRTextureXGS
     {
         char pvrIdentifier[4];
