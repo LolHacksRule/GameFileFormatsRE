@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: ExientXGSEngine_VITA_PVRX.bt
+//      File: ExientXGSEngine_PVRXGS.bt
 //   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-//A mod of the PVR format for XGS, only tested on AB Trilogy Vita textures.
+//A mod of the PVR format for XGS, which is also used in games from First Touch Games as well as AB Trilogy on Vita, only tested on said game's textures.
 
 typedef enum <byte> {
     ARGB4444 = 0,
@@ -23,6 +23,15 @@ typedef enum <byte> {
     PVRTC_4BPP_RGBA = 25,
 } texFmt;
 
+typedef enum <byte> {
+    PVRTCAlpha_AND_IsTwiddled = 0x82,
+    PVRTCAlpha_AND_HasMipMaps_AND_IsTwiddled,
+} texbitflag1;
+
+typedef enum <byte> {
+    VerticallyFlipped = 0x01,
+} texbitflag2;
+
 struct XGSPVRX
 {
     int32 hdrSize; //Modified to 64?
@@ -30,7 +39,9 @@ struct XGSPVRX
     int32 height;
     int32 mipCnt;
     texFmt textureFormat;
-    byte flags[3]; //?
+    texbitflag1 flag1; //00008x = Has PVRTC alpha channel data, 0000010x = has mipmaps, 0000020x = twiddled
+    texbitflag2 flag2; //00100x = Vertically flipped
+    byte flag3; //?
     int32 PVRTexDataSize;
     int32 bpp;
     uint32 r;

@@ -11,15 +11,15 @@ local int isV1 <hidden=true> = 0;
 struct XGSTextureAtlas
 {
     char    magic[5];//XGSTA
-    short   unknown;
+    short   unknown; //Do not modify, should be 0 I think
     byte    version; //version? AB Trilogy 3DS = 2
     if (version < 5)
     {
         isV1 = 1;
     }
-    int     unknown3;
+    int     unknown3; //Do not modify, should be 1 I think
     int     texCnt;
-    int     hash;//??
+    int     hash;//?? Modifying this can make the game unable to load the texture.
     char    atlasName[32];
     struct SplitTextureInfoList
     {
