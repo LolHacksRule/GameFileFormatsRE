@@ -16,6 +16,12 @@
 local uint i < hidden = true > = 0;
 local uint forceBreak < hidden = true > = 0;
 
+typedef enum <uint16>
+{
+    MSADPCM = 2,
+    OGG = 0xfff0,
+} codec;
+
 struct XGSPatchBank
 {
     char HDR[4];
@@ -46,32 +52,35 @@ struct XGSPatchBank
             } file;
         }
     } files;
-    byte test<hidden=true>;
-    if (test == 0x43 || test == 0x57 || test == 0x4D && test != 0xFF)
+    if (ver == 3)
     {
-        FSkip(-1);
-    }
-    else
-    {
-        //FSkip(-1);
-        for (i = 0; i < 23; i++ )
+        byte test<hidden=true>;
+        if (test == 0x43 || test == 0x57 || test == 0x4D || test == 0x56 && test != 0xFF)
         {
-            struct PaddingChecker
+            FSkip(-1);
+        }
+        else
+        {
+            //FSkip(-1);
+            for (i = 0; i < 23; i++ )
             {
-                if (forceBreak != 1)
+                struct PaddingChecker
                 {
-                    byte nextChar;
-                    if (nextChar != -1) //CWAV, WIIADPCM, MSFC
+                    if (forceBreak != 1)
                     {
-                        forceBreak = 1;
-                        FSkip(-1);
+                        byte nextChar;
+                        if (nextChar != -1) //CWAV, WIIADPCM, MSFC, VAGp
+                        {
+                            forceBreak = 1;
+                            FSkip(-1);
+                        }
                     }
-                }
-                else
-                {
-                    break;
-                }
-            } padChk<hidden=true>;
+                    else
+                    {
+                        break;
+                    }
+                } padChk<hidden=true>;
+            }
         }
     }
     struct FileData
@@ -80,7 +89,28 @@ struct XGSPatchBank
         {
             struct IndividualFileData
             {
-                byte theFile[files.file[i].dataSize];
+                if (ver == 2)
+                {
+                    codec theCodec;
+                    uint16 channels;
+                    uint32 freq;
+                    uint32 samples;
+                    uint16 bulkAlign;
+                    uint16 bits;
+                    if (theCodec == OGG)
+                    {
+                        uint32 PCMSize;
+                    }
+                    if (theCodec == MSADPCM)
+                    {
+                        uint16 RiffMoreASize;
+                    }
+                    byte theFile[files.file[i].dataSize-20];
+                }
+                else
+                {
+                    byte theFile[files.file[i].dataSize];
+                }
             } ifd;
         }
     } fileData;
