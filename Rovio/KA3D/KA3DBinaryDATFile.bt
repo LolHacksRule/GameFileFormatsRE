@@ -33,8 +33,8 @@ typedef struct
 {
     blockType contentBlockType;
     DWORD blockSize; //-4
-    SHORT ver;
-} baseCblk;
+    //SHORT ver;
+} baseCblkHdr;
 
 typedef struct
 {
@@ -51,7 +51,8 @@ typedef struct
 
 typedef struct
 {
-    baseCblk baseHdr;
+    baseCblkHdr baseHdr;
+    SHORT ver;
     SHORT texCnt;
     struct TextureData
     {
@@ -84,85 +85,111 @@ typedef struct
 
 typedef struct
 {
-    baseCblk baseHdr;
-    struct LanguageData
+    baseCblkHdr baseHdr;
+    struct TextBlockBin
     {
-        blockType hdr;
-        DWORD blockDataSize;
-        SHORT languageCount;
-        struct Languages
+        SHORT ver;
+        struct LanguageData
         {
-            for (i; i < languageCount; i++)
+            blockType hdr;
+            DWORD blockDataSize;
+            SHORT languageCount;
+            struct Languages
             {
-                genericString theLang;
-            }
-        } langs;
-    } LDAT;
-    struct LabelIDs
-    {
-        blockType hdr;
-        DWORD blockSize;
-        SHORT labels;
-        struct LabelIDStrings
+                for (i; i < languageCount; i++)
+                {
+                    genericString theLang;
+                }
+            } langs;
+        } LDAT;
+        struct LabelIDs
         {
-            for (i = 0; i < labels; i++)
-            {
-                genericString theStr;
-            }
-        } LIDStrings;
-    } LIDS;
-    for (i2 = 0; i2 < LDAT.languageCount; i2++)
-    {
-        struct TextGroupChunk
-        {
-            //local string theLanguage = LDAT.langs[i].theLang[i];
             blockType hdr;
             DWORD blockSize;
-            for (i = 0; i < LIDS.labels; i++)
+            SHORT labels;
+            struct LabelIDStrings
             {
-                genericString theStr;
-            }
-        } TXGP;
-    }
+                for (i = 0; i < labels; i++)
+                {
+                    genericString theStr;
+                }
+            } LIDStrings;
+        } LIDS;
+        for (i2 = 0; i2 < LDAT.languageCount; i2++)
+        {
+            struct TextGroupChunk
+            {
+                //local string theLanguage = LDAT.langs[i].theLang[i];
+                blockType hdr;
+                DWORD blockSize;
+                for (i = 0; i < LIDS.labels; i++)
+                {
+                    genericString theStr;
+                }
+            } TXGP;
+        }
+    } TextBlockBinary;
 } TEXTBlock<bgcolor=cGreen>;
 
 typedef struct
 {
-    baseCblk baseHdr;
-    genericString txtrFNameStr;
-    SHORT maxTextures;
-    for (i = 0; i < maxTextures; i++)
+    baseCblkHdr baseHdr;
+    struct SpriteBlockBin
     {
-        genericString theTexNameStr;
-        struct Param
+        SHORT ver;
+        genericString txtrFNameStr;
+        SHORT maxTextures;
+        struct Textures
         {
-            SHORT xOff;
-            SHORT yOff;
-            SHORT width;
-            SHORT height;
-            SHORT unk2[2];
-        } prm;
-    }
+            Printf("Texture Param:\n");
+            for (i = 0; i < maxTextures; i++)
+            {
+                Printf("--------TEXTURE %i START--------\n", i);
+                struct Texture
+                {
+                    genericString theTexNameStr;
+                    Printf("Name: %s\n", theTexNameStr.theString);
+                    struct Param
+                    {
+                        SHORT xOff;
+                        Printf("X Offset: %d\n", xOff);
+                        SHORT yOff;
+                        Printf("Y Offset: %d\n", yOff);
+                        SHORT width;
+                        Printf("Width: %d\n", width);
+                        SHORT height;
+                        Printf("Height:  %d\n", height);
+                        SHORT unk2[2];
+                    } prm;
+                    Printf("--------TEXTURE %i END--------\n", i);
+                } txtr;
+            }
+        } txtrs;
+    } SpriteBlockBinary;
 } SPRTBlock;
 
 typedef struct
 {
-    baseCblk baseHdr;
-    genericString txtrFNameStr;
-    DWORD unk;
-    SHORT maxTextures;
-    for (i = 0; i < maxTextures; i++)
+    baseCblkHdr baseHdr;
+    struct FontBlockBin
     {
-        //genericString theTexNameStr;
-        struct TParam2
+        SHORT ver;
+        genericString txtrFNameStr;
+        DWORD unk;
+        SHORT maxTextures;
+        for (i = 0; i < maxTextures; i++)
         {
-            SHORT xOff;
-            SHORT yOff;
-            SHORT width;
-            SHORT height;
-            SHORT unk2[2];
-        } prm2;
-    }
+            //genericString theTexNameStr;
+            struct TParam2
+            {
+                SHORT xOff;
+                SHORT yOff;
+                SHORT width;
+                SHORT height;
+                SHORT unk2[2];
+            } prm2;
+        }
+    } FontBlockBinary;
 } FONTBlock;
 
 struct KA3DBinary
@@ -174,7 +201,7 @@ struct KA3DBinary
     FSkip(-4);
     if (tmpChk == Composite)
     {
-        cmpBlock compositeBlock;
+        cmpBlock CompositeBlock;
     }
     if (tmpChk == Text)
     {
