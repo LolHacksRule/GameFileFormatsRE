@@ -1,0 +1,61 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngineMaterial.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i <hidden = true> = 0;
+
+struct XGSMaterial
+{
+    byte BigEndianChecker<hidden=true>;
+    if (BigEndianChecker == 0x00)
+    {
+        BigEndian();
+    }
+    FSkip(-1);
+    int32 ver;
+    if (ver > 21 && ver != 22)
+    {
+        int32 unk[2];
+    }
+    int32 entryCount;
+    struct StringEntries
+    {
+        for (i; i < entryCount; i++)
+        {
+            struct StringEntry
+            {
+                char entry[64];
+            } entry;
+        }
+    } str;
+    int32 unk;
+    int16 unk2;
+    byte unk3[2];
+    if (ver == 22)
+    {
+        float unknownFloats[481];
+    }
+    int32 shaderCount;
+    struct ShaderBinaries
+    {
+        for (i = 0; i < shaderCount; i++)
+        {
+            struct ShaderBin
+            {
+                int32 shaderSize;
+                int32 unknown[7];
+                byte shader[unknown[2]];
+            }  ShaderBinary;
+        }
+    } ShaderBins;
+    //int32 shaderSize;
+} XMAT;

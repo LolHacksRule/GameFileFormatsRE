@@ -22,7 +22,6 @@ Works nearly perfectly on PAKs WITH and WITHOUT folders.
 /*
 TODO:
 Double check XGSPAKV0 from NFS Wii, it's probably similar?
-Double check ABSW PAKs (So far works with PS3, Wii U)
 */
 
 /*
@@ -35,7 +34,7 @@ https://aluigi.altervista.org/bms/dls20.bms
 
 local uint i <hidden = true> = 0;
 local uint isFTGCustomV1 <hidden = true> = 0; //Set this to 1 if reading V1 paks from First Touch Games without modification as they use v0's folder and file metadata structure, alternatively you can change the version to 00 and then run the template
-local uint isABSW_WiiU <hidden = true> = 0; //Don't touch, this will automatically be detected
+local uint isABSW_HighResConsole <hidden = true> = 0; //Don't touch, this will automatically be detected
 
 typedef enum <byte > {
     Version0 = 0, //NFS Wii/Trilogy 3DS/DLS
@@ -80,7 +79,7 @@ struct XGSPakFile {
         else if (pakVersion == Version1)
         {
             //isBigEndian == false;
-            Printf("Angry Birds Go! / ABSW Wii U (XGSPAK V1)\n");
+            Printf("Angry Birds Go! / ABSW Console (XGSPAK V1)\n");
             LittleEndian();
         } else if (pakVersion == Version2) {
             //isBigEndian == false;
@@ -91,7 +90,7 @@ struct XGSPakFile {
         {
             Printf("Big Endian");
             BigEndian();
-            isABSW_WiiU = 1;
+            isABSW_HighResConsole = 1;
         } else if (magic == "KPX")
         {
             Printf("Little Endian");
@@ -114,103 +113,47 @@ struct XGSPakFile {
                 Printf(" with LZ4 Compression\n");
             }
         }
-        else if (pakVersion == Version1)
-        {
-            Printf("\n");
-            if (pakVersion != Version1)
-            {
-                int32 unknownBytes;
-            }
-        }
-    }
-    XGSPakHdr<bgcolor = cBlue>;
-    struct FolderBase {
-        if (XGSPakHdr.pakVersion == Version0)
+        Printf("\n");
+    } XGSPakHdr<bgcolor = cBlue>;
+    struct FolderBase
+    {
+        if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
         {
             int32 nameOff;
-            int32 filesInFolder; //Different on BE?
-            int32 subfolders; //Different on BE?
-            int32 filesPos; //Different on BE?
-            int32 foldersPos; //Different on BE?
+            int32 filesInFolder;
+            int32 subfolders;
+            int32 filesPos;
+            int32 foldersPos;
         }
-        else if (XGSPakHdr.pakVersion == Version1)
+        else if (XGSPakHdr.pakVersion <= Version2 && XGSPakHdr.pakVersion != Version0)
         {
-            if (isFTGCustomV1 == 1)
-            {
-                int32 nameOff;
-                int32 filesInFolder; //Different on BE?
-                int32 subfolders; //Different on BE?
-                int32 filesPos; //Different on BE?
-                int32 foldersPos; //Different on BE?
-            }
-            if (isABSW_WiiU == 1)
+            if (isABSW_HighResConsole == 1)
             {
                 int32 dmy1;
                 int32 nameOff;
                 int32 dmy2;
-                int32 filesPos; //Different on BE?
+                int32 filesPos;
                 int32 dmy3;
-                int32 foldersPos; //Different on BE?
-                int32 filesInFolder; //Different on BE?
-                int32 subfolders; //Different on BE?
+                int32 foldersPos;
+                int32 filesInFolder;
+                int32 subfolders;
             }
             else
             {
                 int32 nameOff;
                 int32 dmy1;
-                int32 filesPos; //Different on BE?
+                int32 filesPos;
                 int32 dmy2;
-                int32 foldersPos; //Different on BE?
+                int32 foldersPos;
                 int32 dmy3;
-                int32 filesInFolder; //Different on BE?
-                int32 subfolders; //Different on BE?
+                int32 filesInFolder;
+                int32 subfolders;
             }
         }
-        else if (XGSPakHdr.pakVersion == Version2)
-        {
-            int32 nameOff;
-            int32 dmy1;
-            int32 filesPos; //Different on BE?
-            int32 dmy2;
-            int32 foldersPos; //Different on BE?
-            int32 dmy3;
-            int32 filesInFolder; //Different on BE?
-            int32 subfolders; //Different on BE?
-        }
-        //LittleEndian();
-        //int32 soon;
-        //int32 unk;
-    }
-    XGSPakFolderBase[XGSPakHdr.folderCnt]<bgcolor = cRed>;
-    /*if (XGSPakHdr.pakVersion == Version0)
-    {
-        //int32 pad[4];
-    }
-    if (XGSPakHdr.pakVersion == Version1)
-    {
-        //int32 pad[1];
-    }
-    if (XGSPakHdr.pakVersion == Version2)
-    {
-        /*int32 pad;
-        struct FolderBase2 {
-            int32 theFolder;
-            int32 unklol[2];
-            if (XGSPakHdr.folderCnt <= 1)
-            {
-                int32 fileCnt;
-            }
-            else
-            {
-                int32 folderCnt; //? 1 Seems to mean none
-            }
-        } XGSFolderBase2;
-    } else if (XGSPakHdr.pakVersion == Version2) {
-        int32 pad;
-    }*/
+    } XGSPakFolderBase[XGSPakHdr.folderCnt]<bgcolor = cRed>;
     struct ContentMetaBase
     {
-        if (XGSPakHdr.pakVersion == Version0)
+        if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
         {
             int32 nameOff;
             int32 dFileSize;
@@ -219,18 +162,9 @@ struct XGSPakFile {
             int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
             int32 cFileSize;
         }
-        if (XGSPakHdr.pakVersion >= Version1)
+        else if (XGSPakHdr.pakVersion >= Version1)
         {
-            if (isFTGCustomV1 == 1)
-            {
-                int32 nameOff;
-                int32 dFileSize;
-                int32 fileOffset;
-                i32_bool isCompressed;
-                int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
-                int32 cFileSize;
-            }
-            if (isABSW_WiiU == 1)
+            if (isABSW_HighResConsole == 1)
             {
                 int32 dmy1;
                 int32 nameOff;
@@ -253,39 +187,19 @@ struct XGSPakFile {
                 int32 dmy2;
             }
         }
-    }
-    XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
-    /*if (XGSPakHdr.pakVersion == Version0)
-    {
-        //FSkip(-4);
-    }
-    if (XGSPakHdr.pakVersion == Version2)
-    {
-        //int32 dummy;
-    }
-    if (XGSPakHdr.pakVersion != Version1)
-    {
-        //byte dbytes[16]<bgcolor = cRed>;
-    }*/
+    } XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
+    
     struct PakStringContent
     {
-        if (XGSPakHdr.magic == "XPK")
-        {
-            i = 1; //Fix a bug with getting another string on Wii U
-        }
-        else
-        {
-            i = 0;
-        }
-        for (i; i < XGSPakHdr.fileCnt + XGSPakHdr.folderCnt; i++)
+        //Sub 1 to fix a bug with getting another string
+        for (i = 0; i < (XGSPakHdr.fileCnt + XGSPakHdr.folderCnt) -1; i++)
         {
             struct PakString
             {
                 string theContentName;
             } pakStr;
         }
-    }
-    pakStrTbl<bgcolor = cGreen>;
+    } pakStrTbl<bgcolor = cGreen>;
     struct PakContent
     {
         FSeek(XGSPakContentMeta.fileOffset);
@@ -329,47 +243,28 @@ struct XGSPakFile {
                 }
             }
         }
-        else if (XGSPakHdr.pakVersion == Version1)
+        else if (XGSPakHdr.pakVersion <= Version1 || isFTGCustomV1 == 1) //Work with V0 as well so let's save code
         {
             //byte paddingByte;
             for (i = 0; i < XGSPakHdr.fileCnt; i++)
             {
-                struct V1File
+                struct V0_V1_File
                 {
                     FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
                     //if (isFTGCustomV1 == 1)
                     {
                         if (XGSPakContentMeta[i].isCompressed == True)
                         {
-                             byte theContent[XGSPakContentMeta[i].cFileSize];
+                             byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
                         }
                         else
                         {
-                            byte theContent[XGSPakContentMeta[i].dFileSize];
+                            byte theRawContent[XGSPakContentMeta[i].dFileSize];
                         }
                     }
                 } V1FileContent;
             }
         }
-        else
-        {
-            for (i = 0; i < XGSPakHdr.fileCnt; i++)
-            {
-                FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                struct V0File
-                {
-                    if (XGSPakContentMeta[i].isCompressed == True)
-                    {
-                        byte theZlibContent[XGSPakContentMeta[i].cFileSize];
-                    }
-                    else
-                    {
-                        byte theRawContent[XGSPakContentMeta[i].dFileSize];
-                    }
-                } V0FileContent;
-            }
-        }
-    }
-    XGSPakContent<bgcolor = cPurple>;
+    } XGSPakContent<bgcolor = cPurple>;
 }
 XGSPak;
