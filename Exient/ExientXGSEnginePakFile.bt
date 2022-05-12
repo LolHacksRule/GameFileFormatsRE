@@ -202,7 +202,7 @@ struct XGSPakFile {
     } pakStrTbl<bgcolor = cGreen>;
     struct PakContent
     {
-        FSeek(XGSPakContentMeta.fileOffset);
+        FSeek(XGSPakContentMeta[0].fileOffset);
         if (XGSPakHdr.pakVersion == Version2)
         {
             if (XGSPakHdr.pakCompressionFlag == RawContent)
