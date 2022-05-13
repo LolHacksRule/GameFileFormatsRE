@@ -90,7 +90,7 @@ struct XGSPatchBank
             FSeek(files.file[i].dataOff); //Skip here
             struct IndividualFileData
             {
-                if (ver == 2)
+                if (ver == 2 || unk == 2)
                 {
                     codec theCodec;
                     uint16 channels;

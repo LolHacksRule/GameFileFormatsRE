@@ -16,28 +16,62 @@
 
 local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;
+local string tempLang <hidden = true> = "";
+local string tempStringID <hidden = true> = "";
+local int printStrings <hidden=true> = 0; //Set this to 1 to print strings
 
-struct XGSL
+typedef enum <int32>
+{
+    English,
+    French,
+    German,
+    Italian,
+    Spanish,
+    Japanese,
+    StringIDs, //Always 6
+    Dutch,
+    Chinese,
+    Portugeuse,
+    Russian, //Portuguese (Brazil) that's funny Exient
+    Arabic,
+    Russian_Old,
+    Portugeuse_Old,
+    Korean = 31,
+} LangType;
+
+struct XGSLangDataBase
 {
     LittleEndian();
     struct HDR
     {
-        char XGSL[4];
-        int32 dmy;
-        int32 ver; //guess
-        Printf("XGS Locale\nVersion: %i\n", ver);
+        char XGSL[4]; //Or maybe it's FTTL, First Touch taking credit of an already identical format.
+        int32 dmy; //init?
+        int32 ver; //guess, it has to be
+        if (printStrings == 1)
+        {
+            Printf("XGS Locale\nVersion: %i\n", ver);
+        }
         int32 localizationEntries;
     } hdr<bgcolor = cRed>;
     struct Meta
     {
         int32 strCnt;
-        Printf("String Count: %i\n", strCnt);
+        if (printStrings == 1)
+        {
+            Printf("String Count: %i\n", strCnt);
+        }
         int32 FileSize;
-        Printf("FileSize: %i\n", FileSize);
+        if (printStrings == 1)
+        {
+            Printf("FileSize: %i\n", FileSize);
+        }
         if (hdr.ver >= 2)
         {
             int32 fontTblOffset;
-            Printf("Font Table Offset: %i\n", fontTblOffset);
+            if (printStrings == 1)
+            {
+                Printf("Font Table Offset: %i\n", fontTblOffset);
+            }
             int32 unk5;
         }
         struct LocMetaTbl
@@ -47,8 +81,12 @@ struct XGSL
                 struct LocMeta
                 {
                     int32 strSize;
-                    Printf("String Block Size [%i]: %i\n", i, strSize);
-                    int32 unk;
+                    LangType LanguageType;
+                    if (printStrings == 1)
+                    {
+                        Printf("String Block Size [%i]: %i\nLanguage ID: %i\n", i, strSize, 
+LanguageType);
+                    }
                 } locMeta;
             }
         } locMetaTbl;
@@ -61,7 +99,7 @@ struct XGSL
     //int32 Unk;
     struct Strings
     {
-        struct StringIDs
+        /*struct StringIDs
         {
             Printf("-----String IDs-----\n");
             for (i = 0; i < meta.strCnt; i++)
@@ -71,46 +109,135 @@ struct XGSL
                     if (hdr.ver >= 1)
                     {
                         string theStrID;
-                        Printf("[%i]: %s\n", i, theStrID);
+                        //Printf("[%i]: %s\n", i, theStrID);
                     }
                     else
                     {
                         wstring theWStrID;
-                        Printf("[%i]: %s\n", i, theWStrID);
+                        //Printf("[%i]: %s\n", i, theWStrID);
                     }
                 } localizedStringID;
             }
         } localizedStringIDs;
         Printf("-----End String IDs-----\n");
-        struct LocalizedStrings
-        {
-            Printf("-----Strings-----\n");
-            for (i = 0; i < hdr.localizationEntries - 1; i++)
+        */
+        //struct LocalizedStrings
+        //{
+            if (printStrings == 1)
+            {
+                Printf("-----Strings-----\n");
+            }
+            for (i = 0; i < hdr.localizationEntries; i++)
             {
                 struct Language
                 {
-                    Printf("[Lang: %i]\n", i);
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == English)
+                    {
+                        tempLang = "English";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == French)
+                    {
+                        tempLang = "French";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == German)
+                    {
+                        tempLang = "German";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Italian)
+                    {
+                        tempLang = "Italian";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Spanish)
+                    {
+                        tempLang = "Spanish";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Japanese)
+                    {
+                        tempLang = "Japanese";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == StringIDs)
+                    {
+                        tempLang = "String IDs";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Dutch)
+                    {
+                        tempLang = "Dutch";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Chinese)
+                    {
+                        tempLang = "Chinese";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Portugeuse || meta.locMetaTbl.locMeta[i].LanguageType == Portugeuse_Old)
+                    {
+                        tempLang = "Portugeuse";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Russian || meta.locMetaTbl.locMeta[i].LanguageType == Russian_Old)
+                    {
+                        tempLang = "Russian";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Arabic)
+                    {
+                        tempLang = "Arabic";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType == Korean)
+                    {
+                        tempLang = "Korean";
+                    }
+                    if (meta.locMetaTbl.locMeta[i].LanguageType > Korean)
+                    {
+                        tempLang = "Unknown!"; //for now
+                    }
+                    local string theLanguage = tempLang;
+                    if (printStrings == 1)
+                    {
+                        Printf("[%s]\n", tempLang);
+                    }
                     for (i2 = 0; i2 < meta.strCnt; i2++)
                     {
                         struct String
                         {
+                            /*if (i != 0)
+                            {
+                                //local string theStringID = tempStringID;
+                            }*/
                             if (hdr.ver >= 1)
                             {
+                                /*if (i != 0)
+                                {
+                                    //tempStringID = lang[0].localizedString[i2].theStr;
+                                }*/
                                 string theStr;
-                                Printf("[%i]: %s\n", i2, theStr);
+                                if (printStrings == 1)
+                                {
+                                    Printf("[%i]: %s\n", i2, theStr);
+                                }
                             }
                             else
                             {
                                 wstring theWStr;
-                                Printf("[%i]: %s\n", i2, theWStr);
+                                /*
+                                if (i != 0)
+                                {
+                                    //tempStringID = lang[0].localizedString[i2].theWStr;
+                                }*/
+                                if (printStrings == 1)
+                                {    
+                                    Printf("[%i]: %s\n", i2, theWStr);
+                                }
                             }
                         } localizedString;
                     }
                 } lang;
-                Printf("[Lang: %i end]\n", i);
+                if (printStrings == 1)
+                {
+                    Printf("[%s end]\n", tempLang);
+                }
             }
-        } locStrings;
-        Printf("-----End of Strings-----\n");
+        //} locStrings;
+        if (printStrings == 1)
+        {
+            Printf("-----End of Strings-----\n");
+        }
     } strings<bgcolor = cGreen>;
     /*struct Strings
     {
@@ -138,36 +265,50 @@ struct XGSL
     } strings;*/
     if (hdr.ver == 2)
     {
-        Printf("Font Strings\n");
+        if (printStrings == 1)
+        {
+            Printf("Font Strings\n");
+        }
         struct FontTbl
         {
             int32 fntFiles;
-            Printf("Font Files: %i\n", fntFiles);
+            if (printStrings == 1)
+            {
+                Printf("Font Files: %i\n", fntFiles);
+            }
             for (i = 0; i < fntFiles; i++) //temp until 
             {
                 struct FontStrs
                 {
-                    uint16 fontNameStrSize;
-                    char fontNameStr[fontNameStrSize];
-                    uint16 pakStrSize;
+                    uint16 fontFileNameStrSize<hidden = true>;
+                    char fontFileNameStr[fontFileNameStrSize];
+                    uint16 pakStrSize<hidden = true>;
                     if (pakStrSize > 1)
                     {
                         char pakStr[pakStrSize];
-                        Printf("[%i]: %s %s \n", i, pakStr, fontNameStr);
                     }
                     else
                     {
                         FSkip(4);
-                        Printf("[%i]: %s \n", i, fontNameStr);
                     }
-                    Printf("[%i]: %s %s \n", i, pakStr, fontNameStr);
+                    uint16 fontNameSize<hidden = true>;
+                    if (fontNameSize != 0)
+                    {
+                        char fontNameStr[fontNameSize];
+                        if (printStrings == 1)
+                        {
+                            Printf("[%i]: %s %s %s \n", i, pakStr, fontFileNameStr, fontNameStr);
+                        }
+                    }
+                    else
+                    {
+                        if (printStrings == 1)
+                        {
+                            Printf("[%i]: %s %s \n", i, pakStr, fontFileNameStr);
+                        }
+                    }
                 } font;
-                FSkip(2);
             }
-        } ftbl;
+        } ftbl<bgcolor=cPurple>;
     }
-    
-    //byte Version;
-    
-    //uint64 StringCnt;
-} XGSLocale;
+} XGSL;

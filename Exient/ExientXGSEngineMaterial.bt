@@ -44,6 +44,10 @@ struct XGSMaterial
     {
         float unknownFloats[481];
     }
+    if (ver == 6)
+    {
+        float unknownFloats[88];
+    }
     int32 shaderCount;
     struct ShaderBinaries
     {

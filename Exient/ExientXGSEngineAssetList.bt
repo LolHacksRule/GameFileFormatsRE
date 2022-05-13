@@ -53,7 +53,7 @@ struct XGSAssetList
                 {
                     if (XGSHeader.hasDuplicatedMD5)
                     {
-                        byte MD5Again[16]<bgcolor = cPurple>;
+                        byte UsuallyMD5Again[16]<bgcolor = cPurple>;
                     }
                     else
                     {
