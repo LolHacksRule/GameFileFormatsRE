@@ -11,8 +11,6 @@
 //   History: 
 //-----------------------------------------------------
 
-//PUBLIC VERSION v1
-
 /*
 XGSPAK VX only works with games using XGS Engine VX (I think First Touch Games use multiple?), using different versions with them is likely a bad idea as devs can only use one of the three.
 XGSPAKV1 can be used with ZLib or Raw content.

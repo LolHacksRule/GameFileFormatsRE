@@ -60,7 +60,14 @@ struct XGSLangDataBase
         {
             Printf("String Count: %i\n", strCnt);
         }
-        int32 FileSize;
+        if (hdr.ver > 0)
+        {
+            int32 FileSize;
+        }
+        else
+        {
+            int32 dmy;
+        }
         if (printStrings == 1)
         {
             Printf("FileSize: %i\n", FileSize);
