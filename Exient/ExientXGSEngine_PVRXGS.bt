@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-//A mod of the PVR format for XGS, which is also used in games from First Touch Games as well as AB Trilogy on Vita, only tested on said game's textures.
+//A mod of the PVR format for XGS, which is also used in games from First Touch Games (before they went with FTC) as well as AB Trilogy on Vita, only tested on said game's textures.
 
 typedef enum <byte> {
     ARGB4444 = 0,
@@ -20,15 +20,20 @@ typedef enum <byte> {
     ARGB1555,
     ARGB8888,
     RGB565,
-    PVRTC_4BPP_RGBA = 25,
+    PVRTC_2BPP_RGB = 24,
+    PVRTC_4BPP_RGBA,
+    ETC1 = 54,
 } texFmt;
 
 typedef enum <byte> {
     HasMipMaps = 0x01,
+    HasNormalData = 0x04,
+    HasMipMaps_AND_HasNormalData,
     PVRTCAlpha = 0x80,
     PVRTCAlpha_AND_HasMipMaps,
     PVRTCAlpha_AND_IsTwiddled,
     PVRTCAlpha_AND_HasMipMaps_AND_IsTwiddled,
+    PVRTCAlpha_AND_HasNormalData,
 } texbitflag1;
 
 typedef enum <byte> {
