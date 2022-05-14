@@ -8,19 +8,29 @@
 local int i <hidden=true> = 0;
 local int isV1 <hidden=true> = 0;
 
+typedef enum <int32>
+{
+    False,
+    True,
+} i32_bool;
+
 struct XGSTextureAtlas
 {
-    char    magic[5];//XGSTA
+    LittleEndian();
+    char    magic[5];//XGSTA or FTTTA, ha ha very funny First Touch
     short   unknown; //Do not modify, should be 0 I think
-    byte    version; //version? AB Trilogy 3DS = 2
-    if (version < 5)
+    byte    version; //version? AB Trilogy 3DS = 2, do not set to 5+,
+    if (version < 5 && version != 2)
     {
         isV1 = 1;
     }
-    int     unknown3; //Do not modify, should be 1 I think
+    int     subTextureCount; //How many %s_x_of_x textures are used, cannot be 0.
     int     texCnt;
-    int     hash;//?? Modifying this can make the game unable to load the texture.
-    char    atlasName[32];
+    int     hash;//No effect when modifying, maybe it's a timestamp?
+    if (!isV1)
+    {
+        char    atlasName[32];
+    }
     struct SplitTextureInfoList
     {
         Printf("Texture Param:\n");
@@ -29,10 +39,10 @@ struct XGSTextureAtlas
             Printf("--------TEXTURE %i START--------\n", i);
             struct InvidualTexInfo
             {
-                int     hash; //??
+                int     hash; //Modifying this will make the game UNABLE to read the texture.
                 Printf("hash: %i\n", hash);
-                int     unk;
-                Printf("unk: %i\n", unk);
+                i32_bool isHidden; //True seems to make the game not load the texture.
+                Printf("Is Hidden: %i\n", isHidden);
                 float   scaleX;//scale value. get real coord need * atlas.xgt image width 
                 Printf("X Scale: %f\n", scaleX);
                 float   scaleY;//scale value. get real coord need * atlas.xgt image height 
@@ -45,7 +55,7 @@ struct XGSTextureAtlas
                 Printf("Texture Width: %i\n", textureWidth);
                 int     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
-                if (isV1 != 1)
+                if (isV1 != 1 && version != 2)
                 {
                     int     unk1;
                     Printf("unk1: %i\n", unk1);
@@ -56,7 +66,7 @@ struct XGSTextureAtlas
             Printf("--------TEXTURE %i END--------\n", i);
         }
     } splitTexInfoList;
-    if (isV1 != 1)
+    if (isV1 != 1 && version != 2)
     {
         int     texNameDataBlockLength;
         struct TextureStrings
