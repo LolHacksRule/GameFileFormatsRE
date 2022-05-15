@@ -25,35 +25,42 @@ typedef enum <byte> {
 } platform;
 
 typedef enum <uint16> {
-    RGB565_SWIZZLED,                        //AB SW Console, Vita uses no swizzle
+    RGB565_SWIZZLED,                        //AB SW Console, Vita/PS3 uses no swizzle
     RGB565_OR_RGBA1555,                     //ABTF, ABSW Vita uses RGB1555
 	RGBA4444,                               //On PS3 this is BGRA8888/ARGB8888?
     RGBA4444_2_OR_RGBA8888_OR_LA88,         //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's linear indexed 32BPP LA88 with BC swizzle
     RGBA8888,
     PALLETIZED_RGBA5A3,                     //Palletized RGB5A3, AB SW Wii
     AL88_OR_DXT1_OR_RGB565           = 8,   //On Xbox 360/PS3 this is usually DXT, on Wii U, RGBA8888, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
-    DXT5_SWIZZLED                    = 10,  //PS3/WinPhone only?
+    UNKNOWN_DXT,                            //DXT3? guess, no XGS games so far use this one
+    DXT5_SWIZZLED,                          //PS3/WinPhone only?
     PVR_UNK,
-    
-    AL88                             = 13,  //AL88
-    
+    UNKNOWN_8888,                           //Some swizzled format (at least for PS3), unused
+    AL88,  //AL88
+    //14 seems to not work for PS3, I think
     PVRTC_2BPP_RGBA                  = 15,
     PVRTC_4BPP_RGB,                         //May need to swap these two
 
     //PVRTC_UNKNOWN_SWIZZLED           = 15, //?
     PVRTC_4BPP_RGBA,
     PVRTC_4BPP_RGBA_2,
-    DXT1_OR_ETC1                     = 24,  //On Android this is usually DXT1, old Android has this DXT1 swizzled
+    //19-21 crash on PS3
+    RG88                             = 22,  //Unused on PS3, it's GR88
+    L4,                                     //Unused
+    DXT1_OR_ETC1,                           //On Android this is usually DXT1, old Android has this DXT1 swizzled, null on PS3
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,
     LA44,
     DXT5,
+    //27-39 crashes on PS3
     PVRTC_2BPP_RGBA_v2               = 29,
     PVRTC_4BPP_RGB_v2,                      //BC swizzled
-    PVRTC_4BPP_RGBA_v2,    
+    PVRTC_4BPP_RGBA_v2,
+    
     ETC2_RGB                         = 35,
     ATC                              = 37,  //BC Swizzled
     ATCA_Interpolated                = 39,  //BC Swizzled
+    //39+ on PS3 crashes
     ETC2_RGB_2                       = 252,
     ETC1_RGB_SPLITALPHA,                    //Swizzled too, CTR only.
     ATC_2,
@@ -80,8 +87,8 @@ struct XGSTexture
         uint16 numColors; //Modifying this seems to have no known effect but idk
         uint16 width;
         uint16 height;
-        uint16 width2;
-        uint16 height2;
+        uint16 width2; //No use modifying
+        uint16 height2; //No use modifying
         uint32 paletteSize; //Modifying this affects the game badly, take care
         uint32 dataSize;
     } hdr<bgcolor=cPurple>;

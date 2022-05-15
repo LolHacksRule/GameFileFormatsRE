@@ -155,6 +155,10 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x09:
             data = bs.readBytes(dataSize)
+            print("ARGB8888\nIf it doesn't look right, look at the below comment!")
+            #Replace with
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+            #to view Android textures
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0B: #RGBA8888 Wii U
@@ -191,7 +195,7 @@ def noepyLoadRGBA(data, texList):
             data = Out
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0B or platform == 0x01 or platform == 0x04 or platform == 0x10: #DXT1 Wii U/PS3/WinPhone
+        elif platform == 0x0B or platform == 0x01 or platform == 0x04 or platform == 0x10 or platform == 0x09: #DXT1 Wii U/PS3/WinPhone/Legacy Android
             print("DXT1")
             data = bs.readBytes(dataSize)
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
@@ -273,8 +277,12 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
         print("ETC")
     elif imgFmt == 0xFC:
-        data = bs.readBytes(dataSize)
-        data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
+        if platform == 0x09: #WinPhone
+            data = bs.readBytes(dataSize)
+            data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
+        else:
+            data = bs.readBytes(dataSize)
+            data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
         texFmt = noesis.NOESISTEX_RGBA32
         print("ETC2_RGB")
     elif imgFmt == 0xFD: #3ds only?

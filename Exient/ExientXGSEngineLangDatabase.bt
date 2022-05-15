@@ -39,14 +39,14 @@ typedef enum <int32>
     Korean = 31,
 } LangType;
 
-struct XGSLangDataBase
+struct XGSLangDatabase
 {
     LittleEndian();
     struct HDR
     {
         char XGSL[4]; //Or maybe it's FTTL, First Touch taking credit of an already identical format.
-        int32 dmy; //init?
-        int32 ver; //guess, it has to be
+        int32 dmy; //It's fine if edited
+        int32 ver; //guess, it has to be, modifying has no effect except make it harder to read the format at first
         if (printStrings == 1)
         {
             Printf("XGS Locale\nVersion: %i\n", ver);
@@ -62,11 +62,11 @@ struct XGSLangDataBase
         }
         if (hdr.ver > 0)
         {
-            int32 FileSize;
+            int32 fileSize; //No effect if modified/mismatching
         }
         else
         {
-            int32 dmy;
+            int32 dmy; //May be filesize, again see above
         }
         if (printStrings == 1)
         {
@@ -87,11 +87,11 @@ struct XGSLangDataBase
             {
                 struct LocMeta
                 {
-                    int32 strSize;
-                    LangType LanguageType;
+                    int32 strBlockSize; //If this mismatches the stringtable size, text renders incorrectly
+                    LangType LanguageType; //Careful when changing this! Setting an identical enum to another language's causes a crash.
                     if (printStrings == 1)
                     {
-                        Printf("String Block Size [%i]: %i\nLanguage ID: %i\n", i, strSize, 
+                        Printf("String Block Size [%i]: %i\nLanguage ID: %i\n", i, strBlockSize, 
 LanguageType);
                     }
                 } locMeta;
