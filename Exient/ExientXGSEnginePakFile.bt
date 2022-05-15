@@ -31,6 +31,7 @@ https://aluigi.altervista.org/bms/dls20.bms
 */
 
 local uint i <hidden = true> = 0;
+local uint terminate <hidden = true> = 0; //Do not set to 1
 local uint isFTGCustomV1 <hidden = true> = 0; //Set this to 1 if reading V1 paks from First Touch Games without modification as they use v0's folder and file metadata structure, alternatively you can change the version to 00 and then run the template
 local uint isABSW_HighResConsole <hidden = true> = 0; //Don't touch, this will automatically be detected
 
@@ -115,154 +116,168 @@ struct XGSPakFile {
     } XGSPakHdr<bgcolor = cBlue>;
     struct FolderBase
     {
-        if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
+        if (terminate != 1)
         {
-            int32 nameOff;
-            int32 filesInFolder;
-            int32 subfolders;
-            int32 filesPos;
-            int32 foldersPos;
-        }
-        else if (XGSPakHdr.pakVersion <= Version2 && XGSPakHdr.pakVersion != Version0)
-        {
-            if (isABSW_HighResConsole == 1)
+            if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
             {
-                int32 dmy1;
                 int32 nameOff;
-                int32 dmy2;
-                int32 filesPos;
-                int32 dmy3;
-                int32 foldersPos;
                 int32 filesInFolder;
                 int32 subfolders;
+                int32 filesPos;
+                int32 foldersPos;
             }
-            else
+            else if (XGSPakHdr.pakVersion <= Version2 && XGSPakHdr.pakVersion != Version0)
             {
-                int32 nameOff;
-                int32 dmy1;
-                int32 filesPos;
-                int32 dmy2;
-                int32 foldersPos;
-                int32 dmy3;
-                int32 filesInFolder;
-                int32 subfolders;
+                if (isABSW_HighResConsole == 1)
+                {
+                    int32 dmy1;
+                    int32 nameOff;
+                    int32 dmy2;
+                    int32 filesPos;
+                    int32 dmy3;
+                    int32 foldersPos;
+                    int32 filesInFolder;
+                    int32 subfolders;
+                }
+                else
+                {
+                    int32 nameOff;
+                    int32 dmy1;
+                    if (dmy1 != 0)
+                    {
+                        terminate = 1;
+                        Printf("DUMMY is above zero, suggesting it is misread for decompressed file size. Most likely you're trying to read a FTG V1 pak. If so, try changing the first byte of the file to 0x0 then try again.");
+                        break;
+                    }
+                    int32 filesPos;
+                    int32 dmy2;
+                    int32 foldersPos;
+                    int32 dmy3;
+                    int32 filesInFolder;
+                    int32 subfolders;
+                }
             }
         }
     } XGSPakFolderBase[XGSPakHdr.folderCnt]<bgcolor = cRed>;
-    struct ContentMetaBase
+    if (terminate != 1)
     {
-        if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
+        struct ContentMetaBase
         {
-            int32 nameOff;
-            int32 dFileSize;
-            int32 fileOffset;
-            i32_bool isCompressed;
-            int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
-            int32 cFileSize;
-        }
-        else if (XGSPakHdr.pakVersion >= Version1)
-        {
-            if (isABSW_HighResConsole == 1)
+            if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
             {
-                int32 dmy1;
                 int32 nameOff;
                 int32 dFileSize;
                 int32 fileOffset;
                 i32_bool isCompressed;
                 int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
                 int32 cFileSize;
-                int32 dmy2;
             }
-            else
+            else if (XGSPakHdr.pakVersion >= Version1)
             {
-                int32 nameOff;
-                int32 dmy1;
-                int32 dFileSize;
-                int32 fileOffset;
-                i32_bool isCompressed;
-                int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
-                int32 cFileSize;
-                int32 dmy2;
+                if (isABSW_HighResConsole == 1)
+                {
+                    int32 dmy1;
+                    int32 nameOff;
+                    int32 dFileSize;
+                    int32 fileOffset;
+                    i32_bool isCompressed;
+                    int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
+                    int32 cFileSize;
+                    int32 dmy2;
+                }
+                else
+                {
+                    int32 nameOff;
+                    int32 dmy1;
+                    int32 dFileSize;
+                    int32 fileOffset;
+                    i32_bool isCompressed;
+                    int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
+                    int32 cFileSize;
+                    int32 dmy2;
+                }
             }
-        }
-    } XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
-    
-    struct PakStringContent
+        } XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
+    }
+    if (terminate != 1)
     {
-        //Sub 1 to fix a bug with getting another string
-        for (i = 0; i < (XGSPakHdr.fileCnt + XGSPakHdr.folderCnt) -1; i++)
+        struct PakStringContent
         {
-            struct PakString
+            //Sub 1 to fix a bug with getting another string
+            for (i = 0; i < (XGSPakHdr.fileCnt + XGSPakHdr.folderCnt) -1; i++)
             {
-                string theContentName;
-            } pakStr;
-        }
-    } pakStrTbl<bgcolor = cGreen>;
-    struct PakContent
-    {
-        FSeek(XGSPakContentMeta[0].fileOffset);
-        if (XGSPakHdr.pakVersion == Version2)
+                struct PakString
+                {
+                    string theContentName;
+                } pakStr;
+            }
+        } pakStrTbl<bgcolor = cGreen>;
+        struct PakContent
         {
-            if (XGSPakHdr.pakCompressionFlag == RawContent)
+            FSeek(XGSPakContentMeta[0].fileOffset);
+            if (XGSPakHdr.pakVersion == Version2)
             {
-                for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                if (XGSPakHdr.pakCompressionFlag == RawContent)
                 {
-                    struct TheRawFile
+                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
                     {
-                        FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                        byte theRawContent[XGSPakContentMeta[i].dFileSize];
-                    } theRaw;
-                }
-            }
-            else if (XGSPakHdr.pakCompressionFlag == ZLib)
-            {
-                for (i = 0; i < XGSPakHdr.fileCnt; i++)
-                {
-                //isBigEndian == false;
-                    struct ZlibCompressedFile
-                    {
-                        FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                        byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
-                    } zlib;
-                    //LittleEndian();
-                }
-            }
-            else if (XGSPakHdr.pakCompressionFlag == LZ4)
-            {
-                for (i = 0; i < XGSPakHdr.fileCnt; i++)
-                {
-                //isBigEndian == false;
-                    struct LZ4CompressedFile
-                    {
-                        FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                        byte theLZ4CompressedContent[XGSPakContentMeta[i].cFileSize];
-                    } lz4;
-                    //LittleEndian();
-                }
-            }
-        }
-        else if (XGSPakHdr.pakVersion <= Version1 || isFTGCustomV1 == 1) //Work with V0 as well so let's save code
-        {
-            //byte paddingByte;
-            for (i = 0; i < XGSPakHdr.fileCnt; i++)
-            {
-                struct V0_V1_File
-                {
-                    FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                    //if (isFTGCustomV1 == 1)
-                    {
-                        if (XGSPakContentMeta[i].isCompressed == True)
+                        struct TheRawFile
                         {
-                             byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
-                        }
-                        else
-                        {
+                            FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
                             byte theRawContent[XGSPakContentMeta[i].dFileSize];
-                        }
+                        } theRaw;
                     }
-                } V1FileContent;
+                }
+                else if (XGSPakHdr.pakCompressionFlag == ZLib)
+                {
+                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                    {
+                    //isBigEndian == false;
+                        struct ZlibCompressedFile
+                        {
+                            FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
+                            byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
+                        } zlib;
+                        //LittleEndian();
+                    }
+                }
+                else if (XGSPakHdr.pakCompressionFlag == LZ4)
+                {
+                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                    {
+                    //isBigEndian == false;
+                        struct LZ4CompressedFile
+                        {
+                            FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
+                            byte theLZ4CompressedContent[XGSPakContentMeta[i].cFileSize];
+                        } lz4;
+                        //LittleEndian();
+                    }
+                }
             }
-        }
-    } XGSPakContent<bgcolor = cPurple>;
+            else if (XGSPakHdr.pakVersion <= Version1 || isFTGCustomV1 == 1) //Work with V0 as well so let's save code
+            {
+                //byte paddingByte;
+                for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                {
+                    struct V0_V1_File
+                    {
+                        FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
+                        //if (isFTGCustomV1 == 1)
+                        {
+                            if (XGSPakContentMeta[i].isCompressed == True)
+                            {
+                                 byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
+                            }
+                            else
+                            {
+                                byte theRawContent[XGSPakContentMeta[i].dFileSize];
+                            }
+                        }
+                    } V1FileContent;
+                }
+            }
+        } XGSPakContent<bgcolor = cPurple>;
+    }
 }
 XGSPak;

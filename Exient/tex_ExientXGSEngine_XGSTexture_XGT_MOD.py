@@ -231,12 +231,12 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x0f:
         data = bs.readBytes(dataSize)
-        print("PVRTC2BPP_RGB (WIP!)")
+        print("PVRTC2BPP_RGBA (WIP!)")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 2)
         texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x11:
         data = bs.readBytes(dataSize)
-        print("PVRTC4BPP_RGB (WIP!)")
+        print("PVRTC4BPP_RGBA (WIP!)")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 4)
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT1
@@ -263,7 +263,7 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x1f:
         data = bs.readBytes(dataSize)
-        print("PVRTC4BPP_RGBA (WIP!)")
+        print("PVRTC4BPP_RGBA_2 (WIP!)")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 4)
         texFmt = noesis.NOESISTEX_RGBA32
     #ETC RGB

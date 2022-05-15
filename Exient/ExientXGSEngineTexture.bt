@@ -41,8 +41,8 @@ typedef enum <uint16> {
     PVRTC_4BPP_RGB,                         //May need to swap these two
 
     //PVRTC_UNKNOWN_SWIZZLED           = 15, //?
-    PVRTC_4BPP_RGB_2,       //May need to swap these two
     PVRTC_4BPP_RGBA,
+    PVRTC_4BPP_RGBA_2,
     DXT1_OR_ETC1                     = 24,  //On Android this is usually DXT1, old Android has this DXT1 swizzled
     //UNKNOWN2               = 24,
     //DXT1_2                 = 24,

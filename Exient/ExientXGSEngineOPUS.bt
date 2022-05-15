@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ExientXGSEngineOPUS.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct XGSOpus
+{
+    LittleEndian();
+    char hdr[4];
+    byte version; //Has to be
+    byte channels;
+    int16 unknown2;
+    int32 unknown4;
+    int32 samples;
+    int32 skip;
+    int32 entries;
+    int32 dSize;
+    int32 dmy;
+    byte entryData[channels*entries];
+    byte audioData[dSize];
+} XOPUS;
