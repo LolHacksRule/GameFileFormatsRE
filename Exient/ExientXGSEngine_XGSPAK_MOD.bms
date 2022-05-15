@@ -1,0 +1,160 @@
+# Mod by LolHacksRule, provides support for all XGSPAK versions in one script, except NFS Wii (but ABTrilogy 3DS is the same format in Little Endian, I think, haven't tested)
+# Need for Speed: Hot Pursuit 2010 Wii (0KPX/XPK0) - https://aluigi.altervista.org/bms/nfshp2010wii.bms
+# F1 2016 obb / Angry Birds (2KPX/XPK2) - https://aluigi.altervista.org/bms/xpk2.bms
+# Angry Birds Go! / Exient XGS engine (1KPX/XPK1) - https://aluigi.altervista.org/bms/angry_birds_go.bms
+# Angry Birds: Star Wars (Big Endian, XGS) - https://aluigi.altervista.org/bms/angry_birds_starwars.bms
+# First Touch Games: V1 headered PAK - https://aluigi.altervista.org/bms/dls20.bms (WILL NOT BE AUTOMATICALLY SUPPORTED)
+# script for QuickBMS http://quickbms.aluigi.org
+
+get ENDIANCHECK byte
+if ENDIANCHECK != 0x58 //check for BE, only ABSW is the v1 Big Endian game
+	goto 0x1
+	idstring "KPX"  # KPX/XPK
+	goto 0x0 # go back and read the ver
+else
+	goto 0x0
+	idstring "XPK"  # KPX/XPK
+	endian big
+endif
+get VERSION byte
+goto 0x4 #go back to the file
+get FOLDERS long
+get FILES long
+get NAMES_SIZE long
+
+if VERSION = 0
+	print "XGSPAKV0"
+endif
+if VERSION = 1
+	print "XGSPAKV1"
+endif
+if VERSION = 2
+	print "XGSPAKV2"
+	get ZIP_MODE long
+	if ZIP_MODE >= 2
+		comtype lz4
+	endif
+endif
+
+for i = 0 < FOLDERS
+	if ENDIANCHECK = 0x58
+		get ZERO long
+	endif
+    get NAME_OFF long
+	if VERSION >= 1
+		get DUMMY long
+		if DUMMY > 1
+		print "DUMMY is above zero, suggesting it is misread for decompressed file size. Most likely you're trying to read a FTG V1 pak. If so, try changing the first byte of the file to 0x0 then try again."
+		break
+	endif
+    if VERSION >= 1
+		get XFILES_POS long
+	endif
+    if VERSION >= 1
+		get DUMMY long
+	endif
+    if VERSION >= 1
+		get XFOLDERS_POS long
+	endif
+    if VERSION >= 1	and ENDIANCHECK != 0x58
+		get DUMMY long
+	endif
+    get XFILES long
+    get XFOLDERS long
+	if VERSION = 0
+		get XFILES_POS long
+		get XFOLDERS_POS long
+	endif
+
+    putarray 5 i NAME_OFF
+    putarray 6 i XFILES
+    putarray 7 i XFOLDERS
+    putarray 8 i XFILES_POS
+    putarray 9 i XFOLDERS_POS
+next i
+
+for i = 0 < FILES
+	if ENDIANCHECK = 0x58
+		get ZERO long
+	endif
+    get NAME_OFF long
+    if VERSION >= 1 and ENDIANCHECK != 0x58
+		get DUMMY long
+	endif
+    get SIZE long
+    get OFFSET long
+    get ZIP long
+    get CRC long
+    get ZSIZE long
+    if VERSION = 1 or VERSION = 2
+		get DUMMY long
+	endif
+
+    putarray 0 i NAME_OFF
+    putarray 1 i SIZE
+    putarray 2 i OFFSET
+    putarray 3 i ZIP
+    putarray 4 i ZSIZE
+next i
+
+savepos NAMES_OFF
+for i = 0 < FOLDERS
+    getarray NAME_OFF 5 i
+    math NAME_OFF + NAMES_OFF
+    goto NAME_OFF
+    get NAME string
+    putarray 5 i NAME
+next i
+for i = 0 < FILES
+    getarray NAME_OFF 0 i
+    math NAME_OFF + NAMES_OFF
+    goto NAME_OFF
+    get NAME string
+    putarray 0 i NAME
+next i
+
+getarray NAME         5 0
+getarray XFILES       6 0
+getarray XFOLDERS     7 0
+getarray XFILES_POS   8 0
+getarray XFOLDERS_POS 9 0
+set PATH string ""
+set NAME string ""
+callfunction EXTRACT
+
+startfunction EXTRACT
+    string PATH += NAME
+    string PATH += /
+    math FILES = XFILES
+    math FOLDERS = XFOLDERS
+    math FILES_POS = XFILES_POS
+    math FOLDERS_POS = XFOLDERS_POS
+
+    for i = 0 < FILES
+        math T = FILES_POS
+        math T += i
+        getarray NAME   0 T
+        getarray SIZE   1 T
+        getarray OFFSET 2 T
+        getarray ZIP    3 T
+        getarray ZSIZE  4 T
+        set FNAME string PATH
+        string FNAME += NAME
+        if ZIP == 0
+            log FNAME OFFSET SIZE
+        else
+            clog FNAME OFFSET ZSIZE SIZE
+        endif
+    next i
+
+    for i = 0 < FOLDERS
+        math T = FOLDERS_POS
+        math T += i
+        getarray NAME         5 T
+        getarray XFILES       6 T
+        getarray XFOLDERS     7 T
+        getarray XFILES_POS   8 T
+        getarray XFOLDERS_POS 9 T
+        callfunction EXTRACT
+    next i
+endfunction
