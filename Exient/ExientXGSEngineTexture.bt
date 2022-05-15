@@ -31,17 +31,17 @@ typedef enum <uint16> {
     RGBA4444_2_OR_RGBA8888_OR_LA88,         //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's linear indexed 32BPP LA88 with BC swizzle
     RGBA8888,
     PALLETIZED_RGBA5A3,                     //Palletized RGB5A3, AB SW Wii
-    AL88_OR_DXT1_OR_RGB565           = 8,   //On Wii U/Xbox 360/PS3 this is DXT, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
+    AL88_OR_DXT1_OR_RGB565           = 8,   //On Xbox 360/PS3 this is usually DXT, on Wii U, RGBA8888, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
     DXT5_SWIZZLED                    = 10,  //PS3/WinPhone only?
-    PVR_UNK                          = 11,
+    PVR_UNK,
     
     AL88                             = 13,  //AL88
     
     PVRTC_2BPP_RGBA                  = 15,
     PVRTC_4BPP_RGB,                         //May need to swap these two
 
-    PVRTC_UNKNOWN_SWIZZLED           = 15,
-    PVRTC_4BPP_RGB_2                 = 16,  //May need to swap these two
+    //PVRTC_UNKNOWN_SWIZZLED           = 15, //?
+    PVRTC_4BPP_RGB_2,       //May need to swap these two
     PVRTC_4BPP_RGBA,
     DXT1_OR_ETC1                     = 24,  //On Android this is usually DXT1, old Android has this DXT1 swizzled
     //UNKNOWN2               = 24,
@@ -50,17 +50,20 @@ typedef enum <uint16> {
     DXT5,
     PVRTC_2BPP_RGBA_v2               = 29,
     PVRTC_4BPP_RGB_v2,                      //BC swizzled
-    PVRTC_4BPP_RGB_v3,    
+    PVRTC_4BPP_RGBA_v2,    
     ETC2_RGB                         = 35,
-    ATC                              = 37,  //BC Swizzled?
-    ATCA_Interpolated                = 39,  //BC Swizzled?
+    ATC                              = 37,  //BC Swizzled
+    ATCA_Interpolated                = 39,  //BC Swizzled
     ETC2_RGB_2                       = 252,
     ETC1_RGB_SPLITALPHA,                    //Swizzled too, CTR only.
-    ATC_SWIZZLED,
+    ATC_2,
 } texFmt;
 
-struct XGSTexture {
-    struct XGSTexHdr {
+struct XGSTexture
+{
+    LittleEndian();
+    struct XGSTexHdr
+    {
         char magic[4]; //XGST
         byte dataOffset;
         platform compilationPlatform; //Definitely platform, this has no harm when modifying (except in Edge of Perception) but does help with knowing platform specific compressions, usually
@@ -69,8 +72,8 @@ struct XGSTexture {
         byte numMips;
         //? start
         byte flag1;
-        byte flag2;
-        byte flag3; //Dummy?
+        byte flag2; //2 = VFlipped? Seen on 3DS
+        byte flag3; //Dummy? 0x3 appears on X360
         //? end
         //char format[4];
         texFmt format;

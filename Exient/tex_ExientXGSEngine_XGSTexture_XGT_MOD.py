@@ -7,6 +7,7 @@
 #Fixed bugs with decoding X360 RGB565 and RGBA8888 textures
 #Add WinPhone detection
 #Add iOS and old iOS detection
+#Fixed wrong channel order for WinPhone textures
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -160,13 +161,9 @@ def noepyLoadRGBA(data, texList):
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0E or platform == 0x04: #ARGB8888 PS4/X360
+        elif platform == 0x0E or platform == 0x04 or platform == 0x10: #ARGB8888 PS4/X360
             data = bs.readBytes(dataSize)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b8 g8 r8 a8")
-            texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x10:
-            data = bs.readBytes(dataSize)
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
     #RGBA8888
     elif imgFmt == 0x4:
