@@ -7,6 +7,9 @@
 
 local int i <hidden=true> = 0;
 local int isV1 <hidden=true> = 0;
+//Set these if you want close-to-accurate X and Y offsets to use in image editors like PVRTexTool, this is split in files so it's not possible to detect, 2048x4096, 2048x2048, 1024x1024, 512x512, 256x256, 128x128 would probably be recommended.
+local int manualTexHeight = 0;
+local int manualTexWidth = 0;
 
 typedef enum <int32>
 {
@@ -43,7 +46,7 @@ struct XGSTextureAtlas
                 Printf("hash: %i\n", hash);
                 i32_bool isHidden; //True seems to make the game not load the texture.
                 Printf("Is Hidden: %i\n", isHidden);
-                float   scaleX;//scale value. get real coord need * atlas.xgt image width 
+                float   scaleX;//scale value. get real coord need * atlas.xgt image width
                 Printf("X Scale: %f\n", scaleX);
                 float   scaleY;//scale value. get real coord need * atlas.xgt image height 
                 Printf("Y Scale: %f\n", scaleY);
@@ -55,6 +58,28 @@ struct XGSTextureAtlas
                 Printf("Texture Width: %i\n", textureWidth);
                 int     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
+                if (manualTexHeight != 0 && manualTexHeight != 0)
+                {
+                    //if these are greater than 127 they're probably negative
+                    local int scaleXMult = scaleX * manualTexHeight;
+                    if (scaleXMult > 127)
+                    {
+                        Printf("X Scale (Multiplied): -%i\n", scaleXMult);
+                    }
+                    else
+                    {
+                        Printf("X Scale (Multiplied): %i\n", scaleXMult);
+                    }                    
+                    local int scaleYMult = scaleY * manualTexWidth;
+                    if (scaleYMult > 127)
+                    {
+                        Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
+                    }
+                    else
+                    {
+                        Printf("Y Scale (Multiplied): %i\n", scaleYMult);
+                    }   
+                }
                 if (isV1 != 1 && version != 2)
                 {
                     int     unk1;
