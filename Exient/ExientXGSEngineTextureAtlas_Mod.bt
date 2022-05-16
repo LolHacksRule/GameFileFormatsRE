@@ -61,7 +61,7 @@ struct XGSTextureAtlas
                 if (manualTexHeight != 0 && manualTexHeight != 0)
                 {
                     //if these are greater than 127 they're probably negative
-                    local int scaleXMult = scaleX * manualTexHeight;
+                    local int scaleXMult <hidden=true> = scaleX * manualTexHeight;
                     if (scaleXMult > 127)
                     {
                         Printf("X Scale (Multiplied): -%i\n", scaleXMult);
@@ -70,7 +70,7 @@ struct XGSTextureAtlas
                     {
                         Printf("X Scale (Multiplied): %i\n", scaleXMult);
                     }                    
-                    local int scaleYMult = scaleY * manualTexWidth;
+                    local int scaleYMult <hidden=true> = scaleY * manualTexWidth;
                     if (scaleYMult > 127)
                     {
                         Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
