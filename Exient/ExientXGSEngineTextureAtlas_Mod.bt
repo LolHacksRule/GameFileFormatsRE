@@ -8,8 +8,8 @@
 local int i <hidden=true> = 0;
 local int isV1 <hidden=true> = 0;
 //Set these if you want close-to-accurate X and Y offsets to use in image editors like PVRTexTool, this is split in files so it's not possible to detect, 2048x4096, 2048x2048, 1024x1024, 512x512, 256x256, 128x128 would probably be recommended.
-local int manualTexHeight = 0;
 local int manualTexWidth = 0;
+local int manualTexHeight = 0;
 
 struct XGSTextureAtlas
 {
@@ -21,9 +21,9 @@ struct XGSTextureAtlas
     {
         isV1 = 1;
     }
-    int     subTextureCount; //How many %s_x_of_x textures are used, cannot be 0.
-    int     texCnt;
-    int     hash;//No effect when modifying, maybe it's a timestamp?
+    int32     subTextureCount; //How many %s_x_of_x textures are used, cannot be 0.
+    int32     texCnt;
+    int32     hash;//No effect when modifying, maybe it's a timestamp?
     if (!isV1)
     {
         char    atlasName[32];
@@ -36,41 +36,34 @@ struct XGSTextureAtlas
             Printf("--------TEXTURE %i START--------\n", i);
             struct InvidualTexInfo
             {
-                int     hash; //Modifying this will make the game UNABLE to read the texture.
+                int32     hash; //Modifying this will make the game UNABLE to read the texture.
                 Printf("hash: %i\n", hash);
-                int32 atlasID; //Atlas ID (Minus 1), where the game will load the texture, must be between subTextureCount! IE 1 means load *_0_of_x.xgt while 2 means load *_1_of_x.xgt, 0 makes the texture not be loaded.
+                int32 atlasID; //Atlas ID (Minus 1), where the game will load the texture, must be between subTextureCount! IE 1 means load *_1_of_x.xgt while 2 means load *_2_of_x.xgt, 0 makes the texture not be loaded.
                 Printf("Atlas ID: %i\n", atlasID);
                 float   scaleX;//scale value. get real coord need * atlas.xgt image width
                 Printf("X Scale: %f\n", scaleX);
                 float   scaleY;//scale value. get real coord need * atlas.xgt image height 
                 Printf("Y Scale: %f\n", scaleY);
                 float   scaleWidth;//scale value
-                Printf("Scale Width: %f\n", scaleWidth);
+                Printf("Scale Width: %f\n", scaleWidth); //Should be this * texWidth, identical to texWidth
                 float   scaleHeight;//scale value
-                Printf("Scale Height: %f\n", scaleHeight);
-                int     textureWidth;
+                Printf("Scale Height: %f\n", scaleHeight); //Should be this * texHeight, identical to texHeight
+                int32     textureWidth;
                 Printf("Texture Width: %i\n", textureWidth);
-                int     textureHeight;
+                int32     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
-                //the first is always -2 or -3 which would translate to 0 so don't show it
                 if (manualTexHeight != 0 && manualTexHeight != 0)
                 {
-                    local int scaleXMult <hidden=true> = scaleX * manualTexHeight;
-                    if (scaleXMult >= 4)
-                    {
-                        Printf("X Scale (Multiplied): -%i\n", scaleXMult);
-                    }                
-                    local int scaleYMult <hidden=true> = scaleY * manualTexWidth;
-                    if (scaleYMult >= 4)
-                    {
-                        Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
-                    }   
+                    local int32 scaleXMult = scaleX * manualTexWidth;
+                    local int32 scaleYMult = scaleY * manualTexHeight;
+                    Printf("X Scale (Multiplied): -%i\n", scaleXMult);       
+                    Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
                 }
                 if (isV1 != 1 && version != 2)
                 {
-                    int     unk1;
+                    int32     unk1;
                     Printf("unk1: %i\n", unk1);
-                    int     unk2;
+                    int32     unk2;
                     Printf("unk2: %i\n", unk2);
                 }
             } iti;
@@ -79,7 +72,7 @@ struct XGSTextureAtlas
     } splitTexInfoList;
     if (isV1 != 1 && version != 2)
     {
-        int     texNameDataBlockLength;
+        int32     texNameDataBlockLength;
         struct TextureStrings
         {
             Printf("Texture Names:\n");
