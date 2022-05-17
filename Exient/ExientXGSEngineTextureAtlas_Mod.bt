@@ -8,8 +8,12 @@
 local int i <hidden=true> = 0;
 local int isV1 <hidden=true> = 0;
 //Set these if you want close-to-accurate X and Y offsets to use in image editors like PVRTexTool, this is split in files so it's not possible to detect, 2048x4096, 2048x2048, 1024x1024, 512x512, 256x256, 128x128 would probably be recommended.
-local int manualTexWidth = 0;
-local int manualTexHeight = 0;
+//ATLAS 1
+local int atlas1ManualTexWidth = 0;
+local int atlas1ManualTexHeight = 0;
+//ATLAS 2
+local int atlas2ManualTexWidth = 0;
+local int atlas2ManualTexHeight = 0;
 
 struct XGSTextureAtlas
 {
@@ -52,10 +56,18 @@ struct XGSTextureAtlas
                 Printf("Texture Width: %i\n", textureWidth);
                 int32     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
-                if (manualTexHeight != 0 && manualTexHeight != 0)
+                if (atlas1ManualTexWidth != 0 && atlas1ManualTexHeight != 0)
                 {
-                    local int32 scaleXMult = scaleX * manualTexWidth;
-                    local int32 scaleYMult = scaleY * manualTexHeight;
+                    if (atlasID == 0)
+                    {
+                        local int32 scaleXMult = scaleX * atlas1ManualTexWidth;
+                        local int32 scaleYMult = scaleY * atlas1ManualTexHeight;
+                    }
+                    if (atlasID == 1)
+                    {
+                        local int32 scaleXMult = scaleX * atlas2ManualTexWidth;
+                        local int32 scaleYMult = scaleY * atlas2ManualTexHeight;
+                    }
                     Printf("X Scale (Multiplied): -%i\n", scaleXMult);       
                     Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
                 }
