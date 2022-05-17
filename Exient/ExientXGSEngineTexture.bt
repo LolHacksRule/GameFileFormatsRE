@@ -39,11 +39,11 @@ typedef enum <uint16> {
     AL88,  //AL88
     //14 seems to not work for PS3, I think
     PVRTC_2BPP_RGBA                  = 15,
-    PVRTC_4BPP_RGB,                         //May need to swap these two
+    PVRTC_4BPP_RGBA,                         //May need to swap these two
 
     //PVRTC_UNKNOWN_SWIZZLED           = 15, //?
-    PVRTC_4BPP_RGBA,
     PVRTC_4BPP_RGBA_2,
+    PVRTC_4BPP_RGBA_3,
     //19-21 crash on PS3
     RG88                             = 22,  //Unused on PS3, it's GR88
     L4,                                     //Unused

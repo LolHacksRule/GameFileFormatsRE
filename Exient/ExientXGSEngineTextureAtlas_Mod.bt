@@ -11,12 +11,6 @@ local int isV1 <hidden=true> = 0;
 local int manualTexHeight = 0;
 local int manualTexWidth = 0;
 
-typedef enum <int32>
-{
-    False,
-    True,
-} i32_bool;
-
 struct XGSTextureAtlas
 {
     LittleEndian();
@@ -44,8 +38,8 @@ struct XGSTextureAtlas
             {
                 int     hash; //Modifying this will make the game UNABLE to read the texture.
                 Printf("hash: %i\n", hash);
-                i32_bool isHidden; //True seems to make the game not load the texture.
-                Printf("Is Hidden: %i\n", isHidden);
+                int32 atlasID; //Atlas ID (Minus 1), where the game will load the texture, must be between subTextureCount! IE 1 means load *_0_of_x.xgt while 2 means load *_1_of_x.xgt, 0 makes the texture not be loaded.
+                Printf("Atlas ID: %i\n", atlasID);
                 float   scaleX;//scale value. get real coord need * atlas.xgt image width
                 Printf("X Scale: %f\n", scaleX);
                 float   scaleY;//scale value. get real coord need * atlas.xgt image height 
@@ -58,26 +52,18 @@ struct XGSTextureAtlas
                 Printf("Texture Width: %i\n", textureWidth);
                 int     textureHeight;
                 Printf("Texture Height: %i\n", textureHeight);
+                //the first is always -2 or -3 which would translate to 0 so don't show it
                 if (manualTexHeight != 0 && manualTexHeight != 0)
                 {
-                    //if these are greater than 127 they're probably negative
                     local int scaleXMult <hidden=true> = scaleX * manualTexHeight;
-                    if (scaleXMult > 127)
+                    if (scaleXMult >= 4)
                     {
                         Printf("X Scale (Multiplied): -%i\n", scaleXMult);
-                    }
-                    else
-                    {
-                        Printf("X Scale (Multiplied): %i\n", scaleXMult);
-                    }                    
+                    }                
                     local int scaleYMult <hidden=true> = scaleY * manualTexWidth;
-                    if (scaleYMult > 127)
+                    if (scaleYMult >= 4)
                     {
                         Printf("Y Scale (Multiplied): -%i\n", scaleYMult);
-                    }
-                    else
-                    {
-                        Printf("Y Scale (Multiplied): %i\n", scaleYMult);
                     }   
                 }
                 if (isV1 != 1 && version != 2)
