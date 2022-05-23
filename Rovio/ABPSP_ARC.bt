@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-//Viewing of archive (ARC) files of AB for PSP.
+//Viewing of archive (ARC) files and also BIN files of AB for PSP.
 
 typedef struct
 {
@@ -32,28 +32,28 @@ local uint i2<hidden = true> = 0;
 
 struct ABPSP_Arc
 {
-    struct TextureMeta
+    struct FileMeta
     {
         LittleEndian();
-        int32 texCount<bgcolor=cBlue>;
-        for (i = 0; i < texCount; i++)
+        int32 fileCount<bgcolor=cBlue>;
+        for (i = 0; i < fileCount; i++)
         {
-            struct IndividualTex
+            struct IndividualFile
             {
-                genericString texture;
+                genericString file;
                 int32 offset;
             } itm;
         }
-    } txm<bgcolor=cYellow>;
-    struct TextureData
+    } fm<bgcolor=cYellow>;
+    struct FileData
     {
-        for (i2 = 0; i2 < txm.texCount; i2++)
+        for (i2 = 0; i2 < fm.fileCount; i2++)
         {
-            struct IndividualTexData
+            struct IndividualFileData
             {
-                int32 txtrSize<bgcolor=cPurple>;
-                byte GIM[txtrSize];
-            } itd;
+                int32 fileSize<bgcolor=cPurple>;
+                byte file[fileSize];
+            } ifd;
         }
-    } td<bgcolor=cGreen>;
+    } fd<bgcolor=cGreen>;
 } ARC;
