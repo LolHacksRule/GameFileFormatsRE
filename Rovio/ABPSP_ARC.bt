@@ -1,0 +1,59 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ABPSP_ARC.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Viewing of archive (ARC) files of AB for PSP.
+
+typedef struct
+{
+    byte stringSize<hidden=true>;
+    if (stringSize >= 1)
+    {
+        char theString[stringSize];
+    }
+    else
+    {
+        Printf("String %i is empty!\n", i);
+    }
+} genericString;
+
+
+local uint i<hidden = true> = 0;
+local uint i2<hidden = true> = 0;
+
+struct ABPSP_Arc
+{
+    struct TextureMeta
+    {
+        LittleEndian();
+        int32 texCount<bgcolor=cBlue>;
+        for (i = 0; i < texCount; i++)
+        {
+            struct IndividualTex
+            {
+                genericString texture;
+                int32 offset;
+            } itm;
+        }
+    } txm<bgcolor=cYellow>;
+    struct TextureData
+    {
+        for (i2 = 0; i2 < txm.texCount; i2++)
+        {
+            struct IndividualTexData
+            {
+                int32 txtrSize<bgcolor=cPurple>;
+                byte GIM[txtrSize];
+            } itd;
+        }
+    } td<bgcolor=cGreen>;
+} ARC;

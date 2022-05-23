@@ -159,6 +159,11 @@ struct XGSPakFile {
             }
         }
     } XGSPakFolderBase[XGSPakHdr.folderCnt]<bgcolor = cRed>;
+    if (XGSPakHdr.fileCnt == 0)
+    {
+        terminate = 1;
+        Printf("This PAK file is empty!");
+    }
     if (terminate != 1)
     {
         struct ContentMetaBase
