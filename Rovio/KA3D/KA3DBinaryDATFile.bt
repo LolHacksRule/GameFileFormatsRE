@@ -74,7 +74,7 @@ typedef struct
                     }
                 } prm;
             }
-            if (hdr != KA3D_RVIO)
+            if (hdr != KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
             {
                 FSkip(2);
             }
@@ -158,7 +158,7 @@ typedef struct
                         SHORT width;
                         Printf("Width: %d\n", width);
                         SHORT height;
-                        Printf("Height:  %d\n", height);
+                        Printf("Height: %d\n", height);
                         SHORT unk2[2];
                     } prm;
                     Printf("--------TEXTURE %i END--------\n", i);
