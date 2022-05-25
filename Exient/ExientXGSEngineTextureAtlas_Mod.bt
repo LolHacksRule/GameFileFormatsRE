@@ -32,6 +32,45 @@ struct XGSTextureAtlas
     {
         char    atlasName[32];
     }
+    //Read the string table first
+    for (i = 0; i < texCnt; i++)
+    {
+        if (isV1 != 1 && version != 2)
+        {
+            FSkip(40);
+        }
+        else
+        {
+            FSkip(32);
+        }
+    }
+    if (isV1 != 1 && version != 2)
+    {
+        int32     texNameDataBlockLength;
+        struct TextureStrings
+        {
+            Printf("Texture Names:\n");
+            for (i = 0; i < texCnt; i++)
+            {
+                struct TextureString
+                {
+                    string texName;
+                    Printf("Texture %i: %s\n", i, texName);
+                } its;
+            }
+        } splitTexNameList;
+    }
+
+    //Then skip and read the texture info
+    FSkip(-texNameDataBlockLength);
+    FSkip(-4);
+    for (i = 0; i < texCnt; i++)
+    {
+        if (isV1 != 1 && version != 2)
+        {
+            FSkip(-40);
+        }
+    }
     struct SplitTextureInfoList
     {
         Printf("Texture Param:\n");
@@ -40,8 +79,10 @@ struct XGSTextureAtlas
             Printf("--------TEXTURE %i START--------\n", i);
             struct InvidualTexInfo
             {
+                local string txtrNameStr = splitTexNameList.its[i].texName;
+                Printf("Name: %s\n", txtrNameStr);
                 int32     hash; //Modifying this will make the game UNABLE to read the texture.
-                Printf("hash: %i\n", hash);
+                Printf("Hash: %i\n", hash);
                 int32 atlasID; //Atlas ID (Minus 1), where the game will load the texture, must be between subTextureCount! IE 1 means load *_1_of_x.xgt while 2 means load *_2_of_x.xgt, 0 makes the texture not be loaded.
                 Printf("Atlas ID: %i\n", atlasID);
                 float   scaleX;//scale value. get real coord need * atlas.xgt image width
@@ -79,23 +120,7 @@ struct XGSTextureAtlas
                     Printf("unk2: %i\n", unk2);
                 }
             } iti;
-            Printf("--------TEXTURE %i END--------\n", i);
+            Printf("--------TEXTURE %i END----------\n", i);
         }
     } splitTexInfoList;
-    if (isV1 != 1 && version != 2)
-    {
-        int32     texNameDataBlockLength;
-        struct TextureStrings
-        {
-            Printf("Texture Names:\n");
-            for (i = 0; i < texCnt; i++)
-            {
-                struct TextureString
-                {
-                    string texName;
-                    Printf("Texture %i: %s\n", i, texName);
-                } its;
-            }
-        } splitTexNameList;
-    }
 } XGSTA;
