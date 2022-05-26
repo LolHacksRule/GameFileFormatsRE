@@ -205,7 +205,10 @@ typedef struct
                         Printf("Width: %d\n", width);
                         SHORT height;
                         Printf("Height: %d\n", height);
-                        SHORT unk2[2];
+                        SHORT widthHalved;
+                        Printf("Width Halved: %d\n", widthHalved);
+                        SHORT heightHalved;
+                        Printf("Height Halved: %d\n", heightHalved);
                     } prm;
                     Printf("--------TEXTURE %i END--------\n", i);
                 } txtr;
