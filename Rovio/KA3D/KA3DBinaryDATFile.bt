@@ -17,7 +17,7 @@ local uint i<hidden = true> = 0;
 local uint i2<hidden = true> = 0;
 
 //MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS!
-local uint forceHeaderlessText <hidden = true> = 1;
+local uint forceHeaderlessText <hidden = true> = 0;
 local uint forceHeaderlessFont <hidden = true> = 0;
 local uint forceHeaderlessSprite <hidden = true> = 0;
 
