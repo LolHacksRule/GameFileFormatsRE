@@ -16,11 +16,16 @@
 local uint i<hidden = true> = 0;
 local uint i2<hidden = true> = 0;
 
+//MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1.
+local uint forceText <hidden = true> = 1;
+local uint forceFont <hidden = true> = 0;
+local uint forceSprite <hidden = true> = 0;
+
 typedef enum <DWORD>
 {
     KA3D = 1262564164,
     KA3D_RVIO = 1381386575,
-    Composite = 1129270608,
+    CompoSprite = 1129270608,
     Text = 1413830740,
     LanguageData = 1279541588,
     LabelIDs = 1279870035,
@@ -85,10 +90,16 @@ typedef struct
 
 typedef struct
 {
-    baseCblkHdr baseHdr;
+    if (forceText != 1)
+    {
+        baseCblkHdr baseHdr;
+    }
     struct TextBlockBin
     {
-        SHORT ver;
+        if (forceText != 1)
+        {
+            SHORT ver;
+        }
         struct LanguageData
         {
             blockType hdr;
@@ -133,10 +144,16 @@ typedef struct
 
 typedef struct
 {
-    baseCblkHdr baseHdr;
+    if (forceSprite != 1)
+    {
+        baseCblkHdr baseHdr;
+    }
     struct SpriteBlockBin
     {
-        SHORT ver;
+        if (forceSprite != 1)
+        {
+            SHORT ver;
+        }
         genericString txtrFNameStr;
         SHORT maxTextures;
         struct Textures
@@ -170,10 +187,16 @@ typedef struct
 
 typedef struct
 {
-    baseCblkHdr baseHdr;
+    if (forceFont != 1)
+    {
+        baseCblkHdr baseHdr;
+    }
     struct FontBlockBin
     {
-        SHORT ver;
+        if (forceFont != 1)
+        {
+            SHORT ver;
+        }
         genericString txtrFNameStr;
         DWORD unk;
         SHORT maxTextures;
@@ -195,24 +218,53 @@ typedef struct
 struct KA3DBinary
 {
     BigEndian();
-    blockType hdr;
-    DWORD mainBlockDataSize;
-    DWORD tmpChk<hidden=true>;
-    FSkip(-4);
-    if (tmpChk == Composite)
+    //Check for headerless file
+    byte headerlessChk; //if you find 0, it's the old headerless format
+    FSkip(-1);
+    if (headerlessChk == 0)
     {
-        cmpBlock CompositeBlock;
+        if (forceText == 1)
+        {
+            Printf("Forcing headerless Text block detection!\n");
+            TEXTBlock HeaderlessTextBlock;
+        }
+        else if (forceSprite == 1)
+        {
+            Printf("Forcing headerless Sprite block detection!\n");
+            SPRTBlock HeaderlessSpriteBlock;
+        }
+        else if (forceFont == 1)
+        {
+            Printf("Forcing headerless Font block detection!\n");
+            FONTBlock HeaderlessFontBlock;
+        }
+        else
+        {
+            Printf("Headerless file detected! Please modify the manual flags to detect its data.\n");
+        }
     }
-    if (tmpChk == Text)
+    else
+    //Detect newer KA3D format
     {
-        TEXTBlock TextBlock;
-    }
-    if (tmpChk == Sprite)
-    {
-        SPRTBlock SpriteBlock;
-    }
-    if (tmpChk == Font)
-    {
-        FONTBlock FontBlock;
+        blockType hdr;
+        DWORD mainBlockDataSize;
+        DWORD tmpChk<hidden=true>;
+        FSkip(-4);    
+        if (tmpChk == CompoSprite)
+        {
+            cmpBlock CompoSpriteBlock;
+        }
+        if (tmpChk == Text || forceText == 1)
+        {
+            TEXTBlock TextBlock;
+        }
+        if (tmpChk == Sprite || forceSprite == 1)
+        {
+            SPRTBlock SpriteBlock;
+        }
+        if (tmpChk == Font)
+        {
+            FONTBlock FontBlock;
+        }
     }
 } KA3D_DAT<bgcolor=cYellow>;
