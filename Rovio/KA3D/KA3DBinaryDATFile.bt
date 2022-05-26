@@ -16,10 +16,10 @@
 local uint i<hidden = true> = 0;
 local uint i2<hidden = true> = 0;
 
-//MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1.
-local uint forceText <hidden = true> = 1;
-local uint forceFont <hidden = true> = 0;
-local uint forceSprite <hidden = true> = 0;
+//MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS!
+local uint forceHeaderlessText <hidden = true> = 1;
+local uint forceHeaderlessFont <hidden = true> = 0;
+local uint forceHeaderlessSprite <hidden = true> = 0;
 
 typedef enum <DWORD>
 {
@@ -90,21 +90,34 @@ typedef struct
 
 typedef struct
 {
-    if (forceText != 1)
+    if (forceHeaderlessText != 1)
     {
         baseCblkHdr baseHdr;
     }
     struct TextBlockBin
     {
-        if (forceText != 1)
+        if (forceHeaderlessText != 1)
         {
             SHORT ver;
         }
+        else
+        {
+            byte dmy;
+        }
         struct LanguageData
         {
-            blockType hdr;
-            DWORD blockDataSize;
-            SHORT languageCount;
+            if (forceHeaderlessText != 1)
+            {
+                blockType hdr;
+                DWORD blockDataSize;
+                SHORT languageCount;
+            }
+            else
+            {
+                DWORD blockDataSize;
+                byte languageCount;
+                //byte dmy;
+            }
             struct Languages
             {
                 for (i; i < languageCount; i++)
@@ -115,8 +128,11 @@ typedef struct
         } LDAT;
         struct LabelIDs
         {
-            blockType hdr;
-            DWORD blockSize;
+            if (forceHeaderlessText != 1)
+            {
+                blockType hdr;
+                DWORD blockSize;
+            }
             SHORT labels;
             struct LabelIDStrings
             {
@@ -126,13 +142,26 @@ typedef struct
                 }
             } LIDStrings;
         } LIDS;
+        if (forceHeaderlessText == 1)
+        {
+            struct OffsetTable
+            {
+                for (i2 = 0; i2 < LDAT.languageCount; i2++)
+                {
+                    int32 offset; //from the current pos, this is the offset
+                }
+            } offtbl;
+        }
         for (i2 = 0; i2 < LDAT.languageCount; i2++)
         {
             struct TextGroupChunk
             {
                 //local string theLanguage = LDAT.langs[i].theLang[i];
-                blockType hdr;
-                DWORD blockSize;
+                if (forceHeaderlessText != 1)
+                {
+                    blockType hdr;
+                    DWORD blockSize;
+                }
                 for (i = 0; i < LIDS.labels; i++)
                 {
                     genericString theStr;
@@ -144,13 +173,13 @@ typedef struct
 
 typedef struct
 {
-    if (forceSprite != 1)
+    if (forceHeaderlessSprite != 1)
     {
         baseCblkHdr baseHdr;
     }
     struct SpriteBlockBin
     {
-        if (forceSprite != 1)
+        if (forceHeaderlessSprite != 1)
         {
             SHORT ver;
         }
@@ -187,13 +216,13 @@ typedef struct
 
 typedef struct
 {
-    if (forceFont != 1)
+    if (forceHeaderlessFont != 1)
     {
         baseCblkHdr baseHdr;
     }
     struct FontBlockBin
     {
-        if (forceFont != 1)
+        if (forceHeaderlessFont != 1)
         {
             SHORT ver;
         }
@@ -219,21 +248,21 @@ struct KA3DBinary
 {
     BigEndian();
     //Check for headerless file
-    byte headerlessChk; //if you find 0, it's the old headerless format
+    byte headerlessChk<hidden=true>; //if you find 0, it's the old headerless format
     FSkip(-1);
     if (headerlessChk == 0)
     {
-        if (forceText == 1)
+        if (forceHeaderlessText == 1)
         {
             Printf("Forcing headerless Text block detection!\n");
             TEXTBlock HeaderlessTextBlock;
         }
-        else if (forceSprite == 1)
+        else if (forceHeaderlessSprite == 1)
         {
             Printf("Forcing headerless Sprite block detection!\n");
             SPRTBlock HeaderlessSpriteBlock;
         }
-        else if (forceFont == 1)
+        else if (forceHeaderlessFont == 1)
         {
             Printf("Forcing headerless Font block detection!\n");
             FONTBlock HeaderlessFontBlock;
@@ -254,11 +283,11 @@ struct KA3DBinary
         {
             cmpBlock CompoSpriteBlock;
         }
-        if (tmpChk == Text || forceText == 1)
+        if (tmpChk == Text)
         {
             TEXTBlock TextBlock;
         }
-        if (tmpChk == Sprite || forceSprite == 1)
+        if (tmpChk == Sprite)
         {
             SPRTBlock SpriteBlock;
         }
