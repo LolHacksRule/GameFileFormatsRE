@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: PopCapJ2ME_AFile.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Gets data from chunked MIDI files.
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Only tested on PVZ's "a" file!
+
+local uint i<hidden = true> = 0;
+
+struct PopCapJ2ME_AFile
+{
+    byte midiCount;
+    int16 bSizeOfMidi1;
+    for (i = 0; i < midiCount; i++)
+    {
+        struct Midi
+        {
+            byte pad;
+            int32 ver; //?
+            byte pad2[3];
+            int32 bSize;
+            byte MIDI[bSize];
+        } midi;
+    }
+}a;
