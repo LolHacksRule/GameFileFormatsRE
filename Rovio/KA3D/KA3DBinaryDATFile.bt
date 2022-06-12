@@ -39,7 +39,7 @@ typedef struct
     blockType contentBlockType;
     DWORD blockSize; //-4
     //SHORT ver;
-} baseCblkHdr;
+} contentBlockHeader;
 
 typedef struct
 {
@@ -56,43 +56,60 @@ typedef struct
 
 typedef struct
 {
-    baseCblkHdr baseHdr;
-    SHORT ver;
-    SHORT texCnt;
-    struct TextureData
+    local string theLabelIDString = LIDS.LIDSd.LIDStrings.theLabelIDStr[i].theString;
+    short textStringSize<hidden=true>;
+    if (textStringSize >= 1)
     {
-        for (i; i < texCnt; i++)
+        char theTextString[textStringSize];
+    }
+    else
+    {
+        Printf("TextString %i is empty!\n", i);
+    }
+} textString;
+
+typedef struct
+{
+    contentBlockHeader baseCompositeHdr;
+    struct COMPData
+    {
+        SHORT ver;
+        SHORT texCnt;
+        struct TextureData
         {
-            genericString texNameStr;
-            short subTexCnt;
-            for (i2 = 0; i2 < subTexCnt; i2++)
+            for (i; i < texCnt; i++)
             {
-                genericString subTexNameStr;
-                struct SubTexParam
+                genericString texNameStr;
+                short subTexCnt;
+                for (i2 = 0; i2 < subTexCnt; i2++)
                 {
-                    short unk[2]; //First one is width?
-                    if (hdr == KA3D_RVIO)
+                    genericString subTexNameStr;
+                    struct SubTexParam
                     {
-                        short unk2;
-                        float unk3[3];
-                        int16 unk4;
-                    }
-                } prm;
+                        short unk[2]; //First one is width?
+                        if (hdr == KA3D_RVIO)
+                        {
+                            short unk2;
+                            float unk3[3];
+                            int16 unk4;
+                        }
+                    } prm;
+                }
+                if (hdr != KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
+                {
+                    FSkip(2);
+                }
             }
-            if (hdr != KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
-            {
-                FSkip(2);
-            }
-        }
-    } tdata;
-    FSkip(2);
+        } tdata;
+        FSkip(2);
+    } compD;
 } cmpBlock;
 
 typedef struct
 {
     if (forceHeaderlessText != 1)
     {
-        baseCblkHdr baseHdr;
+        contentBlockHeader baseTextDataBlockHdr;
     }
     struct TextBlockBin
     {
@@ -108,66 +125,91 @@ typedef struct
         {
             if (forceHeaderlessText != 1)
             {
-                blockType hdr;
-                DWORD blockDataSize;
-                SHORT languageCount;
+                contentBlockHeader languageDataBlockHdr;
             }
             else
             {
                 DWORD blockDataSize;
-                byte languageCount;
-                //byte dmy;
             }
-            struct Languages
+            struct LDATData
             {
-                for (i; i < languageCount; i++)
+                if (forceHeaderlessText != 1)
                 {
-                    genericString theLang;
+                    SHORT languageCount;
                 }
-            } langs;
+                else
+                {
+                    byte languageCount;
+                    //byte dmy;
+                }
+                struct Languages
+                {
+                    for (i; i < languageCount; i++)
+                    {
+                        //struct Language
+                        //{
+                            genericString theLanguageStr;
+                        //} ldat_lang;
+                    }
+                } langs;
+            } LDATd;
         } LDAT;
         struct LabelIDs
         {
             if (forceHeaderlessText != 1)
             {
-                blockType hdr;
-                DWORD blockSize;
+                contentBlockHeader labelIDDataBlockHdr;
             }
-            SHORT labels;
-            struct LabelIDStrings
+            struct LIDSData
             {
-                for (i = 0; i < labels; i++)
+                SHORT labels;
+                struct LabelIDStrings
                 {
-                    genericString theStr;
-                }
-            } LIDStrings;
+                    for (i = 0; i < labels; i++)
+                    {
+                        //struct LabelIDString
+                        //{
+                            genericString theLabelIDStr;
+                        //} lid_str;
+                    }
+                } LIDStrings;
+            } LIDSd;
         } LIDS;
         if (forceHeaderlessText == 1)
         {
             struct OffsetTable
             {
-                for (i2 = 0; i2 < LDAT.languageCount; i2++)
+                for (i2; i2 < LDAT.LDATd.languageCount; i2++)
                 {
                     int32 offset; //from the current pos, this is the offset
                 }
             } offtbl;
         }
-        for (i2 = 0; i2 < LDAT.languageCount; i2++)
+        struct TextGroups
         {
-            struct TextGroupChunk
+            for (i2 = 0; i2 < LDAT.LDATd.languageCount; i2++)
             {
-                //local string theLanguage = LDAT.langs[i].theLang[i];
-                if (forceHeaderlessText != 1)
+                struct TextGroup
                 {
-                    blockType hdr;
-                    DWORD blockSize;
-                }
-                for (i = 0; i < LIDS.labels; i++)
-                {
-                    genericString theStr;
-                }
-            } TXGP;
-        }
+                    local string theLanguage = LDAT.LDATd.langs.theLanguageStr[i2].theString;
+                    if (forceHeaderlessText != 1)
+                    {
+                        contentBlockHeader textGroupBlockHdr;
+                    }
+                    struct TextGroupData
+                    {
+                        for (i = 0; i < LIDS.LIDSd.labels; i++)
+                        {
+                            //struct TextGroupString
+                            //{
+                                //local string theLabelID = LIDS.LIDSd.LIDStrings.lid_str[i].theStr.theString;
+                                textString TextGroupString;
+                            //} txgp_str;
+                        }
+                    } txgpd;
+                } TXGP;
+            }
+        } textGroups;
     } TextBlockBinary;
 } TEXTBlock<bgcolor=cGreen>;
 
@@ -175,7 +217,7 @@ typedef struct
 {
     if (forceHeaderlessSprite != 1)
     {
-        baseCblkHdr baseHdr;
+        contentBlockHeader baseSpriteBlockHdr;
     }
     struct SpriteBlockBin
     {
@@ -221,7 +263,7 @@ typedef struct
 {
     if (forceHeaderlessFont != 1)
     {
-        baseCblkHdr baseHdr;
+        contentBlockHeader baseFontBlockHdr;
     }
     struct FontBlockBin
     {
@@ -278,8 +320,7 @@ struct KA3DBinary
     else
     //Detect newer KA3D format
     {
-        blockType hdr;
-        DWORD mainBlockDataSize;
+        contentBlockHeader baseHdr;
         DWORD tmpChk<hidden=true>;
         FSkip(-4);    
         if (tmpChk == CompoSprite)
