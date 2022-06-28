@@ -1,0 +1,51 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ArtPacker_StreamFile.bt
+//   Authors: LolHacksRule (rizdub for format https://ptb.discord.com/channels/502223141179883540/502319209012002817/502333268738310187)
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int64>
+{
+    RGBA4444 = 5928780282272691252,
+    RGBA8888 = 5928780282340063288
+} texFmt; //Rovio didn't use I64 possibly so I'd rather save text
+
+local int FPos<hidden = true> = FTell();
+
+local int FSize<hidden = true> = FileSize();
+
+//local int isEOF = FEof();
+
+local int EOF<hidden = true> = FPos + FSize;
+
+BigEndian();
+
+local uint i<hidden=true> = 0;
+
+struct ArtPackerSTREAM
+{
+    while (FPos < EOF) //Just detect as many
+    {
+        struct RawImage
+        {
+            uint32 imageSize;
+            uint16 hdrSize; //40
+            uint16 width;
+            uint16 height;
+            uint16 atlasNum;
+            uint16 unk[10]; //the first one is width again?
+            texFmt theTexFormat;
+            FSkip(-40);
+            byte theRawTex[imageSize];
+            FPos = FTell();
+        } rawImg;
+        //FSkip(-32);
+    }
+} zstreamFile;
