@@ -30,7 +30,9 @@ local int isPVZ2CompressedPTXFile <hidden=true> = 0;
 
 typedef enum <int32> {
 	ARGB8888,
+    RGBA4444,
     RGB565,
+    RGBA5551,
     DXT5 = 5, //PS4/Xbox 360
     ETC1_RGB_A8 = 147,
     RGBA4444_BLOCK = 21 //?

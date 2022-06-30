@@ -54,7 +54,7 @@ typedef struct
     }
 } seqBlock;
 
-struct Housemarque_ExportedFile
+struct ExportedFile
 {
     BigEndian();
     genericString theFName;

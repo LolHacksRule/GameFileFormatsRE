@@ -36,7 +36,7 @@ typedef enum <uint16> {
     DXT5_SWIZZLED,                          //PS3/WinPhone only?
     PVR_UNK,
     UNKNOWN_8888,                           //Some swizzled format (at least for PS3), unused
-    AL88,  //AL88
+    AL88,                                   //AL88
     //14 seems to not work for PS3, I think
     PVRTC_2BPP_RGBA                  = 15,
     PVRTC_4BPP_RGBA,                         //May need to swap these two
@@ -48,8 +48,8 @@ typedef enum <uint16> {
     RG88                             = 22,  //Unused on PS3, it's GR88
     L4,                                     //Unused
     DXT1_OR_ETC1,                           //On Android this is usually DXT1, old Android has this DXT1 swizzled, null on PS3
-    //UNKNOWN2               = 24,
-    //DXT1_2                 = 24,
+    //UNKNOWN2                       = 24,
+    //DXT1_2                         = 24,
     LA44,
     DXT5,
     //27-39 crashes on PS3
