@@ -1,0 +1,116 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint isWiiU = 0;
+local uint isWii = 0;
+
+typedef enum <uint32>
+{
+    MipHeader = 1296650344,
+    WiiUTexture = 1465209888,
+    GameCubeTexture_NotReally = 1195594784
+} contentType;
+
+typedef enum <uint16>
+{
+    RGBA8888_Paletized = 6,
+    RGBA4444_Paletized = 8,
+    Pal8,
+} GCTTexFmt;
+
+typedef enum <uint16>
+{
+    IA8,
+    RGB565,
+    RGB5A3,
+} GCTPalFmt;
+
+typedef enum <uint32>
+{
+    BC1_SRGB = 0x431,
+    BC2_SRGB = 0x432,
+    BC3_SRGB = 0x433,
+    BC4_SNORM = 0x234,
+    BC5_SNORM = 0x235,
+} WiiUTexFmt;
+
+struct FunLabsTexture
+{
+    struct MipHeader
+    {
+        BigEndian();
+        contentType magic;
+        //FSkip(2);
+        int32 dataSize; //or offset
+        int16 xOff;
+        int16 yOff;
+        int32 dataOff; //Or header size?
+        if (dataOff == 192)
+        {
+            isWiiU = 1;
+        }
+        else
+        {
+            isWii = 1;
+        }
+        int32 width;
+        int32 height;
+        int16 unk2[2];
+        if (isWii)
+        {
+            int32 unk;
+            struct WiiGCT
+            {
+                contentType magic;
+                int16 width;
+                int16 height;
+                GCTTexFmt texFmt;
+                GCTPalFmt palFmt;
+                int32 unk;
+                int32 pixelSize;
+                int32 palSize;
+                int32 unk2[2];
+            } GCT;
+        }
+        if (isWiiU)
+        {
+            struct WiiUTexture
+            {
+                contentType magic;
+                int16 unknown[2];
+                int32 surfaceDim;
+                int32 width;
+                int32 height;
+                int32 unknown3;
+                int32 mips;
+                WiiUTexFmt textureFormat;
+                int32 AAMode;
+                int32 surfaceUse;
+                int32 pixelSize;
+                int32 dataPtr;
+                int32 mipMapDSize;
+                int32 mipMapPtr;
+                int32 tileMode;
+                int32 swizzle;
+                int32 alignment;
+                int32 pitch;
+                FSkip(64);
+                int32 unknown3;
+                byte unknown4[4];
+                uint32 unknown5[6];
+            } WUT;
+            FSeek(dataOff);
+        }
+    } MIPh;
+    byte theTexData[MIPh.dataSize];
+} TextureFile;

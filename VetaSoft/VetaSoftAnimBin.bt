@@ -1,0 +1,57 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint animInfoNum<hidden = true> = 0;
+local uint animInfo2Num<hidden = true> = 0;
+
+struct VetaSoftAnimBin
+{
+    LittleEndian();
+    short anims;
+    for (animInfoNum = 0; animInfoNum <= anims; animInfoNum++)
+    {
+        struct animdata
+        {
+            short num1;
+            short num2;
+            for (animInfo2Num = 0; animInfo2Num <= num2; animInfo2Num++)
+            {
+                struct AnimInfo
+                {
+                    short OnOff;
+                    short VRam;                  
+                    short PosX;
+                    short PosY;                    
+                    byte Transparence;                    
+                    byte Locked;                    
+                    byte FlipX;                    
+                    byte FlipY;                    
+                    short ZoomX;                    
+                    short ZoomY;                    
+                    short Colorised;                    
+                    byte ActiveZoomX;                    
+                    byte ActiveZoomY;                    
+                    short Rotation;                    
+                    short DetectionX1;                    
+                    short DetectionY1;                    
+                    short DetectionX2;                    
+                    short DetectionY2;                    
+                    byte DetectionType;                    
+                    byte Son;                    
+                    byte SonVolume;                    
+                    byte SonBalance;
+                } AI;
+            }
+        } ad;
+    }
+} VSA;

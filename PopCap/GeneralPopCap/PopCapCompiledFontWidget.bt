@@ -53,7 +53,7 @@ typedef struct
 
 struct CFW2
 {
-    byte MD5[16]; //MD5 of original TXT file
+    byte MD5[16]; //MD5 of original TXT file, legacy games for iDevices exclude this and only have the later content
     int32 ContentChecker;
     if (ContentChecker == 3439307281)
     {

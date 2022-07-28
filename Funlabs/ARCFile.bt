@@ -1,0 +1,151 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: ARCFile.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading of the metadata
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Only tested on Angry Birds Trilogy on Wii/U.
+
+typedef enum <uint32>
+{
+    ARC_Header = 4411969,
+    ARC_Archive = 1212371521
+} format;
+
+typedef enum <uint32>
+{
+    False,
+    True
+} I32_Bool;
+
+local uint arcNum<hidden = true> = 0;
+local uint fileNum<hidden = true> = 0;
+
+//Set this to true to manually read uncompressed ARCH blocks in the file, WIP!
+local uint viewEmbeddedArchiveBlocks<hidden = true> = 0;
+
+local int FPos<hidden = true> = FTell();
+
+local int FSize<hidden = true> = FileSize();
+
+//local int isEOF = FEof();
+
+local int EOF<hidden = true> = FPos + FSize;
+
+//local int pos = FTell();
+
+//local int end = pos + size;
+
+typedef struct
+{
+    //FSkip(-800);
+    format magic;
+    BigEndian();
+    int16 ver;
+    int16 verMinor;
+    LittleEndian();
+    int32 archDataTableOffset;
+    int32 size;
+    int32 compressedSize;
+    int32 files;
+    int32 alignment;
+    //FSkip(offst * alignment);
+} ARC;
+
+typedef struct
+{
+    format magic;
+    int32 offset;
+    int32 unknown1;
+    int32 size;
+    int32 compressedSize;
+    int32 unknown2;
+    if (size != compressedSize)
+    {
+        local I32_Bool isCompressed = True;
+    }
+    else
+    {
+        local I32_Bool isCompressed = False;
+    }
+    int32 stringSize;
+    char theFileName[stringSize];
+} ARCH;
+
+typedef struct
+{
+    if (ARCHBlks.TheArcArchive[fileNum].isCompressed == True)
+    {
+        byte theCompressedFileData[ARCHBlks.TheArcArchive[fileNum].compressedSize];
+    }
+    else
+    {
+        byte theFileData[ARCHBlks.TheArcArchive[fileNum].size];
+    }
+} File;
+
+struct ArcFile
+{
+    LittleEndian();
+    format hdrChkTmp<hidden=true>;
+    FSkip(-4);
+    if (hdrChkTmp != ARC_Header && hdrChkTmp != ARC_Archive)
+    {
+        FSkip(FSize - 2048);
+    }
+    format hdrChk<hidden=true>;
+    FSkip(-4);
+    if (hdrChk == ARC_Header) //Check for ARC
+    {
+        ARC TheArcHeader;
+        FSeek(TheArcHeader.archDataTableOffset * TheArcHeader.alignment);
+        if (viewEmbeddedArchiveBlocks)
+        {
+            struct ARCHBlocks
+            {
+                for (arcNum = 0; arcNum < TheArcHeader.files; arcNum++)
+                {
+                    ARCH TheArcArchive;
+                }
+            } ARCHBlks;
+            struct FileBlocks
+            {
+                for (fileNum = 0; fileNum < TheArcHeader.files; fileNum++)
+                {
+                    FSeek(ARCHBlks.TheArcArchive[fileNum].offset * TheArcHeader.alignment);
+                    File theFile;
+                }
+            } FileBlks;
+        }
+        else
+        {
+            byte theCompressedArcArchive[TheArcHeader.compressedSize];
+        }
+        //Commented,
+        /*for (arcNum = 0; arcNum < TheArcHeader.files; arcNum++)
+        {
+            ARCH TheArcArchive;
+        }*/
+    }
+    if (hdrChk == ARC_Archive) //Check for ARC
+    {
+        //Printf("---------File Data-----------\n");
+        struct ARCHBlocks_ArchiveFile
+        {
+            while (FPos < EOF) //Read as many until EOF
+            {
+                ARCH TheArcArchive;
+                FPos = FTell();
+            }
+        } ArchBlks;
+        //Printf("---------File Data End-------\n");
+        Printf("The end of the file was reached.");
+    }
+} ARCFile;

@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: VetaSoftSpritesBin.bt
+//   Authors: LolHacksRule
+//   Version: 1
+//   Purpose: Reading of the sprites binary
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint texNum<hidden = true> = 0;
+
+struct VetaSoftSpritesBin
+{
+    LittleEndian();
+    for (texNum = 0; texNum < 1023; texNum++) //Replace 1023 with the amount of numbered textures if needed, Garfield's Wild Ride has 1023
+    {
+        struct Data
+        {
+            int16 width;
+            int16 height;
+            Printf("%i: %ix%i\n", texNum, width, height);
+        } texData;
+    }
+} VSA;
