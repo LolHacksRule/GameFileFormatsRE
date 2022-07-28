@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+//Also works with DAT files from legacy PVZ and iDevice ports
+
 local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 
