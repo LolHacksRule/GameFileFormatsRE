@@ -1,6 +1,9 @@
 #Original script https://zenhax.com/viewtopic.php?t=1270
 
 set UNNAMEDASSETS 0
+set ISNX 0
+set GUIDSIZE 16
+set DGRPS 0
 
 idstring "RFRM"
 endian big
@@ -11,6 +14,9 @@ for i = 0 < ASSETS
 	#if ASSETTYPE = "CSMP"
 	#math UNNAMEDASSETS + 1
 	#endif
+	if ASSETTYPE = "DGRP"
+		math DGRPS + 1
+	endif
 	#if ASSETTYPE = "CAUD"
 	#math UNNAMEDASSETS + 1
 	#endif
@@ -32,17 +38,14 @@ get UNNECESSARY2 longlong
 get UNNECESSARY3 long
 get UNNECESSARY4 longlong
 get NAMETAGS long
-for i = 0 < NAMETAGS
-	set NAMETYPE = ""
+for i = 0 < NAMETAGS - DGRPS
+	set DATATYPE = ""
 	getDstring NAMETYPE 4
 	if NAMETYPE = "MSBT"
 	string DATATYPE = ".mstbin"
 	endif
 	if NAMETYPE = "LDTA"
 	string DATATYPE = ".ldata"
-	endif
-	if NAMETYPE = "DGRP"
-	string DATATYPE = ""
 	endif
 	if NAMETYPE = "UINF"
 	string DATATYPE = ".uinfo"
@@ -65,7 +68,7 @@ for i = 0 < NAMETAGS
 	if NAMETYPE = "FSMC"
 	string DATATYPE = ".cfsm"
 	endif
-	if NAMETYPE = "GFX" || TYPE == "GFXL"
+	if NAMETYPE = "GFX" || NAMETYPE == "GFXL"
 	string DATATYPE = ".rsgfx"
 	endif
 	if NAMETYPE = "ROOM"
@@ -76,18 +79,33 @@ for i = 0 < NAMETAGS
 	endif
 	get GUID longlong
 	get GUIDP2 longlong
-	get ASSETNAME string
+	savepos nxCheck
+		get test byte
+	goto nxCheck
+	if test == 0x0 && ISNX != 1
+		math ISNX += 1
+		get STRSIZE long
+		getDstring ASSETNAME STRSIZE
+	else
+		get ASSETNAME string
+	endif
 	math T == i
 	getarray OFFSET   3	 T
 	getarray SIZE   4 T
-	if ASSETTYPE == NAMETYPE
-		string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
-		log NAME OFFSET SIZE
-	else
-		string NAME p= "0x%08x%08x%s" GUID GUIDP2 ASSETTYPE
-		log NAME OFFSET SIZE
-	endif
 next i
+
+	#if ASSETTYPE != NAMETYPE
+	#	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
+	#	log NAME OFFSET SIZE
+	#else
+	#	set LOSTDATATYPE = ""
+	#	if ASSETTYPE = "CSMP"
+	#		string LOSTDATATYPE = ".csmp"
+	#	endif
+	#	string NAME p= "0x%08x%08x%s" GUID GUIDP2 LOSTDATATYPE
+	#	log NAME OFFSET SIZE
+	#endif
+
 #for i = 0 < UNNAMEDASSETS	
 #if ASSETTYPE = "LDTA"
 #	string DATATYPE = ".ldata"
@@ -101,3 +119,11 @@ next i
 #string NAME p= "0x%08x%08x%s" GUID GUIDP2 DATATYPE
 #log NAME OFFSET SIZE
 #next i
+
+#if DGRPS > 0
+	#for i = 0 < DGRPS	
+	#	string NAME p= "%s" ASSETNAME
+	#	log NAME OFFSET SIZE
+	#next i
+	#endif
+	#math DGRPS = 0
