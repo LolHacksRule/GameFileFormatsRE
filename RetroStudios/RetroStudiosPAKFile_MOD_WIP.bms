@@ -11,11 +11,16 @@ for i = 0 < ASSETS
 	get OFFSET longlong
 	get SIZE longlong
 	#putarray 1 i SIZE
-	putarray 2 i OFFSET
+	#putarray 2 i OFFSET
 next i
-get UNNECESSARY longlong
+getDstring ISMETA 4
+if ISMETA = "META"
+Print "Doesn't work on meta."
+break
+endif
 get UNNECESSARY2 longlong
-get UNNECESSARY3 longlong
+get UNNECESSARY3 long
+get UNNECESSARY4 longlong
 get NAMETAGS long
 for i = 0 < NAMETAGS
 	getDstring TYPE 4
@@ -62,7 +67,7 @@ for i = 0 < NAMETAGS
 	get GUIDP2 longlong
 	get ASSETNAME string
 	#getarray SIZE   1 T
-    getarray OFFSET 2 T
+    #getarray OFFSET 2 T
 	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
 	log NAME OFFSET SIZE
 next i
