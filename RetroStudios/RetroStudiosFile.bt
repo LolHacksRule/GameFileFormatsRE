@@ -945,6 +945,10 @@ typedef struct
     {
         FormDescriptor TextureFormDescriptor;
     }
+    if (isPack == 0 && ContentForm.fVer == 15 && ContentForm.dVer == 16)
+    {
+        checkLocalMETA = 1;
+    }
     ChunkDescriptor TextureHeaderDescriptor;
     struct TextureData
     {
@@ -1684,7 +1688,10 @@ struct RetroStudiosFile
     if (ContentForm.contentType == Texture)
     {
         TextureChunk TextureContent;
-        checkLocalMETA = 1;
+        if (isNX)
+        {
+            checkLocalMETA = 1;
+        }
     }
     if (ContentForm.contentType == CompiledModel || ContentForm.contentType == SkinnedModel || ContentForm.contentType == WorldModel)
     {
