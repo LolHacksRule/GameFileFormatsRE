@@ -16,7 +16,7 @@
 local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
-local uint hasTXTRMeta <hidden=true> = 0;
+//local uint hasTXTRMeta <hidden=true> = 0;
 local uint DependencyGroups <hidden=true> = 0;
 local uint tree_forDCLN <hidden=true> = 0;
 local uint isCLSN <hidden=true> = 0; //Use this to force Material chunks for CLSNs
@@ -24,7 +24,7 @@ local uint isLegacyCLSN <hidden=true> = 0; //A fix for detecting V2 clsn
 local uint isPack <hidden=true> = 0; //A fix for detecting pack and not reusing forms
 local uint isWMDL <hidden=true> = 0;
 local uint isSMDL <hidden=true> = 0;
-local uint dontCheckForLE <hidden=true> = 0; //Check for NX?
+local uint isNXPAK <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead of static strings
 
 //Format info
 
@@ -89,6 +89,12 @@ typedef enum <uint32>
     EU_Italian = 1163217236,
     JA_Japanese = 1246775888,
 } dataType;
+
+typedef struct
+{
+    uint32 stringSize<hidden=true>;
+    char theString[stringSize];
+} CommonInt32Str;
 
 typedef struct
 {
@@ -222,11 +228,14 @@ typedef struct
     if (isPack)
     {
         FormDescriptor RuleSetConfigFormDescriptor;
-        byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize];
+        ChunkDescriptor RSTCChunkDesc;
+        byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
     }
+    
     else
     {
-        byte RuleSetConfigDataBlock[ContentForm.dataSize];
+        ChunkDescriptor RSTCChunkDesc;
+        byte RuleSetConfigDataBlock[ContentForm.dataSize-24];
     }
     //ChunkDescriptor DescriptionChunk;
     //uint16 unk[2];
@@ -246,10 +255,34 @@ typedef struct
         struct ReferencedTxtrs
         {
             GUID texRef;
-            string texName;
+            if (isNXPAK == 0)
+            {
+                byte checkForNX<hidden=true>;
+                FSkip(-1);
+                if (checkForNX == 0)
+                {
+                    isNXPAK = 1;
+                    Printf("NX PAK DETECTED");
+                }
+            }
+            if (isNXPAK)
+            {
+                CommonInt32Str texName;
+            }
+            else
+            {
+                string texName;
+            }
         } rtxtrs;
     }
-    string theSwfName;
+    if (isNXPAK)
+    {
+        CommonInt32Str theSWFName;
+    }
+    else
+    {
+        string theSWFName;
+    }
     FSkip(4);
     LittleEndian(); //temp swap endian
     uint32 swfSize;
@@ -626,14 +659,25 @@ typedef struct
         DependencyGroups++;
     }
     GUID AssetID;
-    string AssetName;
+    if (isNXPAK == 0)
+    {
+        byte checkForNX<hidden=true>;
+        FSkip(-1);
+        if (checkForNX == 0)
+        {
+            isNXPAK = 1;
+            Printf("NX PAK DETECTED");
+        }
+    }
+    if (isNXPAK)
+    {
+        CommonInt32Str theNXAssetName;
+    }
+    else
+    {
+        string AssetName;
+    }
 } NameTagChunk;
-
-typedef struct
-{
-    uint32 stringSize<hidden=true>;
-    char theString[stringSize];
-} CommonInt32Str;
 
 typedef struct
 {
@@ -648,10 +692,10 @@ typedef struct
 typedef struct
 {
     dataType assetType;
-    if (assetType == Texture)
+    /*if (assetType == Texture)
     {
         hasTXTRMeta = 1;
-    }
+    }*/
     GUID assetID;
     uint64 off;
     uint64 size;
@@ -757,26 +801,36 @@ typedef struct
     ChunkDescriptor MetaDataChunkDescriptor;
     struct MetaData
     {
-        /*uint32 metaDataEntryCount;
-        for (i = 0; i < metaDataEntryCount; i++)
+        if (MetaDataChunkDescriptor.dataOff != 0)
         {
-            struct MetaDataEntry
+            uint32 metaDataEntryCount;
+            struct MetaDataOffsetEntries
             {
-                GUID AssetID;
-                uint32 metaDataOff;
-            } metaDataEntry;
-        }
-        for (i2 = 0; i2 < metaDataEntryCount; i2++)
-        {
-            struct ChunkMeta
-            {
-                if (AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].assetType == Texture)
+                for (i = 0; i < metaDataEntryCount; i++)
                 {
-                    TextureMetadata theTmt;
+                    struct MetaDataOffsetEntry
+                    {
+                        GUID AssetID;
+                        uint32 metaDataOff;
+                    } metaDataOffEntry;
                 }
-            } cm;
-        }*/
-        byte metaDataBlock[MetaDataChunkDescriptor.dataSize];
+            } mdos;
+            /*for (i2 = 0; i2 < metaDataEntryCount; i2++)
+            {
+                struct ChunkMeta
+                {
+                    if (AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].assetType == Texture)
+                    {
+                        TextureMetadata theTmt;
+                    }
+                } cm;
+            }*/
+            byte metaDataBlock[MetaDataChunkDescriptor.dataSize-sizeof mdos-4]; //For now
+        }
+        else
+        {
+            byte metaDataBlock[MetaDataChunkDescriptor.dataSize];
+        }
     } metaDataContent;
 } MetaDataChunk;
 
@@ -1186,10 +1240,16 @@ typedef struct
     typedef struct
     {
         AssetDirectory AssetDirChunk;
-        if (hasTXTRMeta)
+        dataType checkForMETA<hidden=true>;
+        FSkip(-4);
+        if (checkForMETA == Metadata)
         {
             MetaDataChunk theMeta;
         }
+        /*if (hasTXTRMeta)
+        {
+            MetaDataChunk theMeta;
+        }*/
         //Fix for reading dev files
         if (ContentForm.fVer != 1 && ContentForm.dVer != 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
         {
@@ -1229,9 +1289,10 @@ typedef struct
     {
         for (i2 = 0; i2 < DependencyGroups; i2++)
         {
+            //local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
             DependencyGroupChunk DependencyGroupChunkContent;
         }
-        for (i2 = DependencyGroups; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
+        for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
         {
             FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
             FSkip(-32);
@@ -1441,8 +1502,7 @@ typedef struct
 
 typedef struct
 {
-    /*ChunkDescriptor RFLODesc;
-    uint32 unk;
+    /*uint32 unk;
     uint32 stringCount;
     for (i = 0; i < stringCount; i++)
     {
@@ -1475,8 +1535,14 @@ typedef struct
             }
         } fs;
     }*/
-    byte theRFLO[ContentForm.dataSize];
-} RFLOChunk; //WIP
+    byte theRFLO[RFLODesc.dataSize];
+} RenderFlowContent;
+
+typedef struct
+{
+    ChunkDescriptor RFLODesc;
+    RenderFlowContent theRFLOContent;
+} RenderFlowChunk; //WIP
 
 struct RetroStudiosFile
 {
@@ -1493,7 +1559,7 @@ struct RetroStudiosFile
     }
     if (ContentForm.contentType == RFLO)
     {
-        RFLOChunk RFLOContent;
+        RenderFlowChunk RFLOContent;
     }
     if (ContentForm.contentType == MessageTable_MessageStudioBinaryText)
     {
@@ -1585,9 +1651,22 @@ struct RetroStudiosFile
     {
         LooseDataChunk LooseDataContent;
     }
+    if (ContentForm.contentType == RuleSetConfig)
+    {
+        RuleSetConfigChunk RuleSetConfigContent;
+    }
     if (ContentForm.contentType == DynamicCollision)
     {
         isCLSN = 1;
         DynamicCollisionChunk DynamicCollisionContent;
+    }
+    if (ContentForm.contentType != CompiledAudioSoundEffect && ContentForm.contentType != GraphicalFXLibrary_Flash && ContentForm.contentType != Room && ContentForm.contentType != Skeleton && ContentForm.contentType != GraphicalFX_Flash && ContentForm.contentType != Material && ContentForm.contentType != FiniteStateMachine && ContentForm.contentType != DynamicCollision && ContentForm.contentType != MessageTable_MessageStudioBinaryText && ContentForm.contentType != RuleSetConfig)
+    {
+        dataType checkForMETA<hidden=true>;
+        FSkip(-4);
+        if (checkForMETA == Metadata)
+        {
+            MetaDataChunk theMeta;
+        }
     }
 } RetroStudiosFileData;
