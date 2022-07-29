@@ -16,6 +16,7 @@
 local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
+local uint addExtension<hidden=true> = 0;
 //local uint hasTXTRMeta <hidden=true> = 0;
 local uint checkLocalMETA <hidden=true> = 0;
 local uint DependencyGroups <hidden=true> = 0;
@@ -664,10 +665,77 @@ typedef struct
 
 typedef struct
 {
+    local string extensionToAdd = "";
     dataType AssetType;
     if (AssetType == DependencyGroup)
     {
         DependencyGroups++;
+    }
+    //Add true ext names from log in Kiosk
+    if (AssetType == MessageTable_MessageStudioBinaryText)
+    {
+        extensionToAdd = "mstbin";
+        addExtension = 1;
+    }
+    if (AssetType == LooseData)
+    {
+        extensionToAdd = "ldata";
+        addExtension = 1;
+    }
+    if (AssetType == LooseData)
+    {
+        extensionToAdd = "ldata";
+        addExtension = 1;
+    }
+    if (AssetType == UniverseInfo)
+    {
+        extensionToAdd = "uinfo";
+        addExtension = 1;
+    }
+    if (AssetType == CompiledAudioBusHeiarchy)
+    {
+        extensionToAdd = "cabh";
+        addExtension = 1;
+    }
+    if (AssetType == Material)
+    {
+        extensionToAdd = "cmat";
+        addExtension = 1;
+    }
+    if (AssetType == Character)
+    {
+        extensionToAdd = "char";
+        addExtension = 1;
+    }
+    if (AssetType == CompiledAudioSample)
+    {
+        extensionToAdd = "csmp";
+        addExtension = 1;
+    }
+    if (AssetType == FiniteStateMachine)
+    {
+        extensionToAdd = "cfsm";
+        addExtension = 1;
+    }
+    if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+    {
+        extensionToAdd = "rfgfx";
+        addExtension = 1;
+    }
+    if (AssetType == CompiledAudioSoundEffect)
+    {
+        extensionToAdd = "caud";
+        addExtension = 1;
+    }
+    if (AssetType == Room)
+    {
+        extensionToAdd = "rsd";
+        addExtension = 1;
+    }
+    if (AssetType == Texture)
+    {
+        extensionToAdd = "ctex"; //There's also ctexarray but how is that determined
+        addExtension = 1;
     }
     GUID AssetID;
     if (isNX == 0) //If this is 0, it's an NX PAK
@@ -677,17 +745,34 @@ typedef struct
         if (checkForNX == 0)
         {
             isNX = 1;
-            Printf("NX PAK DETECTED");
+            Printf("NX PAK DETECTED\n");
         }
     }
     if (isNX)
     {
-        CommonInt32Str theNXAssetName;
+        CommonInt32Str AssetName;
+        if (addExtension)
+        {
+            Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+        }
+        else
+        {
+            Printf("%s\n", AssetName.theString);
+        }
     }
     else
     {
         string AssetName;
+        if (addExtension)
+        {
+            Printf("%s.%s\n", AssetName, extensionToAdd);
+        }
+        else
+        {
+            Printf("%s\n", AssetName);
+        }
     }
+    addExtension = 0;
 } NameTagChunk;
 
 typedef struct
@@ -1286,10 +1371,7 @@ typedef struct
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor TOCForm;
-    }
+    FormDescriptor TOCForm;
     TableOfContentsContent TOCC;
 } TableOfContentsChunk;
 
@@ -1440,7 +1522,7 @@ typedef struct
     LooseDataChunk LooseDataChunkContent5;
     LooseDataChunk LooseDataChunkContent6;
     LooseDataChunk LooseDataChunkContent7;
-    CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyaChunkContent;
+    CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyChunkContent;
     MSBTChunk_NMS MessageTableContent;
     CompiledAudioSampleChunk theCSMP;
     CompiledAudioSoundEffectChunk theCAUD;
@@ -1628,7 +1710,6 @@ struct RetroStudiosFile
     if (ContentForm.contentType == ExtendedTransformAnimation)
     {
         AnimationTransformChunk AnimationTransformContent;
-        //MetaDataChunk AnimationTransformChunkMetaData;
     }
     if (ContentForm.contentType == Skeleton)
     {
