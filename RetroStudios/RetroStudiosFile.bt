@@ -684,11 +684,6 @@ typedef struct
         extensionToAdd = "ldata";
         addExtension = 1;
     }
-    if (AssetType == LooseData)
-    {
-        extensionToAdd = "ldata";
-        addExtension = 1;
-    }
     if (AssetType == UniverseInfo)
     {
         extensionToAdd = "uinfo";
@@ -721,7 +716,7 @@ typedef struct
     }
     if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
     {
-        extensionToAdd = "rfgfx";
+        extensionToAdd = "rsgfx";
         addExtension = 1;
     }
     if (AssetType == CompiledAudioSoundEffect)
