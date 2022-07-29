@@ -17,6 +17,7 @@ local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 //local uint hasTXTRMeta <hidden=true> = 0;
+local uint checkLocalMETA <hidden=true> = 0;
 local uint DependencyGroups <hidden=true> = 0;
 local uint tree_forDCLN <hidden=true> = 0;
 local uint isCLSN <hidden=true> = 0; //Use this to force Material chunks for CLSNs
@@ -24,7 +25,7 @@ local uint isLegacyCLSN <hidden=true> = 0; //A fix for detecting V2 clsn
 local uint isPack <hidden=true> = 0; //A fix for detecting pack and not reusing forms
 local uint isWMDL <hidden=true> = 0;
 local uint isSMDL <hidden=true> = 0;
-local uint isNXPAK <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead of static strings
+local uint isNX <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead of static strings and also newer audio samples and message tables
 
 //Format info
 
@@ -45,7 +46,6 @@ typedef enum <uint32>
     Collision = 1129075534,
     DynamicCollision = 1145261134,
     Material = 1297371724,
-    TOCC = 1297371724,
     ShaderX  = 1396987936,
     ShaderGX2  = 1397184562,
     Strings = 1398035015,
@@ -156,6 +156,17 @@ typedef struct
     {
         FormDescriptor NMSBTForm;
     }
+    if (isPack != 1)
+    {
+        if (isNX == 0)
+        {
+            if (ContentForm.fVer == 5 && ContentForm.dVer == 5)
+            {
+                isNX = 1;
+                Printf("NX FILE DETECTED");
+            }
+        }
+    }
     struct MessageTable
     {
         for (i = 0; i < 9; i++) //DKCTF has 9 localizations
@@ -255,17 +266,17 @@ typedef struct
         struct ReferencedTxtrs
         {
             GUID texRef;
-            if (isNXPAK == 0)
+            if (isNX == 0)
             {
                 byte checkForNX<hidden=true>;
                 FSkip(-1);
                 if (checkForNX == 0)
                 {
-                    isNXPAK = 1;
+                    isNX = 1;
                     Printf("NX PAK DETECTED");
                 }
             }
-            if (isNXPAK)
+            if (isNX)
             {
                 CommonInt32Str texName;
             }
@@ -275,7 +286,7 @@ typedef struct
             }
         } rtxtrs;
     }
-    if (isNXPAK)
+    if (isNX)
     {
         CommonInt32Str theSWFName;
     }
@@ -659,17 +670,17 @@ typedef struct
         DependencyGroups++;
     }
     GUID AssetID;
-    if (isNXPAK == 0)
+    if (isNX == 0) //If this is 0, it's an NX PAK
     {
         byte checkForNX<hidden=true>;
         FSkip(-1);
         if (checkForNX == 0)
         {
-            isNXPAK = 1;
+            isNX = 1;
             Printf("NX PAK DETECTED");
         }
     }
-    if (isNXPAK)
+    if (isNX)
     {
         CommonInt32Str theNXAssetName;
     }
@@ -747,6 +758,7 @@ typedef struct
     if (isPack)
     {
         FormDescriptor LooseDataFormDescriptor;
+        //ChunkDescriptor LooseDataChunkDescriptor;
         byte LooseDataBlock[LooseDataFormDescriptor.dataSize];
     }
     else
@@ -1556,6 +1568,7 @@ struct RetroStudiosFile
     if (ContentForm.contentType == Material)
     {
         MaterialChunk TheMaterialChunk;
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == RFLO)
     {
@@ -1568,6 +1581,10 @@ struct RetroStudiosFile
     if (ContentForm.contentType == CompiledAudioSample)
     {
         CompiledAudioSampleChunk CompiledAudioSampleContent;
+        if (ContentForm.fVer == 18 && ContentForm.dVer == 18) //Detect NX audio
+        {
+            checkLocalMETA = 1;
+        }
     }
     if (ContentForm.contentType == CompiledAudioSoundEffect)
     {
@@ -1580,6 +1597,7 @@ struct RetroStudiosFile
     if (ContentForm.contentType == Texture)
     {
         TextureChunk TextureContent;
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == CompiledModel || ContentForm.contentType == SkinnedModel || ContentForm.contentType == WorldModel)
     {
@@ -1592,10 +1610,12 @@ struct RetroStudiosFile
             isSMDL = 1;
         }
         ModelChunk ModelContent;
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == GenericParticleSystem)
     {
         GenericParticleSystemChunk GenericParticleSystemContent;
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == DependencyGroup)
     {
@@ -1642,6 +1662,7 @@ struct RetroStudiosFile
     if (ContentForm.contentType == SwooshParticleSystem)
     {
         SwooshParticleSystemChunk SwooshParticleSystemContent;
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == Room)
     {
@@ -1660,13 +1681,8 @@ struct RetroStudiosFile
         isCLSN = 1;
         DynamicCollisionChunk DynamicCollisionContent;
     }
-    if (ContentForm.contentType != CompiledAudioSoundEffect && ContentForm.contentType != GraphicalFXLibrary_Flash && ContentForm.contentType != Room && ContentForm.contentType != Skeleton && ContentForm.contentType != GraphicalFX_Flash && ContentForm.contentType != Material && ContentForm.contentType != FiniteStateMachine && ContentForm.contentType != DynamicCollision && ContentForm.contentType != MessageTable_MessageStudioBinaryText && ContentForm.contentType != RuleSetConfig)
+    if (checkLocalMETA == 1)
     {
-        dataType checkForMETA<hidden=true>;
-        FSkip(-4);
-        if (checkForMETA == Metadata)
-        {
-            MetaDataChunk theMeta;
-        }
+        MetaDataChunk theMeta;
     }
 } RetroStudiosFileData;
