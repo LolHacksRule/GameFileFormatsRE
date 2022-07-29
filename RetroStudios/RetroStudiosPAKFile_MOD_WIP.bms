@@ -1,0 +1,68 @@
+#Original script https://zenhax.com/viewtopic.php?t=1270
+
+idstring "RFRM"
+endian big
+goto 0x58 #skip to adir
+get ASSETS long
+for i = 0 < ASSETS
+	getDstring TYPE 4
+	get GUID longlong
+	get GUIDP2 longlong
+	get OFFSET longlong
+	get SIZE longlong
+	#putarray 1 i SIZE
+	putarray 2 i OFFSET
+next i
+get UNNECESSARY longlong
+get UNNECESSARY2 longlong
+get UNNECESSARY3 longlong
+get NAMETAGS long
+for i = 0 < NAMETAGS
+	getDstring TYPE 4
+	if TYPE = "MSBT"
+	string DATATYPE = ".mstbin"
+	endif
+	if TYPE = "LDTA"
+	string DATATYPE = ".ldata"
+	endif
+	if TYPE = "DGRP"
+	string DATATYPE = ""
+	endif
+	if TYPE = "UINF"
+	string DATATYPE = ".uinfo"
+	endif
+	if TYPE = "CABH"
+	string DATATYPE = ".cabh"
+	endif
+	if TYPE = "CAUD"
+	string DATATYPE = ".caud"
+	endif
+	if TYPE = "MTRL"
+	string DATATYPE = ".cmat"
+	endif
+	if TYPE = "CHAR"
+	string DATATYPE = ".char"
+	endif
+	if TYPE = "CSMP"
+	string DATATYPE = ".csmp"
+	endif
+	if TYPE = "FSMC"
+	string DATATYPE = ".cfsm"
+	endif
+	if TYPE = "GFX" || TYPE == "GFXL"
+	string DATATYPE = ".rsgfx"
+	endif
+	if TYPE = "ROOM"
+	string DATATYPE = ".rsd"
+	endif
+	if TYPE = "TXTR"
+	string DATATYPE = ".ctex" #May be ctexarray idk
+	endif
+	get GUID longlong
+	get GUIDP2 longlong
+	get ASSETNAME string
+	#getarray SIZE   1 T
+    getarray OFFSET 2 T
+	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
+	log NAME OFFSET SIZE
+next i
