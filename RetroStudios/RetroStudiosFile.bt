@@ -667,7 +667,7 @@ typedef struct
 
 typedef struct
 {
-    local string extensionToAdd = "";
+    local string extensionToAdd<hidden=true> = "";
     dataType AssetType;
     if (AssetType == DependencyGroup)
     {

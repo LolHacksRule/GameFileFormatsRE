@@ -1,73 +1,103 @@
 #Original script https://zenhax.com/viewtopic.php?t=1270
 
+set UNNAMEDASSETS 0
+
 idstring "RFRM"
 endian big
 goto 0x58 #skip to adir
 get ASSETS long
 for i = 0 < ASSETS
-	getDstring TYPE 4
+	getDstring ASSETTYPE 4
+	#if ASSETTYPE = "CSMP"
+	#math UNNAMEDASSETS + 1
+	#endif
+	#if ASSETTYPE = "CAUD"
+	#math UNNAMEDASSETS + 1
+	#endif
 	get GUID longlong
 	get GUIDP2 longlong
 	get OFFSET longlong
 	get SIZE longlong
-	#putarray 1 i SIZE
-	#putarray 2 i OFFSET
+	putarray 3 i OFFSET
+	putarray 4 i SIZE
 next i
 getDstring ISMETA 4
 if ISMETA = "META"
 Print "Doesn't work on meta."
 break
+#get DSIZE longlong
+#goto DSIZE
 endif
 get UNNECESSARY2 longlong
 get UNNECESSARY3 long
 get UNNECESSARY4 longlong
 get NAMETAGS long
 for i = 0 < NAMETAGS
-	getDstring TYPE 4
-	if TYPE = "MSBT"
+	set NAMETYPE = ""
+	getDstring NAMETYPE 4
+	if NAMETYPE = "MSBT"
 	string DATATYPE = ".mstbin"
 	endif
-	if TYPE = "LDTA"
+	if NAMETYPE = "LDTA"
 	string DATATYPE = ".ldata"
 	endif
-	if TYPE = "DGRP"
+	if NAMETYPE = "DGRP"
 	string DATATYPE = ""
 	endif
-	if TYPE = "UINF"
+	if NAMETYPE = "UINF"
 	string DATATYPE = ".uinfo"
 	endif
-	if TYPE = "CABH"
+	if NAMETYPE = "CABH"
 	string DATATYPE = ".cabh"
 	endif
-	if TYPE = "CAUD"
+	if NAMETYPE = "CAUD"
 	string DATATYPE = ".caud"
 	endif
-	if TYPE = "MTRL"
+	if NAMETYPE = "MTRL"
 	string DATATYPE = ".cmat"
 	endif
-	if TYPE = "CHAR"
+	if NAMETYPE = "CHAR"
 	string DATATYPE = ".char"
 	endif
-	if TYPE = "CSMP"
+	if NAMETYPE = "CSMP"
 	string DATATYPE = ".csmp"
 	endif
-	if TYPE = "FSMC"
+	if NAMETYPE = "FSMC"
 	string DATATYPE = ".cfsm"
 	endif
-	if TYPE = "GFX" || TYPE == "GFXL"
+	if NAMETYPE = "GFX" || TYPE == "GFXL"
 	string DATATYPE = ".rsgfx"
 	endif
-	if TYPE = "ROOM"
+	if NAMETYPE = "ROOM"
 	string DATATYPE = ".rsd"
 	endif
-	if TYPE = "TXTR"
+	if NAMETYPE = "TXTR"
 	string DATATYPE = ".ctex" #May be ctexarray idk
 	endif
 	get GUID longlong
 	get GUIDP2 longlong
 	get ASSETNAME string
-	#getarray SIZE   1 T
-    #getarray OFFSET 2 T
-	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
-	log NAME OFFSET SIZE
+	math T == i
+	getarray OFFSET   3	 T
+	getarray SIZE   4 T
+	if ASSETTYPE == NAMETYPE
+		string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
+		log NAME OFFSET SIZE
+	else
+		string NAME p= "0x%08x%08x%s" GUID GUIDP2 ASSETTYPE
+		log NAME OFFSET SIZE
+	endif
 next i
+#for i = 0 < UNNAMEDASSETS	
+#if ASSETTYPE = "LDTA"
+#	string DATATYPE = ".ldata"
+#endif
+#if ASSETTYPE = "CSMP"
+#	string DATATYPE = ".csmp"
+#endif
+#if ASSETTYPE = "CAUD"
+#	string DATATYPE = ".caud"
+#endif
+#string NAME p= "0x%08x%08x%s" GUID GUIDP2 DATATYPE
+#log NAME OFFSET SIZE
+#next i
