@@ -17,6 +17,7 @@ local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 local uint addExtension<hidden=true> = 0;
+local uint isSDX<hidden=true> = 0;
 //local uint hasTXTRMeta <hidden=true> = 0;
 local uint checkLocalMETA <hidden=true> = 0;
 local uint DependencyGroups <hidden=true> = 0;
@@ -549,6 +550,7 @@ typedef struct
     }
     if (ContentForm.fVer == 10 && ContentForm.fVer == 10)
     {
+        isSDX = 1;
         ChunkDescriptor MTRLChunkDesc;
         struct ShaderArcData
         {
@@ -1650,7 +1652,10 @@ struct RetroStudiosFile
     if (ContentForm.contentType == Material)
     {
         MaterialChunk TheMaterialChunk;
-        checkLocalMETA = 1;
+        if (isSDX == 1)
+        {
+            checkLocalMETA = 0;
+        }
     }
     if (ContentForm.contentType == RFLO)
     {
