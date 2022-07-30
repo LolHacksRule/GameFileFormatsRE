@@ -93,8 +93,63 @@ typedef enum <uint32>
     JA_Japanese = 1246775888,
 } dataType;
 
+//DKCTF Enums
+
+typedef enum <byte>{
+    StandardLevel,
+    Boss,
+    KONGBonusLevel
+} DKCTF_LevelType;
+
 typedef enum <uint32>{
-    //DKCTF Enums
+    GX2_SURFACE_DIM_TEXTURE_1D,
+    GX2_SURFACE_DIM_TEXTURE_2D,
+    GX2_SURFACE_DIM_TEXTURE_3D,
+    GX2_SURFACE_DIM_TEXTURE_CUBE,
+    GX2_SURFACE_DIM_TEXTURE_1D_ARRAY,
+    GX2_SURFACE_DIM_TEXTURE_2D_ARRAY,
+    GX2_SURFACE_DIM_TEXTURE_2D_MSAA,
+    GX2_SURFACE_DIM_TEXTURE_2D_MSAA_ARRAY
+} DKCTF_TexType;
+
+typedef enum <uint32>{
+    GX2_SURFACE_FORMAT_UNORM_R8,
+    GX2_SURFACE_FORMAT_SNORM_R8,
+    GX2_SURFACE_FORMAT_UINT_R8,
+    GX2_SURFACE_FORMAT_SINT_R8,
+    GX2_SURFACE_FORMAT_UNORM_R16,
+    GX2_SURFACE_FORMAT_SNORM_R16,
+    GX2_SURFACE_FORMAT_UINT_R16,
+    GX2_SURFACE_FORMAT_SINT_R16,
+    GX2_SURFACE_FORMAT_FLOAT_R16,
+    GX2_SURFACE_FORMAT_UINT_R32,
+    GX2_SURFACE_FORMAT_SINT_R32,
+    GX2_SURFACE_FORMAT_INVALID,
+    GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8,
+    GX2_SURFACE_FORMAT_SRGB_R8_G8_B8_A8,
+    GX2_SURFACE_FORMAT_FLOAT_R16_G16_B16_A16,
+    GX2_SURFACE_FORMAT_FLOAT_R32_G32_B32_A32,
+    GX2_SURFACE_FORMAT_UNORM_R16_2,
+    GX2_SURFACE_FORMAT_UNORM_R16_3,
+    GX2_SURFACE_FORMAT_UNORM_R24_X8,
+    GX2_SURFACE_FORMAT_FLOAT_R32,
+    GX2_SURFACE_FORMAT_UNORM_BC1,
+    GX2_SURFACE_FORMAT_SRGB_BC1,
+    GX2_SURFACE_FORMAT_UNORM_BC2,
+    GX2_SURFACE_FORMAT_SRGB_BC2,
+    GX2_SURFACE_FORMAT_UNORM_BC3,
+    GX2_SURFACE_FORMAT_SRGB_BC3,
+    GX2_SURFACE_FORMAT_UNORM_BC4,
+    GX2_SURFACE_FORMAT_SNORM_BC4,
+    GX2_SURFACE_FORMAT_UNORM_BC5,
+    GX2_SURFACE_FORMAT_SNORM_BC5,
+    GX2_SURFACE_FORMAT_FLOAT_R11_G11_B10,
+    GX2_SURFACE_FORMAT_FLOAT_R32_2,
+    GX2_SURFACE_FORMAT_FLOAT_R16_G16,
+    GX2_SURFACE_FORMAT_UNORM_R8_G8
+} DKCTF_TexFmt;
+
+typedef enum <uint32>{
     SLdrPlayerMovementControls = 196636994,
     SLdrCommandControls_field_0 = 3877745243,
     SLdrMapControls = 2348383302,
@@ -959,21 +1014,30 @@ typedef struct
     {
         checkLocalMETA = 1;
     }
-    ChunkDescriptor TextureHeaderDescriptor;
     struct TextureData
     {
-        uint32 texType;
-        uint32 texFmt;
-        uint32 width;
-        uint32 height;
-        uint32 depth;
-        uint32 tileMode;
-        uint32 swizzle;
-        uint32 mips;
-        uint32 mipSizes[mips];
-        uint32 flags;
-        byte texFilter;
-        byte texWrap[3];
+        struct TextureHeader
+        {
+            ChunkDescriptor TextureHeaderDescriptor;
+            struct TextureHeaderData
+            {
+                DKCTF_TexType texType;
+                DKCTF_TexFmt texFmt;
+                uint32 width;
+                uint32 height;
+                uint32 depth;
+                uint32 tileMode;
+                uint32 swizzle;
+                uint32 mips;
+                uint32 mipSizes[mips];
+                struct TextureSamplerData
+                {
+                    uint32 flags;
+                    byte texFilter;
+                    byte texWrap[3];
+                } tsd;
+            } thdrd;
+        } thdr;
         GPUChunk theCPUChunk;
     } txtr; //wip
 } TextureChunk;
@@ -1275,8 +1339,8 @@ typedef struct
                     CommonInt32Str theLocalizedAreaName;
                     byte WorldNum;
                     byte ActNum;
-                    BoolByte isBoss; //If true, it's probably a boss, setting this off on one that is a boss doesn't display the level complete UI (confirm)
-                    uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9.
+                    DKCTF_LevelType LevelType; //0 means it's a standard level, if 1, it's a boss, setting this to 1 or 0 on one that is a boss doesn't display the level complete UI (confirm), 2 means it's a KONG letter bonus level
+                    uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9, if the level type is a boss, this is ignored.
                     uint32 unk3[5];
                     dataType checkForEOF<hidden=true>;
                     FSkip(-4);
