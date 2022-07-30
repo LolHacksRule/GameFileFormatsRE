@@ -19,6 +19,7 @@ local uint terminateUINF<hidden=true> = 0;
 local uint addExtension<hidden=true> = 0;
 local uint isSDX<hidden=true> = 0;
 //local uint hasTXTRMeta <hidden=true> = 0;
+//local uint disableStructFields<hidden=true> = 0;
 local uint checkLocalMETA <hidden=true> = 0;
 local uint DependencyGroups <hidden=true> = 0;
 local uint tree_forDCLN <hidden=true> = 0;
@@ -91,6 +92,18 @@ typedef enum <uint32>
     EU_Italian = 1163217236,
     JA_Japanese = 1246775888,
 } dataType;
+
+typedef enum <uint32>{
+    //DKCTF Enums
+    SLdrPlayerMovementControls = 196636994,
+    SLdrCommandControls_field_0 = 3877745243,
+    SLdrMapControls = 2348383302,
+    SLdrMiscControls = 3342169473,
+    SLdrDebugControls = 2000855825,
+    enum_100071d8 = 3648137374,
+    LOOSE_DATA_TEST_1 = 3341599032,
+    LOOSE_DATA_TEST_2 = 1682086747
+} DKCTF_LdrTypeCRC;
 
 typedef struct
 {
@@ -837,37 +850,33 @@ typedef struct
 
 typedef struct
 {
+    DKCTF_LdrTypeCRC FieldNameHash;
+    uint16 blockSize;
+    byte theFieldBlock[blockSize];
+} Field;
+
+typedef struct
+{
     if (isPack)
     {
         FormDescriptor LooseDataFormDescriptor;
         //ChunkDescriptor LooseDataChunkDescriptor;
-        byte LooseDataBlock[LooseDataFormDescriptor.dataSize];
+        //byte LooseDataBlock[LooseDataFormDescriptor.dataSize-24];
     }
     else
     {
         byte LooseDataBlock[ContentForm.dataSize];
     }
     //For now
-    /*struct LooseDataB
+    struct LooseDataBlock_SldrGameControls
     {
         ChunkDescriptor LooseDataChunkDescriptor;
         uint16 fieldCount;
         for (i = 0; i < fieldCount; i++)
         {
-            struct Field
-            {
-                uint32 MainFieldID;
-                uint16 blockSize;
-                uint16 valueCount;
-                for (i2 = 0; i2 < valueCount-1; i2++)
-                {
-                    uint32 subFieldID;
-                    uint16 blockSize2; //?
-                    uint16 valueCount2;
-                }
-            } fld;
+            Field theField;
         }
-    } LooseDataBlock;*/
+    } LooseDataBlock;
 } LooseDataChunk;
 
 typedef struct
