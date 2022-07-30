@@ -111,6 +111,12 @@ typedef struct
     char theString[stringSize];
 } CommonInt32Str;
 
+typedef enum <byte>
+{
+    False,
+    True,
+} BoolByte;
+
 typedef struct
 {
     float min[3];
@@ -1262,15 +1268,15 @@ typedef struct
         {
             if (terminateUINF != 1)
             {
-                struct RoomInfo
+                struct AreaInfo
                 {
                     ChunkDescriptor Universe_ROOMFormDescriptor;
                     GUID RoomGUID;
-                    CommonInt32Str theRoomName;
+                    CommonInt32Str theLocalizedAreaName;
                     byte WorldNum;
                     byte ActNum;
-                    byte unk;
-                    uint16 unk2;
+                    BoolByte isBoss; //If true, it's probably a boss, setting this off on one that is a boss doesn't display the level complete UI (confirm)
+                    uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9.
                     uint32 unk3[5];
                     dataType checkForEOF<hidden=true>;
                     FSkip(-4);
@@ -1278,7 +1284,7 @@ typedef struct
                     {
                         terminateUINF = 1;
                     }
-                } roomInfo;
+                } areaInfo;
             }
         }
         terminateUINF = 0;
