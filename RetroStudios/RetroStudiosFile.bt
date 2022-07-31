@@ -158,7 +158,20 @@ typedef enum <uint32>{
     enum_100071d8 = 3648137374,
     LOOSE_DATA_TEST_1 = 3341599032,
     LOOSE_DATA_TEST_2 = 1682086747
-} DKCTF_LdrTypeCRC;
+} DKCTF_CRC;
+
+typedef struct
+{
+    DKCTF_CRC FieldNameHash;
+    uint16 blockSize;
+    byte theFieldBlock[blockSize];
+} Field;
+
+typedef struct
+{
+    uint16 typeID;
+    uint16 version;
+} GenericAssetHeader;
 
 typedef struct
 {
@@ -427,7 +440,8 @@ typedef struct
     if (isPack)
     {
         FormDescriptor FiniteStateMachineFormDescriptor;
-        byte FiniteStateMachineDataBlock[FiniteStateMachineFormDescriptor.dataSize];
+        ChunkDescriptor FiniteStateMachineChunkDesc;
+        byte FiniteStateMachineDataBlock[FiniteStateMachineFormDescriptor.dataSize-24];
     }
     else
     {
@@ -463,6 +477,84 @@ typedef struct
 
 typedef struct
 {
+    dataType connID[2];
+    GUID componentGUID;
+    uint16 unk;
+    BoolByte unk2[2];
+} Connection;
+
+typedef struct
+{
+    dataType linkID;
+    GUID componentGUID;
+    BoolByte unk;
+} ScriptLink;
+
+typedef struct
+{
+    dataType SubCompType;
+    GUID SubCompGUID;
+    BoolByte unk;
+} SubComponent;
+
+typedef struct
+{
+    ChunkDescriptor ComponentChunkDescriptor;
+    DKCTF_CRC ComponentTypeCRC;
+    GUID componentGUID;
+    CommonInt32Str theComponentName;
+    //FSkip(16);
+    //uint32 guids;
+    //GUID theGUID;
+    /*uint16 connnections;
+    if (connnections != 0)
+    {
+        struct Connections
+        {
+            for (i = 0; i < connnections; i2++)
+            {
+                Connection theConn;
+            }
+        } conns;
+    }
+    else
+    {
+        //FSkip(2);
+    }
+    uint16 scriptLinks;
+    if (scriptLinks != 0)
+    {
+        struct ScriptLinks
+        {
+            for (i2 = 0; i2 < scriptLinks; i2++)
+            {
+                ScriptLink theSL;
+            }
+        } slnks;
+    }*/
+    /*uint32 subComponents;
+    if (subComponents != 0)
+    {
+        struct SubComponents
+        {
+            for (i = 0; i < subComponents; i2++)
+            {
+                SubComponent theSubComp;
+            }
+        } subcs;
+    }
+    else
+    {
+        FSkip(1);
+    }
+    BoolByte unk;
+    float pos[3];
+    float rot[3];
+    float scale[3];*/
+} GameObjectComponent;
+
+typedef struct
+{
     if (isPack)
     {
         FormDescriptor RoomFormDescriptor;
@@ -473,60 +565,182 @@ typedef struct
         byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
-    /*struct RoomHeader
+    /*struct RoomData
     {
-        FormDescriptor RoomHeaderFormDescriptor;
-        ChunkDescriptor RoomHeaderChunkDescriptor;
-        uint16 unk;
-        struct PerformanceGroups
+        struct MainHeader
         {
-            ChunkDescriptor PerformanceGroupsChunkDescriptor;
-            uint16 pgcount;
-            for (i = 0; i < pgcount; i++)
+            FormDescriptor RoomHeaderFormDescriptor;
+            struct RoomHeader
             {
-                struct PerformanceGroup
+                ChunkDescriptor RoomHeaderChunkDescriptor;
+                struct RoomHeaderData
                 {
-                    uint32 nameLen;
-                    char theName[nameLen];
-                    GUID editorID;
-                    byte active;
-                    uint16 refGUIDs;
-                    for (i2 = 0; i2 < refGUIDs; i2++)
+                    uint16 LoadUnits;
+                    struct PerformanceGroup
                     {
-                        struct ReferencedGUID
+                        ChunkDescriptor PerformanceGroupsChunkDescriptor;
+                        struct PerformanceGroupEntries
                         {
-                            GUID theRefGUID;
-                        } rguid;
-                    }
-                } pg;
-            }
-        } pgs;
-        struct LevelGenerated
+                            uint16 pgcount;
+                            for (i = 0; i < pgcount; i++)
+                            {
+                                struct PerformanceGroupEntry
+                                {
+                                    uint32 nameLen;
+                                    char theName[nameLen];
+                                    GUID editorID;
+                                    byte active;
+                                    uint16 refGUIDs;
+                                    for (i2 = 0; i2 < refGUIDs; i2++)
+                                    {
+                                        struct ReferencedGUID
+                                        {
+                                            GUID theRefGUID;
+                                        } rguid;
+                                    }
+                                } pge;
+                            }
+                        } pges;
+                    } pgc;
+                    struct LevelGenerated
+                    {
+                        ChunkDescriptor LevelGeneratedChunkDescriptor;
+                        struct LevelGeneratedData
+                        {
+                            uint16 objCount;
+                            struct GeneratedObjects
+                            {
+                                for (i = 0; i < objCount; i++)
+                                {
+                                    struct GenObject
+                                    {
+                                        GUID GenObjectID;
+                                        GUID LyrID;
+                                    } gobj;
+                                }
+                            } gobjs;
+                        } lgd;
+                    } lg;
+                    struct LoadUnitForms
+                    {
+                        for (i = 0; i < LoadUnits; i++)
+                        {
+                            struct LoadUnitForm
+                            {
+                                FormDescriptor LoadUnitFormsFormDescriptor;
+                                struct LoadUnitFormsData
+                                {
+                                    struct LevelUnitHead
+                                    {
+                                        ChunkDescriptor LevelUnitHeadDescriptor;
+                                        struct LevelUnitHeaderData
+                                        {
+                                            CommonInt32Str theStr;
+                                            GUID loadUnitGUID;
+                                            uint16 flags;
+                                        } LUHD;
+                                    } LUH;
+                                    struct LevelUnitResources
+                                    {
+                                        ChunkDescriptor LevelUnitResourcesChunkDescriptor;
+                                        struct LevelUnitResourcesData
+                                        {
+                                            uint32 resCnt;
+                                            struct LevelUnitResIDs
+                                            {
+                                                for (i = 0; i < resCnt; i++)
+                                                {
+                                                    struct LevelUnitResID
+                                                    {
+                                                        GUID LevelResID;
+                                                    } luri;
+                                                } 
+                                            } lurids;
+                                        } luresids;
+                                    } lres;
+                                    struct LevelUnitLayers
+                                    {
+                                        ChunkDescriptor LevelUnitLayersChunkDescriptor;
+                                        struct LevelUnitLayersData
+                                        {
+                                            uint32 layerCount;
+                                            struct LevelUnitLayerEntries
+                                            {
+                                                for (i = 0; i < layerCount; i++)
+                                                {
+                                                    struct LevelUnitLayerEntry
+                                                    {
+                                                        GUID LevelResID;
+                                                    } lari;
+                                                } 
+                                            } larids;
+                                        } lulids;
+                                    } lulres;
+                                } luf;
+                            } lufd;
+                        }
+                    } rhd;
+                } lufds;
+            } mhd;
+        } mh;
+        struct ScriptLayers
         {
-            ChunkDescriptor LevelGeneratedChunkDescriptor;
-            uint16 objCount;
-            for (i = 0; i < objCount; i++)
+            FormDescriptor ScriptLayersFormDescriptor;
+            struct ScriptLayerData
             {
-                struct GenObject
+                struct LayerHeader
                 {
-                    GUID GenObjectID;
-                    GUID LyrID;
-                } gobj;
-            }
-        } lg;
-        struct LoadUnitForms
-        {
-            FormDescriptor LoadUnitFormsFormDescriptor;
-            struct LevelUnitHead
-            {
-                ChunkDescriptor LevelUnitHeadDescriptor;
-                uint32 stringSize;
-                char theStr[stringSize];
-                GUID loadUnitGUID;
-                uint16 flags;
-            } LUH;
-        } luf;
-    } rh;*/
+                    ChunkDescriptor ScriptLayerHeadChunkDescriptor;
+                    struct LayerHeaderData
+                    {
+                        CommonInt32Str ScriptLayerName;
+                        GUID ScriptLayerGUID;
+                        uint16 unk;
+                        uint16 loadUnitIDs;
+                        struct LoadUnitIDs
+                        {
+                            for (i = 0; i < loadUnitIDs; i++)
+                            {
+                                GUID LoadUnitGUID;
+                            }
+                        } luids;
+                        GUID unknownGUID;
+                        BoolByte unknownFlag;
+                    } lyrhdrd;
+                } lyrhdr;
+                struct GeneratedScriptObject
+                {
+                    FormDescriptor ScriptLayersFormDescriptor;
+                    if (ScriptLayersFormDescriptor.dataSize != 0)
+                    {
+                        struct GSOData
+                        {
+                            GUID objID;
+                            uint16 componentCount;
+                            struct GameObjectComponents
+                            {
+                                for (i = 0; i < componentCount; i++)
+                                {
+                                    GameObjectComponent theComponent;
+                                }
+                            } gobjcs;
+                        } gsod;
+                    }
+                } gso;
+                struct ScriptObject
+                {
+                    FormDescriptor ScriptObjectFormDescriptor;
+                    struct Data
+                    {
+                        for (i = 0; i < 40; i++)
+                        {
+                            GameObjectComponent theGOBJ;
+                        }
+                    } d;
+                } sro;
+            } sld;
+        } sl;
+    } rd;*/
 } RoomChunk;
 
 typedef struct
@@ -543,15 +757,14 @@ typedef struct
     }
     /*struct CharacterData
     {
-        uint16 tID;
-        uint16 ver;
+        GenericAssetHeader theCharChunkAssetHdr;
         struct CharInfo
         {
             byte unk[16];
             byte flags[3];
         } charInfo;
         string theName;
-        GUID objectID;
+        GUID skelObjectID;
         int32 charModelSets;
         struct CharModelSets
         {
@@ -561,8 +774,7 @@ typedef struct
                 {
                     string charModelName;
                     GUID SMDLGUID;
-                    float lowEdge[3];
-                    float highEdge[3];
+                    AABox charModelSetAABox;
                 } cms;
             }
         } cmss;
@@ -575,15 +787,22 @@ typedef struct
                 {
                     string charModelName;
                     GUID SMDLGUID;
-                    uint32 fileID;
-                    uint32 unk;
+                    uint32 unk[2];
                     uint16 unk2[2];
                     byte unk3;
-                    float lowEdge[3];
-                    float highEdge[3];
+                    AABox charAnimAABox;
                 } cmi;
             }
         } cmis;
+        struct AnimIDMap
+        {
+            int32 hashNodes;
+            for (i = 0; i < hashNodes; i++)
+            {
+                int32 hashNode;
+            }
+        } aim;
+        AABox mainAABox;
     } charData;*/
 } CharacterChunk;
 
@@ -605,14 +824,16 @@ typedef struct
     {
         uint32 unk;
         uint32 jointNames;
-        for (i = 0; i < jointNames; i++)
+        struct JointNames
         {
-            struct JointName
+            for (i = 0; i < jointNames; i++)
             {
-                uint32 theNameSize;
-                string thename;
-            } jn;
-        }
+                //struct JointName
+                //{
+                    CommonInt32Str JointNameStr;
+                //} jn;
+            }
+        } jn;
     } jna;*/
 } SkeletonChunk;
 
@@ -908,13 +1129,6 @@ typedef struct
         }
     } treeData;
 } TreeChunk;
-
-typedef struct
-{
-    DKCTF_LdrTypeCRC FieldNameHash;
-    uint16 blockSize;
-    byte theFieldBlock[blockSize];
-} Field;
 
 typedef struct
 {
@@ -1315,6 +1529,38 @@ typedef struct
     {
         byte theFile[ContentForm.dataSize];
     }
+    /*struct CAUDData
+    {
+        string fileName;
+        uint32 groupNameCount;
+        struct GroupNamesData
+        {
+            for (i = 0; i < groupNameCount; i++)
+            {
+                struct GroupName
+                {
+                    string GroupNameStr;
+                } gn;
+            }
+        } gns;
+        float unk[2];
+        uint32 unk2;
+        uint16 unk3[2];
+        byte unk4[3];
+        float unk4;
+        uint32 asamples;
+        struct Samples
+        {
+            for (i = 0; i < asamples; i++)
+            {
+                struct SampleInfo
+                {
+                    uint32 infoSize;
+                    uint32 assetID;
+                } smpl;
+            }
+        } samples;
+    } caudData;*/
 } CompiledAudioSoundEffectChunk;
 
 typedef struct
@@ -1407,11 +1653,11 @@ typedef struct
         FormDescriptor GENPForm;
         byte theFile[GENPForm.dataSize];
     }
-    //ChunkDescriptor DescChunkHdr;
     else
     {
         byte theFile[ContentForm.dataSize];
     }
+    //ChunkDescriptor DescChunkHdr;
 } GenericParticleSystemChunk;
 
     typedef struct
@@ -1783,7 +2029,7 @@ struct RetroStudiosFile
     if (ContentForm.contentType == GenericParticleSystem)
     {
         GenericParticleSystemChunk GenericParticleSystemContent;
-        checkLocalMETA = 1;
+        //checkLocalMETA = 1;
     }
     if (ContentForm.contentType == DependencyGroup)
     {
