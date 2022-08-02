@@ -88,6 +88,11 @@ typedef enum <uint32>
     RuleSetConfig = 1381192771,
     RuleChunk = 1381321797,
     LightProbe = 1280332354,
+    LayerHeader = 1279804740,
+    LayerChunk = 1279351122,
+    GeneratedScriptObject = 1196642896,
+    ScriptObject = 1397901648,
+    ComponentChunk = 1129270608,
     //Translations
     US_English = 1431520590,
     US_French = 1431520850,
@@ -751,80 +756,87 @@ typedef struct
         } mh;
         struct ScriptLayers
         {
-            struct ScriptLayer
+            for (i2 = 0; i2 < mh.mhd.lufds.rhd.lufd.luf.lulres.lulids.layerCount; i2++)
             {
-                FormDescriptor ScriptLayersFormDescriptor;
-                struct ScriptLayerData
+                struct ScriptLayer
                 {
-                    struct LayerHeader
+                    FormDescriptor ScriptLayersFormDescriptor;
+                    struct ScriptLayerData
                     {
-                        ChunkDescriptor ScriptLayerHeadChunkDescriptor;
-                        struct LayerHeaderData
+                        struct LayerHeader
                         {
-                            CommonInt32Str ScriptLayerName;
-                            GUID ScriptLayerGUID;
-                            uint16 unk;
-                            uint16 loadUnitIDs;
-                            struct LoadUnitIDs
+                            ChunkDescriptor ScriptLayerHeadChunkDescriptor;
+                            struct LayerHeaderData
                             {
-                                for (i = 0; i < loadUnitIDs; i++)
+                                CommonInt32Str ScriptLayerName;
+                                GUID ScriptLayerGUID;
+                                uint16 unk;
+                                uint16 loadUnitIDs;
+                                struct LoadUnitIDs
                                 {
-                                    struct LoadUnitGUIDEntry
+                                    for (i = 0; i < loadUnitIDs; i++)
                                     {
-                                        GUID LoadUnitGUID;
-                                    } luge;
-                                }
-                            } luids;
-                            GUID unknownGUID;
-                            BoolByte unknownFlag;
-                        } lyrhdrd;
-                    } lyrhdr;
-                    struct GeneratedScriptObject
-                    {
-                        FormDescriptor ScriptLayersFormDescriptor;
-                        if (ScriptLayersFormDescriptor.dataSize != 0)
+                                        struct LoadUnitGUIDEntry
+                                        {
+                                            GUID LoadUnitGUID;
+                                        } luge;
+                                    }
+                                } luids;
+                                GUID unknownGUID;
+                                BoolByte unknownFlag;
+                            } lyrhdrd;
+                        } lyrhdr;
+                        struct GeneratedScriptObject
                         {
-                            struct GSOData
+                            FormDescriptor ScriptLayersFormDescriptor;
+                            if (ScriptLayersFormDescriptor.dataSize != 0)
                             {
-                                GUID objID;
-                                uint16 componentCount;
-                                struct GameObjectComponents
+                                struct GSOData
                                 {
-                                    for (i = 0; i < componentCount; i++)
+                                    GUID objID;
+                                    uint16 componentCount;
+                                    struct GameObjectComponents
                                     {
-                                        GameObjectComponent theComponent;
-                                    }
-                                } gobjcs;
-                            } gsod;
-                        }
-                    } gso;
-                    struct ScriptObject
-                    {
-                        FormDescriptor ScriptObjectFormDescriptor;
-                        struct Data
-                        {
-                            //add terminate flag soon
-                            for (i = 0; i < 255; i++)
-                            {
-                                if (terminateGameObjDetection != 1)
-                                {
-                                    {
-                                        GameObjectComponent theGOBJ;
-                                    }
-                                    dataType checkForRFRM<hidden=true>;
-                                    FSkip(-4);
-                                    if (checkForRFRM == RetroFormDescriptor)
-                                    {
-                                        terminateGameObjDetection = 1;
-                                        Printf("End of Game Objects!\n");
-                                    }
-                                }
+                                        for (i = 0; i < componentCount; i++)
+                                        {
+                                            GameObjectComponent theComponent;
+                                        }
+                                    } gobjcs;
+                                } gsod;
                             }
-                        } d;
-                        terminateGameObjDetection = 0;
-                    } sro;
-                } sld;
-            } sl;
+                        } gso;
+                        struct ScriptObject
+                        {
+                            FormDescriptor ScriptObjectFormDescriptor;
+                            if (ScriptObjectFormDescriptor.dataSize != 0)
+                            {
+                                struct Data
+                                {
+                                    //add terminate flag soon
+                                    for (i = 0; i < 255; i++)
+                                    {
+                                        if (terminateGameObjDetection != 1)
+                                        {
+                                            {
+                                                GameObjectComponent theGOBJ;
+                                            }
+                                            dataType checkForRFRM<hidden=true>;
+                                            FSkip(-4);
+                                            if (checkForRFRM == RetroFormDescriptor)
+                                            {
+                                                terminateGameObjDetection = 1;
+                                                Printf("End of Game Objects!\n");
+                                            }
+                                        }
+                                    }
+                                } d;
+                            }
+                            terminateGameObjDetection = 0;
+                            //i = 0;
+                        } sro;
+                    } sld;
+                } sl;
+            }
         } sld;
     } rd;*/
 } RoomChunk;
