@@ -11,6 +11,9 @@
 //   History: 
 //------------------------------------------------
 
+//Original sources
+//http://www.metroid2002.com/retromodding/wiki
+//https://github.com/kinnay/Nintendo-File-Formats/wiki
 //This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo!
 
 local uint i<hidden=true> = 0;
@@ -18,6 +21,8 @@ local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 local uint addExtension<hidden=true> = 0;
 local uint isSDX<hidden=true> = 0;
+local uint isDSubComp<hidden=true> = 0;
+local uint isGameObjectComponent<hidden=true> = 0;
 //local uint hasTXTRMeta <hidden=true> = 0;
 //local uint disableStructFields<hidden=true> = 0;
 local uint checkLocalMETA <hidden=true> = 0;
@@ -39,10 +44,10 @@ typedef enum <uint32>
     TableOfContentsContent = 1414480707,
     MessageTable_MessageStudioBinaryText = 1297302100,
     RetroFormDescriptor = 1380340301,
-    CompiledAudioSample = 1129532752,
-    CompiledAudioSoundEffect = 1128355140,
+    CookedAudioSample = 1129532752,
+    CookedAudioSoundEffect = 1128355140,
     AssetDirectory = 1094994258,
-    CompiledAudioBusHeiarchy = 1128350280,
+    CookedAudioBusHeiarchy = 1128350280,
     DependencyGroup = 1145524816,
     Package = 1346454347,
     UniverseInfo = 1430867526,
@@ -62,7 +67,7 @@ typedef enum <uint32>
     TreeNode = 1414677829,
     Room = 1380929357,
     Export = 1163415636,
-    CompiledModel = 1129137228,
+    CookedModel = 1129137228,
     WorldModel = 1464681548,
     SkinnedModel = 1397572684,
     GenericParticleSystem = 1195724368,
@@ -80,6 +85,7 @@ typedef enum <uint32>
     GPUCompressed = 1196447008,
     SwooshParticleSystem = 1398231880,
     RuleSetConfig = 1381192771,
+    RuleChunk = 1381321797,
     LightProbe = 1280332354,
     //Translations
     US_English = 1431520590,
@@ -146,7 +152,9 @@ typedef enum <uint32>{
     GX2_SURFACE_FORMAT_FLOAT_R11_G11_B10,
     GX2_SURFACE_FORMAT_FLOAT_R32_2,
     GX2_SURFACE_FORMAT_FLOAT_R16_G16,
-    GX2_SURFACE_FORMAT_UNORM_R8_G8
+    GX2_SURFACE_FORMAT_UNORM_R8_G8,
+    NX_ASTC_2D_6X5 = 55,
+    NX_ASTC_2D_UNKNOWN = 58
 } DKCTF_TexFmt;
 
 typedef enum <uint32>{
@@ -157,7 +165,9 @@ typedef enum <uint32>{
     SLdrDebugControls = 2000855825,
     enum_100071d8 = 3648137374,
     LOOSE_DATA_TEST_1 = 3341599032,
-    LOOSE_DATA_TEST_2 = 1682086747
+    LOOSE_DATA_TEST_2 = 1682086747,
+    CRelayAutoFireGOC = 2137857210,
+    CRelayGOC = 2413871049,
 } DKCTF_CRC;
 
 typedef struct
@@ -348,47 +358,56 @@ typedef struct
         FormDescriptor GraphicalFXLibrary_FlashFormDescriptor;
         //byte GraphicalFXLibrary_FlashDataBlock[GraphicalFXLibrary_FlashFormDescriptor.dataSize];
     }
-    ChunkDescriptor GFXLChunk;
-    uint32 referencedTextures;
-    for (i = 0; i < referencedTextures; i++)
+    struct GFXLibData
     {
-        struct ReferencedTxtrs
+        ChunkDescriptor GFXLChunk;
+        struct GFXLibChunkData 
         {
-            GUID texRef;
-            if (isNX == 0)
+            uint32 referencedTextures;
+            struct ReferencedTxtrs
             {
-                byte checkForNX<hidden=true>;
-                FSkip(-1);
-                if (checkForNX == 0)
+                for (i = 0; i < referencedTextures; i++)
                 {
-                    isNX = 1;
-                    Printf("NX PAK DETECTED");
+                    struct ReferencedTxtr
+                    {
+                        GUID texRef;
+                        if (isNX == 0)
+                        {
+                            byte checkForNX<hidden=true>;
+                            FSkip(-1);
+                            if (checkForNX == 0)
+                            {
+                                isNX = 1;
+                                Printf("NX PAK DETECTED");
+                            }
+                        }
+                        if (isNX)
+                        {
+                            CommonInt32Str texName;
+                        }
+                        else
+                        {
+                            string texName;
+                        }
+                    } rtxtr;
                 }
-            }
+            } rtxrs;
             if (isNX)
             {
-                CommonInt32Str texName;
+                CommonInt32Str theSWFName;
             }
             else
             {
-                string texName;
+                string theSWFName;
             }
-        } rtxtrs;
-    }
-    if (isNX)
-    {
-        CommonInt32Str theSWFName;
-    }
-    else
-    {
-        string theSWFName;
-    }
-    FSkip(4);
-    LittleEndian(); //temp swap endian
-    uint32 swfSize;
-    BigEndian(); //temp swap endian
-    FSkip(-8);
-    byte theGFXFile[swfSize];
+            FSkip(4);
+            LittleEndian(); //temp swap endian
+            uint32 swfSize;
+            BigEndian(); //temp swap endian
+            FSkip(-8);
+            byte theGFXFile[swfSize];
+        } gfxcd;
+    } gfxld;
 } GraphicalFXLibrary_FlashChunk;
 
 typedef struct
@@ -423,13 +442,44 @@ typedef struct
     {
         FormDescriptor GraphicalFX_FlashFormDescriptor;
     }
-    ChunkDescriptor GraphicalFX_FlashChunkDescriptor;
     struct GFX
     {
-        /*FSkip(48);
-        uint32 SWFSize;
-        FSkip(48);
-        byte theSWFFile[SWFSize];*/
+        ChunkDescriptor GraphicalFX_FlashChunkDescriptor;
+        /*struct GFXData
+        {
+            GUID LibGUID;
+            GUID PossiblyAnotherGUID;
+            //FSkip(12);
+            uint32 RefSWFCount;
+            struct ReferencedSWFs
+            {
+                for (i = 0; i < RefSWFCount-1; i++)
+                {
+                    struct ReferencedSWF
+                    {
+                        uint64 dataOff;
+                        uint64 SWFSize;
+                        char SWFName[48];
+                    } rswf;
+                }
+            } rswfs;
+            //FSkip(48);
+            struct MainSWF
+            {
+                uint64 mainDataOff;
+                uint64 mainSWFSize;
+                char mainSWFName[48];
+                //FSkip(dataOff-20-7);
+                if (RefSWFCount == 1)
+                {
+                    byte theSWFFile[mainSWFSize]; //add 7 since since the CWS bit is included
+                }
+                else
+                {
+                    //byte theSWFFile[(GraphicalFX_FlashChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+                }
+            } mswf;
+        } gfxd;*/
         //for now read it in bytes idk how to make 010 detect the whole thing
         byte theGFXFile[GraphicalFX_FlashChunkDescriptor.dataSize];
     } gfx;
@@ -477,7 +527,8 @@ typedef struct
 
 typedef struct
 {
-    dataType connID[2];
+    dataType Event;
+    dataType Action;
     GUID componentGUID;
     uint16 unk;
     BoolByte unk2[2];
@@ -492,65 +543,78 @@ typedef struct
 
 typedef struct
 {
+    dataType unk1;
     dataType SubCompType;
     GUID SubCompGUID;
+    byte unk2[3];
     BoolByte unk;
 } SubComponent;
 
 typedef struct
 {
-    ChunkDescriptor ComponentChunkDescriptor;
     DKCTF_CRC ComponentTypeCRC;
+    if (ComponentTypeCRC == 2314479346)
+    {
+        //isGameObjectComponent = 1;
+    }
     GUID componentGUID;
     CommonInt32Str theComponentName;
     //FSkip(16);
     //uint32 guids;
     //GUID theGUID;
-    /*uint16 connnections;
-    if (connnections != 0)
+    if (isGameObjectComponent == 0)
     {
-        struct Connections
+        uint16 connections;
+        if (connections != 0)
         {
-            for (i = 0; i < connnections; i2++)
+            struct Connections
             {
-                Connection theConn;
-            }
-        } conns;
+                for (i = 0; i < connections; i++)
+                {
+                    Connection theConn;
+                }
+            } conns;
+        }
+        //We die here
+        //uint32 testScriptLinksVar;
+        uint32 scriptLinks;
+        if (scriptLinks != 0)
+        {
+            struct ScriptLinks
+            {
+                for (i2 = 0; i2 < scriptLinks; i2++)
+                {
+                    Field theSL;
+                }
+            } slnks;
+        }
     }
     else
     {
-        //FSkip(2);
-    }
-    uint16 scriptLinks;
-    if (scriptLinks != 0)
-    {
-        struct ScriptLinks
+        uint16 subComponents;
+        if (subComponents != 0)
         {
-            for (i2 = 0; i2 < scriptLinks; i2++)
+            struct SubComponents
             {
-                ScriptLink theSL;
-            }
-        } slnks;
-    }*/
-    /*uint32 subComponents;
-    if (subComponents != 0)
-    {
-        struct SubComponents
+                for (i2 = 0; i2 < subComponents; i2++)
+                {
+                    SubComponent theSubComp;
+                }
+            } subcs;
+        }
+        else
         {
-            for (i = 0; i < subComponents; i2++)
-            {
-                SubComponent theSubComp;
-            }
-        } subcs;
+            FSkip(1);
+        }
     }
-    else
-    {
-        FSkip(1);
-    }
-    BoolByte unk;
-    float pos[3];
-    float rot[3];
-    float scale[3];*/
+} Component;
+
+typedef struct
+{
+    ChunkDescriptor ComponentChunkDescriptor;
+    byte theComponent[ComponentChunkDescriptor.dataSize]; //For now
+    //Component theComponent;
+    isGameObjectComponent = 0;
 } GameObjectComponent;
 
 typedef struct
@@ -565,7 +629,8 @@ typedef struct
         byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
-    /*struct RoomData
+    /*
+    struct RoomData
     {
         struct MainHeader
         {
@@ -685,61 +750,67 @@ typedef struct
         } mh;
         struct ScriptLayers
         {
-            FormDescriptor ScriptLayersFormDescriptor;
-            struct ScriptLayerData
+            struct ScriptLayer
             {
-                struct LayerHeader
+                FormDescriptor ScriptLayersFormDescriptor;
+                struct ScriptLayerData
                 {
-                    ChunkDescriptor ScriptLayerHeadChunkDescriptor;
-                    struct LayerHeaderData
+                    struct LayerHeader
                     {
-                        CommonInt32Str ScriptLayerName;
-                        GUID ScriptLayerGUID;
-                        uint16 unk;
-                        uint16 loadUnitIDs;
-                        struct LoadUnitIDs
+                        ChunkDescriptor ScriptLayerHeadChunkDescriptor;
+                        struct LayerHeaderData
                         {
-                            for (i = 0; i < loadUnitIDs; i++)
+                            CommonInt32Str ScriptLayerName;
+                            GUID ScriptLayerGUID;
+                            uint16 unk;
+                            uint16 loadUnitIDs;
+                            struct LoadUnitIDs
                             {
-                                GUID LoadUnitGUID;
-                            }
-                        } luids;
-                        GUID unknownGUID;
-                        BoolByte unknownFlag;
-                    } lyrhdrd;
-                } lyrhdr;
-                struct GeneratedScriptObject
-                {
-                    FormDescriptor ScriptLayersFormDescriptor;
-                    if (ScriptLayersFormDescriptor.dataSize != 0)
-                    {
-                        struct GSOData
-                        {
-                            GUID objID;
-                            uint16 componentCount;
-                            struct GameObjectComponents
-                            {
-                                for (i = 0; i < componentCount; i++)
+                                for (i = 0; i < loadUnitIDs; i++)
                                 {
-                                    GameObjectComponent theComponent;
+                                    struct LoadUnitGUIDEntry
+                                    {
+                                        GUID LoadUnitGUID;
+                                    } luge;
                                 }
-                            } gobjcs;
-                        } gsod;
-                    }
-                } gso;
-                struct ScriptObject
-                {
-                    FormDescriptor ScriptObjectFormDescriptor;
-                    struct Data
+                            } luids;
+                            GUID unknownGUID;
+                            BoolByte unknownFlag;
+                        } lyrhdrd;
+                    } lyrhdr;
+                    struct GeneratedScriptObject
                     {
-                        for (i = 0; i < 40; i++)
+                        FormDescriptor ScriptLayersFormDescriptor;
+                        if (ScriptLayersFormDescriptor.dataSize != 0)
                         {
-                            GameObjectComponent theGOBJ;
+                            struct GSOData
+                            {
+                                GUID objID;
+                                uint16 componentCount;
+                                struct GameObjectComponents
+                                {
+                                    for (i = 0; i < componentCount; i++)
+                                    {
+                                        GameObjectComponent theComponent;
+                                    }
+                                } gobjcs;
+                            } gsod;
                         }
-                    } d;
-                } sro;
-            } sld;
-        } sl;
+                    } gso;
+                    struct ScriptObject
+                    {
+                        FormDescriptor ScriptObjectFormDescriptor;
+                        struct Data
+                        {
+                            for (i = 0; i < 75; i++)
+                            {
+                                GameObjectComponent theGOBJ;
+                            }
+                        } d;
+                    } sro;
+                } sld;
+            } sl;
+        } sld;
     } rd;*/
 } RoomChunk;
 
@@ -984,7 +1055,7 @@ typedef struct
         extensionToAdd = "uinfo";
         addExtension = 1;
     }
-    if (AssetType == CompiledAudioBusHeiarchy)
+    if (AssetType == CookedAudioBusHeiarchy)
     {
         extensionToAdd = "cabh";
         addExtension = 1;
@@ -999,7 +1070,7 @@ typedef struct
         extensionToAdd = "char";
         addExtension = 1;
     }
-    if (AssetType == CompiledAudioSample)
+    if (AssetType == CookedAudioSample)
     {
         extensionToAdd = "csmp";
         addExtension = 1;
@@ -1014,7 +1085,7 @@ typedef struct
         extensionToAdd = "rsgfx";
         addExtension = 1;
     }
-    if (AssetType == CompiledAudioSoundEffect)
+    if (AssetType == CookedAudioSoundEffect)
     {
         extensionToAdd = "caud";
         addExtension = 1;
@@ -1237,6 +1308,7 @@ typedef struct
             {
                 DKCTF_TexType texType;
                 DKCTF_TexFmt texFmt;
+                //Printf("%i:%i\n", i2, texFmt);
                 uint32 width;
                 uint32 height;
                 uint32 depth;
@@ -1464,7 +1536,7 @@ typedef struct
     {
         byte theFile[ContentForm.dataSize];
     }
-} CompiledAudioBusHeirachyChunk;
+} CookedAudioBusHeirachyChunk;
 
 typedef struct
 {
@@ -1516,7 +1588,7 @@ typedef struct
             byte DSPAudioData[DATAChunkDesc.dataSize]; //
         } dsp;
     } DATA;*/
-} CompiledAudioSampleChunk;
+} CookedAudioSampleChunk;
 
 typedef struct
 {
@@ -1529,7 +1601,8 @@ typedef struct
     {
         byte theFile[ContentForm.dataSize];
     }
-    /*struct CAUDData
+    /*
+    struct CAUDData
     {
         string fileName;
         uint32 groupNameCount;
@@ -1547,7 +1620,7 @@ typedef struct
         uint32 unk2;
         uint16 unk3[2];
         byte unk4[3];
-        float unk4;
+        float unk5;
         uint32 asamples;
         struct Samples
         {
@@ -1555,13 +1628,13 @@ typedef struct
             {
                 struct SampleInfo
                 {
-                    uint32 infoSize;
-                    uint32 assetID;
+                    //uint32 infoSize;
+                    GUID assetID;
                 } smpl;
             }
         } samples;
     } caudData;*/
-} CompiledAudioSoundEffectChunk;
+} CookedAudioSoundEffectChunk;
 
 typedef struct
 {
@@ -1651,13 +1724,18 @@ typedef struct
     if (isPack)
     {
         FormDescriptor GENPForm;
-        byte theFile[GENPForm.dataSize];
+        //byte theFile[GENPForm.dataSize];
     }
     else
     {
-        byte theFile[ContentForm.dataSize];
+        //byte theFile[ContentForm.dataSize];
     }
     //ChunkDescriptor DescChunkHdr;
+    struct GPSData
+    {
+        ChunkDescriptor DescChunkHdr;
+        byte theGPSFile[DescChunkHdr.dataSize];
+    } d;
 } GenericParticleSystemChunk;
 
     typedef struct
@@ -1720,9 +1798,9 @@ typedef struct
             {
                 LooseDataChunk LooseDataChunkContent;
             }
-            else if (TMPCHECK.contentType == CompiledAudioBusHeiarchy)
+            else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
             {
-                CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyChunkContent;
+                CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
             }
             else if (TMPCHECK.contentType == MessageTable_MessageStudioBinaryText)
             {
@@ -1732,17 +1810,17 @@ typedef struct
             {
                 MaterialChunk TheMaterialChunk;
             }
-            else if (TMPCHECK.contentType == CompiledAudioSample)
+            else if (TMPCHECK.contentType == CookedAudioSample)
             {
-                CompiledAudioSampleChunk CompiledAudioSampleContent;
+                CookedAudioSampleChunk CookedAudioSampleContent;
             }
-            else if (TMPCHECK.contentType == CompiledAudioSoundEffect)
+            else if (TMPCHECK.contentType == CookedAudioSoundEffect)
             {
-                CompiledAudioSoundEffectChunk CompiledAudioSoundEffectContent;
+                CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
             }
-            else if (TMPCHECK.contentType == CompiledAudioBusHeiarchy)
+            else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
             {
-                CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyContent;
+                CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
             }
             else if (TMPCHECK.contentType == Texture)
             {
@@ -1820,7 +1898,7 @@ typedef struct
                 DynamicCollisionChunk DynamicCollisionContent;
                 isCLSN = 0;
             }
-            else if (TMPCHECK.contentType == CompiledModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
+            else if (TMPCHECK.contentType == CookedModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
             {
                 if (TMPCHECK.contentType == WorldModel)
                 {
@@ -1848,10 +1926,10 @@ typedef struct
     LooseDataChunk LooseDataChunkContent5;
     LooseDataChunk LooseDataChunkContent6;
     LooseDataChunk LooseDataChunkContent7;
-    CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyChunkContent;
+    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
     MSBTChunk_NMS MessageTableContent;
-    CompiledAudioSampleChunk theCSMP;
-    CompiledAudioSoundEffectChunk theCAUD;
+    CookedAudioSampleChunk theCSMP;
+    CookedAudioSoundEffectChunk theCAUD;
     MSBTChunk_NMS MessageTableContent2;
     UniverseInfoChunk UniverseInfoContent;
     UniverseInfoChunk UniverseInfoContent2;
@@ -1989,21 +2067,21 @@ struct RetroStudiosFile
     {
         MSBTChunk_NMS MessageTableContent;
     }
-    if (ContentForm.contentType == CompiledAudioSample)
+    if (ContentForm.contentType == CookedAudioSample)
     {
-        CompiledAudioSampleChunk CompiledAudioSampleContent;
+        CookedAudioSampleChunk CookedAudioSampleContent;
         if (ContentForm.fVer == 18 && ContentForm.dVer == 18) //Detect NX audio
         {
             checkLocalMETA = 1;
         }
     }
-    if (ContentForm.contentType == CompiledAudioSoundEffect)
+    if (ContentForm.contentType == CookedAudioSoundEffect)
     {
-        CompiledAudioSoundEffectChunk CompiledAudioSoundEffectContent;
+        CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
     }
-    if (ContentForm.contentType == CompiledAudioBusHeiarchy)
+    if (ContentForm.contentType == CookedAudioBusHeiarchy)
     {
-        CompiledAudioBusHeirachyChunk CompiledAudioBusHeirachyContent;
+        CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
     }
     if (ContentForm.contentType == Texture)
     {
@@ -2013,7 +2091,7 @@ struct RetroStudiosFile
             checkLocalMETA = 1;
         }
     }
-    if (ContentForm.contentType == CompiledModel || ContentForm.contentType == SkinnedModel || ContentForm.contentType == WorldModel)
+    if (ContentForm.contentType == CookedModel || ContentForm.contentType == SkinnedModel || ContentForm.contentType == WorldModel)
     {
         if (ContentForm.contentType == WorldModel)
         {
