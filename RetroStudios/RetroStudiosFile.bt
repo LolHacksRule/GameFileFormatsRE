@@ -20,6 +20,7 @@ local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 local uint terminateGameObjDetection<hidden=true> = 0;
+local uint terminateLoadUnitDetection<hidden=true> = 0;
 local uint addExtension<hidden=true> = 0;
 local uint isSDX<hidden=true> = 0;
 local uint isDSubComp<hidden=true> = 0;
@@ -95,6 +96,12 @@ typedef enum <uint32>
     ScriptObject = 1397901648,
     ComponentChunk = 1129270608,
     GeneratedGameObjectChunk = 1195855682,
+    PerformanceGroupChunk = 1346851408,
+    LevelGeneratedChunk = 1279739214,
+    LoadUnitChunk = 1280659028,
+    LoadUnitHeader = 1280657476,
+    LoadUnitResourcesChunk = 1280460115,
+    LoadUnitLayerChunk = 1280072018,
     //Translations
     US_English = 1431520590,
     US_French = 1431520850,
@@ -820,8 +827,8 @@ typedef struct
                 ChunkDescriptor RoomHeaderChunkDescriptor;
                 struct RoomHeaderData
                 {
-                    uint16 LoadUnits;
-                    local uint16 totalLoadUnits<hidden=true> = LoadUnits+LoadUnits;
+                    uint16 unk; //Always 3
+                    //local uint16 totalLoadUnits<hidden=true> = LoadUnits+LoadUnits;
                     struct PerformanceGroup
                     {
                         ChunkDescriptor PerformanceGroupsChunkDescriptor;
@@ -869,8 +876,8 @@ typedef struct
                     } lg;
                     struct LoadUnitForms
                     {
-                        for (i = 0; i < totalLoadUnits; i++)
-                        {
+                        //for (i = 0; i < totalLoadUnits; i++)
+                        //{
                             struct LoadUnitForm
                             {
                                 FormDescriptor LoadUnitFormsFormDescriptor;
@@ -924,7 +931,7 @@ typedef struct
                                     } lulres;
                                 } luf;
                             } lufd;
-                        }
+                        //}
                     } rhd;
                 } lufds;
             } mhd;
@@ -1002,7 +1009,6 @@ typedef struct
                             {
                                 struct Data
                                 {
-                                    //add terminate flag soon
                                     for (i = 0; i < 1024; i++)
                                     {
                                         if (terminateGameObjDetection != 1)
