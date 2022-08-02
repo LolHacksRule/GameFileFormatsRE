@@ -19,6 +19,7 @@
 local uint i<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
+local uint terminateGameObjDetection<hidden=true> = 0;
 local uint addExtension<hidden=true> = 0;
 local uint isSDX<hidden=true> = 0;
 local uint isDSubComp<hidden=true> = 0;
@@ -802,11 +803,25 @@ typedef struct
                         FormDescriptor ScriptObjectFormDescriptor;
                         struct Data
                         {
-                            for (i = 0; i < 75; i++)
+                            //add terminate flag soon
+                            for (i = 0; i < 255; i++)
                             {
-                                GameObjectComponent theGOBJ;
+                                if (terminateGameObjDetection != 1)
+                                {
+                                    {
+                                        GameObjectComponent theGOBJ;
+                                    }
+                                    dataType checkForRFRM<hidden=true>;
+                                    FSkip(-4);
+                                    if (checkForRFRM == RetroFormDescriptor)
+                                    {
+                                        terminateGameObjDetection = 1;
+                                        Printf("End of Game Objects!\n");
+                                    }
+                                }
                             }
                         } d;
+                        terminateGameObjDetection = 0;
                     } sro;
                 } sld;
             } sl;
