@@ -94,6 +94,7 @@ typedef enum <uint32>
     GeneratedScriptObject = 1196642896,
     ScriptObject = 1397901648,
     ComponentChunk = 1129270608,
+    GeneratedGameObjectChunk = 1195855682,
     //Translations
     US_English = 1431520590,
     US_French = 1431520850,
@@ -808,8 +809,8 @@ typedef struct
         byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
-    /*
-    struct RoomData
+    
+    /*struct RoomData
     {
         struct MainHeader
         {
@@ -962,23 +963,38 @@ typedef struct
                         } lyrhdr;
                         struct GeneratedScriptObject
                         {
-                            FormDescriptor ScriptLayersFormDescriptor;
-                            if (ScriptLayersFormDescriptor.dataSize != 0)
+                            FormDescriptor GeneratedScriptObjFormDescriptor;
+                            if (GeneratedScriptObjFormDescriptor.dataSize != 0)
                             {
-                                struct GSOData
+                                for (i = 0; i < 255; i++)
                                 {
-                                    GUID objID;
-                                    uint16 componentCount;
-                                    struct GameObjectComponents
+                                    if (terminateGameObjDetection != 1)
                                     {
-                                        for (i = 0; i < componentCount; i++)
+                                        struct GenGameObjData
                                         {
-                                            GameObjectComponent theComponent;
-                                        }
-                                    } gobjcs;
-                                } gsod;
+                                            ChunkDescriptor GenGameObjChunkDesc;
+                                            GUID objID;
+                                            uint16 componentCount;
+                                            struct GameObjectComponents
+                                            {
+                                                for (i = 0; i < componentCount; i++)
+                                                {
+                                                    GameObjectComponent theComponent;
+                                                }
+                                            } gobjcs;
+                                            dataType checkForRFRM<hidden=true>;
+                                            FSkip(-4);
+                                            if (checkForRFRM == RetroFormDescriptor)
+                                            {
+                                                terminateGameObjDetection = 1;
+                                                Printf("End of Generated Game Objects!\n");
+                                            }
+                                        } ggobjd;
+                                    }
+                                }
                             }
                         } gso;
+                        terminateGameObjDetection = 0;
                         struct ScriptObject
                         {
                             FormDescriptor ScriptObjectFormDescriptor;
@@ -987,7 +1003,7 @@ typedef struct
                                 struct Data
                                 {
                                     //add terminate flag soon
-                                    for (i = 0; i < 255; i++)
+                                    for (i = 0; i < 1024; i++)
                                     {
                                         if (terminateGameObjDetection != 1)
                                         {
