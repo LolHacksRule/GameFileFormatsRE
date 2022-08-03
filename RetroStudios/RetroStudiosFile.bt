@@ -17,6 +17,7 @@
 //This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo!
 
 local uint i<hidden=true> = 0;
+//local uint totalLayerCount<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 local uint terminateGameObjDetection<hidden=true> = 0;
@@ -468,8 +469,8 @@ typedef struct
 
 typedef struct
 {
-    ChunkDescriptor SGX2ChunkDesc;
-    struct SGX2Data
+    ChunkDescriptor ShaderPlatformChunkDesc;
+    struct SPlatformData
     {
         /*uint32 useTOC;
         if (useTOC == 1)
@@ -496,9 +497,9 @@ typedef struct
             //
         }
         //uint32 shaderParts;*/
-        byte SGX2Data[SGX2ChunkDesc.dataSize];
-    } SGX2;
-} SGX2Content;
+        byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
+    } SPlatform;
+} ShaderPlatformContent;
 
 typedef struct
 {
@@ -813,7 +814,7 @@ typedef struct
     }
     else
     {
-        //byte RoomData[ContentForm.dataSize];
+        byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
     
@@ -1159,7 +1160,7 @@ typedef struct
         struct ShaderArcData
         {
             byte theFile[MTRLChunkDesc.dataSize];
-            SGX2Content SGX2Chunk;
+            ShaderPlatformContent ShaderPlatformChunk;
         } mtrld;
     }
     else
@@ -1833,14 +1834,30 @@ typedef struct
     if (isPack)
     {
         FormDescriptor CAUDFormDescriptor;
-        string macroFileName;
+        if (isNX)
+        {
+            CommonInt32Str macroFileName;
+            Printf("%s.caud\n", macroFileName.theString);
+        }
+        else
+        {
+            string macroFileName;
+            Printf("%s.caud\n", macroFileName);
+        }
         FSkip(-sizeof macroFileName);
-        Printf("%s.caud\n", macroFileName);
+        //Printf("%s.caud\n", macroFileName);
         byte theFile[CAUDFormDescriptor.dataSize];
     }
     else
     {
-        string macroFileName;
+        if (isNX)
+        {
+            CommonInt32Str macroFileName;
+        }
+        else
+        {
+            string macroFileName;
+        }
         FSkip(-sizeof macroFileName);
         Printf("%s.caud\n", macroFileName);
         byte theFile[ContentForm.dataSize];
@@ -1982,40 +1999,40 @@ typedef struct
     } d;
 } GenericParticleSystemChunk;
 
-    typedef struct
+typedef struct
+{
+    AssetDirectory AssetDirChunk;
+    dataType checkForMETA<hidden=true>;
+    FSkip(-4);
+    if (checkForMETA == Metadata)
     {
-        AssetDirectory AssetDirChunk;
-        dataType checkForMETA<hidden=true>;
-        FSkip(-4);
-        if (checkForMETA == Metadata)
-        {
-            MetaDataChunk theMeta;
-        }
-        /*if (hasTXTRMeta)
-        {
-            MetaDataChunk theMeta;
-        }*/
-        //Fix for reading dev files
-        if (ContentForm.fVer != 1 && ContentForm.dVer != 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
-        {
-            NameTagsChunk StringTableChunk;
-        }
-        /*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == DynamicCollision)
-        {
-            isCLSN = 1;
-            DynamicCollisionChunk theDCLN;
-        }
-        if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == Collision)
-        {
-            CollisionChunk theCSLN;
-        }
-        if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == LooseData)
-        {
-            LooseDataChunk theLDTA;
-            break; //just stop here
-        }*/
-        //end
-    } TableOfContentsContent;
+        MetaDataChunk theMeta;
+    }
+    /*if (hasTXTRMeta)
+    {
+        MetaDataChunk theMeta;
+    }*/
+    //Fix for reading dev files
+    if (ContentForm.fVer != 1 && ContentForm.dVer != 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
+    {
+        NameTagsChunk StringTableChunk;
+    }
+    /*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == DynamicCollision)
+    {
+        isCLSN = 1;
+        DynamicCollisionChunk theDCLN;
+    }
+    if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == Collision)
+    {
+        CollisionChunk theCSLN;
+    }
+    if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == LooseData)
+    {
+        LooseDataChunk theLDTA;
+        break; //just stop here
+    }*/
+    //end
+} TableOfContentsContent;
 
 typedef struct
 {
@@ -2244,7 +2261,11 @@ typedef struct
 
 typedef struct
 {
-    /*uint32 unk;
+    ChunkDescriptor RFLODesc;
+    byte theRFLO[RFLODesc.dataSize];
+    /*struct RenderFlowContent
+    {
+        /*uint32 unk;
     uint32 stringCount;
     for (i = 0; i < stringCount; i++)
     {
@@ -2276,21 +2297,14 @@ typedef struct
                 //int16 unk;
             }
         } fs;
-    }*/
-    byte theRFLO[RFLODesc.dataSize];
-} RenderFlowContent;
-
-typedef struct
-{
-    ChunkDescriptor RFLODesc;
-    RenderFlowContent theRFLOContent;
+    }
+    } theRFLOContent;*/
 } RenderFlowChunk; //WIP
 
 struct RetroStudiosFile
 {
     BigEndian();
     FormDescriptor ContentForm;
-    local int64 currOffset = OffsetGetStart();
     if (ContentForm.contentType == Package)
     {
         isPack = 1;
