@@ -1833,16 +1833,16 @@ typedef struct
     if (isPack)
     {
         FormDescriptor CAUDFormDescriptor;
-        string fileName;
-        FSkip(-sizeof fileName);
-        Printf("%s.caud\n", fileName);
+        string macroFileName;
+        FSkip(-sizeof macroFileName);
+        Printf("%s.caud\n", macroFileName);
         byte theFile[CAUDFormDescriptor.dataSize];
     }
     else
     {
-        string fileName;
-        FSkip(-sizeof fileName);
-        Printf("%s.caud\n", fileName);
+        string macroFileName;
+        FSkip(-sizeof macroFileName);
+        Printf("%s.caud\n", macroFileName);
         byte theFile[ContentForm.dataSize];
     }
     /*
