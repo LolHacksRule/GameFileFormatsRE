@@ -813,7 +813,7 @@ typedef struct
     }
     else
     {
-        byte RoomData[ContentForm.dataSize];
+        //byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
     
@@ -842,14 +842,14 @@ typedef struct
                                     uint32 nameLen;
                                     char theName[nameLen];
                                     GUID editorID;
-                                    byte active;
-                                    uint16 refGUIDs;
-                                    for (i2 = 0; i2 < refGUIDs; i2++)
+                                    BoolByte active;
+                                    uint16 refLayerGUIDs;
+                                    for (i2 = 0; i2 < refLayerGUIDs; i2++)
                                     {
-                                        struct ReferencedGUID
+                                        struct ReferencedLayerGUID
                                         {
                                             GUID theRefGUID;
-                                        } rguid;
+                                        } rlyrguid;
                                     }
                                 } pge;
                             }
@@ -876,69 +876,83 @@ typedef struct
                     } lg;
                     struct LoadUnitForms
                     {
-                        //for (i = 0; i < totalLoadUnits; i++)
-                        //{
-                            struct LoadUnitForm
+                        for (i = 0; i < 20; i++)
+                        {
+                            if (terminateLoadUnitDetection != 1)
                             {
-                                FormDescriptor LoadUnitFormsFormDescriptor;
-                                struct LoadUnitFormsData
+                                struct LoadUnitForm
                                 {
-                                    struct LevelUnitHead
+                                    FormDescriptor LoadUnitFormsFormDescriptor;
+                                    struct LoadUnitFormsData
                                     {
-                                        ChunkDescriptor LevelUnitHeadDescriptor;
-                                        struct LevelUnitHeaderData
+                                        struct LevelUnitHead
                                         {
-                                            CommonInt32Str theStr;
-                                            GUID loadUnitGUID;
-                                            uint16 flags;
-                                        } LUHD;
-                                    } LUH;
-                                    struct LevelUnitResources
-                                    {
-                                        ChunkDescriptor LevelUnitResourcesChunkDescriptor;
-                                        struct LevelUnitResourcesData
-                                        {
-                                            uint32 resCnt;
-                                            struct LevelUnitResIDs
+                                            ChunkDescriptor LevelUnitHeadDescriptor;
+                                            struct LevelUnitHeaderData
                                             {
-                                                for (i = 0; i < resCnt; i++)
-                                                {
-                                                    struct LevelUnitResID
-                                                    {
-                                                        GUID LevelResID;
-                                                    } luri;
-                                                } 
-                                            } lurids;
-                                        } luresids;
-                                    } lres;
-                                    struct LevelUnitLayers
-                                    {
-                                        ChunkDescriptor LevelUnitLayersChunkDescriptor;
-                                        struct LevelUnitLayersData
+                                                CommonInt32Str theStr;
+                                                GUID loadUnitGUID;
+                                                uint16 flags;
+                                            } LUHD;
+                                        } LUH;
+                                        struct LevelUnitResources
                                         {
-                                            uint32 layerCount;
-                                            struct LevelUnitLayerEntries
+                                            ChunkDescriptor LevelUnitResourcesChunkDescriptor;
+                                            struct LevelUnitResourcesData
                                             {
-                                                for (i = 0; i < layerCount; i++)
+                                                uint32 resCnt;
+                                                struct LevelUnitResIDs
                                                 {
-                                                    struct LevelUnitLayerEntry
+                                                    for (i = 0; i < resCnt; i++)
                                                     {
-                                                        GUID LevelResID;
-                                                    } lari;
-                                                } 
-                                            } larids;
-                                        } lulids;
-                                    } lulres;
-                                } luf;
-                            } lufd;
-                        //}
+                                                        struct LevelUnitResID
+                                                        {
+                                                            GUID LevelResID;
+                                                        } luri;
+                                                    } 
+                                                } lurids;
+                                            } luresids;
+                                        } lres;
+                                        struct LevelUnitLayers
+                                        {
+                                            ChunkDescriptor LevelUnitLayersChunkDescriptor;
+                                            struct LevelUnitLayersData
+                                            {
+                                                uint32 layerCount;
+                                                local uint32 totalLayerCount = layerCount+layerCount;
+                                                Printf("%i\n", totalLayerCount);
+                                                struct LevelUnitLayerEntries
+                                                {
+                                                    for (i = 0; i < layerCount; i++)
+                                                    {
+                                                        struct LevelUnitLayerEntry
+                                                        {
+                                                            GUID LevelResID;
+                                                        } lari;
+                                                    } 
+                                                } larids;
+                                            } lulids;
+                                        } lulres;
+                                    } luf;
+                                } lufd;
+                                FSkip(20);
+                                dataType checkForLUNT<hidden=true>;
+                                FSkip(-24);
+                                if (checkForLUNT != LoadUnitChunk)
+                                {
+                                    terminateLoadUnitDetection = 1;
+                                    Printf("End of Load Units!\n");
+                                }
+                            }
+                        }
+                        terminateLoadUnitDetection = 0;
                     } rhd;
                 } lufds;
             } mhd;
         } mh;
         struct ScriptLayers
         {
-            for (i2 = 0; i2 < mh.mhd.lufds.rhd.lufd.luf.lulres.lulids.layerCount; i2++)
+            for (i2 = 0; i2 < mh.mhd.lufds.rhd.lufd.luf.lulres.lulids.totalLayerCount; i2++)
             {
                 struct ScriptLayer
                 {
@@ -1009,27 +1023,28 @@ typedef struct
                             {
                                 struct Data
                                 {
-                                    for (i = 0; i < 1024; i++)
+                                    for (i = 0; i < 2000; i++)
                                     {
                                         if (terminateGameObjDetection != 1)
                                         {
                                             {
                                                 GameObjectComponent theGOBJ;
                                             }
-                                            dataType checkForRFRM<hidden=true>;
+                                            dataType checkForRFRM<hidden=true>; //if we error out here from standalone files, we're fine
                                             FSkip(-4);
                                             if (checkForRFRM == RetroFormDescriptor)
                                             {
                                                 terminateGameObjDetection = 1;
                                                 Printf("End of Game Objects!\n");
                                             }
+                                    
                                         }
                                     }
                                 } d;
                             }
-                            terminateGameObjDetection = 0;
                             //i = 0;
                         } sro;
+                        terminateGameObjDetection = 0;
                     } sld;
                 } sl;
             }
@@ -1818,10 +1833,16 @@ typedef struct
     if (isPack)
     {
         FormDescriptor CAUDFormDescriptor;
+        string fileName;
+        FSkip(-sizeof fileName);
+        Printf("%s.caud\n", fileName);
         byte theFile[CAUDFormDescriptor.dataSize];
     }
     else
     {
+        string fileName;
+        FSkip(-sizeof fileName);
+        Printf("%s.caud\n", fileName);
         byte theFile[ContentForm.dataSize];
     }
     /*
@@ -2269,6 +2290,7 @@ struct RetroStudiosFile
 {
     BigEndian();
     FormDescriptor ContentForm;
+    local int64 currOffset = OffsetGetStart();
     if (ContentForm.contentType == Package)
     {
         isPack = 1;
