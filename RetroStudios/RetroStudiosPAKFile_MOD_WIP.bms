@@ -21,10 +21,11 @@ for i = 0 < ASSETS
 	get GUID longlong
 	get GUIDP2 longlong
 	get OFFSET longlong
+	get SIZE longlong
     if ASSETTYPE = "DGRP"
 		set DGRPOFFSET = OFFSET
+        set DGRPSIZE = SIZE
 	endif
-	get SIZE longlong
 	putarray 3 i OFFSET
 	putarray 4 i SIZE
 next i
@@ -107,7 +108,7 @@ next i
 for i = 0 < DGRPS
 math T == i
 string NAME p= "%s" DGRPNAME
-log DGRPNAME DGRPOFFSET SIZE
+log DGRPNAME DGRPOFFSET DGRPSIZE
 next i
 
 #for i = 0 < ASSETS - 1	
