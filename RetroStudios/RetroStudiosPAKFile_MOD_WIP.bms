@@ -29,12 +29,17 @@ for i = 0 < ASSETS
 	putarray 3 i OFFSET
 	putarray 4 i SIZE
 next i
+savepos metaDataOff
 getDstring ISMETA 4
 if ISMETA = "META"
-Print "Doesn't currently work on PAKs with meta."
-break
-#get DSIZE longlong
-#goto DSIZE
+#Print "Doesn't currently work on PAKs with meta."
+#break
+get METADSIZE longlong
+math METADSIZE + 24
+goto metaDataOff
+get FNAME basename
+string MDATA p= "%s_metadata.bin" FNAME
+log MDATA metaDataOff METADSIZE
 endif
 get UNNECESSARY2 longlong
 get UNNECESSARY3 long
@@ -100,19 +105,18 @@ for i = 0 < NAMETAGS
     if NAMETYPE = "DGRP"
         string DGRPNAME = ASSETNAME
     endif
-	math T == i
-	getarray OFFSET   3	 T
-	getarray SIZE   4 T
+	#math T == i
+	#getarray OFFSET   3	 T
+	#getarray SIZE   4 T
 next i
 
 for i = 0 < DGRPS
-math T == i
+#math T == i
 string NAME p= "%s" DGRPNAME
 log DGRPNAME DGRPOFFSET DGRPSIZE
 next i
 
 #for i = 0 < ASSETS - DGRPS
-
 	#if ASSETTYPE != NAMETYPE
 	#	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
 	#	log NAME OFFSET SIZE
@@ -139,11 +143,3 @@ next i
 #string NAME p= "0x%08x%08x%s" GUID GUIDP2 DATATYPE
 #log NAME OFFSET SIZE
 #next i
-
-#if DGRPS > 0
-	#for i = 0 < DGRPS	
-	#	string NAME p= "%s" ASSETNAME
-	#	log NAME OFFSET SIZE
-	#next i
-	#endif
-	#math DGRPS = 0
