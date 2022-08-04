@@ -1,9 +1,10 @@
 #Original script https://zenhax.com/viewtopic.php?t=1270
 
 set UNNAMEDASSETS 0
-set ISNX 0
+set ISNX 0 #NS uses Int32 strings
 set GUIDSIZE 16
 set DGRPS 0
+#set DGRPOFFSET 0
 
 idstring "RFRM"
 endian big
@@ -14,22 +15,22 @@ for i = 0 < ASSETS
 	#if ASSETTYPE = "CSMP"
 	#math UNNAMEDASSETS + 1
 	#endif
-	if ASSETTYPE = "DGRP"
-		math DGRPS + 1
-	endif
 	#if ASSETTYPE = "CAUD"
 	#math UNNAMEDASSETS + 1
 	#endif
 	get GUID longlong
 	get GUIDP2 longlong
 	get OFFSET longlong
+    if ASSETTYPE = "DGRP"
+		set DGRPOFFSET = OFFSET
+	endif
 	get SIZE longlong
 	putarray 3 i OFFSET
 	putarray 4 i SIZE
 next i
 getDstring ISMETA 4
 if ISMETA = "META"
-Print "Doesn't work on meta."
+Print "Doesn't currently work on PAKs with meta."
 break
 #get DSIZE longlong
 #goto DSIZE
@@ -38,11 +39,14 @@ get UNNECESSARY2 longlong
 get UNNECESSARY3 long
 get UNNECESSARY4 longlong
 get NAMETAGS long
-for i = 0 < NAMETAGS - DGRPS
+for i = 0 < NAMETAGS
 	set DATATYPE = ""
 	getDstring NAMETYPE 4
 	if NAMETYPE = "MSBT"
 	string DATATYPE = ".mstbin"
+	endif
+	if NAMETYPE = "DGRP"
+        math DGRPS + 1
 	endif
 	if NAMETYPE = "LDTA"
 	string DATATYPE = ".ldata"
@@ -68,7 +72,10 @@ for i = 0 < NAMETAGS - DGRPS
 	if NAMETYPE = "FSMC"
 	string DATATYPE = ".cfsm"
 	endif
-	if NAMETYPE = "GFX" || NAMETYPE == "GFXL"
+	if NAMETYPE = "GFX"
+	string DATATYPE = ".rfgfx"
+	endif
+	if NAMETYPE == "GFXL"
 	string DATATYPE = ".rsgfx"
 	endif
 	if NAMETYPE = "ROOM"
@@ -89,10 +96,21 @@ for i = 0 < NAMETAGS - DGRPS
 	else
 		get ASSETNAME string
 	endif
+    if NAMETYPE = "DGRP"
+        string DGRPNAME = ASSETNAME
+    endif
 	math T == i
 	getarray OFFSET   3	 T
 	getarray SIZE   4 T
 next i
+
+for i = 0 < DGRPS
+math T == i
+string NAME p= "%s" DGRPNAME
+log DGRPNAME DGRPOFFSET SIZE
+next i
+
+#for i = 0 < ASSETS - 1	
 
 	#if ASSETTYPE != NAMETYPE
 	#	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
