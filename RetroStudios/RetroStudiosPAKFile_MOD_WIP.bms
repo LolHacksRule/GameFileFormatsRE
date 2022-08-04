@@ -41,8 +41,9 @@ if ISMETA = "META"
     log MDATA metaDataOff METADSIZE
     savepos theSTRGOff
     math theSTRGOff + METADSIZE
+    goto theSTRGOff
+    #Print %theSTRGOff%
     getDString STRG 4
-    Print %theSTRGOff%
 endif
 
 get UNNECESSARY2 longlong
@@ -116,7 +117,7 @@ for i = 0 < NAMETAGS
 next i
 
 for i = 0 < DGRPS
-#math T == i
+math T == i
 string NAME p= "%s" DGRPNAME
 log DGRPNAME DGRPOFFSET DGRPSIZE
 next i
