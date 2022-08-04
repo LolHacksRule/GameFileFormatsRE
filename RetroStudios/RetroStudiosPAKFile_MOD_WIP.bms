@@ -29,22 +29,27 @@ for i = 0 < ASSETS
 	putarray 3 i OFFSET
 	putarray 4 i SIZE
 next i
+
 savepos metaDataOff
 getDstring ISMETA 4
 if ISMETA = "META"
-#Print "Doesn't currently work on PAKs with meta."
-#break
-get METADSIZE longlong
-math METADSIZE + 24
-goto metaDataOff
-get FNAME basename
-string MDATA p= "%s_metadata.bin" FNAME
-log MDATA metaDataOff METADSIZE
+    get METADSIZE longlong
+    math METADSIZE + 24
+    goto metaDataOff
+    get FNAME basename
+    string MDATA p= "%s_metadata.bin" FNAME
+    log MDATA metaDataOff METADSIZE
+    savepos theSTRGOff
+    math theSTRGOff + METADSIZE
+    getDString STRG 4
+    Print %theSTRGOff%
 endif
+
 get UNNECESSARY2 longlong
 get UNNECESSARY3 long
 get UNNECESSARY4 longlong
 get NAMETAGS long
+
 for i = 0 < NAMETAGS
 	set DATATYPE = ""
 	getDstring NAMETYPE 4
