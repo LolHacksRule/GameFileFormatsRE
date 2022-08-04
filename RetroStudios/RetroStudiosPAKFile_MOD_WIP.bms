@@ -111,19 +111,19 @@ string NAME p= "%s" DGRPNAME
 log DGRPNAME DGRPOFFSET DGRPSIZE
 next i
 
-#for i = 0 < ASSETS - 1	
+for i = 0 < ASSETS - 1	
 
-	#if ASSETTYPE != NAMETYPE
-	#	string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
-	#	log NAME OFFSET SIZE
-	#else
-	#	set LOSTDATATYPE = ""
-	#	if ASSETTYPE = "CSMP"
-	#		string LOSTDATATYPE = ".csmp"
-	#	endif
-	#	string NAME p= "0x%08x%08x%s" GUID GUIDP2 LOSTDATATYPE
-	#	log NAME OFFSET SIZE
-	#endif
+	if ASSETTYPE != NAMETYPE
+		string NAME p= "%s%s" ASSETNAME /*GUID GUIDP2*/ DATATYPE
+		log NAME OFFSET SIZE
+	else
+		set LOSTDATATYPE = ""
+		if ASSETTYPE = "CSMP"
+			string LOSTDATATYPE = ".csmp"
+		endif
+		string NAME p= "0x%08x%08x%s" GUID GUIDP2 LOSTDATATYPE
+		log NAME OFFSET SIZE
+	endif
 
 #for i = 0 < UNNAMEDASSETS	
 #if ASSETTYPE = "LDTA"

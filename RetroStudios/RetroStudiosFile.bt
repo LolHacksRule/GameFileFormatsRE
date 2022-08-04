@@ -1450,7 +1450,7 @@ typedef struct
     }
     else
     {
-        byte LooseDataBlock[ContentForm.dataSize];
+        //byte LooseDataBlock[ContentForm.dataSize];
     }
     //For now
     struct LooseDataBlock_SldrGameControls
