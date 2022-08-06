@@ -169,7 +169,8 @@ typedef enum <uint32>{
     GX2_SURFACE_FORMAT_FLOAT_R32_2,
     GX2_SURFACE_FORMAT_FLOAT_R16_G16,
     GX2_SURFACE_FORMAT_UNORM_R8_G8,
-    NX_ASTC_2D_6X5 = 55,
+    NX_ASTC_2D_12X10 = 54,
+    NX_ASTC_2D_6X5,
     NX_ASTC_2D_UNKNOWN = 58
 } DKCTF_TexFmt;
 
@@ -2046,10 +2047,16 @@ typedef struct
     TableOfContentsChunk TOCChunk;
     struct AssetData
     {
-        for (i2 = 0; i2 < DependencyGroups; i2++)
+        if (DependencyGroups != 0)
         {
-            //local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
-            DependencyGroupChunk DependencyGroupChunkContent;
+            struct DependencyGroupChunks
+            {
+                for (i2 = 0; i2 < DependencyGroups; i2++)
+                {
+                    //local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
+                    DependencyGroupChunk DependencyGroupChunkContent;
+                }
+            } dgcs;
         }
         for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
         {

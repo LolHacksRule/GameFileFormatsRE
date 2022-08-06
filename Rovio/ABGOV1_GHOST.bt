@@ -13,26 +13,69 @@
 
 LittleEndian();
 
-struct ABGhost
+
+typedef enum <byte>
+{
+    AirRace1 = 0x2A,
+    AirRace2 = 0xC5,
+    AirRace3 = 0xC0,
+    RockyRoadRace1 = 0x6F,
+    RockyRoadRace2 = 0x09,
+    RockyRoadRace3 = 0x51,
+    SeedwayRace1 = 0x5A,
+    SeedwayRace2 = 0x23,
+    SeedwayRace3 = 0xB3,
+} ABGO_MapID;
+
+typedef struct
+{
+    ABGO_MapID MapID;
+    byte unk[7];
+    uint32 compGhostDataSize;
+    uint32 uncompGhostDataSize;
+    byte compGhostData[compGhostDataSize];
+    Printf("Map ID: %i\nCompressed Size: %i\nUncompressed Size: %i", MapID, compGhostDataSize, uncompGhostDataSize);
+} CompressedGhost;
+
+typedef struct
 {
     struct HDR
     {
-        int64 unk;
-        string KartName;
+        int32 zero;
+        int32 unk; //?
+        string KartName<bgcolor=cLtGreen>;
+        byte unk2[16]<bgcolor=cRed>;
         //if (unk == 206158430208)
         //{
             //int32 unknown[3];
         //}
-        FSeek(40);
-        string CharName;
+        //FSeek(40);
+        string CharName<bgcolor=cAqua>;
     } hdr;
     FSeek(112);
     struct Ghost
     {
-        float unk[5];
-        int32 cnt;
-        int32 unk; //1?
-        float c[(cnt*8 -1)];
-        int32 unk2[8]; //Seems to be padding/dummydata?
+        Printf("Kart: %s\nCharacter: %s\n", hdr.KartName, hdr.CharName);
+        float unkFloats[5]<bgcolor=cRed>;
+        int32 valueCnt<bgcolor=cPurple>;
+        float unkFloat<bgcolor=cRed>; //Dev ghosts suggests it's a float?
+        float floatValue[(valueCnt*8 -1)]<bgcolor=cPurple>;
+        byte  pad[32]<bgcolor=cRed>; //Seems to be padding
     } ghost;
+} UncompressedGhost;
+
+struct ABGOV1_Ghost
+{
+    ubyte bc<hidden=true>;
+    FSkip(-1);
+    if (bc > 0)
+    {
+        Printf("The Ghost file is compressed! Let's make the compressed ghost struct.\n");
+        CompressedGhost theCompressedGhostData;
+    }
+    else
+    {
+        Printf("The Ghost file is uncompressed! Let's make the uncompressed ghost struct.\n");
+        UncompressedGhost theUncompressedGhostData;
+    }
 } ghost10;
