@@ -30,7 +30,10 @@ typedef enum <byte>
 typedef struct
 {
     ABGO_MapID MapID;
-    byte unk[7];
+    byte unk;
+    byte unk2;
+    byte unk3;
+    byte zero[4];
     uint32 compGhostDataSize;
     uint32 uncompGhostDataSize;
     byte compGhostData[compGhostDataSize];
@@ -43,19 +46,18 @@ typedef struct
     {
         int32 zero;
         int32 unk; //?
-        string KartName<bgcolor=cLtGreen>;
-        byte unk2[16]<bgcolor=cRed>;
+        string CurrentKart<bgcolor=cLtBlue>;
         //if (unk == 206158430208)
         //{
             //int32 unknown[3];
         //}
-        //FSeek(40);
-        string CharName<bgcolor=cAqua>;
+        FSeek(40);
+        string CharacterName<bgcolor=cBlue>;
     } hdr;
     FSeek(112);
     struct Ghost
     {
-        Printf("Kart: %s\nCharacter: %s\n", hdr.KartName, hdr.CharName);
+        Printf("Kart: %s\nCharacter: %s\n", hdr.CurrentKart, hdr.CharacterName);
         float unkFloats[5]<bgcolor=cRed>;
         int32 valueCnt<bgcolor=cPurple>;
         float unkFloat<bgcolor=cRed>; //Dev ghosts suggests it's a float?

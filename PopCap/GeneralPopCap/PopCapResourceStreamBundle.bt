@@ -1,10 +1,10 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: PopCapResourceStreamBin.bt
+//      File: PopCapResourceStreamBundle.bt
 //      Authors: LolHacksRule
 //      Version: 1
-//      Purpose: Gets data out of the binary and groups.
+//      Purpose: Gets data out of the bundle and groups.
 //      Category: Game Archive
 //      File Mask: rsb1
 //      ID Bytes:
@@ -13,7 +13,8 @@
 
 /*
 General Format Info:
-https://github.com/TwinKleS-C/PvZTool/blob/53be6e2364381515b8d4b37c4f51fe562a20034d/src/pvztool.c https://github.com/Nineteendo/PVZ2tools/blob/183078174f3bda15bd06f7fefd0cbf4ebb8bf4e8/OBBEdit/README.md
+https://github.com/TwinKleS-C/PvZTool/blob/main/src/pvztool.c
+https://github.com/Nineteendo/PVZ2tools/blob/master/OBBEdit/README.md
 http://www.watto.org/specs.html?specs=Archive_RSB_1BSR
 https://github.com/YingFengTingYu/PopStudio
 */
@@ -341,22 +342,22 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
     }
 } ResourceStreamsGroup;
 
-struct ResourceStreamBin
+struct ResourceStreamBundle
 {
-    struct ResBinHeader
+    struct ResStreamBundleHeader
     {
         char header[4]<bgcolor = cBlue>;
     
         if (header == "rsb1")
         {
             BigEndian();
-            Printf("PS3/X360 Resource Stream Binary\n");
+            Printf("PS3/X360 Resource Stream Bundle\n");
         }
         if (header == "1bsr")
         {
             LittleEndian();
             isLE = 1;
-            Printf("Android/iOS/PS4 Resource Stream Binary\n");
+            Printf("Android/iOS/PS4 Resource Stream Bundle\n");
         }
         int32 version<bgcolor = cYellow>; //4 = PVZ2+/Zuma's Revenge (X360), 3 = Console Ports/BejClassic/Peggle2
         if (version == 4)
@@ -394,7 +395,7 @@ struct ResourceStreamBin
         int32 xmlPart3Off;
         if (ver4Rsb)
         {
-            int32 resourceBinLen; //?
+            int32 resourceBundleLen; //?
         }
     } rsb1Hdr;
     //struct StringTable
@@ -446,4 +447,4 @@ struct ResourceStreamBin
             ResourceStreamsGroup ResourceStreamsGroupFile<bgcolor = cPurple>;
         }
     } rsgps;
-} popCapResourceStreamBinary;
+} popCapResourceStreamBundle;
