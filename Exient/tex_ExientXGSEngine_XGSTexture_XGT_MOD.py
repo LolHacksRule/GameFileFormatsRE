@@ -9,6 +9,7 @@
 #Add iOS and old iOS detection
 #Add Vita detection and support format 0x03 for it
 #Add format 0x1d support
+#Add PS3 deswizzle for RGBA8888 (WIP!)
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -133,8 +134,14 @@ def noepyLoadRGBA(data, texList):
         elif platform == 0x01:
             print("RGBA8888\nIf it doesn't look right, look at the below comment!")
             data = bs.readBytes(dataSize)
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
+            #Acewell https://forum.xentax.com/viewtopic.php?t=17315
+            unswizzled = bytearray()
+            for x in range(0, imgWidth):
+                for y in range(0, imgHeight):
+                    idx = noesis.morton2D(x, y)
+                    unswizzled += data[idx*4:idx*4+4]
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,32,32,32) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            data = rapi.imageDecodeRaw(unswizzled, imgWidth, imgHeight, "a8 r8 g8 b8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x02:
             print("RGBA4444")
@@ -142,6 +149,7 @@ def noepyLoadRGBA(data, texList):
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x03: #LA88 32BPP Wii texture
+            print("LA88")
             data = bs.readBytes(dataSize)
             data = read32RGBA(data, imgWidth, imgHeight, 4,4)
             texFmt = noesis.NOESISTEX_RGBA32
@@ -152,8 +160,8 @@ def noepyLoadRGBA(data, texList):
         elif platform == 0x06:
             print("RGBA8888")
             data = bs.readBytes(dataSize)
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
-            print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
+            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,32) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            print("Deswizzling is WIP!\nIf you don't see anything or want to see the original image, Comment the above line in the script.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x07:
@@ -238,7 +246,7 @@ def noepyLoadRGBA(data, texList):
         if platform == 0x03:
             Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,4,8)
         elif platform == 0x01:
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,8)
+            #Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,8)
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8") #TODO#
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
@@ -262,6 +270,9 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x19:
         data = bs.readBytes(dataSize)
         print("LA44")
+        if platform == 0x06: #Deswizzle CTR WIP
+            print("Cannot deswizzle currently!")
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,?,?,?)
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4")
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT5
@@ -287,19 +298,24 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
         print("ETC")
     elif imgFmt == 0xFC:
-        if platform == 0x09: #WinPhone
-            data = bs.readBytes(dataSize)
+        data = bs.readBytes(dataSize)
+        #print("ETC2_RGB")
+        if platform == 0x06: #Deswizzle CTR WIP
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,32)
             data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
+            print("ETC1 (WIP!)")
+        elif platform == 0x09: #WinPhone
+            data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
+            print("ETC2_RGB")
         else:
-            data = bs.readBytes(dataSize)
             data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
+            print("ETC2_RGB")
         texFmt = noesis.NOESISTEX_RGBA32
-        print("ETC2_RGB")
     elif imgFmt == 0xFD: #3ds only?
+        print("ETC1_RGB_SPLITALPHA\nWIP")
         data = bs.readBytes(dataSize)
         data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
         texFmt = noesis.NOESISTEX_RGBA32
-        print("ETC1_RGB_SPLITALPHA\nWIP")
     texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
     return 1
     
