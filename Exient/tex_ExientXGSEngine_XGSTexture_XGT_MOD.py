@@ -7,7 +7,6 @@
 #Fixed bugs with decoding X360 RGB565 and RGBA8888 textures
 #Add WinPhone detection
 #Add iOS and old iOS detection
-#Fixed wrong channel order for WinPhone textures
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -63,6 +62,8 @@ def noepyLoadRGBA(data, texList):
         print("Platform: iOS_OLD");
     if platform == 0x06:
         print("Platform: CTR/Nintendo 3DS");
+    if platform == 0x07:
+        print("Platform: PlayStation Vita");
     if platform == 0x09:
         print("Platform: Android_OLD");
     if platform == 0x0B:
@@ -153,12 +154,19 @@ def noepyLoadRGBA(data, texList):
             print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x07:
+            print("RGBA8888")
+            data = bs.readBytes(dataSize)
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
+            #print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+            texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x09:
             data = bs.readBytes(dataSize)
             print("ARGB8888\nIf it doesn't look right, look at the below comment!")
             #Replace with
             #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
-            #to view Android textures
+            #to view legacy Android textures
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0B: #RGBA8888 Wii U
