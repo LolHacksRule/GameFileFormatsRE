@@ -15,6 +15,8 @@
 #Fixed a mistake causing failures reading 0x5 format textures
 #Fixed a mistake when reading 0x3 format textures on Wii
 #Fixed opening AL88 textures on Wii
+#Fixed deswizzle of Wii RGB565 textures
+#Fixed read of PS3 RGB565 and Wii RGB565
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -84,10 +86,13 @@ def noepyLoadRGBA(data, texList):
     #RGB565_ABSW_WII
     if imgFmt == 0x0:
         #print("RGB565_Swizzled (WIP!)")
-        if platform == 0x03:
-            print("RGB565_Swizzled (WIP!")
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
-            print("Cannot deswizzle currently!")
+        if platform == 0x01:
+            print("RGB565 (WIP!)")
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+            texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x03:
+            print("RGB565_Swizzled")
+            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x04:
@@ -111,12 +116,16 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
     #RGB565
     elif imgFmt == 0x2:
-        if platform == 0x06:
+        if platform == 0x01:
+            print("GBAR4444")
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4 b4 g4")
+            texFmt = noesis.NOESISTEX_RGBA32
+        elif platform == 0x06:
             data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
             print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
-        if platform == 0x04:
+        elif platform == 0x04:
             print("RGBA4444")
             imgWidth = imgWidth + 1 #fix for textures with odd width sizes
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b4 g4 r4 a4")
@@ -162,8 +171,6 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x07:
             print("RGBA8888")
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
-            #print("Deswizzling is WIP!\nComment the above to see the swizzled image.")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x09:
@@ -233,6 +240,7 @@ def noepyLoadRGBA(data, texList):
         #Acewell https://forum.xentax.com/viewtopic.php?t=17315
         if platform == 0x01:
             #TODO
+            print("The deswizzling is a WIP!")
             unswizzled = bytearray()
             for x in range(0, imgWidth):
                 for y in range(0, imgHeight):
@@ -262,7 +270,7 @@ def noepyLoadRGBA(data, texList):
         print("LA44")
         if platform == 0x06: #Deswizzle CTR WIP
             print("Cannot deswizzle currently!")
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,?,?,?)
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4")
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT5
