@@ -16,7 +16,7 @@
 #Fixed a mistake when reading 0x3 format textures on Wii
 #Fixed opening AL88 textures on Wii
 #Fixed deswizzle of Wii RGB565 textures
-#Fixed read of PS3 RGB565 and Wii RGB565
+#Fixed read of PS3 RGB565 and Wii RGB565, bug fixes too
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
