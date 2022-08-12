@@ -7,6 +7,7 @@
 #Fixed bugs with decoding X360 RGB565 and RGBA8888 textures
 #Add WinPhone detection
 #Add iOS and old iOS detection
+#Add Vita detection and support format 0x03 for it
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
