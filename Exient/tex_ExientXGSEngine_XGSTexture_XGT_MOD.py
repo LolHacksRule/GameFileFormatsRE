@@ -13,6 +13,7 @@
 #Add PS3 deswizzle for AL88 (WIP!)  
 #Clean up redundant code
 #Fixed a mistake causing failures reading 0x5 format textures
+#Fixed a mistake when reading 0x3 format textures on Wii
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -146,6 +147,7 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x03: #LA88 32BPP Wii texture
             print("LA88")
+            data = bs.readBytes(dataSize)
             data = read32RGBA(data, imgWidth, imgHeight, 4,4)
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x05:
