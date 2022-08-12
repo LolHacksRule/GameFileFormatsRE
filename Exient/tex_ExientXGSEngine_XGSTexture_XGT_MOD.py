@@ -14,6 +14,7 @@
 #Clean up redundant code
 #Fixed a mistake causing failures reading 0x5 format textures
 #Fixed a mistake when reading 0x3 format textures on Wii
+#Fixed opening AL88 textures on Wii
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -230,9 +231,7 @@ def noepyLoadRGBA(data, texList):
         Out[3::4] = In[1::2]
         data = Out
         #Acewell https://forum.xentax.com/viewtopic.php?t=17315
-        if platform == 0x03:
-            Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,4,8)
-        elif platform == 0x01:
+        if platform == 0x01:
             #TODO
             unswizzled = bytearray()
             for x in range(0, imgWidth):
@@ -240,6 +239,9 @@ def noepyLoadRGBA(data, texList):
                     idx = noesis.morton2D(x, y)
                     unswizzled += data[idx*4:idx*4+4]
             data = rapi.imageDecodeRaw(unswizzled, imgWidth, imgHeight, "a8 r8") #TODO#
+        elif platform == 0x03:
+            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO, Convert this to AL88
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
