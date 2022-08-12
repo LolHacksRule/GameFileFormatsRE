@@ -8,6 +8,7 @@
 #Add WinPhone detection
 #Add iOS and old iOS detection
 #Add Vita detection and support format 0x03 for it
+#Add format 0x1d support
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -242,7 +243,7 @@ def noepyLoadRGBA(data, texList):
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
-    elif imgFmt == 0x0f:
+    elif imgFmt == 0x0f or imgFmt == 0x1d:
         data = bs.readBytes(dataSize)
         print("PVRTC2BPP_RGBA (WIP!)")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 2)
