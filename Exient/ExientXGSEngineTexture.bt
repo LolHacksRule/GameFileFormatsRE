@@ -61,7 +61,7 @@ typedef enum <uint16> {
     ATC                              = 37,  //BC Swizzled
     ATCA_Interpolated                = 39,  //BC Swizzled
     //39+ on PS3 crashes
-    ETC2_RGB_2                       = 252,
+    ETC2_RGB_2_OR_ETC1               = 252, //On CTR, ETC1 Z-Order 1
     ETC1_RGB_SPLITALPHA,                    //Swizzled too, CTR only.
     ATC_2,
 } texFmt;
