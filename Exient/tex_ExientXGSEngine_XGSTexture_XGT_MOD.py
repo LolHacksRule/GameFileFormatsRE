@@ -10,6 +10,7 @@
 #Add Vita detection and support format 0x03 for it
 #Add format 0x1d support
 #Add PS3 deswizzle for RGBA8888 (WIP!)
+#Add PS3 deswizzle for AL88 (WIP!)
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -120,7 +121,7 @@ def noepyLoadRGBA(data, texList):
             texFmt = noesis.NOESISTEX_RGBA32
         else:
             data = bs.readBytes(dataSize)
-            print("RGBA4444")
+            print("ABGR4444")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444_OR_RGBA8888
@@ -237,17 +238,23 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x0d:
         data = bs.readBytes(dataSize)
         print("AL88")
-        #add to convert
+        #add to convert to LA88 (Acewell)
         In = bytearray(data)
         Out = bytearray(2*len(data))
         for i in range(3): Out[i::4] = In[0::2]
         Out[3::4] = In[1::2]
         data = Out
+        #Acewell https://forum.xentax.com/viewtopic.php?t=17315
         if platform == 0x03:
             Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,4,8)
         elif platform == 0x01:
-            #Out = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,8)
-            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8") #TODO#
+            #TODO
+            unswizzled = bytearray()
+            for x in range(0, imgWidth):
+                for y in range(0, imgHeight):
+                    idx = noesis.morton2D(x, y)
+                    unswizzled += data[idx*4:idx*4+4]
+            data = rapi.imageDecodeRaw(unswizzled, imgWidth, imgHeight, "a8 r8") #TODO#
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
