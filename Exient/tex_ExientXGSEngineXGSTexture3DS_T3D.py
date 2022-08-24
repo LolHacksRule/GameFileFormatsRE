@@ -3,8 +3,7 @@
 #Please tell me if a format that is listed isn't decoded properly
 #There's format 26 but I don't remember what file has it
 #Conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
-
-#Currently deswizzling is not yet possible with this script
+#Added and modified 3DS deswizzle code (https://raw.githubusercontent.com/Zheneq/Noesis-Plugins/master/fmt_mtframework_3ds_tex.py)
 
 from inc_noesis import *
 
@@ -39,6 +38,14 @@ def noepyLoadRGBA(data, texList):
     if dataSize == 0:
         print("Texture is empty!")
         return 1
+    if imgFmt == 0x0 or imgFmt == 0x1 or imgFmt == 0x2:
+        data = unswizzleGeneric(data, imgWidth, imgHeight)
+    elif imgFmt == 0x3:
+        data = unswizzle8888(data, imgWidth, imgHeight)
+    elif imgFmt == 0xD:
+        data = unswizzleLA88(data, imgWidth, imgHeight)
+    elif imgFmt == 0x19:
+        data = unswizzleLA44(data, imgWidth, imgHeight)
     #RGB565
     if imgFmt == 0x0:
         print("RGB565 (WIP!)")
@@ -47,6 +54,7 @@ def noepyLoadRGBA(data, texList):
     #ARGB1555
     if imgFmt == 0x1:
         print("ARGB1555")
+        #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,16,32) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a1 b5 g5 r5")
         texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444
@@ -89,5 +97,95 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_RGBA32
     texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
     return 1
+
+def unswizzleGeneric(buffer, width, height):
+    bpp = 16
+    l = 8
+    m = 4
+    s = 2
+    stripSize = bpp * s // 8
+
+    result = bytearray(width * height * bpp // 8)
+    ptr = 0
+
+    for y in range(0, height, l):
+        for x in range(0, width, l):
+            for y1 in range(0, l, m):
+                for x1 in range(0, l, m):
+                    for y2 in range(0, m, s):
+                        for x2 in range(0, m, s):
+                            for y3 in range(s):
+                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
+                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
+                                ptr += stripSize
+
+    return result
+
+def unswizzle8888(buffer, width, height):
+    bpp = 32
+    l = 8
+    m = 4
+    s = 2
+    stripSize = bpp * s // 8
+
+    result = bytearray(width * height * bpp // 8)
+    ptr = 0
+
+    for y in range(0, height, l):
+        for x in range(0, width, l):
+            for y1 in range(0, l, m):
+                for x1 in range(0, l, m):
+                    for y2 in range(0, m, s):
+                        for x2 in range(0, m, s):
+                            for y3 in range(s):
+                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
+                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
+                                ptr += stripSize
+
+    return result
     
-#When deswizzle is successful,
+def unswizzleLA44(buffer, width, height):
+    bpp = 8
+    l = 8
+    m = 4
+    s = 2
+    stripSize = bpp * s // 8
+
+    result = bytearray(width * height * bpp // 8)
+    ptr = 0
+
+    for y in range(0, height, l):
+        for x in range(0, width, l):
+            for y1 in range(0, l, m):
+                for x1 in range(0, l, m):
+                    for y2 in range(0, m, s):
+                        for x2 in range(0, m, s):
+                            for y3 in range(s):
+                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
+                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
+                                ptr += stripSize
+
+    return result
+      
+def unswizzleLA88(buffer, width, height):
+    bpp = 16
+    l = 8
+    m = 4
+    s = 2
+    stripSize = bpp * s // 8
+
+    result = bytearray(width * height * bpp // 8)
+    ptr = 0
+
+    for y in range(0, height, l):
+        for x in range(0, width, l):
+            for y1 in range(0, l, m):
+                for x1 in range(0, l, m):
+                    for y2 in range(0, m, s):
+                        for x2 in range(0, m, s):
+                            for y3 in range(s):
+                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
+                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
+                                ptr += stripSize
+
+    return result
