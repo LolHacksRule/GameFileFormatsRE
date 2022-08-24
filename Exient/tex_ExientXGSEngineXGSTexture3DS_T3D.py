@@ -76,7 +76,7 @@ def noepyLoadRGBA(data, texList):
         for i in range(3): Out[i::4] = In[0::2]
         Out[3::4] = In[1::2]
         data = Out
-        Out = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, "r8 a8") #TODO#
+        Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
     #LA44
     if imgFmt == 0x19:
