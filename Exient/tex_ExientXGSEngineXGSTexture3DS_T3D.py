@@ -4,6 +4,7 @@
 #There's format 26 but I don't remember what file has it
 #Conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
 #Added and modified 3DS deswizzle code (https://raw.githubusercontent.com/Zheneq/Noesis-Plugins/master/fmt_mtframework_3ds_tex.py)
+#Added code to flip the image data
 
 from inc_noesis import *
 
@@ -54,7 +55,6 @@ def noepyLoadRGBA(data, texList):
     #ARGB1555
     if imgFmt == 0x1:
         print("ARGB1555")
-        #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,16,32) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a1 b5 g5 r5")
         texFmt = noesis.NOESISTEX_RGBA32
     #RGBA4444
@@ -65,7 +65,6 @@ def noepyLoadRGBA(data, texList):
     #RGBA8888
     if imgFmt == 0x3:
         print("RGBA8888")
-        #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,32) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4}) this currently doesn't work
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
         texFmt = noesis.NOESISTEX_RGBA32
     #LA88
@@ -77,8 +76,7 @@ def noepyLoadRGBA(data, texList):
         for i in range(3): Out[i::4] = In[0::2]
         Out[3::4] = In[1::2]
         data = Out
-        #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,1,4,16) #Attempt to deswizzle ({1,0},{0,1},{2,0},{0,2},{4,0},{0,4})
-        Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
+        Out = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
     #LA44
     if imgFmt == 0x19:
@@ -95,7 +93,8 @@ def noepyLoadRGBA(data, texList):
         print("ETC1_RGB_SPLITALPHA_ZORDERON\nWIP")
         data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgba")
         texFmt = noesis.NOESISTEX_RGBA32
-    texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
+    flippedImg = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, 0, 1)
+    texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, flippedImg, texFmt))
     return 1
 
 def unswizzleGeneric(buffer, width, height):
