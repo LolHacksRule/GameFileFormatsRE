@@ -16,11 +16,11 @@ typedef enum <int32> {
     RGBA5551,
     RGBA4444,
     RGBA8888,
-    LA88 = 13, //Confirm
+    LA88 = 13,
     LA44 = 25,
     UNKNOWN_88_2, //BGRA?
     ETC1 = 252,
-    ETC_RGB_A1_ZOrderON,
+    ETC_RGB_SPLITALPHA_ZOrderON,
 } texFmt;
 
 struct Texture3D {

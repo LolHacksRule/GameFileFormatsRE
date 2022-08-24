@@ -10,30 +10,52 @@
 LittleEndian();
 
 typedef enum <byte> {
-    WIN32_OR_ANDROID, //how would you get Win32
+    WIN32_OR_ANDROID, //Android but how would you get Win32
     PS3, //PlayStation 3
-    iOS,
-    WII,
+    iOS, //Current iOS
+    REVOLUTION, //Nintendo Wii
     XENON, //Xbox 360
-    iOS_OLD,
+    iOS_LEGACY, //Legacy iOS
     CTR, //Nintendo 3DS
     PSP2, //Vita
-    ANDROID_OLD = 9,
+    ANDROID_LEGACY = 9, //Legacy Android
     CAFE = 11, //Wii U
     ORBIS = 14, //PlayStation 4
-    WINPHONE = 16,
+    WINPHONE = 16, //Windows Phone
 } platform;
+
+typedef enum <byte> {
+    HasNoFlag1,
+    HasMipMaps, //All XGSTextures ASIDE FROM Edge of Perception seem to have the value be at least this one
+    IsTwiddled,
+    ContainsNormalData = 0x04,
+    HasBorder = 0x08,
+    IsCubeMap = 0x10,
+    MipMapsHaveDbgColoring = 0x20,
+    IsVolume3DTex = 0x40,
+    PVRTCAlpha = 0x80,
+    PVRTCAlpha_AND_HasMipMaps,
+    PVRTCAlpha_AND_IsTwiddled,
+    PVRTCAlpha_AND_HasMipMaps_AND_IsTwiddled,
+} xgstexflag1;
+
+typedef enum <byte> {
+    //0x11: PVRTC/ETC only? Alpha channel?
+    StandardTexture = 0x01, //0x1: Standard texture?
+    VerticallyFlipped,
+    VerticallyFlipped_AND_Twiddled, //3DS only?
+} xgstexflag2;
 
 typedef enum <uint16> {
     RGB565_SWIZZLED,                        //AB SW Console, Vita/PS3 uses no swizzle
-    RGB565_OR_RGBA1555,                     //ABTF, ABSW Vita uses RGB1555
+    RGB565,                                 //ABTF
 	RGBA4444,                               //On PS3 this is BGRA8888/ARGB8888?
-    RGBA4444_2_OR_RGBA8888_OR_LA88,         //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's linear indexed 32BPP LA88 with BC swizzle
+    RGBA4444_2_OR_RGBA8888_OR_LA88,         //On PS4/X360/XENON this is ARGB8888, on Win this is RGBA8888, on current Android this is RGBA4444 OR RGBA8888 (ABTF2017 Chi?), on caFe/Wii U this is RGBA8888, on current iOS it's both, on Orbis/PS4 it's BGRA8888, on Wii it's linear indexed 32BPP LA88 with BC swizzle, on legacy iOS it's RGBA8888
     RGBA8888,
     PALLETIZED_RGBA5A3,                     //Palletized RGB5A3, AB SW Wii
     AL88_OR_DXT1_OR_RGB565           = 8,   //On Xbox 360/PS3 this is usually DXT, on Wii U, RGBA8888, on Android, this is usually AL88 unless the format is DXT, on 3DS, swizzled RGB565
     UNKNOWN_DXT,                            //DXT3? guess, no XGS games so far use this one
-    DXT5_SWIZZLED,                          //PS3/WinPhone only?
+    DXT5_LEGACY,                            //PS3/WinPhone/Legacy Android only?
     PVR_UNK,
     UNKNOWN_8888,                           //Some swizzled format (at least for PS3), unused
     AL88,                                   //AL88
@@ -45,7 +67,7 @@ typedef enum <uint16> {
     PVRTC_4BPP_RGBA_2,
     PVRTC_4BPP_RGBA_3,
     //19-21 crash on PS3
-    RG88                             = 22,  //Unused on PS3, it's GR88
+    RG88_OR_GR88                     = 22,  //Unused. On PS3, it's GR88
     L4,                                     //Unused
     DXT1_OR_ETC1,                           //On Android this is usually DXT1, old Android has this DXT1 swizzled, null on PS3
     //UNKNOWN2                       = 24,
@@ -54,8 +76,8 @@ typedef enum <uint16> {
     DXT5,
     //27-39 crashes on PS3
     PVRTC_2BPP_RGBA_v2               = 29,
-    PVRTC_4BPP_RGB_v2,                      //BC swizzled
-    PVRTC_4BPP_RGBA_v2,
+    PVRTC_4BPP_RGBA_v2,                      //BC swizzled
+    PVRTC_4BPP_RGBA_v3,
     
     ETC2_RGB                         = 35,
     ATC                              = 37,  //BC Swizzled
@@ -64,6 +86,7 @@ typedef enum <uint16> {
     ETC2_RGB_2_OR_ETC1               = 252, //On CTR, ETC1 Z-Order 1
     ETC1_RGB_SPLITALPHA,                    //Swizzled too, CTR only.
     ATC_2,
+    ATCA_INTERPOLATED_LEGACY = 256,
 } texFmt;
 
 struct XGSTexture
@@ -78,8 +101,8 @@ struct XGSTexture
         //byte dmy;
         byte numMips;
         //? start
-        byte flag1;
-        byte flag2; //2 = VFlipped? Seen on 3DS
+        xgstexflag1 flag1;
+        xgstexflag2 flag2; //2 = VFlipped? Seen on 3DS
         byte flag3; //Dummy? 0x3 appears on X360
         //? end
         //char format[4];
