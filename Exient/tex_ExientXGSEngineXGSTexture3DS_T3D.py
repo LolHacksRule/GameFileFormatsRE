@@ -5,6 +5,7 @@
 #Conversion of r channel in LA88 (https://zenhax.com/viewtopic.php?t=7573)
 #Added and modified 3DS deswizzle code (https://raw.githubusercontent.com/Zheneq/Noesis-Plugins/master/fmt_mtframework_3ds_tex.py)
 #Added code to flip the image data
+#Modified the deswizzle code to not use duplicated functions
 
 from inc_noesis import *
 
@@ -40,13 +41,13 @@ def noepyLoadRGBA(data, texList):
         print("Texture is empty!")
         return 1
     if imgFmt == 0x0 or imgFmt == 0x1 or imgFmt == 0x2:
-        data = unswizzleGeneric(data, imgWidth, imgHeight)
+        data = unswizzleCTR(data, imgWidth, imgHeight, 16, 8, 4, 2)
     elif imgFmt == 0x3:
-        data = unswizzle8888(data, imgWidth, imgHeight)
+        data = unswizzleCTR(data, imgWidth, imgHeight, 32, 8, 4, 2)
     elif imgFmt == 0xD:
-        data = unswizzleLA88(data, imgWidth, imgHeight)
+        data = unswizzleCTR(data, imgWidth, imgHeight, 16, 8, 4, 2)
     elif imgFmt == 0x19:
-        data = unswizzleLA44(data, imgWidth, imgHeight)
+        data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
     #RGB565
     if imgFmt == 0x0:
         print("RGB565 (WIP!)")
@@ -97,80 +98,7 @@ def noepyLoadRGBA(data, texList):
     texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, flippedImg, texFmt))
     return 1
 
-def unswizzleGeneric(buffer, width, height):
-    bpp = 16
-    l = 8
-    m = 4
-    s = 2
-    stripSize = bpp * s // 8
-
-    result = bytearray(width * height * bpp // 8)
-    ptr = 0
-
-    for y in range(0, height, l):
-        for x in range(0, width, l):
-            for y1 in range(0, l, m):
-                for x1 in range(0, l, m):
-                    for y2 in range(0, m, s):
-                        for x2 in range(0, m, s):
-                            for y3 in range(s):
-                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
-                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
-                                ptr += stripSize
-
-    return result
-
-def unswizzle8888(buffer, width, height):
-    bpp = 32
-    l = 8
-    m = 4
-    s = 2
-    stripSize = bpp * s // 8
-
-    result = bytearray(width * height * bpp // 8)
-    ptr = 0
-
-    for y in range(0, height, l):
-        for x in range(0, width, l):
-            for y1 in range(0, l, m):
-                for x1 in range(0, l, m):
-                    for y2 in range(0, m, s):
-                        for x2 in range(0, m, s):
-                            for y3 in range(s):
-                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
-                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
-                                ptr += stripSize
-
-    return result
-    
-def unswizzleLA44(buffer, width, height):
-    bpp = 8
-    l = 8
-    m = 4
-    s = 2
-    stripSize = bpp * s // 8
-
-    result = bytearray(width * height * bpp // 8)
-    ptr = 0
-
-    for y in range(0, height, l):
-        for x in range(0, width, l):
-            for y1 in range(0, l, m):
-                for x1 in range(0, l, m):
-                    for y2 in range(0, m, s):
-                        for x2 in range(0, m, s):
-                            for y3 in range(s):
-                                idx = (((y + y1 + y2 + y3) * width) + x + x1 + x2) * bpp // 8
-                                result[idx : idx+stripSize] = buffer[ptr : ptr+stripSize]
-                                ptr += stripSize
-
-    return result
-      
-def unswizzleLA88(buffer, width, height):
-    bpp = 16
-    l = 8
-    m = 4
-    s = 2
+def unswizzleCTR(buffer, width, height, bpp, l, m, s):
     stripSize = bpp * s // 8
 
     result = bytearray(width * height * bpp // 8)
