@@ -21,6 +21,7 @@
 #Merge 3DS deswizzle code
 #Add proper PS3 deswizzle (https://zenhax.com/viewtopic.php?t=7573#p33850), fix Vita 5551
 #Fix PS3 ARGB8888 color channels
+#Comment out used code (contact if there's an error with a 0x3 texture)
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -146,7 +147,7 @@ def noepyLoadRGBA(data, texList):
     #RGBA4444_OR_RGBA8888_OR_LA88
     elif imgFmt == 0x3:
         if platform == 0x00:
-            print("RGBA8888\nIt's not possible to detect the format for this platform.\nComment the below and replace with the other function to force RGBA4444.")
+            print("RGBA8888 OR RGBA4444\nIt's not possible to detect the format for this platform.\nComment the below and replace with the other function to force RGBA4444.")
             #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 g4 b4 a4")
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
             texFmt = noesis.NOESISTEX_RGBA32
@@ -216,14 +217,15 @@ def noepyLoadRGBA(data, texList):
             data = Out
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0B or platform == 0x01 or platform == 0x04 or platform == 0x10 or platform == 0x09: #DXT1 Wii U/PS3/WinPhone/Legacy Android
+        elif platform == 0x01 or platform == 0x04 or platform == 0x09 or platform == 0x0B or platform == 0x10: #DXT1 Wii U/X360/PS3/WinPhone/Legacy Android
             print("DXT1")
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_DXT1
-        else:
-            print("L8A8 OR DXT1 (WIP!)\nIf it doesn't look right, look at the below comment!")
-            Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES#
-            texFmt = noesis.NOESISTEX_RGBA32
+        #Comment this out for now, will delete when we're sure nothing can can trigger this statement
+        #else:
+        #print("L8A8 OR DXT1 (WIP!)\nIf it doesn't look right, look at the below comment!")
+        #Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "l8 a8") #COMMENT THIS AND THE BELOW LINE AND REPLACE THE BELOW WITH "texFmt = noesis.NOESISTEX_DXT1" (No quotes) TO WORK WITH WII U TEXTURES#
+        #texFmt = noesis.NOESISTEX_RGBA32
     #PVRTC_4BPP_RGB_2
     elif imgFmt == 0x10:
         print("PVRTC4BPP_RGB 2")    
@@ -254,6 +256,7 @@ def noepyLoadRGBA(data, texList):
         else:
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
         texFmt = noesis.NOESISTEX_RGBA32
+    #PVRTC4BPP
     elif imgFmt == 0x0f or imgFmt == 0x1d:
         print("PVRTC2BPP_RGBA (WIP!)")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 2)
@@ -294,7 +297,7 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0xFC:
         #print("ETC2_RGB")
         if platform == 0x06: #Deswizzle CTR WIP
-            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,8,8,32)
+            data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
             data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
             print("ETC1 (WIP!)")
         elif platform == 0x09: #WinPhone
