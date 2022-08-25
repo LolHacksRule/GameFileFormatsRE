@@ -20,6 +20,7 @@
 #Added 3DS deswizzle code (https://raw.githubusercontent.com/Zheneq/Noesis-Plugins/master/fmt_mtframework_3ds_tex.py)
 #Merge 3DS deswizzle code
 #Add proper PS3 deswizzle (https://zenhax.com/viewtopic.php?t=7573#p33850), fix Vita 5551
+#Fix PS3 ARGB8888 color channels
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -155,8 +156,7 @@ def noepyLoadRGBA(data, texList):
             #Acewell https://forum.xentax.com/viewtopic.php?t=17315
             if (imgWidth != 1530 and imgHeight != 986) and (imgWidth != 1490 and imgHeight != 1292) and (imgWidth != 1854 and imgHeight != 1450) and (imgWidth != 661 and imgHeight != 218) and (imgWidth != 1466 and imgHeight != 991) and (imgWidth != 1959 and imgHeight != 1290) and (imgWidth != 1640 and imgHeight != 1737): #screw these files, there's really no flag set to identify a swizzled texture so here's the common sizes of data that most likely would not be swizzled so we won't deswizzle 'em
                 data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight, 4)
-            else:
-                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
+            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x02:
             print("RGBA4444")
@@ -246,7 +246,9 @@ def noepyLoadRGBA(data, texList):
         #Acewell https://forum.xentax.com/viewtopic.php?t=17315
         if platform == 0x01:
             data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight, 4) #todo: Use a8r8 somehow
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8")
         elif platform == 0x03:
+            print("Currently cannot convert channels!")
             data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO, Convert this to AL88
         else:
@@ -267,7 +269,7 @@ def noepyLoadRGBA(data, texList):
     #LA44
     elif imgFmt == 0x19:
         print("LA44")
-        if platform == 0x06: #Deswizzle CTR WIP
+        if platform == 0x06: #Deswizzle CTR
             data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4")
         texFmt = noesis.NOESISTEX_RGBA32
@@ -314,7 +316,6 @@ def noepyLoadRGBA(data, texList):
     return 1
 
 #add 3DS deswizzle code
-
 def unswizzleCTR(buffer, width, height, bpp, l, m, s):
     stripSize = bpp * s // 8
 
@@ -334,8 +335,9 @@ def unswizzleCTR(buffer, width, height, bpp, l, m, s):
 
     return result
 
-#added Wii palette code and modified
+#end
 
+#added Wii palette code and modified
 def read32RGBA(pixel,width,height,tile_w,tile_h):
     real_width,real_height = getRealWH(width,height,tile_w,tile_h)
     tileSize = tile_w * tile_h * 4
@@ -482,4 +484,5 @@ def rgb5a3(rawPixel):
         t[2] = (((rawPixel >> 0)  & 0x0F) * 0xFF // 0x0F)
         t[3] = (((rawPixel >> 12) & 0x07) * 0xFF // 0x07)
     return t    
+    
 #end
