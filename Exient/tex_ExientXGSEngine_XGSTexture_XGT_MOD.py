@@ -22,6 +22,7 @@
 #Add proper PS3 deswizzle (https://zenhax.com/viewtopic.php?t=7573#p33850), fix Vita 5551
 #Fix PS3 ARGB8888 color channels
 #Comment out used code (contact if there's an error with a 0x3 texture)
+#Fix channels with PS3 RGB565
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -92,7 +93,8 @@ def noepyLoadRGBA(data, texList):
     if imgFmt == 0x0:
         #print("RGB565_Swizzled (WIP!)")
         if platform == 0x01:
-            print("RGB565 (WIP!)")
+            print("RGB565")
+            data = rapi.swapEndianArray(data, 2) #Thanks so much DKDave on XentaxCord
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x03:
@@ -297,7 +299,7 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0xFC:
         #print("ETC2_RGB")
         if platform == 0x06: #Deswizzle CTR WIP
-            data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
+            #data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
             data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
             print("ETC1 (WIP!)")
         elif platform == 0x09: #WinPhone
