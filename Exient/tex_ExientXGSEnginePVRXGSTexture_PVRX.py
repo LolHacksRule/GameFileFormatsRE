@@ -44,12 +44,14 @@ def noepyLoadRGBA(data, texList):
         return 1
     if flag1 == -125 or flag1 == -126:
         print("Swizzled!")
-        data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight) # PSVita specific swizzling, thanks Acewell
+        if imgFmt == 0x12: #for RGBA8888, use 4BPP, else use the other one
+            data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight, 4) # PSVita specific swizzling, thanks Acewell
+        else:
+            data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight) # PSVita specific swizzling, thanks Acewell
     #RGBA4444
     if imgFmt == 0x0 or imgFmt == 0x10:
         print("RGBA4444")
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
-        #data = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, 0, 0)
         texFmt = noesis.NOESISTEX_RGBA32
     #RGB565
     elif imgFmt == 0x04:
@@ -79,5 +81,11 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x36:
         data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
         texFmt = noesis.NOESISTEX_RGBA32
-    texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
+    #comment if vita
+    if flag1 == -126 or flag1 == -125 or flag1 == 1:
+        flippedImg = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, 0, 1)
+        texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, flippedImg, texFmt))
+    else:
+        #uncomment if not
+        texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, data, texFmt))
     return 1
