@@ -214,6 +214,7 @@ struct XGSPakFile {
                 struct PakString
                 {
                     string theContentName;
+                    Printf("%s\n", theContentName);
                 } pakStr;
             }
         } pakStrTbl<bgcolor = cGreen>;

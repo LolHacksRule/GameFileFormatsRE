@@ -60,17 +60,10 @@ struct XGSLangDatabase
         {
             Printf("String Count: %i\n", strCnt);
         }
-        if (hdr.ver > 0)
-        {
-            int32 fileSize; //No effect if modified/mismatching
-        }
-        else
-        {
-            int32 dmy; //May be filesize, again see above
-        }
+        int32 fileSize; //No effect if modified/mismatching
         if (printStrings == 1)
         {
-            Printf("FileSize: %i\n", FileSize);
+            Printf("File Size: %i\n", fileSize);
         }
         if (hdr.ver >= 2)
         {
@@ -304,14 +297,14 @@ LanguageType);
                         char fontNameStr[fontNameSize];
                         if (printStrings == 1)
                         {
-                            Printf("[%i]: %s %s %s \n", i, pakStr, fontFileNameStr, fontNameStr);
+                            Printf("[%i]: %s:%s|%s\n", i, pakStr, fontFileNameStr, fontNameStr); //Exient uses a "/" or a "\" it's inconsistent
                         }
                     }
                     else
                     {
                         if (printStrings == 1)
                         {
-                            Printf("[%i]: %s %s \n", i, pakStr, fontFileNameStr);
+                            Printf("[%i]: %s:%s\n", i, pakStr, fontFileNameStr);
                         }
                     }
                 } font;
