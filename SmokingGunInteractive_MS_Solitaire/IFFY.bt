@@ -1,0 +1,75 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint32>
+{
+    MigHeader = 1296648008,
+    Data = 1145132097,
+    Server = 1397051990,
+    ADUserSettings = 1094997331,
+    UserDataFlowSettings = 1430537811,
+    XboxGamePass = 1480738640,
+    DownloadedFile = 1145849417,
+    Info = 1229866575,
+} SGIContentType;
+
+typedef struct CommonBlock
+{
+    SGIContentType hdr;
+    uint16 unk[2];
+    uint32 dSize;
+};
+
+typedef struct InfoBlock
+{
+    CommonBlock InfoBlockHdr;
+    struct InfoBlockData
+    {
+        uint16 strSize;
+        char  solitaire[strSize];
+        uint16 str2Size; //Can be MD5 (If JSON)
+        char str2[str2Size];
+    } OFNI;
+};
+
+typedef struct DataBlock
+{
+    CommonBlock DataBlockHdr;
+    byte Data[DataBlockHdr.dSize];
+};
+
+typedef struct DownloadedFileBlock
+{
+    CommonBlock DownloadedFileBlockHdr;
+    struct DownloadedFileBlockData
+    {
+        InfoBlock InfoBlockEntry;
+        DataBlock DataBlockData;
+    } DLFI;
+};
+
+struct SGIFile
+{
+    LittleEndian();
+    uint32 hdr;
+    uint32 ver[2];
+    uint32 dsize; //24
+    uint32 blockSize;
+    uint32 dmy;
+    SGIContentType blockChk<hidden=true>;
+    FSkip(-4);
+    if (blockChk == DownloadedFile)
+`   {
+        DownloadedFileBlock theDLFI;
+    }
+} IFFY;
