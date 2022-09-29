@@ -1,0 +1,471 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint isZipOrBin <hidden=true> = 0;
+
+typedef enum <uint32>
+{
+    MigrationHistory = 1296648008,
+    Data = 1145132097,
+    Server = 1397051990,
+    ADUserSettings = 1094997331,
+    UserDataFlowSettings = 1430537811,
+    XboxGamePass = 1480738640,
+    DownloadedFile = 1145849417,
+    Info = 1229866575,
+    Variable = 1230127446,
+    UserSettings = 1431520594,
+    InfoFile = 1229342297,
+    NLST = 1313624916,
+    AdIDSync = 1094994259,
+    AdsGamePlay = 1094993744,
+    AdsUserSettings = 1094997331,
+    AwardsStatistic = 1096241732,
+    DailyChallengesStatsCache = 1145262915,
+    Statistics = 1398030676,
+    GameOptions = 1195462480,
+    RateGameUserData = 1380406596,
+    UserExperienceData = 1430602817,
+    ImportantNewsSeenData = 1229869892,
+    XboxSignInPremiumData = 1481855044,
+    SolvableSeedsCondensedPlayHistory = 1396920392,
+    StarClubCollectionStripeData = 1396921156,
+    StarClubUserProgress = 1396921680,
+    ThemesCardBackNewBannerData = 1413697092,
+    TournamentLocalSettingsData = 1414288196,
+    RGST = 1380406100,
+    DailyChallengeUserProgress = 1145263440,
+    PlayerData = 1347570756,
+} SGIContentType;
+
+typedef enum <uint32>
+{
+    UnsignedInt,
+    Boolean,
+    Int,
+    String,
+} SGIVariableType;
+
+typedef struct CommonBlock
+{
+    SGIContentType hdr;
+    uint16 unk[2];
+    uint32 dSize;
+};
+
+typedef struct InfoBlock
+{
+    CommonBlock InfoBlockHdr;
+    struct InfoBlockData
+    {
+        uint16 strSize;
+        char  solitaire[strSize];
+        uint16 str2Size; //Can be MD5 (If JSON)
+        char str2[str2Size];
+    } INFO;
+};
+
+typedef struct DataBlock
+{
+    CommonBlock DataBlockHdr;
+    if (isZipOrBin)
+    {
+        byte ZIPOrBinFile[DataBlockHdr.dSize];
+    }
+    else
+    {
+        if (DataBlockHdr.dSize > 11)
+        {
+            uint32 StrSize;
+            string LocalData;
+            Printf("Local Data:\n%s\nLocal Data End", LocalData);
+        }
+        else
+        {
+            uint16 StrSize;
+            string UndefinedStr;
+        }
+    }
+};
+
+typedef struct ServerBlock
+{
+    CommonBlock ServerBlockHdr;
+    {
+        uint32 StrSize;
+        char ServerData[StrSize];
+        Printf("Server Data:\n%s\nServer Data End\n", ServerData);
+    }
+};
+
+typedef struct DownloadedFileBlock
+{
+    CommonBlock DownloadedFileBlockHdr;
+    struct DownloadedFileBlockData
+    {
+        InfoBlock InfoBlockEntry;
+        DataBlock DataBlockEntry;
+    } DLFI;
+};
+
+typedef struct MigrationHistoryBlock
+{
+    CommonBlock MigratedHistoryBlockHdr;
+    struct MigrationHistoryBlockData
+    {
+        DataBlock DataBlockEntry;
+    } DLFI;
+};
+
+typedef struct VariableBlock
+{
+    CommonBlock VariableBlockHdr;
+    struct VariableBlockData
+    {
+        byte varBlock[VariableBlockHdr.dSize]; //4 bytes of null?
+    } USER;
+};
+
+typedef struct NLSTBlock
+{
+    CommonBlock NLSTBlockHdr;
+    struct NLSTBlockData
+    {
+        byte NLSTBlock[NLSTBlockHdr.dSize];
+    } NLST;
+};
+
+typedef struct UserSettingsBlock
+{
+    CommonBlock UserSettingsBlockHdr;
+    struct UserSettingsBlockData
+    {
+        VariableBlock VariableBlockEntry;
+        NLSTBlock NLSTBlockEntry;
+    } USER;
+};
+
+typedef struct AdIDSyncBlock
+{
+    CommonBlock AdIDSyncBlockHdr;
+    struct AdIDSyncBlockData
+    {
+        DataBlock DataBlockEntry;
+    } ADIS;
+};
+
+typedef struct AdsGamePlayBlock
+{
+    CommonBlock AdsGamePlayBlockHdr;
+    struct AdsGamePlayBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } ADGP;
+};
+
+typedef struct AdsUserSettingsBlock
+{
+    CommonBlock AdsUserSettingsBlockHdr;
+    struct AdsUserSettingsBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } ADUS;
+};
+
+typedef struct AwardsStatisticBlock
+{
+    CommonBlock AwardsStatisticBlockHdr;
+    struct AwardsStatisticBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } AWRD;
+};
+
+typedef struct DailyChallengesStatsCacheBlock
+{
+    CommonBlock DailyChallengesStatsCacheBlockHdr;
+    struct DailyChallengesStatsCacheBlockData
+    {
+        DataBlock DataBlockEntry; 
+    } DCSC;
+};
+
+typedef struct StatisticsBlock
+{
+    CommonBlock StatisticsBlockHdr;
+    struct StatisticsBlockData
+    {
+        DataBlock DataBlockEntry; 
+    } STAT;
+};
+
+typedef struct GameOptionsBlock
+{
+    CommonBlock GameOptionsBlockHdr;
+    struct GameOptionsBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } GAOP;
+};
+
+typedef struct RateGameUserDataBlock
+{
+    CommonBlock RateGameUserDataBlockHdr;
+    struct RateGameUserDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } RGUD;
+};
+
+typedef struct UserExperienceDataBlock
+{
+    CommonBlock UserExperienceDataBlockHdr;
+    struct UserExperienceDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } UEDA;
+};
+
+typedef struct ImportantNewsSeenDataBlock
+{
+    CommonBlock ImportantNewsSeenDataBlockHdr;
+    struct ImportantNewsSeenDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } INSD;
+};
+
+typedef struct XboxSignInPremiumDataBlock
+{
+    CommonBlock XboxSignInPremiumDataBlockHdr;
+    struct XboxSignInPremiumDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } XPSD;
+};
+
+typedef struct SolvableSeedsCondensedPlayHistoryBlock
+{
+    CommonBlock SolvableSeedsCondensedPlayHistoryBlockHdr;
+    struct SolvableSeedsCondensedPlayHistoryBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        isZipOrBin = 1;
+        DataBlock DataBlockEntry; 
+    } SCPH;
+};
+
+typedef struct StarClubCollectionStripeDataBlock
+{
+    CommonBlock StarClubCollectionStripeDataBlockHdr;
+    struct StarClubCollectionStripeDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } SCSD;
+};
+
+typedef struct StarClubUserProgressBlock
+{
+    CommonBlock StarClubUserProgressBlockHdr;
+    struct StarClubUserProgressBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } SCUP;
+};
+
+typedef struct ThemesCardBackNewBannerDataBlock
+{
+    CommonBlock ThemesCardBackNewBannerDataBlockHdr;
+    struct ThemesCardBackNewBannerDataBlockData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry; 
+    } TCND;
+};
+
+typedef struct RGSTBlock
+{
+    CommonBlock RGSTBlockHdr;
+    byte RGSTData[RGSTBlockHdr.dSize];
+};
+
+
+typedef struct TournamentLocalSettingsDataBlock
+{
+    CommonBlock TournamentLocalSettingsDataBlockHdr;
+    struct TournamentLocalSettingsDataBlockData
+    {
+        DataBlock DataBlockEntry;
+        RGSTBlock RGSTBlockEntry;
+    } TLSD;
+};
+
+typedef struct UserDataFlowSettingsBlock
+{
+    CommonBlock UserDataFlowSettingsBlockHdr;
+    struct UserDataFlowSettingsBlockData
+    {
+        DataBlock DataBlockEntry;
+    } UDFS;
+};
+
+typedef struct DailyChallengeUserProgressBlock
+{
+    CommonBlock DailyChallengeUserProgressBlockHdr;
+    struct DailyChallengeUserProgressData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry;
+    } DCUP;
+};
+
+typedef struct PlayerDataBlock
+{
+    CommonBlock PlayerDataBlockHdr;
+    struct PlayerDataData
+    {
+        ServerBlock ServerBlockEntry;
+        DataBlock DataBlockEntry;
+    } PLRD;
+};
+
+typedef struct XboxGamePassBlock
+{
+    CommonBlock XboxGamePassBlockHdr;
+    struct XboxGamePassData
+    {
+        DataBlock DataBlockEntry;
+    } PLRD;
+};
+
+
+struct SGIFile
+{
+    LittleEndian();
+    SGIContentType hdr;
+    uint32 ver[2];
+    uint32 dsize; //24
+    uint32 blockSize;
+    uint32 dmy;
+    SGIContentType blockChk<hidden=true>;
+    FSkip(-4);
+    if (blockChk == DownloadedFile)
+    {
+        isZipOrBin = 1;
+        DownloadedFileBlock theDLFI;
+    }
+    if (blockChk == MigrationHistory)
+    {
+        MigrationHistoryBlock theMIGH;
+    }
+    if (blockChk == UserSettings)
+    {
+        isZipOrBin = 1;
+        UserSettingsBlock theUSER;
+    }
+    if (blockChk == AdIDSync)
+    {
+        AdIDSyncBlock theADIS;
+    }
+    if (blockChk == AdsGamePlay)
+    {
+        AdsGamePlayBlock theADGP;
+    }
+    if (blockChk == AdsUserSettings)
+    {
+        isZipOrBin = 1;
+        AdsUserSettingsBlock theADUS;
+    }
+    if (blockChk == AwardsStatistic)
+    {
+        isZipOrBin = 1;
+        AwardsStatisticBlock theAWRD;
+    }
+    if (blockChk == DailyChallengesStatsCache)
+    {
+        DailyChallengesStatsCacheBlock theDCSC;
+    }
+    if (blockChk == Statistics)
+    {
+        StatisticsBlock theSTAT;
+    }
+    if (blockChk == GameOptions)
+    {
+        GameOptionsBlock theGAOP;
+    }
+    if (blockChk == RateGameUserData)
+    {
+        isZipOrBin = 1;
+        RateGameUserDataBlock theRGUD;
+    }
+    if (blockChk == UserExperienceData)
+    {
+        UserExperienceDataBlock theUEDA;
+    }
+    if (blockChk == ImportantNewsSeenData)
+    {
+        ImportantNewsSeenDataBlock theINSD;
+    }
+    if (blockChk == XboxSignInPremiumData)
+    {
+        XboxSignInPremiumDataBlock theXSPD;
+    }
+    if (blockChk == SolvableSeedsCondensedPlayHistory)
+    {
+        SolvableSeedsCondensedPlayHistoryBlock theSCPH;
+    }
+    if (blockChk == StarClubCollectionStripeData)
+    {
+        StarClubCollectionStripeDataBlock theSCSD;
+    }
+    if (blockChk == StarClubUserProgress)
+    {
+        StarClubUserProgressBlock theSCUP;
+    }
+    if (blockChk == ThemesCardBackNewBannerData)
+    {
+        ThemesCardBackNewBannerDataBlock theTCND;
+    }
+    if (blockChk == TournamentLocalSettingsData)
+    {
+        isZipOrBin = 1;
+        TournamentLocalSettingsDataBlock theTLSD;
+    }
+    if (blockChk == UserDataFlowSettings)
+    {
+        isZipOrBin = 1;
+        UserDataFlowSettingsBlock theUDFS;
+    }
+    if (blockChk == DailyChallengeUserProgress)
+    {
+        DailyChallengeUserProgressBlock theDCUP;
+    }
+    if (blockChk == PlayerData)
+    {
+        PlayerDataBlock thePLRD;
+    }
+    if (blockChk == XboxGamePass)
+    {
+        XboxGamePassBlock theXBGP;
+    }
+} IFFY;
