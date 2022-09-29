@@ -11,15 +11,49 @@
 //   History: 
 //------------------------------------------------
 
+local uint i <hidden=true> = 0;
+local uint i2 <hidden=true> = 0;
+
 typedef enum <uint32>
 {
-    WithStringIDs = 1397509955,
-    WithoutStringIDs = 1280262995,
+    WithinternalIDs = 1397509955,
+    WithoutinternalIDs = 1280262995,
 } LocType;
 
 typedef struct GenericString
 {
-    
+    string str;
+    Printf("String: %s\n", str);
+};
+
+typedef struct GenericStringID
+{
+    string internalID;
+    Printf("Internal ID: %s\n", internalID);
+    string stringID;
+    Printf("String ID: %s\n", stringID);
+};
+
+typedef struct StringParam
+{
+    uint32 offInStrTbl;
+    uint32 strSize;
+    uint32 fullStrSize; //Contains string ID and string entry
+    uint32 strSize2; //Normally +1
+};
+
+typedef struct GenericUnicodeString
+{
+    string str;
+    Printf("String: %s\n", str);
+};
+
+typedef struct GenericUnicodeStringID
+{
+    wstring internalID;
+    Printf("Internal ID: %s\n", internalID);
+    wstring stringID;
+    Printf("String ID: %s\n", stringID);
 };
 
 struct LocalisationFile
@@ -27,14 +61,33 @@ struct LocalisationFile
     LocType theHdr;
     uint32 ver;
     uint32 unk;
-    if (theHdr == WithStringIDs)
+    if (theHdr == WithinternalIDs)
     {
         uint32 stringCnt;
-        uint32 unk2[2];
+        uint32 unk2[2]; //28 and 38
         uint32 stringDataOff;
         uint32 strTblOff;
         uint32 strEntryTblOff;
         uint32 strEntryTblSize;
+        struct StringParameters
+        {
+            for (i = 0; i < stringCnt; i++)
+            {
+                StringParam internalIDParamEntry;
+            }
+            uint32 unk3[4];
+        } strprm;
+        string locFileName;
+        for (i = 0; i < stringCnt-1; i++)
+        {
+            Printf("String ID [%i]\n", i);
+            GenericStringID internalIDEntry;
+        }
+        for (i = 0; i < stringCnt-1; i++)
+        {
+            Printf("String [%i]\n", i);
+            GenericString StringEntry;
+        }
     }
     else
     {
