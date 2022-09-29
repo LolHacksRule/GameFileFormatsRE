@@ -53,7 +53,7 @@ typedef struct GenericUnicodeStringID
     Printf("%s\n", stringID);
 };
 
-typedef struct GenericUnicodeStringID
+typedef struct GenericUnicodeString
 {
     wstring str;
     Printf("%s\n", str);
