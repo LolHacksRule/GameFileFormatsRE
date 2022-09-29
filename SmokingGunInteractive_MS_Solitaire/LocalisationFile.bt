@@ -1,8 +1,8 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
+//      File: LocalisationFile.bt
+//   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
 //  Category: 
@@ -20,19 +20,24 @@ typedef enum <uint32>
     WithoutinternalIDs = 1280262995,
 } LocType;
 
-typedef struct GenericString
+typedef enum <uint32>
 {
-    string str;
-    Printf("String: %s\n", str);
-};
+    SingleStringID = 1,
+    ExtraStringID = 2,
+} LocFlag;
 
 typedef struct GenericStringID
 {
-    string internalID;
-    Printf("Internal ID: %s\n", internalID);
     string stringID;
-    Printf("String ID: %s\n", stringID);
+    Printf("%s\n", stringID);
 };
+
+typedef struct GenericString
+{
+    string str;
+    Printf("%s\n", str);
+};
+    
 
 typedef struct StringParam
 {
@@ -44,23 +49,17 @@ typedef struct StringParam
 
 typedef struct GenericUnicodeString
 {
-    string str;
-    Printf("String: %s\n", str);
-};
-
-typedef struct GenericUnicodeStringID
-{
-    wstring internalID;
-    Printf("Internal ID: %s\n", internalID);
     wstring stringID;
-    Printf("String ID: %s\n", stringID);
+    Printf("%s\n", stringID);
+    string str;
+    Printf("%s\n", str);
 };
 
 struct LocalisationFile
 {
     LocType theHdr;
     uint32 ver;
-    uint32 unk;
+    LocFlag flag; //Flag of some kind, if 2 there's another group of ints
     if (theHdr == WithinternalIDs)
     {
         uint32 stringCnt;
@@ -73,21 +72,46 @@ struct LocalisationFile
         {
             for (i = 0; i < stringCnt; i++)
             {
-                StringParam internalIDParamEntry;
+                StringParam ParamEntry;
             }
             uint32 unk3[4];
+            if (flag == 2)
+            {
+                uint32 unk4[4];
+            }
         } strprm;
-        string locFileName;
-        for (i = 0; i < stringCnt-1; i++)
+        struct StringTable
         {
-            Printf("String ID [%i]\n", i);
-            GenericStringID internalIDEntry;
-        }
-        for (i = 0; i < stringCnt-1; i++)
-        {
-            Printf("String [%i]\n", i);
-            GenericString StringEntry;
-        }
+            string locFileName;
+            Printf("String IDs:\n");
+            struct StringIDEntries
+            {
+                if (flag == 2)
+                {
+                    for (i = 0; i < stringCnt+1; i++)
+                    {
+                        GenericStringID StringIDEntry;
+                    }
+                }
+                else
+                {
+                    for (i = 0; i < stringCnt; i++)
+                    {
+                        GenericStringID StringIDEntry;
+                    }
+                }
+            } strIDEntries;
+            Printf("String IDs End\n");
+            Printf("Strings:\n");
+            struct StringEntries
+            {
+                for (i = 0; i < stringCnt; i++)
+                {
+                    GenericString StringEntry;
+                }
+            } strEntries;
+             Printf("Strings End");
+        } strTbl;
     }
     else
     {
