@@ -47,11 +47,15 @@ typedef struct StringParam
     uint32 strSize2; //Normally +1
 };
 
-typedef struct GenericUnicodeString
+typedef struct GenericUnicodeStringID
 {
     wstring stringID;
     Printf("%s\n", stringID);
-    string str;
+};
+
+typedef struct GenericUnicodeStringID
+{
+    wstring str;
     Printf("%s\n", str);
 };
 
@@ -101,7 +105,7 @@ struct LocalisationFile
                     }
                 }
             } strIDEntries;
-            Printf("String IDs End\n");
+            Printf("String IDs End\n\n");
             Printf("Strings:\n");
             struct StringEntries
             {
