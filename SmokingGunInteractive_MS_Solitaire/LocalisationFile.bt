@@ -47,6 +47,28 @@ typedef struct StringParam
     uint32 strSize2; //Normally +1, if is one it applies to the below values
 };
 
+typedef struct HashedStringParam
+{
+    if (ver == 2)
+    {
+        uint32 hash[2]; //?
+    }
+    else
+    {
+        uint32 hash;
+    }
+    uint32 zero;
+    if (ver == 2)
+    {
+        uint32 strSize; //Normally +1, if is one it applies to the below values
+    }
+    else
+    {
+        uint32 hash;
+        uint32 strSize; //Normally +1, if is one it applies to the below values
+    }
+};
+
 typedef struct GenericUnicodeStringID
 {
     wstring stringID;
@@ -119,7 +141,49 @@ struct LocalisationFile
     }
     else
     {
-        uint32 unk3[8];
+        if (ver == 2)
+        {
+            uint32 hash[2]; //?
+        }
+        else
+        {
+            uint32 hash;
+        }
+        uint32 zero;
+        if (ver == 2 && flag == 2)
+        {
+            uint32 unk1[4];
+        }
+        uint32 locStrings1;
+        uint32 unk; //same as locstrings1 if 0
+        struct HashedStringParamEntries
+        {
+            for (i = 0; i < locStrings1; i++)
+            {
+                HashedStringParam HashedStringEntry;
+            }
+        } hspe;
+        if (flag == 2 && ver != 2)
+        {
+            uint32 unk2[4];
+        }
+        struct HashedStringEntries
+        {
+            if (ver == 2)
+            {
+                for (i = 0; i < locStrings1; i++)
+                {
+                    GenericString HashedStringEntry;
+                }
+            }
+            else
+            {
+                for (i = 0; i < locStrings1; i++)
+                {
+                    GenericUnicodeString HashedUnicodeStringEntry;
+                }
+            }
+        } hashedStrEntries;
     }
     //uint32 strTblOff;
 } Loc;
