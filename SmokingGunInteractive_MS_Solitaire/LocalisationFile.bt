@@ -35,7 +35,7 @@ typedef struct GenericStringID
 typedef struct GenericString
 {
     string str;
-    if (flag == 1)
+    if (magic == Unhashed)
     {
         local string StringID = strIDEntries.StringIDEntry[i].stringID;
         Printf("%s=", StringID);
@@ -67,11 +67,11 @@ typedef struct HashedStringParam
     {
         uint32 strSize; //Does not include the null byte at the end
     }
-    else
+    /*else
     {
         uint32 hash2;
         uint32 strSize; //Normally +1, if is one it applies to the below values
-    }
+    }*/
 };
 
 typedef struct GenericUnicodeStringID
@@ -88,10 +88,10 @@ typedef struct GenericUnicodeString
 
 struct LocalisationFile
 {
-    LocType theHdr;
+    LocType magic;
     uint32 ver;
     LocFlag flag; //Flag of some kind, if 2 there's another group of ints
-    if (theHdr == Unhashed)
+    if (magic == Unhashed)
     {
         uint32 stringCnt;
         uint32 unk2[2]; //28 and 38
@@ -176,7 +176,7 @@ struct LocalisationFile
                 }
                 else
                 {
-                    for (i = 0; i < locStrings1 / 2; i++) //Change locstrings to / 2 if you don't get something
+                    for (i = 0; i < locStrings1; i++) //Change locstrings to / 2 if you don't get something
                     {
                         HashedStringParam HashedStringEntry;
                     }
