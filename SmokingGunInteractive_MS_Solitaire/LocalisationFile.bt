@@ -29,12 +29,17 @@ typedef enum <uint32>
 typedef struct GenericStringID
 {
     string stringID;
-    Printf("%s\n", stringID);
+    //Printf("%s\n", stringID);
 };
 
 typedef struct GenericString
 {
     string str;
+    if (flag == 1)
+    {
+        local string StringID = strIDEntries.StringIDEntry[i].stringID;
+        Printf("%s=", StringID);
+    }
     Printf("%s\n", str);
 };
     
@@ -72,7 +77,7 @@ typedef struct HashedStringParam
 typedef struct GenericUnicodeStringID
 {
     wstring stringID;
-    Printf("%s\n", stringID);
+    //Printf("%s\n", stringID);
 };
 
 typedef struct GenericUnicodeString
@@ -109,7 +114,7 @@ struct LocalisationFile
         struct StringTable
         {
             string locFileName;
-            Printf("String IDs:\n");
+            //Printf("String IDs:\n");
             struct StringIDEntries
             {
                 if (flag == 2)
@@ -127,8 +132,8 @@ struct LocalisationFile
                     }
                 }
             } strIDEntries;
-            Printf("String IDs End\n\n");
-            Printf("Strings:\n");
+            //Printf("String IDs End\n\n");
+            Printf("[%s]\n", locFileName);
             struct StringEntries
             {
                 for (i = 0; i < stringCnt; i++)
@@ -136,7 +141,7 @@ struct LocalisationFile
                     GenericString StringEntry;
                 }
             } strEntries;
-             Printf("Strings End");
+            //Printf("Strings End");
         } strTbl;
     }
     else
@@ -157,7 +162,7 @@ struct LocalisationFile
             uint32 unk2;
         }
         uint32 locStrings1;
-        uint32 unk; //same as locstrings1 if 0
+        uint32 locStringsAgain;
         if (locStrings1 != 0)
         {
             struct HashedStringParamEntries
