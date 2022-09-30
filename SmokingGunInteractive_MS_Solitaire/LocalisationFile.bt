@@ -57,10 +57,10 @@ typedef struct HashedStringParam
     {
         uint32 hash;
     }
-    uint32 zero;
+    uint32 offInStrTbl;
     if (ver == 2)
     {
-        uint32 strSize; //Normally +1, if is one it applies to the below values
+        uint32 strSize; //Does not include the null byte at the end
     }
     else
     {
@@ -158,7 +158,7 @@ struct LocalisationFile
         uint32 unk; //same as locstrings1 if 0
         struct HashedStringParamEntries
         {
-            for (i = 0; i < locStrings1; i++)
+            for (i = 0; i < locStrings1 / 2; i++)
             {
                 HashedStringParam HashedStringEntry;
             }
