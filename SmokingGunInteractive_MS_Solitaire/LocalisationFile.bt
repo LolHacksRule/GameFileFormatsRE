@@ -64,7 +64,7 @@ typedef struct HashedStringParam
     }
     else
     {
-        uint32 hash;
+        uint32 hash2;
         uint32 strSize; //Normally +1, if is one it applies to the below values
     }
 };
@@ -152,38 +152,57 @@ struct LocalisationFile
         uint32 zero;
         if (ver == 2 && flag == 2)
         {
-            uint32 unk1[4];
+            uint32 unk1;
+            uint32 hashflg[2];
+            uint32 unk2;
         }
         uint32 locStrings1;
         uint32 unk; //same as locstrings1 if 0
-        struct HashedStringParamEntries
+        if (locStrings1 != 0)
         {
-            for (i = 0; i < locStrings1 / 2; i++)
+            struct HashedStringParamEntries
             {
-                HashedStringParam HashedStringEntry;
+                if (flag == 2)
+                {
+                    for (i = 0; i < locStrings1; i++)
+                    {
+                        HashedStringParam HashedStringEntry;
+                    }
+                }
+                else
+                {
+                    for (i = 0; i < locStrings1 / 2; i++) //Change locstrings to / 2 if you don't get something
+                    {
+                        HashedStringParam HashedStringEntry;
+                    }
+                }
+            } hspe;
+            if (flag == 2 && ver != 2)
+            {
+                uint32 unk2[4];
             }
-        } hspe;
-        if (flag == 2 && ver != 2)
-        {
-            uint32 unk2[4];
+            struct HashedStringEntries
+            {
+                if (ver == 2)
+                {
+                    for (i = 0; i < locStrings1; i++)
+                    {
+                        GenericString HashedStringEntry;
+                    }
+                }
+                else
+                {
+                    for (i = 0; i < locStrings1; i++)
+                    {
+                        GenericUnicodeString HashedUnicodeStringEntry;
+                    }
+                }
+            } hashedStrEntries;
         }
-        struct HashedStringEntries
+        else
         {
-            if (ver == 2)
-            {
-                for (i = 0; i < locStrings1; i++)
-                {
-                    GenericString HashedStringEntry;
-                }
-            }
-            else
-            {
-                for (i = 0; i < locStrings1; i++)
-                {
-                    GenericUnicodeString HashedUnicodeStringEntry;
-                }
-            }
-        } hashedStrEntries;
+            Printf("No strings!");
+        }
     }
     //uint32 strTblOff;
 } Loc;
