@@ -101,11 +101,10 @@ struct LocalisationFile
         uint32 strEntryTblSize;
         struct StringParameters
         {
-            for (i = 0; i < stringCnt; i++)
+            for (i = 0; i < stringCnt+1; i++)
             {
                 StringParam ParamEntry;
             }
-            uint32 unk3[4];
             if (flag == 2)
             {
                 uint32 unk4[4];
