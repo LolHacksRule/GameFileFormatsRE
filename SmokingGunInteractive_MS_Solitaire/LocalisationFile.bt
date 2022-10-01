@@ -88,26 +88,25 @@ typedef struct GenericUnicodeString
 
 struct LocalisationFile
 {
+    LittleEndian();
     LocType magic;
     uint32 ver;
     LocFlag flag; //Flag of some kind, if 2 there's another group of ints
     if (magic == Unhashed)
     {
         uint32 stringCnt;
-        uint32 unk2[2]; //28 and 38
+        uint32 tournamentStringParamTblOff; //28
+        uint32 stringParamTableOff; //38
         uint32 stringDataOff;
         uint32 strTblOff;
         uint32 strEntryTblOff;
         uint32 strEntryTblSize;
         struct StringParameters
         {
-            for (i = 0; i < stringCnt+1; i++)
+            StringParam TournamentParamEntry;
+            for (i = 0; i < stringCnt; i++)
             {
                 StringParam ParamEntry;
-            }
-            if (flag == 2)
-            {
-                uint32 unk4[4];
             }
         } strprm;
         struct StringTable
