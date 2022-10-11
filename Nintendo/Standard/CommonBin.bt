@@ -1,0 +1,156 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct N_BinVersion {
+	byte       micro;
+    byte       minor;
+    uint16     major;
+};
+
+typedef struct N_CommonBinHdr
+{
+    char       signature[8];
+    N_BinVersion version;
+    EndianEnum byteOrderMark;
+    byte       alignmentShift;
+    byte       targetAddressSize;
+    int32      offsetToFileName;
+    int16      flags;
+    int16      offsetToFirstBlock;
+    int32      offsetToRelTable;
+    int32      fileSize;
+};
+
+typedef struct N_CommonBlockHdr
+{
+    char       signature[8];
+    uint32     offsetToNextBlock;
+    uint32     blockSize;
+    uint32     reserved;
+};
+
+typedef struct N_CommonBlockHdr_4Block
+{
+    char       signature[4];
+    uint32     offsetToNextBlock;
+    uint32     blockSize;
+    uint32     reserved;
+};
+
+typedef struct N_DictionaryEntry
+{
+    int32  refBit;
+    uint16 children[2];
+    uint64 pKey;
+};
+
+typedef struct N_DictionaryEntries
+{
+    N_DictionaryEntry TheDictEntry; //WIP
+};
+
+typedef struct N_Dictionary
+{
+    char            signature[4];
+    int32           count;
+    N_DictionaryEntry rootDict;
+    N_DictionaryEntry dictionary[count];
+};
+
+typedef struct N_StringPoolStringEntries
+{
+    for (i = 0; i < stringCount+1; i++)
+    {
+        I16_StringEntry StringPoolStringEntry; //WIP
+    }
+};
+
+typedef struct N_StringPool {
+	N_CommonBlockHdr_4Block       Header;
+    int32                       stringCount;
+    N_StringPoolStringEntries     strPoolEntries;
+};
+
+typedef struct N_RelocationTableSection
+{
+    int64 memAddress;
+    int32 fOff;
+    int32 fSize;
+    int32 idxfirst;
+    int32 relocs;
+};
+
+typedef struct N_RelocationTableSections
+{
+    for (i = 0; i < sectionCount; i++)
+    {
+        N_RelocationTableSection section;
+    }
+};
+
+typedef struct N_RelocationTableEntry
+{
+    int32 position;
+    int16 structCount;
+    byte  offsetCount;
+    byte  paddingCount;
+};
+
+typedef struct N_RelocationTableEntries
+{
+    for (i = 0; i < RLTContent.RLTSections.section.relocs; i++)
+    {
+        N_RelocationTableEntry entries;
+    }
+};
+
+typedef struct N_RelocationTableContent
+{
+    if (sectionCount > 0)
+    {
+        N_RelocationTableSections RLTSections;
+        N_RelocationTableEntries RLTEntries;
+    }
+};
+
+typedef struct N_RelocationTable {
+	char                 signature[4];
+    uint32               position;
+    uint32               sectionCount;
+    uint32               padding;
+    if (sectionCount >= 1)
+    {
+        N_RelocationTableContent RLTContent;
+        /*
+        struct RelocationTableSections
+        {
+            for (i = 0; i < sectionCount; i++)
+            {
+                RelocationTableSection section;
+            }
+        };
+        struct RelocationTableEntries
+        {
+            for (i = 0; i < relocs; i++)
+            {
+                RelocationTableEntry entry;
+            }
+        };*/
+    }
+    else
+    {
+        byte dummy[52];
+    }
+};

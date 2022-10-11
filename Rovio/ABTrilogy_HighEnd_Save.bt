@@ -11,13 +11,9 @@
 //   History: 
 //------------------------------------------------
 
-local int i <hidden=true> = 0;
+#include "../../LHR/Common.bt"
 
-typedef enum <byte>
-{
-    False,
-    True,
-} bool;
+local int i <hidden=true> = 0;
 
 typedef enum <int32>
 {
@@ -53,11 +49,11 @@ struct HighEndTrilogySave
                 }
                 else if (param == "Eagle_Unlocked")
                 {
-                    bool eagleUnlocked;
+                    Byte_Bool eagleUnlocked;
                 }
                 else if (param == "Speech_Enabled")
                 {
-                    bool speechEnabled;
+                    Byte_Bool speechEnabled;
                 }
                 else if (param == "Menu_Theme")
                 {

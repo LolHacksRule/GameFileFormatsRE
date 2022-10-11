@@ -14,7 +14,9 @@
 //Ver 1 appears to be identical to 2, without the font table
 //Ver 0 uses unicode
 
-local int i <hidden=true> = 0;
+#include "../LHR/Common.bt"
+
+//local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;
 local string tempLang <hidden = true> = "";
 local string tempStringID <hidden = true> = "";
@@ -280,31 +282,21 @@ LanguageType);
             {
                 struct FontStrs
                 {
-                    uint16 fontFileNameStrSize<hidden = true>;
-                    char fontFileNameStr[fontFileNameStrSize];
-                    uint16 pakStrSize<hidden = true>;
-                    if (pakStrSize > 1)
+                    U16_StringEntry fontFileName;
+                    U16_StringEntry pakName;
+                    U16_StringEntry fontName<hidden = true>;
+                    if (fontName.byteSize != 0)
                     {
-                        char pakStr[pakStrSize];
-                    }
-                    else
-                    {
-                        FSkip(4);
-                    }
-                    uint16 fontNameSize<hidden = true>;
-                    if (fontNameSize != 0)
-                    {
-                        char fontNameStr[fontNameSize];
                         if (printStrings == 1)
                         {
-                            Printf("[%i]: %s:%s|%s\n", i, pakStr, fontFileNameStr, fontNameStr); //Exient uses a "/" or a "\" it's inconsistent
+                            Printf("[%i]: %s:%s|%s\n", i, pakName.theString, fontFileName.theString, fontNameStr.theString); //Exient uses a "/" or a "\" it's inconsistent
                         }
                     }
                     else
                     {
                         if (printStrings == 1)
                         {
-                            Printf("[%i]: %s:%s\n", i, pakStr, fontFileNameStr);
+                            Printf("[%i]: %s:%s\n", i, pakName.theString, fontFileName.theString);
                         }
                     }
                 } font;

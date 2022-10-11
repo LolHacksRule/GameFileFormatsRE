@@ -1,0 +1,785 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//TODO: REWRITE COMMAPGROUP PLEASE
+
+//We don't need to include LHRCommon
+
+/*typedef struct NB_ComponentHeader
+{
+    NB_ComponentType ComponentType;
+    byte pad[3];
+};*/
+
+typedef struct NB_ComLightEmitterTbl
+                    {
+                        float Range;
+                        float InnerSpotAngle;
+                        float OuterSpotAngle;
+                        float Color[3];
+                        float Intensity;
+                        float SourceRadius;
+                        float AttentuationPower;
+                        float Specular[3];
+                        FSkip(12);
+                        float SpotFallOff;
+                        NB_LightType LightType;
+                        byte LightFilePathCnt;
+                        Byte_Bool DirectLightBakeMode;
+                        byte dmy;
+                        if (LightFilePathCnt != 0)
+                        {
+                            struct LightFilePath
+                            {
+                                int64 dmy;
+                                {
+                                    struct LightFileTbl
+                                    {
+                                        int64 strtbloff;
+                                    } lft[LightFilePathCnt];
+                                }
+                            } lfp;
+                        }
+                    };
+
+typedef struct NB_ComAudioEmitterTbl // PROBABLY PERFECT
+                        {
+                            FSkip(4);
+                            int64 AssetFilePathOff;
+                            int64 AudioNameOff;
+                            float Volume;
+                            float Pitch;
+                            float Pan;
+                            float FadeInSecond;
+                            float FadeOutSecond;
+                            NB_AudioStartOffsetType AudioStartOffsetType;
+                            int16 StartOffset;
+                        };
+
+typedef struct NB_ComParticleFxEmitterTbl
+                    {
+                        FSkip(4);
+                        int64 ParticleFxAssetPathOff;
+                        int64 EmitterSetNameOff;
+                        float MultiplyColor[4];
+                        float ParticleGlobalScale[3];
+                        float ParticleEmissionScale[3];
+                        float EmitterVolumeScale[3];
+                        Byte_Bool IsVisible;
+                        byte GroupId;
+                        NB_BillboardType BillboardType;
+                    };
+
+typedef struct NB_ComGuiLayoutTbl
+                    {
+                        FSkip(4);
+                        int64 LayoutArchivePathOff;
+                        int64 LayoutNameOff;
+                        int64 someOff;
+                        int64 LayoutNameOffAgain;
+                        FSkip(40);
+                        if (LayoutNameOff == LayoutNameOffAgain)
+                        {
+                            local Byte_Bool isViewportScissorInfoEnabled = 1;
+                        }
+                        else
+                        {
+                            local Byte_Bool isViewportScissorInfoEnabled = 0;
+                        }
+                        struct ViewportScissorInfo
+                        {
+                            int32 ViewportWidth;
+                            int32 ViewportHeight;
+                            int32 ViewportOrigin[2];
+                            int32 ScissorWidth;
+                            int32 ScissorHeight;
+                            int32 ScissorOrigin[2];
+                        } vsi;
+                        FSkip(40);
+                        int64 StrTblOff;
+                    };
+
+typedef struct NB_ComUiWidgetTbl
+                    {
+                        FSkip(4);
+                        int64 HudNameOff;
+                        int32 unk;
+                        float Position[3];
+                        float Rotate[3];
+                        float Scale[2];
+                        Byte_Bool IsVisible;
+                        FSkip(3);
+                    } ;
+
+typedef struct NB_ComPropertyTbl
+                    {
+                        FSkip(4);
+                        int64 unk;
+                        int64 kvpCount;
+                        for (i = 0; i < kvpCount; i++)
+                        {
+                            struct KeyValuePair
+                            {
+                                int64 keyOff;
+                                int64 ValueOff;
+                                NB_ComPropertyValueType ComPropertyValueType;
+                            } kvp;
+                        }
+                    };
+
+typedef struct NB_ComTransformTbl // PROBABLY PERFECT
+                    {
+                        float Translate[3];
+                        float Rotate[3];
+                        float possiblyDummy;
+                        float Scale[3];
+                        int32 dmy;
+                    };
+
+typedef struct NB_ComTransformTbl2D
+                    {
+                        float Scale[2];
+                        float Translation[2];
+                        float XYRotation[2];
+                        int32 dmy;
+                        float ZScale;
+                        float Depth;
+                        int64 end;
+                    };
+
+typedef struct NB_ComCharacterCollision
+                    {
+                        NB_HitCollisionType HitCollisionType;
+                        int64 clsnShapeOff;
+                        struct CollisionShape
+                        {
+                            NB_CollisionShapeType CLSNShapeType;
+                            int32 dmy;
+                            int64 clsnTblOff;
+                            struct CollisionTable
+                            {
+                                if (CLSNShapeType == CLSNShapeType_Box)
+                                {
+                                    float Size[3];
+                                    byte d[20];
+                                }
+                                if (CLSNShapeType == CLSNShapeType_Sphere)
+                                {
+                                    byte dmy[24];
+                                    float Radius;
+                                    int32 end;
+                                }
+                                if (CLSNShapeType == CLSNShapeType_Capsule)
+                                {
+                                    byte dmy[16];
+                                    float Radius;
+                                    float Length;
+                                    int64 end;
+                                }
+                            } ctbl;
+                        } cshp;
+                    };
+
+typedef struct NB_ComHitCollision //need fixes
+                    {
+	                    int32 nodeCntBeforeComp;
+                        if (nodeCntBeforeComp == 0) //kill if CHC is empty
+	                    {
+			                FSkip(56);
+                            break;
+                        }
+                        int64 offToTbl;
+                        FSeek(offToTbl+8);
+                        for( i = 0; i < nodeCntBeforeComp; i++ )
+                        {
+		                    struct ComHitColTbl
+                            {
+			                    int64 StrTblOffst;
+                                /*if (StrTblOffst != StrTblOffst)
+                                {
+                                    FSkip(-8);
+                                    int64 offstonoffst;
+                                    int64 unk;
+                                    FSkip(unk+8);
+                                    break;
+                                }*/
+			                    int64 someOtherOff;
+			                    if (someOtherOff != 0)
+			                    {
+				                    FSeek(someOtherOff-8); //skip cpad
+			                    }
+                                //if (someOtherOff == 40)
+			                    //{
+                                    //FSkip(-16);
+				                    //FSeek(someOtherOff-8); //skip cpad
+			                    //}
+			                    else
+			                    {
+				                    int64 offstTo28;
+				                    int64 unk;
+				                    FSkip(-16);
+				                    //if (nodeCntBeforeComp >= 2)
+				                    //{
+					                    //FSkip(unk+16);
+				                    //}
+				                    //else
+				                    //{
+					                    FSkip(unk+8);
+				                    //}
+			                    }
+                            } chctbl;
+                        }
+                        struct FinalCHT
+                        {
+                            int64 unk;
+                            int64 unk2;
+                            FSkip(24);
+                        } fcht;
+                        FSkip(-8);
+                    };
+
+typedef struct NB_ComRenderer //Hell
+                    {
+                        FSkip(4);
+                        int64 FPathOffst;
+                        if (entityHdr.version.major > 5)
+                        {
+                            int64 rootBoneNameOffst;
+                        }
+                        //float possiblyDummy;
+                        float ScaleX;
+                        float unknown[3];
+                        //float Translate[3];
+                        //float Scale[3];
+                        float ScaleY;
+                        float unk2;
+                        float unk3[2];
+                        float ScaleZ;
+                        float Translate[3];
+                        //Byte_Bool isCastShadow;
+                        //Byte_Bool isRecieveShadow;
+                        NB_BakeTargetCondition BakeTargetCondition;
+                        byte ComRenderFlag; //Related to bools
+                        //byte unknownFlag;
+                        NB_UnderWaterRenderingMode UnderWaterRenderingMode;
+                        byte InterKineticCalcInterCnt;
+                        float LightMapScale;
+                        float InterKineticTolerance;
+                        byte BoneRefMdlCnt;
+                        byte SklRefMdlCnt;
+                        byte MtlRefMdlCnt;
+                        byte AnimRefMdlCnt;
+                        byte prmCntForInterKineticConstraints;
+                        byte prmCntForInterKineticAngleLimiters;
+                        //int64 unknowni;
+                        //int64 d[4];
+                        FSkip(6);
+                        //int64 strTblOff;
+                        //int64 o[(BoneRefMdlCnt + SklRefMdlCnt + MtlRefMdlCnt + AnimRefMdlCnt) + 2];    
+                        if (entityHdr.version.major > 5)
+                        {
+                            if (BoneRefMdlCnt != 0)
+                            {
+                                int64 BoneRefFilePathOff;
+                            }
+                            else
+                            {
+                                FSkip(8);
+                            }
+                            if (SklRefMdlCnt != 0)
+                            {
+                                int64 SklRefFilePathOff;
+                            }
+                            else
+                            {
+                                FSkip(8);
+                            }
+                            if (MtlRefMdlCnt != 0)
+                            {
+                                int64 MtlRefFilePathOff;
+                            }
+                            else
+                            {
+                                FSkip(8);
+                            }
+                            if (AnimRefMdlCnt != 0)
+                            {
+                                int64 AnimRefFilePathOff;
+                            }
+                            else
+                            {
+                                FSkip(8);
+                            }
+                            char BlockChecker[4]<hidden = true>;
+                            FSkip(-4);
+                            if (BlockChecker == "ENTY" || BlockChecker == "_STR")
+                            {
+                                FSkip(-4);
+                                break;
+                            }
+                            //int64 strTblOff[(BoneRefMdlCnt + SklRefMdlCnt + MtlRefMdlCnt + AnimRefMdlCnt) - 2];    
+                            int64 unk;
+                            int64 unk5;
+                            if (unk5 != 0)
+                            {
+                                FSeek(unk5);
+                            }
+                            else
+                            {   
+                                break;
+                                //int64 unkn2;
+                            }
+                            //int64 compilerCache[2];
+                            int64 StrTblOffst;
+                            if (unk5 != 0)
+                            {
+                                int64 CPad[14];
+                            }
+                            //else
+                            //{
+                                //int64 CPad[4];
+                            //}
+                            //int32 unk7;
+                            //byte dmy[40];
+                            //byte unknownBytes[384];
+                            //int32 dmy;
+                            //isHasPhysSim PhysSim;
+                            //byte unk3[7];
+                            //float unk4;
+                            //float unk5;
+                        }
+                    };
+
+typedef struct NB_ComGroupTbl
+                    {
+                        //int64 nextEntyOffstTblOffst;
+                        int32 dmy;
+                        int64 nextEntyOffstTblOffst;
+                        if (nextEntyOffstTblOffst == 0)
+                        {
+                            int64 pad; //assume its padding as no enty offst doesn't make sense
+                            break;
+                        }
+                        int64 entyCnt;
+                        int64 nextEntyOffst[entyCnt];
+                    };
+
+typedef struct NB_ComCollisionTbl
+                    {
+                        FSkip(4);
+                        int64 strTblOffst; //Some Str Tbl Offst?
+                        Byte_Bool IsTrigger;
+                        NB_CollisionLayer CollisionLayer;
+                        NB_CollisionQuality CollisionQuality;
+                        if (entityHdr.version.major >= 3)
+                        {
+                            FSkip(2);
+                        }
+                        else
+                        {
+                            FSkip(5);
+                        }
+                    };
+
+typedef struct NB_ComCollision2dTbl
+                    {
+                        Byte_Bool IsTrigger;
+                        NB_CollisionLayer2d CollisionLayer2d;
+                        FSkip(-1);
+                        float Offset[2];
+                        float Friction;
+                        float Restitution;
+                        int64 clsnShape2dOff;
+                        NB_CollisionShapeType2d CLSNShapeType2d;
+                        //FSkip(4);
+                        int64 clsnTbl2DOff;
+                        FSeek(clsnTbl2DOff);
+                        struct CollisionTable2d
+                        {
+                            if (CLSNShapeType2d == CLSN2dShapeType_Box2d)
+                            {
+                                struct Collision2dBox2D
+                                {
+                                    float HalfExtent[2];
+                                    FSkip(40);
+                                } cc2db2d;
+                            }
+                            if (CLSNShapeType2d == CLSN2dShapeType_Circle2d)
+                            {
+                                //FSkip(8);
+                                struct Collision2dCircle2d
+                                {
+                                    float Radius;
+                                    FSkip(36);
+                                } cc2db2d;
+                            }
+                            if (CLSNShapeType2d == CLSN2dShapeType_CornerClippedBox2d)
+                            {
+                                //FSkip(8);
+                                struct Collision2dCornerClippedBox2d //openboxedge2d is also this
+                                {
+                                    FSkip(8);
+                                    float ClippingLength;
+                                    FSkip(20);
+                                } cc2dccb2d;
+                            }
+                        } ctbl2d;
+                        //if (CLSNShapeType2d == Box2D)
+                        //{
+                        //}
+                    };
+
+typedef struct NB_ComPhysics2d
+                    {
+                        float Density;
+                        float GravityScale;
+                        float LinearDamping;
+                        float AngularDamping;
+                        NB_CollisionQuality2d CollisionQuality2d;
+                        Byte_Bool RotationFixed;
+                        FSkip(2);
+                    };
+
+typedef struct NB_ComPhysics
+                        {
+                            float Mass;
+                            float StaticFriction;
+                            float DynamicFriction;
+                            float Restitution;
+                            float LinearVelocityDamping;
+                            float AngularVelocityDamping;
+                            FSkip(4);
+                        } ;
+
+typedef struct NB_ComMapPath //?
+                    {
+                        if (!isNewEnty)
+                        {
+                            FSkip(4);
+                            int64 eRefTblOffst;
+                            int64 entityRefCnt;
+                            char BlockChecker[4]<hidden = true>;
+                            FSkip(-4);
+                            if (BlockChecker == "ENTY" || BlockChecker == "_STR")
+                            {
+                                //terminateEntyDetection = 1;
+                                //FSkip(-4);
+                                //Printf("Entity ended early.");
+                                break;
+                                
+                            }
+                        }
+                        else
+                        {
+                            int32 unk;
+                            int64 LayoutNameOffst; //Offst?
+                            int64 BinLytNameOffst;
+                        }
+                        if (unk != 0 || (!isNewEnty))
+                        {
+                            struct ERef
+                            {
+                                int64 entityOffst;
+                                int64 prmOffstBeforeNextEnty;
+                                int64 ePrmCnt;
+                            } er[entityRefCnt];
+                            if (!isNewEnty)
+                            {
+                                struct Vertices
+                                {
+                                    struct MapPathVertex
+                                    {
+                                        float Position[3];
+                                    } mpvtx[2];
+                                } vertexes;
+                            }
+                            else
+                            {
+                                struct Anchors
+                                {
+                                    struct MapPathAnchor
+                                    {
+                                        float Position[3];
+                                    } mpa[2];
+                                } anchors;
+                            }
+                            if (!isNewEnty)
+                            {
+                                struct ControlPoint
+                                {
+                                    float Position[3];
+                                } ctrlp[2];
+                            }
+                            else
+                            {
+                                struct Tangent
+                                {
+                                    float Position[3];
+                                } tngt[2];
+                            }
+                            int32 dmy;
+                            if (!isNewEnty)
+                            {
+                                struct MapPathOtherVertexex
+                                {
+                                    float Position[3];
+                                } mpvtxs[2];
+                            }
+                            else
+                            {
+                                struct MapPathAnchor2
+                                {
+                                    float Position[3];
+                                } mpa2[2];
+                            }
+                            if (!isNewEnty)
+                            {
+                                struct ControlPoint2
+                                {
+                                    float Position[3];
+                                } ctrlp2[2];
+                            }
+                            else
+                            {
+                                struct Tangent2
+                                {
+                                    float Pos[3];
+                                } tngt2[2];
+                            }
+                            //int32 dmy2;
+                            if (isNewEnty)
+                            {
+                                struct MapPathAnchor3
+                                {
+                                    float Position[3];
+                                } mpa3[2];
+                            }
+                            //struct MapPathAnchor4
+                            //{
+                                //float Position[3];
+                            //} mpa4[2];
+                            if (isNewEnty)
+                            {
+                                struct Tangent3
+                                {
+                                    float Pos[3];
+                                } tngt3[2];
+                                int64 end;
+                            }
+                            Byte_Bool IsBezierConnect;
+                            Byte_Bool unk[3];
+                            int64 refEntyPrmOff;
+                            int32 dmy2[2];
+                            Byte_Bool unk2[4];
+                            FSkip(4);
+                        }
+                        //} anchors;
+                        //Byte_Bool IsTrigger;
+                        //NB_CollisionLayer CollisionLayer;
+                        //NB_CollisionQuality CollisionQuality;
+                        //byte dbytes[5];
+                    };
+
+typedef struct NB_ComGlobalLightingTbl
+                    {
+                        struct MainLight
+                        {
+                            int32 version;
+                            int64 dmy;
+                            float Position[3];
+                            float Direction[3];
+                            //int32 unk2[5];
+                            float Intensity;
+                            float Range;
+                            float Color[3];
+                            float OuterAngle;
+                            float InnerAngle;
+                        } mlght;
+                        struct Fog
+                        {
+                            float Color0[3];
+                            float Color1[3];
+                            float Start0;
+                            float End0;
+                            float Density0;
+                            float Start1;
+                            float End1;
+                            float Density1;
+                            float ColorScale[2]; //?
+                        } fog;
+                        struct ParticleFxColorScale
+                        {
+                            float ColorScale;
+                            float ColorOffset[3];
+                        } pfxcolorscale;
+                        struct Sky
+                        {
+                            float ColorScale;
+                            float LightProbeIlluminanceScale;
+                        } sky;
+                        struct Ambient
+                        {
+                            float Color[3];
+                            float ColorScale;
+                        } ambient;
+                        struct Hemisphere
+                        {
+                            float SkyDirection[3];
+                            if (entityHdr.version.major > 9)
+                            {
+                                float SkyColor[3];
+                                float GroundColor[3];
+                            }
+                                float ColorScale;
+                            //}
+                        } hemisphere;
+                        struct ShCoefficient
+                        {
+                            FSkip(4);
+                            //if (entityHdr.version.major == 11)
+                            //{
+                                //int64 RGBOff;
+                            //}
+                            if (entityHdr.version.major == 12)
+                            {
+                                int64 RGBOff;
+                            }
+                            int64 SkyboxTextureOff;
+                            int64 SpecularProbeTextureOff;
+                            float Emissive; //yes this is here
+                            FSkip(4);
+                            float Red;
+                            FSkip(32);
+                            float Green;
+                            FSkip(32);
+                            float Blue;
+                            if (entityHdr.version.major > 3)
+                            {
+                                FSkip(36);  
+                            }
+                            else
+                            {
+                                FSkip(20);
+                            }
+                        } shc;
+                    };
+
+typedef struct NB_ComMapLightingTbl
+                    {
+                        FSkip(4);
+                        int64 MapOff;
+                        int64 GlobalLightingOff;
+                        Byte_Bool hasLightProbeBakePoints;
+                        FSkip(1);
+                        Byte_Bool hasReflectionProbes;
+                        FSkip(1);
+                        int16 nodeCntInLights; //should be 2
+                        int16 nodeCntInLightProbeGrids;
+                        int64 someOff[4];
+                        int64 cpad[22];
+                    };
+
+typedef struct NB_ComCameraTbl
+                    {
+                        float ViewMatrix;
+                        FSkip(44);
+                        float ProjectionMatrix;
+                        FSkip(60);
+                        Byte_Bool IsToEnableAtStaged;
+                        NB_ComCameraProjectionType ComCameraProjectionType;
+                        byte cameraAnimationRefCnt;
+                        FSkip(1);
+                        float AspectRatio;
+                        float FovyRadian;
+                        float FrustumLeft;
+                        float FrustumRight;
+                        float FrustumTop;
+                        float FrustumBottom;
+                        float FrustumNearZ;
+                        float FrustumFarZ;
+                        float TextureOffset;
+                        FSkip(4);
+                        int64 CameraAnimationsOff;
+                        int64 FilePath[cameraAnimationRefCnt];
+                    };
+
+typedef struct NB_ComClothTbl
+                    {
+                        FSkip(4);
+                        int64 FilePathOff;
+                        float PerClothWindVelocity[3];
+                        Byte_Bool IsAffectedByGlobalWind;
+                        FSkip(3);
+                    };
+
+typedef struct NB_ComSpriteTbl
+                    {
+                        FSkip(4);
+                        int64 TextureAssetPathOff;
+                        float MultiplyColor[4];
+                        float Size[2];
+                        float SourceRectLeftTop[2];
+                        float SourceRectSize[2];
+                        float SourceRectPivot[2];
+                        FSkip(4);
+                        float AlphaTestThreshold;
+                        float Order;
+                        NB_SpriteBlendMode SpriteBlendMode;
+                        byte  flag; //0 = no flags
+                        FSkip(2);
+                    };
+
+typedef struct NB_ComFxTriggerTbl
+                    {
+                        FSkip(4);
+                        int64 FilePathOff;
+                    };
+
+typedef struct NB_ComCharacterTbl
+                    {
+                        FSkip(4);
+                        int64 ModelPathOff;
+                        //int64 AudioNameOff;
+                        Byte_Bool hasFrameAttrAssetNames;
+                        FSkip(1);
+                        Byte_Bool hasAnimations;
+                        if (hasFrameAttrAssetNames == 0)
+                        {
+                            if (hasAnimations == 0)
+                            {
+                                FSkip(16);
+                            }
+                        }
+                        FSkip(5);
+                        if (hasFrameAttrAssetNames)
+                        {
+                            int64 FrameAttrFilePathValueOff;
+                        }
+                        if (hasAnimations)
+                        {
+                            int64 AnimFilePathValueOff;
+                        }
+                        //int64 unk[2];
+                        int64 ParticleFxAssetPathOff;
+                        int64 AudioAssetPathOffOff;
+                        int64 FxTriggerAssetPathOff;
+                        if (hasFrameAttrAssetNames)
+                        {
+                            int64 FrameAttrFilePathOff;
+                        }
+                        if (hasAnimations && isNewEnty)
+                        {
+                            int64 AnimFilePathOff;
+                        }
+                        //int64 
+                    };

@@ -13,6 +13,8 @@
 
 local uint i <hidden = true> = 0;
 
+#include "../LHR/Common.bt"
+
 struct GLAucklandLoc
 {
     int32 StrCnt;
@@ -20,14 +22,8 @@ struct GLAucklandLoc
     {
         struct TextString
         {
-            int32 strIdBSize<hidden=true>;
-            char StrID[strIdBSize];
-            int32 stringBSize<hidden=true>;
-            if (stringBSize == 0)
-            {
-                break;
-            }
-            wchar_t lString[stringBSize];
+            I32_StringEntry StrID;
+            I32_UnicodeStringEntry lString;
         } ts;
     }
 }glAucklandLoc;

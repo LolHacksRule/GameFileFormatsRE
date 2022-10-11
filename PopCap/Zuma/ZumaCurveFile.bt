@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 /*
 General Format Info (Credits to the said):
 https://github.com/GScience/ZumaToolPack/blob/master/Zuma%20Curv%E5%88%86%E6%9E%90.docx?raw=true
@@ -41,12 +43,6 @@ Mostly decompiled WP7 ver
 
 typedef enum <byte>
 {
-    False,
-    True
-} bool;
-
-typedef enum <byte>
-{
     Top,
     Bottom,
 } ZumaCurve_Layer;
@@ -73,7 +69,7 @@ typedef struct
     }
     if (version < 3)
     {
-        bool isInTunnel;
+        Byte_Bool isInTunnel;
         ZumaCurve_Layer lyr;
     }
 } Zuma_PathPoint;
@@ -84,7 +80,7 @@ typedef struct
     //float y;
     byte X;
     byte Y;
-    bool isInTunnel;
+    Byte_Bool isInTunnel;
     ZumaCurve_Layer lyr;
 } Zuma1_PathPoint;
 
@@ -92,7 +88,7 @@ typedef struct
 {
     int32 x;
     int32 y;
-    bool isInTunnel;
+    Byte_Bool isInTunnel;
     ZumaCurve_Layer lyr;
 } Zuma1_KeyPoint;
 
@@ -132,7 +128,7 @@ struct ZumaCurveFile
         {
             if (version >= 8)
             {
-                bool isLinear;
+                Byte_Bool isLinear;
                 if (isLinear == True)
                 {
                     Printf("isLinear: True\n");
@@ -232,7 +228,7 @@ struct ZumaCurveFile
                     int32 pwrUpChance;
                     Printf("pwrUpChance: %i\n", pwrUpChance);
                 }
-                bool drawCurve;
+                Byte_Bool drawCurve;
                 if (drawCurve == True)
                 {
                     Printf("drawCurve: True\n");
@@ -241,7 +237,7 @@ struct ZumaCurveFile
                 {
                     Printf("drawCurve: False\n");
                 }
-                bool drawTunnels;
+                Byte_Bool drawTunnels;
                 if (drawTunnels == True)
                 {
                     Printf("drawTunnels: True\n");
@@ -250,7 +246,7 @@ struct ZumaCurveFile
                 {
                     Printf("drawTunnels: False\n");
                 }
-                bool destroyAll;
+                Byte_Bool destroyAll;
                 if (destroyAll == True)
                 {
                     Printf("destroyAll: True\n");
@@ -261,7 +257,7 @@ struct ZumaCurveFile
                 }
                 if (version > 8)
                 {
-                    bool drawPit;
+                    Byte_Bool drawPit;
                     if (drawPit == True)
                     {
                         Printf("drawPit: True\n");
@@ -273,7 +269,7 @@ struct ZumaCurveFile
                 }
                 if (version > 9)
                 {
-                    bool dieAtEnd;
+                    Byte_Bool dieAtEnd;
                     if (dieAtEnd == True)
                     {
                         Printf("dieAtEnd: True\n");
@@ -285,7 +281,7 @@ struct ZumaCurveFile
                 }
             }
             Printf("------LEVEL PARAM END------\n");
-            bool hasNoEditType; //Seems no samples I tried set this to true
+            Byte_Bool hasNoEditType; //Seems no samples I tried set this to true
             if (hasNoEditType == True)
             {
                 Printf("hasNoEditType: True\n");
@@ -294,7 +290,7 @@ struct ZumaCurveFile
             {
                 Printf("hasNoEditType: False\n");
             }
-            bool hasTunnels;
+            Byte_Bool hasTunnels;
             if (hasNoEditType == True)
             {
                 Printf("hasTunnels: True\n");
@@ -326,7 +322,7 @@ struct ZumaCurveFile
     {
         struct Zuma1Curv
         {
-            bool unkBool[2];
+            Byte_Bool unkBool[2];
             if (version != 3)
             {
                 FSkip(2); //It's probably two zeroes

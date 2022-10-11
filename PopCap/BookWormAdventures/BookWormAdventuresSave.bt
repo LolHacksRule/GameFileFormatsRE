@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;
 local int i3 <hidden=true> = 0;
@@ -22,11 +24,6 @@ typedef enum <int32> {
     String,
     Int16,
 } valueType;
-
-typedef enum <byte> {
-    False,
-	True,
-} boolChecker;
 
 //TODO DETECT ARRAYS
 
@@ -108,7 +105,7 @@ struct BookWormAdventuresSave
                 }
                 if (theValueType == 2) //EASY
                 {
-                    boolChecker theBool;
+                    Byte_Bool theBool;
                     if (theBool == 1)
                     {
                         Printf("true,\n");

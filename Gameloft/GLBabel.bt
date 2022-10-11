@@ -35,8 +35,7 @@ struct GLBabel
         int32 langCnt;
         struct FirstLocStr
         {
-            int32 strBSize;
-            char theStr[strBSize];
+            I32_StringEntry theStr;
             int32 unk;
         } firststr;
         int32 locCnt;
@@ -48,8 +47,7 @@ struct GLBabel
         {
             struct GLBabelString
             {
-                int32 strBSize;
-                char theStr[strBSize];
+                I32_StringEntry theStr;
                 int32 unk;
             } babelStr;
         }

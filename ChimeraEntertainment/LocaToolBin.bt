@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 struct LocaToolData {
     struct StringEntry {
         //if (NotEpicLocaBalDataFlag)
@@ -18,11 +20,9 @@ struct LocaToolData {
             
         //}
         byte chunkStart;
-        byte strIDSize;
-        char stringID[strIDSize];
+        Byte_StringEntry stringID;
         byte end;
-        byte strSize;
-        char stringData[strSize];
+        Byte_StringEntry stringData;
         if (NotEpicLocaBalDataFlag)
         {
             byte endByte;
@@ -49,8 +49,7 @@ else
 {
     struct LocaToolBin {
         byte contentStart;
-        byte langSize;
-        char language[langSize];
+        Byte_StringEntry language;
         byte endbyte;
         byte chunkSize;
         LocaToolData LTD;

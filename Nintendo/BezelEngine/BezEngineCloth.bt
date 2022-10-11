@@ -13,28 +13,11 @@
 
 LittleEndian();
 
-typedef struct CommonNinNXHdr
-{
-    char hdr[8];
-    byte micro;
-    byte minor;
-    byte major[2];
-    int16 endian;
-    byte alignment;
-    byte addressSize;
-    int32 fNameOffst;
-    int16 flags;
-    int16 firstBlockOffst;
-    int32 relocBlockOffst;
-    int32 fsize;
-} ninNXHdr;
+#include "../Standard/CommonBin.bt"
 
 struct Cloth
 {
-    struct Header
-    {
-        ninNXHdr theHdr;
-    } hdr<comment="Common NX Hdr">;
+    N_CommonBinHdr theClothHdr<bgcolor = cBlue>;
     struct Content
     {
         int64 RootBoneNameOffset<comment="Root Bone Name Offset">;
@@ -45,33 +28,52 @@ struct Cloth
         float sStiff<comment="Shearing Stiffness">;
         float bStiff<comment="Bending Stiffness">;
         byte clothPtclCnt<comment="Cloth Particle Count">;
-        byte clothPtclTblNodeByteCnt<comment="Bytecount of Cloth Particle Groups?">; //?
-        byte dmy2;
-        byte disableCollDetection<comment="Disable Collision Detection, 1 = ON, 2 = OFF">;;
+        byte quadVtxCnt<comment="Quad Vertex Count">; //?
+        byte clothShape;
+        Byte_Bool disableCollDetection<comment="Disable Collision Detection, 1 = ON, 2 = OFF">;;
         float selfCollDist<comment="Self Collision Distance">;
         float selfCollStiff<comment="Self Collision Stiffness">;
-        float simFreq<comment="Simulation Frequency">;
-        float stiffFreq<comment="Stiffness Frequency">;
-        float windDrag<comment="Wind Drag">;
-        float windLift<comment="Wind Lift">;;
-        byte  vpSetting<comment="Virtual Particle Setting">;
+        if (theClothHdr.version.major > 2)
+        {
+            float simFreq<comment="Simulation Frequency">;
+            float stiffFreq<comment="Stiffness Frequency">;
+            float windDrag<comment="Wind Drag">;
+            float windLift<comment="Wind Lift">;;
+            byte  vpSetting<comment="Virtual Particle Setting">;
+        }
         FSeek(clothPtclTblOffst);
         //if 0, let's safely assume there's no cloth structure
         if (clothStructureOffst > 0)
         {
             struct ClothParticles
             {
-                float invMass[2]<comment="Inverted Mass (x2)">;
+                if (theClothHdr.version.major > 2)
+                {
+                    float invMass[2]<comment="Inverted Mass (x2)">;
+                }
+                else
+                {
+                    float invMass;
+                }
                 int32 boneId<comment="Bone ID">;
                 //int64 dmy;
             } clothPtcls[clothPtclCnt]<comment="Cloth Particles">;
-            byte clothStructure[48]<comment="Cloth Structure (in bytes)">;
+            if (theClothHdr.version.major > 2)
+            {
+                byte clothStructure[48]<comment="Cloth Structure (in bytes)">;
+            }
+            else
+            {
+                byte clothStructure[16]<comment="Cloth Structure (in bytes)">;
+            }
         }
         FSeek(RootBoneNameOffset); //Go to root bone name
         int16 strSize<hidden=true>;
         string RootBoneName<comment="Root Bone Name">;
-        FSeek(hdr.theHdr.fNameOffst);
+        FSeek(theClothHdr.offsetToFileName);
         //int16 fNameStrSize;
         string fnameStr<comment="Should be NoName">;
+        FSeek(theClothHdr.offsetToRelTable);
+        N_RelocationTable theClothRLT;
     } content<comment="Bezel Cloth Config Bin Content">;
 } cloth<comment="Binary NintendoWare Bezel Engine Cloth Config">;

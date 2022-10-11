@@ -13,17 +13,13 @@
 
 //Only tested on Angry Birds Trilogy on Wii/U.
 
+#include "../../LHR/Common.bt"
+
 typedef enum <uint32>
 {
     ARC_Header = 4411969,
     ARC_Archive = 1212371521
 } format;
-
-typedef enum <uint32>
-{
-    False,
-    True
-} I32_Bool;
 
 local uint arcNum<hidden = true> = 0;
 local uint fileNum<hidden = true> = 0;

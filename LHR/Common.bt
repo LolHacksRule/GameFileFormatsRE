@@ -1,0 +1,202 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i <hidden=true> = 0;
+
+typedef enum <uint16> {
+	Little = 0xFEFF,
+    Big = 0xFFFE,
+} EndianEnum;
+
+typedef enum <uint32> {
+	U32_False,
+    U32_True,
+} U32_Bool;
+
+typedef enum <int32> {
+	I32_False,
+    I32_True,
+} I32_Bool;
+
+typedef enum <byte> {
+	Byte_False,
+    Byte_True,
+} Byte_Bool;
+
+typedef struct I16_StringEntry {
+	int16 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I16_UnicodeStringEntry {
+	int16 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U16_StringEntry {
+	uint16 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U16_UnicodeStringEntry {
+	uint16 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct I32_StringEntry {
+	int32 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I32_UnicodeStringEntry {
+	int32 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U32_StringEntry {
+	uint32 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U32_UnicodeStringEntry {
+	uint32 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct Byte_StringEntry {
+	byte byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(1);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct Byte_UnicodeStringEntry {
+	byte byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(1);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct I64_StringEntry {
+	int64 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I64_UnicodeStringEntry {
+	int64 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U64_StringEntry {
+	uint64 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U64_UnicodeStringEntry {
+	uint64 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};

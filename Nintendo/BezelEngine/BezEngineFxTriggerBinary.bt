@@ -11,10 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-typedef enum <uint16> {
-	IsLE = 0xFEFF,
-    IsBE = 0xFFFE,
-} endianEnum;
+#include "../Standard/CommonBin.bt"
 
 //typedef byte            int8;
 //typedef unsigned byte   uint8;
@@ -26,7 +23,7 @@ struct BezelEngineFXTriggerBin
     struct FileHdr
     {
         char FTRGHdr[4];
-        endianEnum bezEndianEnum;
+        EndianEnum bezEndianEnum;
         //if (bezEndianEnum == IsLE)
         //{
             //LittleEndian();

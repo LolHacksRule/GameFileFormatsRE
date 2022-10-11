@@ -30,7 +30,9 @@ https://aluigi.altervista.org/bms/xpk2.bms
 https://aluigi.altervista.org/bms/dls20.bms
 */
 
-local uint i <hidden = true> = 0;
+#include "../LHR/Common.bt"
+
+//local uint i <hidden = true> = 0;
 local uint terminate <hidden = true> = 0; //Do not set to 1
 local uint isFTGCustomV1 <hidden = true> = 0; //Set this to 1 if reading V1 paks from First Touch Games without modification as they use v0's folder and file metadata structure, alternatively you can change the version to 00 and then run the template
 local uint isABSW_HighResConsole <hidden = true> = 0; //Don't touch, this will automatically be detected
@@ -46,11 +48,6 @@ typedef enum <int32> {
     ZLib = 1, //ABGO/ABTF
     LZ4 = 2, //Furby/F1 Series
 } PakCompressionType;
-
-typedef enum <int32> {
-    False = 0,
-    True = 1,
-} i32_bool;
 
 struct XGSPakFile {
     struct Header {
@@ -173,7 +170,7 @@ struct XGSPakFile {
                 int32 nameOff;
                 int32 dFileSize;
                 int32 fileOffset;
-                i32_bool isCompressed;
+                I32_Bool isCompressed;
                 int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
                 int32 cFileSize;
             }
@@ -185,7 +182,7 @@ struct XGSPakFile {
                     int32 nameOff;
                     int32 dFileSize;
                     int32 fileOffset;
-                    i32_bool isCompressed;
+                    I32_Bool isCompressed;
                     int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
                     int32 cFileSize;
                     int32 dmy2;
@@ -196,7 +193,7 @@ struct XGSPakFile {
                     int32 dmy1;
                     int32 dFileSize;
                     int32 fileOffset;
-                    i32_bool isCompressed;
+                    I32_Bool isCompressed;
                     int32 CRC; //Why is this even here lol it has no effect in preventing RE'ing :) oddly enough it's not present in ABGO v187
                     int32 cFileSize;
                     int32 dmy2;

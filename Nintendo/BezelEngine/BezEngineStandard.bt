@@ -1,0 +1,163 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//CONSTANT ENUMS
+
+typedef enum <int16>
+{
+    BBT_None,
+    BBT_AllAxis,
+    BBT_AxisXZ
+} NB_BillboardType;
+
+typedef enum <byte>
+{
+    Disabled = 0x00,
+    Submersible = 0x01,
+    Submerged = 0x02,
+} NB_UnderWaterRenderingMode;
+
+typedef enum <byte>
+{
+    BTC_Auto = 0x0,
+    BTC_Always = 0x1,
+    BTC_Never = 0x2,
+} NB_BakeTargetCondition;
+
+typedef enum <int16>
+{
+    ASOT_MilliSeconds,
+    ASOT_Tick,
+    ASOT_Sample
+} NB_AudioStartOffsetType;
+
+typedef enum <byte>
+{
+    LT_Directional,
+    LT_Point,
+    LT_Spot
+} NB_LightType;
+
+typedef enum <byte>
+{
+    CCPT_PerspectiveFovy,
+    CCPT_PerspectiveFrustum,
+    CCPT_PerspectiveLighty,
+    CCPT_Orthographic,
+    CCPT_Custom
+} NB_ComCameraProjectionType;
+
+typedef enum <int32>
+{
+    CLSNShapeType_Box = 0,
+    CLSNShapeType_Sphere = 1,
+    CLSNShapeType_Capsule = 2,
+} NB_CollisionShapeType;
+
+typedef enum <int64>
+{
+    CLSN2dShapeType_Box2d,
+    CLSN2dShapeType_Circle2d,
+    CLSN2dShapeType_CornerClippedBox2d,
+    CLSN2dShapeType_OpenBoxEdge2d
+} NB_CollisionShapeType2d;
+
+typedef enum <int64>
+{
+    ScriptParamType_Int,
+    ScriptParamType_Float,
+    ScriptParamType_Bool,
+    ScriptParamType_String,
+    //ScriptParamType_Vector3,
+    ScriptParamType_Entity,
+    ScriptParamType_ScriptRef,
+} NB_ScriptParamType;
+
+typedef enum <int32>
+{
+    HitCLSNShapeType_Attack,
+    HitCLSNShapeType_Damage,
+} NB_HitCollisionType;
+
+typedef enum <byte>
+{
+    SPRTBlendMode_None,
+    SPRTBlendMode_AlphaBlend,
+    SPRTBlendMode_Additive,
+    SPRTBlendMode_Subtractive
+} NB_SpriteBlendMode;
+
+typedef enum <int64>
+{
+    ComPropertyValueType_Int,
+    ComPropertyValueType_Float,
+    ComPropertyValueType_Bool,
+    ComPropertyValueType_String,
+    ComPropertyValueType_Vector3,
+    ComPropertyValueType_Matrix43
+} NB_ComPropertyValueType;
+
+typedef enum <int32>
+{
+    CL_All,
+    CL_None,
+    CL_Default,
+    CL_Character,
+    CL_Static,
+    CL_Debris,
+    CL_HitCollisionAttack,
+    CL_HitCollisionDamage,
+    CL_PhysicalAnimation,
+    CL_User1,
+    CL_User2,
+    CL_User3,
+    CL_User4,
+    CL_User5,
+    CL_User6,
+    CL_User7,
+    CL_User8,
+} NB_CollisionLayer;
+
+typedef enum <int32>
+{
+    CL2d_All,
+    CL2d_None,
+    CL2d_Default,
+    CL2d_Static,
+    CL2d_Debris,
+    CL2d_User1,
+    CL2d_User2,
+    CL2d_User3,
+    CL2d_User4,
+    CL2d_User5,
+    CL2d_User6,
+    CL2d_User7,
+    CL2d_User8,
+} NB_CollisionLayer2d;
+
+typedef enum <byte>
+{
+    CQ_Invalid,
+    CQ_Debris,
+    CQ_RobustDebris,
+    CQ_Moving,
+    CQ_Critical,
+    CQ_Bullet,
+} NB_CollisionQuality;
+
+typedef enum <byte>
+{
+    CQ2d_Invalid,
+    CQ2d_Moving,
+    CQ2d_Bullet,
+} NB_CollisionQuality2d;
