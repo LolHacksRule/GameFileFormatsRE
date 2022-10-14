@@ -89,102 +89,6 @@ typedef enum <byte>
     //HasScripts,
 //} hasScripts;
 
-/*typedef enum <int32>
-{
-    CC_ComTransform = 0,
-    CC_ComRenderer = 1,
-    CC_ComCollision = 2,
-    CC_ComCharacterCollision = 3,
-    //if (isOldBzEng)
-    //{
-        //CC_ComGroup_V1 = 4,
-    //}
-    //else
-    //{
-        CC_ComHitCollision = 4,
-    //}
-    CC_ComMapPath_V1 = 5,
-    CC_ComPhysics2d = 6,
-    CC_ComGroup = 7,
-    CC_ComMapPath = 8,
-    CC_ComLightEmitter = 9,
-    CC_ComAudioEmitter = 10,
-    CC_ComParticleFxEmitter = 11,
-    CC_ComGuiLayout = 12,
-    CC_ComUiWidget = 13,
-    CC_ComProperty = 14,
-    CC_ComGlobalLighting = 15,
-    CC_ComMapLighting = 16,
-    CC_ComCharacter = 17,
-    CC_ComCamera = 18,
-    CC_ComCloth = 19,
-    CC_ComSprite = 20,
-    CC_ComFxTrigger = 21,
-    CC_ComTransform2d = 22,
-    CC_ComCollision2d = 23,
-} componentCategory;*/
-
-if (isNewEnty)
-{
-    typedef enum <int32>
-    {
-        CC_ComTransform,
-        CC_ComRenderer,
-        CC_ComCollision,
-        CC_ComCharacterCollision,
-        CC_ComHitCollision,
-        CC_ComPhysics,
-        CC_ComPhysics2d,
-        CC_ComGroup,
-        CC_ComMapPath,
-        CC_ComLightEmitter,
-        CC_ComAudioEmitter,
-        CC_ComParticleFxEmitter,
-        CC_ComGuiLayout,
-        CC_ComUiWidget,
-        CC_ComProperty,
-        CC_ComGlobalLighting,
-        CC_ComMapLighting,
-        CC_ComCharacter,
-        CC_ComCamera,
-        CC_ComCloth,
-        CC_ComSprite,
-        CC_ComFxTrigger,
-        CC_ComTransform2d,
-        CC_ComCollision2d
-    } componentCategory;
-}
-
-else 
-{
-    typedef enum <int32>
-    {
-        CC_ComTransform_V1,
-        CC_ComRenderer_V1,
-        CC_ComCollision_V1,
-        CC_ComCharacterCollision_V1,
-        CC_ComGroup_V1,
-        CC_ComMapPath_V1 = 5,
-        CC_ComPhysics2d_V1,
-        //CC_ComGroup_V1,
-        //CC_ComLightEmitter_V1,
-        //CC_ComAudioEmitter_V1,
-        //CC_ComParticleFxEmitter_V1,
-        //CC_ComGuiLayout_V1,
-        //CC_ComUiWidget_V1,
-        //CC_ComProperty_V1,
-        CC_ComGlobalLighting_V1 = 10,
-        CC_ComMapLighting_V1,
-        CC_ComCharacter_V1,
-        CC_ComCamera_V1,
-        CC_ComCloth_V1,
-        CC_ComSprite_V1,
-        CC_ComFxTrigger_V1,
-        CC_ComTransform2d_V1,
-        CC_ComCollision2d_V1
-    } componentCategoryV1;
-}
-
 LittleEndian();
 
 typedef struct BezelEngineEntity
@@ -197,8 +101,8 @@ typedef struct BezelEngineEntity
     //int16 bSize;
     //char str[bSize];
     //FSeek(entyNameOffst)
-    int64 prmOffTbl;
-    if (prmOffTbl == 0)
+    int64 componentTblOff;
+    if (componentTblOff == 0)
     {
         int64 dbytes[2];
         FSkip(3);
@@ -240,82 +144,82 @@ typedef struct BezelEngineEntity
             {
                 if (isNewEnty)
                 {
-                    componentCategory ComponentCategory;
+                    NB_ComponentType componentType;
                 }
                 else
                 {
-                    componentCategoryV1 ComponentCategory;
+                    NB_ComponentTypeV1 componentType;
                 }
-                if (ComponentCategory == CC_ComLightEmitter)
+                if (componentType == CC_ComLightEmitter && isNewEnty == 1 || componentType == CC_ComLightEmitter_V1 && isNewEnty != 1)
                 {
                     NB_ComLightEmitterTbl clet;
                 }
-                if (ComponentCategory == CC_ComAudioEmitter)
+                if (componentType == CC_ComAudioEmitter)
                 {
-                    if (entityHdr.version.major > 5)
+                    if (isNewEnty == 1)
                     {
                         NB_ComAudioEmitterTbl caet;
                     }
                 }
-                if (ComponentCategory == CC_ComParticleFxEmitter)
+                if (componentType == CC_ComParticleFxEmitter && isNewEnty == 1 || componentType == CC_ComParticleFxEmitter_V1 && isNewEnty != 1)
                 {
                     NB_ComParticleFxEmitterTbl cpfxe;
                 }
-                if (ComponentCategory == CC_ComGuiLayout && isNewEnty)
+                if (componentType == CC_ComGuiLayout && isNewEnty == 1 || componentType == CC_ComGuiLayout_V1 && isNewEnty != 1)
                 {
                     NB_ComGuiLayoutTbl cguilt;
                 }
-                if (ComponentCategory == CC_ComUiWidget)
+                if (componentType == CC_ComUiWidget)
                 {
                     NB_ComUiWidgetTbl cuiwt;
                 }
-                if (ComponentCategory == CC_ComProperty)
+                if (componentType == CC_ComProperty && isNewEnty == 1 || componentType == CC_ComProperty_V1 && isNewEnty != 1)
                 {
                     NB_ComPropertyTbl cproptbl;
                 }
-                if (ComponentCategory == CC_ComTransform)
+                if (componentType == CC_ComTransform || componentType == CC_ComTransform_V1)
                 {
                     NB_ComTransformTbl ct;
                 }
-                if (ComponentCategory == CC_ComTransform2d)
+                if (componentType == CC_ComTransform2d)
                 {
                     NB_ComTransformTbl2D ct2d;
                 }
-                if (ComponentCategory == CC_ComCharacterCollision)
+                if (componentType == CC_ComCharacterCollision && isNewEnty == 1)
                 {
                     NB_ComCharacterCollision cclsn;
                 }
-                if (ComponentCategory == 4 && isNewEnty)
+                if (componentType == 4 && isNewEnty)
                 {
                     NB_ComHitCollision chc;
                 }
-                if (ComponentCategory == CC_ComRenderer || ComponentCategory == CC_ComRenderer_V1)
+                if (componentType == CC_ComRenderer || componentType == CC_ComRenderer_V1)
                 {
                     NB_ComRenderer crdr; //Hell
                 }
-                if (ComponentCategory == CC_ComGroup || ComponentCategory == CC_ComGroup_V1)
+                if (componentType == CC_ComGroup && isNewEnty == 1 || (componentType == CC_ComGroup_V1 && isNewEnty != 1))
                 {
-                    //if (entityHdr.version.major > 5)
+                    //if (isNewEnty == 1)
                     //{
                         //break;
                     //}
                     NB_ComGroupTbl cg;
                 }
-                if (ComponentCategory == CC_ComCollision)
+                if (componentType == CC_ComCollision)
                 {
                     NB_ComCollisionTbl cc;
                 }
-                if (ComponentCategory == CC_ComCollision2d)
+                if (componentType == CC_ComCollision2d)
                 {
                     NB_ComCollision2dTbl cc2d;
                 }
-                if (ComponentCategory == CC_ComPhysics2d)
+                if (componentType == CC_ComPhysics2d && isNewEnty == 1)
                 {
                     NB_ComPhysics2d cphy2d;
                 }
-                if (ComponentCategory == CC_ComPhysics)
+                if (componentType == CC_ComPhysics || (componentType == CC_ComPhysics_V1 && isNewEnty != 1))
                 {
-                    if (entityHdr.version.major > 5)
+                    //if (isNewEnty == 1)
                     {
                         NB_ComPhysics cphy;
                     }
@@ -360,36 +264,36 @@ typedef struct BezelEngineEntity
                         } c5;
                     }*/
                 }
-                if (ComponentCategory == CC_ComMapPath || ComponentCategory == CC_ComMapPath_V1)
+                if (componentType == CC_ComMapPath && isNewEnty == 1 || componentType == CC_ComMapPath_V1 && isNewEnty != 1)
                 {
                     //TODO REWRITE THIS, MESSY AF
                     NB_ComMapPath cmp; //?
                 }
-                if (ComponentCategory == CC_ComGlobalLighting || ComponentCategory == CC_ComGlobalLighting_V1)
+                if (componentType == CC_ComGlobalLighting) //Same in all versions
                 {
                     NB_ComGlobalLightingTbl cgl;
                 }
-                if (ComponentCategory == CC_ComMapLighting)
+                if (componentType == CC_ComMapLighting && isNewEnty == 1 || componentType == CC_ComMapLighting_V1 && isNewEnty != 1)
                 {
                     NB_ComMapLightingTbl cml;
                 }
-                if (ComponentCategory == CC_ComCamera)
+                if (componentType == CC_ComCamera)
                 {
                     NB_ComCameraTbl ccmratl;
                 }
-                if (ComponentCategory == CC_ComCloth)
+                if (componentType == CC_ComCloth)
                 {
                     NB_ComClothTbl ccltht;
                 }
-                if (ComponentCategory == CC_ComSprite)
+                if (componentType == CC_ComSprite)
                 {
                     NB_ComSpriteTbl cccst;
                 }
-                if (ComponentCategory == CC_ComFxTrigger)
+                if (componentType == CC_ComFxTrigger)
                 {
                     NB_ComFxTriggerTbl cfxtt;
                 }
-                if (ComponentCategory == CC_ComCharacter || ComponentCategory == CC_ComCharacter_V1)
+                if (componentType == CC_ComCharacter && isNewEnty == 1 || componentType == CC_ComCharacter_V1 && isNewEnty != 1)
                 {
                     NB_ComCharacterTbl cchart;
                 }
@@ -498,6 +402,10 @@ typedef struct BezelEngineEntity
 struct EntityFile
 {
     N_CommonBinHdr entityHdr<bgcolor = cBlue>;
+    if (entityHdr.version.major > 5)
+    {
+        isNewEnty = 1;
+    }
     struct Content
     {
         int64 entityChunkOffst<bgcolor = cYellow>;

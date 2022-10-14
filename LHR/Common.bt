@@ -200,3 +200,21 @@ typedef struct U64_UnicodeStringEntry {
         wchar_t theString[byteSize];
     }
 };
+
+typedef struct XY_F32 {
+	float X;
+    float Y;
+};
+
+typedef struct XYZ_F32 {
+	float X;
+    float Y;
+    float Z;
+};
+
+typedef struct XYZW_F32 {
+	float X;
+    float Y;
+    float Z;
+    float W;
+};

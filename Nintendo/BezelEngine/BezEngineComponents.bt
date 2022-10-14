@@ -15,6 +15,97 @@
 
 //We don't need to include LHRCommon
 
+/*typedef enum <int32>
+{
+    CC_ComTransform = 0,
+    CC_ComRenderer = 1,
+    CC_ComCollision = 2,
+    CC_ComCharacterCollision = 3,
+    //if (isOldBzEng)
+    //{
+        //CC_ComGroup_V1 = 4,
+    //}
+    //else
+    //{
+        CC_ComHitCollision = 4,
+    //}
+    CC_ComMapPath_V1 = 5,
+    CC_ComPhysics2d = 6,
+    CC_ComGroup = 7,
+    CC_ComMapPath = 8,
+    CC_ComLightEmitter = 9,
+    CC_ComAudioEmitter = 10,
+    CC_ComParticleFxEmitter = 11,
+    CC_ComGuiLayout = 12,
+    CC_ComUiWidget = 13,
+    CC_ComProperty = 14,
+    CC_ComGlobalLighting = 15,
+    CC_ComMapLighting = 16,
+    CC_ComCharacter = 17,
+    CC_ComCamera = 18,
+    CC_ComCloth = 19,
+    CC_ComSprite = 20,
+    CC_ComFxTrigger = 21,
+    CC_ComTransform2d = 22,
+    CC_ComCollision2d = 23,
+} componentType;*/
+
+typedef enum <int32>
+{
+    CC_ComTransform,
+    CC_ComRenderer,
+    CC_ComCollision,
+    CC_ComCharacterCollision,
+    CC_ComHitCollision,
+    CC_ComPhysics,
+    CC_ComPhysics2d,
+    CC_ComGroup,
+    CC_ComMapPath,
+    CC_ComLightEmitter,
+    CC_ComAudioEmitter,
+    CC_ComParticleFxEmitter,
+    CC_ComGuiLayout,
+    CC_ComUiWidget,
+    CC_ComProperty,
+    CC_ComGlobalLighting,
+    CC_ComMapLighting,
+    CC_ComCharacter,
+    CC_ComCamera,
+    CC_ComCloth,
+    CC_ComSprite,
+    CC_ComFxTrigger,
+    CC_ComTransform2d,
+    CC_ComCollision2d
+} NB_ComponentType;
+ 
+typedef enum <int32>
+{
+        CC_ComTransform_V1,
+        CC_ComRenderer_V1,
+        CC_ComCollision_V1,
+        CC_ComPhysics_V1,
+        //CC_ComCharacterCollision_V1,
+        CC_ComGroup_V1,
+        CC_ComMapPath_V1,
+        //CC_ComPhysics2d_V1,
+        //CC_ComGroup_V1,
+        CC_ComLightEmitter_V1,
+        //CC_ComAudioEmitter_V1,
+        CC_ComParticleFxEmitter_V1,
+        CC_ComGuiLayout_V1,
+        //CC_ComUiWidget_V1,
+        CC_ComProperty_V1,
+        CC_ComGlobalLighting_V1,
+        CC_ComMapLighting_V1,
+        CC_ComCharacter_V1,
+        //CC_ComCamera_V1,
+        //CC_ComCloth_V1,
+        //CC_ComSprite_V1,
+        //CC_ComFxTrigger_V1,
+        //CC_ComTransform2d_V1,
+        //CC_ComCollision2d_V1
+} NB_ComponentTypeV1;
+
 /*typedef struct NB_ComponentHeader
 {
     NB_ComponentType ComponentType;
@@ -26,18 +117,21 @@ typedef struct NB_ComLightEmitterTbl
                         float Range;
                         float InnerSpotAngle;
                         float OuterSpotAngle;
-                        float Color[3];
+                        XYZ_F32 Color;
                         float Intensity;
+                        float SourceWidth;
+                        float SourceHeight;
                         float SourceRadius;
-                        float AttentuationPower;
-                        float Specular[3];
-                        FSkip(12);
-                        float SpotFallOff;
+                        //float AttentuationPower;
+                        //XYZ_F32 Specular;
+                        //FSkip(12);
+                        //float SpotFallOff;
                         NB_LightType LightType;
-                        byte LightFilePathCnt;
-                        Byte_Bool DirectLightBakeMode;
-                        byte dmy;
-                        if (LightFilePathCnt != 0)
+                        NB_LightUnit LightUnit;
+                        //byte LightFilePathCnt;
+                        //Byte_Bool DirectLightBakeMode;
+                        //byte dmy;
+                        /*if (LightFilePathCnt != 0)
                         {
                             struct LightFilePath
                             {
@@ -49,7 +143,7 @@ typedef struct NB_ComLightEmitterTbl
                                     } lft[LightFilePathCnt];
                                 }
                             } lfp;
-                        }
+                        }*/
                     };
 
 typedef struct NB_ComAudioEmitterTbl // PROBABLY PERFECT
@@ -71,13 +165,13 @@ typedef struct NB_ComParticleFxEmitterTbl
                         FSkip(4);
                         int64 ParticleFxAssetPathOff;
                         int64 EmitterSetNameOff;
-                        float MultiplyColor[4];
-                        float ParticleGlobalScale[3];
-                        float ParticleEmissionScale[3];
-                        float EmitterVolumeScale[3];
+                        /*float MultiplyColor[4];
+                        XYZ_F32 ParticleGlobalScale;
+                        XYZ_F32 ParticleEmissionScale;
+                        XYZ_F32 EmitterVolumeScale;
                         Byte_Bool IsVisible;
                         byte GroupId;
-                        NB_BillboardType BillboardType;
+                        NB_BillboardType BillboardType;*/
                     };
 
 typedef struct NB_ComGuiLayoutTbl
@@ -85,7 +179,7 @@ typedef struct NB_ComGuiLayoutTbl
                         FSkip(4);
                         int64 LayoutArchivePathOff;
                         int64 LayoutNameOff;
-                        int64 someOff;
+                        /*int64 someOff;
                         int64 LayoutNameOffAgain;
                         FSkip(40);
                         if (LayoutNameOff == LayoutNameOffAgain)
@@ -106,7 +200,7 @@ typedef struct NB_ComGuiLayoutTbl
                             int32 ScissorOrigin[2];
                         } vsi;
                         FSkip(40);
-                        int64 StrTblOff;
+                        int64 StrTblOff;*/
                     };
 
 typedef struct NB_ComUiWidgetTbl
@@ -114,8 +208,8 @@ typedef struct NB_ComUiWidgetTbl
                         FSkip(4);
                         int64 HudNameOff;
                         int32 unk;
-                        float Position[3];
-                        float Rotate[3];
+                        XYZ_F32 Position;
+                        XYZ_F32 Rotate;
                         float Scale[2];
                         Byte_Bool IsVisible;
                         FSkip(3);
@@ -125,25 +219,19 @@ typedef struct NB_ComPropertyTbl
                     {
                         FSkip(4);
                         int64 unk;
-                        int64 kvpCount;
+                        int32 kvpCount;
                         for (i = 0; i < kvpCount; i++)
                         {
-                            struct KeyValuePair
-                            {
-                                int64 keyOff;
-                                int64 ValueOff;
-                                NB_ComPropertyValueType ComPropertyValueType;
-                            } kvp;
+                            NB_KeyValuePair kvp;
                         }
                     };
 
 typedef struct NB_ComTransformTbl // PROBABLY PERFECT
                     {
-                        float Translate[3];
-                        float Rotate[3];
-                        float possiblyDummy;
+                        XYZ_F32 Translate;
+                        float Rotate[4];
                         float Scale[3];
-                        int32 dmy;
+                        //int32 dmy;
                     };
 
 typedef struct NB_ComTransformTbl2D
@@ -159,8 +247,21 @@ typedef struct NB_ComTransformTbl2D
 
 typedef struct NB_ComCharacterCollision
                     {
-                        NB_HitCollisionType HitCollisionType;
+                        NB_CollisionLayerU32 HitCollisionType;
                         int64 clsnShapeOff;
+                        
+                        XYZ_F32 Translate;
+                        XYZ_F32 Rotate;//?
+                        float unk; //If 1, rot is set to 0
+                        //float Scale[3];
+                        XYZ_F32 UpDirection;
+                        float Density;
+                        float StaticFriction;
+                        float DynamicFriction;
+                        float Restitution;
+                        float MaxSlope;
+                        FSkip(4);
+                        uint64 AttachedBoneNameOff;
                         struct CollisionShape
                         {
                             NB_CollisionShapeType CLSNShapeType;
@@ -170,7 +271,7 @@ typedef struct NB_ComCharacterCollision
                             {
                                 if (CLSNShapeType == CLSNShapeType_Box)
                                 {
-                                    float Size[3];
+                                    XYZ_F32 Size;
                                     byte d[20];
                                 }
                                 if (CLSNShapeType == CLSNShapeType_Sphere)
@@ -283,7 +384,7 @@ typedef struct NB_ComRenderer //Hell
                         byte prmCntForInterKineticAngleLimiters;
                         //int64 unknowni;
                         //int64 d[4];
-                        FSkip(6);
+                        //FSkip(6);
                         //int64 strTblOff;
                         //int64 o[(BoneRefMdlCnt + SklRefMdlCnt + MtlRefMdlCnt + AnimRefMdlCnt) + 2];    
                         if (entityHdr.version.major > 5)
@@ -377,17 +478,18 @@ typedef struct NB_ComGroupTbl
 typedef struct NB_ComCollisionTbl
                     {
                         FSkip(4);
-                        int64 strTblOffst; //Some Str Tbl Offst?
+                        int64 filePath;
                         Byte_Bool IsTrigger;
                         NB_CollisionLayer CollisionLayer;
                         NB_CollisionQuality CollisionQuality;
-                        if (entityHdr.version.major >= 3)
+                        byte pad;
+                        //if (isNewEnty == 1)
                         {
-                            FSkip(2);
+                            //FSkip(2);
                         }
-                        else
+                        //else
                         {
-                            FSkip(5);
+                            //FSkip(5);
                         }
                     };
 
@@ -447,7 +549,7 @@ typedef struct NB_ComPhysics2d
                         float AngularDamping;
                         NB_CollisionQuality2d CollisionQuality2d;
                         Byte_Bool RotationFixed;
-                        FSkip(2);
+                        //FSkip(2);
                     };
 
 typedef struct NB_ComPhysics
@@ -458,7 +560,7 @@ typedef struct NB_ComPhysics
                             float Restitution;
                             float LinearVelocityDamping;
                             float AngularVelocityDamping;
-                            FSkip(4);
+                            //FSkip(4);
                         } ;
 
 typedef struct NB_ComMapPath //?
@@ -499,7 +601,7 @@ typedef struct NB_ComMapPath //?
                                 {
                                     struct MapPathVertex
                                     {
-                                        float Position[3];
+                                        XYZ_F32 Position;
                                     } mpvtx[2];
                                 } vertexes;
                             }
@@ -509,7 +611,7 @@ typedef struct NB_ComMapPath //?
                                 {
                                     struct MapPathAnchor
                                     {
-                                        float Position[3];
+                                        XYZ_F32 Position;
                                     } mpa[2];
                                 } anchors;
                             }
@@ -517,43 +619,43 @@ typedef struct NB_ComMapPath //?
                             {
                                 struct ControlPoint
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } ctrlp[2];
                             }
                             else
                             {
                                 struct Tangent
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } tngt[2];
                             }
                             int32 dmy;
                             if (!isNewEnty)
                             {
-                                struct MapPathOtherVertexex
+                                struct MapPathOtherVertex
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } mpvtxs[2];
                             }
                             else
                             {
                                 struct MapPathAnchor2
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } mpa2[2];
                             }
                             if (!isNewEnty)
                             {
                                 struct ControlPoint2
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } ctrlp2[2];
                             }
                             else
                             {
                                 struct Tangent2
                                 {
-                                    float Pos[3];
+                                    XYZ_F32 Pos;
                                 } tngt2[2];
                             }
                             //int32 dmy2;
@@ -561,7 +663,7 @@ typedef struct NB_ComMapPath //?
                             {
                                 struct MapPathAnchor3
                                 {
-                                    float Position[3];
+                                    XYZ_F32 Position;
                                 } mpa3[2];
                             }
                             //struct MapPathAnchor4
@@ -572,7 +674,7 @@ typedef struct NB_ComMapPath //?
                             {
                                 struct Tangent3
                                 {
-                                    float Pos[3];
+                                    XYZ_F32 Pos;
                                 } tngt3[2];
                                 int64 end;
                             }
@@ -596,19 +698,19 @@ typedef struct NB_ComGlobalLightingTbl
                         {
                             int32 version;
                             int64 dmy;
-                            float Position[3];
-                            float Direction[3];
+                            XYZ_F32 Position;
+                            XYZ_F32 Direction;
                             //int32 unk2[5];
                             float Intensity;
                             float Range;
-                            float Color[3];
+                            XYZ_F32 Color;
                             float OuterAngle;
                             float InnerAngle;
                         } mlght;
                         struct Fog
                         {
-                            float Color0[3];
-                            float Color1[3];
+                            XYZ_F32 Color0;
+                            XYZ_F32 Color1;
                             float Start0;
                             float End0;
                             float Density0;
@@ -620,7 +722,7 @@ typedef struct NB_ComGlobalLightingTbl
                         struct ParticleFxColorScale
                         {
                             float ColorScale;
-                            float ColorOffset[3];
+                            XYZ_F32 ColorOffset;
                         } pfxcolorscale;
                         struct Sky
                         {
@@ -629,16 +731,16 @@ typedef struct NB_ComGlobalLightingTbl
                         } sky;
                         struct Ambient
                         {
-                            float Color[3];
+                            XYZ_F32 Color;
                             float ColorScale;
                         } ambient;
                         struct Hemisphere
                         {
-                            float SkyDirection[3];
+                            XYZ_F32 SkyDirection;
                             if (entityHdr.version.major > 9)
                             {
-                                float SkyColor[3];
-                                float GroundColor[3];
+                                XYZ_F32 SkyColor;
+                                XYZ_F32 GroundColor;
                             }
                                 float ColorScale;
                             //}
@@ -679,14 +781,20 @@ typedef struct NB_ComMapLightingTbl
                         FSkip(4);
                         int64 MapOff;
                         int64 GlobalLightingOff;
-                        Byte_Bool hasLightProbeBakePoints;
-                        FSkip(1);
-                        Byte_Bool hasReflectionProbes;
-                        FSkip(1);
-                        int16 nodeCntInLights; //should be 2
-                        int16 nodeCntInLightProbeGrids;
-                        int64 someOff[4];
-                        int64 cpad[22];
+                        uint16 lightProbeBakePoints;
+                        uint16 reflectionProbes;
+                        uint16 lights;
+                        uint16 lightMaps;
+                        uint16 lightProbeGrids;
+                        /*NB_LightProbeBakePoint LightProbeBakePoints;
+                        NB_ReflectionProbe ReflectionProbes;
+                        NB_Light Lights;
+                        NB_LightMap LightMaps;
+                        NB_LightProbeGrid LightProbeGrids;*/
+                        //int16 nodeCntInLights; //should be 2
+                        //int16 nodeCntInLightProbeGrids;
+                        //int64 someOff[4];
+                        //int64 cpad[22];
                     };
 
 typedef struct NB_ComCameraTbl
@@ -748,9 +856,14 @@ typedef struct NB_ComFxTriggerTbl
 typedef struct NB_ComCharacterTbl
                     {
                         FSkip(4);
-                        int64 ModelPathOff;
+                        int64 modelFileName;
                         //int64 AudioNameOff;
-                        Byte_Bool hasFrameAttrAssetNames;
+                        uint16 frameAttrAssetCount;
+                        uint16 animationCount;
+                        uint64 frameAttrAsset;
+                        uint64 anims;
+                        FSkip(4); //?
+                        /*Byte_Bool hasFrameAttrAssetNames;
                         FSkip(1);
                         Byte_Bool hasAnimations;
                         if (hasFrameAttrAssetNames == 0)
@@ -770,16 +883,24 @@ typedef struct NB_ComCharacterTbl
                             int64 AnimFilePathValueOff;
                         }
                         //int64 unk[2];
+                        //if (frameAttrAssetCount != 0)
+                        {
+                            int64 FrameAttrFilePathValueOff;
+                        }
+                        //if (animationCount != 0)
+                        {
+                            int64 AnimFilePathValueOff;
+                        }*/
                         int64 ParticleFxAssetPathOff;
                         int64 AudioAssetPathOffOff;
-                        int64 FxTriggerAssetPathOff;
-                        if (hasFrameAttrAssetNames)
+                        //int64 FxTriggerAssetPathOff;
+                        /*if (hasFrameAttrAssetNames)
                         {
                             int64 FrameAttrFilePathOff;
                         }
                         if (hasAnimations && isNewEnty)
                         {
                             int64 AnimFilePathOff;
-                        }
+                        }*/
                         //int64 
                     };

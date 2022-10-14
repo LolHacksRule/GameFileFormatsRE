@@ -72,6 +72,14 @@ typedef enum <int64>
     CLSN2dShapeType_OpenBoxEdge2d
 } NB_CollisionShapeType2d;
 
+typedef enum <byte>
+{
+    LgtUnit_Luminance,    
+    LgtUnit_LuminousPower,
+    LgtUnit_Illuminance,  
+    LgtUnit_Unknown,      
+} NB_LightUnit;
+
 typedef enum <int64>
 {
     ScriptParamType_Int,
@@ -85,8 +93,8 @@ typedef enum <int64>
 
 typedef enum <int32>
 {
-    HitCLSNShapeType_Attack,
-    HitCLSNShapeType_Damage,
+    HitCLSNType_Attack,
+    HitCLSNType_Damage,
 } NB_HitCollisionType;
 
 typedef enum <byte>
@@ -97,7 +105,7 @@ typedef enum <byte>
     SPRTBlendMode_Subtractive
 } NB_SpriteBlendMode;
 
-typedef enum <int64>
+typedef enum <uint32>
 {
     ComPropertyValueType_Int,
     ComPropertyValueType_Float,
@@ -107,7 +115,7 @@ typedef enum <int64>
     ComPropertyValueType_Matrix43
 } NB_ComPropertyValueType;
 
-typedef enum <int32>
+typedef enum <byte>
 {
     CL_All,
     CL_None,
@@ -126,7 +134,28 @@ typedef enum <int32>
     CL_User6,
     CL_User7,
     CL_User8,
+    //CL_Unknown = 112, //Used when nothing's defined
 } NB_CollisionLayer;
+
+typedef enum <uint32>
+{
+    CLU32_All,
+    CLU32_None,
+    CLU32_Default,
+    CLU32_Character,
+    CLU32_Static,
+    CLU32_Debris,
+    //Fsr User1 goes up from Debris by 5
+    CLU32_User1 = 9,
+    CLU32_User2,
+    CLU32_User3,
+    CLU32_User4,
+    CLU32_User5,
+    CLU32_User6,
+    CLU32_User7,
+    CLU32_User8,
+    //CL_Unknown = 112, //Used when nothing's defined
+} NB_CollisionLayerU32;
 
 typedef enum <int32>
 {
@@ -161,3 +190,96 @@ typedef enum <byte>
     CQ2d_Moving,
     CQ2d_Bullet,
 } NB_CollisionQuality2d;
+
+typedef enum <byte>
+{
+    BoundingVol_Sphere,
+    BoundingVol_Aaab,
+    BoundingVol_Obb,
+} NB_BoundingVolumeType;
+
+typedef struct NB_KeyValuePair
+{
+    int64 keyOff;
+    int64 ValueOff;
+    NB_ComPropertyValueType ComPropertyValueType;
+};
+
+typedef struct NB_BoundingSphere
+{
+    float radius;
+};
+
+typedef struct NB_Aaab
+{
+    float min[3];
+    float max[3];
+};
+
+typedef struct NB_Obb
+{
+    float rotate[3];
+    float min[3];
+    float max[3];
+};
+
+
+typedef struct NB_BoundingVolume
+{
+    byte targetID[16];
+    byte pad[3];
+    uint64 spheres;
+    NB_BoundingSphere BoundingSphere[spheres]; 
+    uint64 aaabs;
+    NB_Aaab Aabs[aaabs]; 
+    uint64 obbs;
+    NB_Obb Obbs[obbs]; 
+};
+
+typedef struct NB_ReflectionProbe
+{
+    byte targetID[16];
+    float Position[3];
+    NB_BoundingVolume BoundingVolume;
+    uint64 texturePath;
+};
+
+typedef struct NB_Light
+{
+    byte targetEntityID[16];
+    Byte_Bool isEnabled;
+};
+
+typedef struct NB_LightMapPerShape
+{
+    uint64 texturePath;
+};
+
+typedef struct NB_LightMap
+{
+    byte targetEntityID[16];
+    uint16 lightMapPerShapesCount;
+    byte pad[2];
+    
+};
+
+typedef struct NB_LightProbeBakePoint
+{
+    byte targetID[16];
+    float Position[3];
+    NB_BoundingVolume BoundingVolume;
+    float shCoeff;
+};
+
+typedef struct NB_LightProbeGrid
+{
+    byte targetID[16];
+    float Position[3];
+    NB_BoundingVolume BoundingVolume;
+    byte dividedCount[3];
+    Byte_Bool isUseGlobalLighting;
+    float illuminanceScale;
+    float probeBlendRatio;
+    float globalBlendRatio;
+    uint64 texPaths[4];
+};
