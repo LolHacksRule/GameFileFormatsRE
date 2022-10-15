@@ -13,27 +13,14 @@
 
 //Reading of physics state DAT files dumped from debug builds of Angry Birds Star Wars on console (currently PS3, untested on other platforms)
 
-local uint i<hidden = true> = 0;
+//local uint i<hidden = true> = 0;
 local uint doBreak<hidden = true> = 0;
 
+#include "../LHR/Common.bt"
 
 typedef struct
 {
-    int32 stringSize<hidden=true>;
-    if (stringSize >= 1)
-    {
-        char theString[stringSize];
-    }
-    else
-    {
-        Printf("End of file!\n");
-        doBreak = 1;
-    }
-} genericString;
-
-typedef struct
-{
-    genericString theBlockName;
+    Byte_StringEntry theBlockName;
     //68 b
     if (doBreak == 1)
     {
