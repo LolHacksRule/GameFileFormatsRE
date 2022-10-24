@@ -11,6 +11,8 @@
 //   History: 
 //---------------------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 struct ML3MsgBin
 {
     struct Hdr
@@ -24,7 +26,6 @@ struct ML3MsgBin
     } header;
     struct MsgMeta
     {
-        int32 msgFileOffset; //First should be 0 because the first is obv at offset 0
-        int32 msgFileByteSize;
+        I32_OffsetWithSize MessageFileMeta;
     } msgMeta[header.messageBinFileCnt];
 } ML3MesBin;

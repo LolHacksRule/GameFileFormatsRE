@@ -13,7 +13,7 @@
 
 #include "../../LHR/Common.bt"
 
-local int i <hidden=true> = 0;
+//local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;
 local int i3 <hidden=true> = 0;
 
@@ -23,7 +23,7 @@ typedef enum <int32> {
     Boolean,
     String,
     Int16,
-} valueType;
+} ValueType;
 
 //TODO DETECT ARRAYS
 
@@ -37,7 +37,7 @@ AllowItems: ?
 AllowXPBar: ?
 BeatdownMultiplier: ?
 CompletedChapters: ?
-CurrentBook: Current Book (2+ bypasses tutorial).
+CurrentBook: Current Book (2+ bypasses tutorial and 4+ unlocks TOK).
 CurrentChapter: Current Chapter.
 CurrentStage: Current Stage.
 CompletedChapters: Completed chapters.
@@ -46,6 +46,7 @@ DidGoldenFleece: Did get the Golden Fleece.
 DisableTips: ?
 EnablePips: ?
 EnabledMiniGames: Enabled mini games.
+InGame: Locks out map
 
 MaxHealth: Max health of Lex.
 mNum: ?
@@ -72,7 +73,7 @@ struct BookWormAdventuresSave
                 {
                     Printf(stringData + " = ");
                 }
-                valueType theValueType;
+                ValueType theValueType;
                 if (theValueType == 0)
                 {
                     
@@ -117,8 +118,7 @@ struct BookWormAdventuresSave
                 }
                 if (theValueType == 3)
                 {
-                    int16 paramStringSize;
-                    char paramString[paramStringSize];
+                    I16_StringEntry ParamString;
                     /*
                     if (stringData == "mLetter") //hell
                     {
@@ -147,6 +147,19 @@ struct BookWormAdventuresSave
                         //Printf("%d, %d, %d, %d, %d\n", theFiveInt16[0], theFiveInt16[1], theFiveInt16[2], theFiveInt16[3], theFiveInt16[4]);
                         Printf("\n");
                     }
+                    /*else if (stringData == "TopWords") //I hate this
+                    {
+                        struct TopWords
+                        {
+                            int16 another[2];
+                            int32 a[2];
+                            struct WordParam
+                            {
+                                I16_StringEntry WordEntry;
+                                ValueType WordValueType;
+                            }
+                        } TW;
+                    }*/
                     else if (stringData == "GridState")
                     {
                         struct GridStateParams
@@ -161,7 +174,7 @@ struct BookWormAdventuresSave
                                         Printf("GridState[%d] = ", i2);
                                         int16 letterParamSize;
                                         char letterParamName[letterParamSize];
-                                        valueType theLetterValueTypeShouldBeString;
+                                        ValueType theLetterValueTypeShouldBeString;
                                         int16 letterStringSize;
                                         char theLetter[letterStringSize];
                                         //Printf("""");
@@ -221,6 +234,27 @@ struct BookWormAdventuresSave
                     else if (stringData == "TM_Treasures")
                     {
                         int16 theTM_TreasuresInt16s[5];
+                    }
+                    else if (stringData == "Treasures")
+                    {
+                        int16 theTreasuresI16s[5];
+                    }
+                    else if (stringData == "VisitedBooks")
+                    {
+                        int16 theVisitedBooksI16s[7];
+                    }
+                    else if (stringData == "VisitedCreatures")
+                    {
+                        int16 theVisitedCreaturesI16s[5];
+                        for (i3 = 0; i3 < 3; i3++)
+                        {
+                            struct CreatureEntry
+                            {
+                                I16_StringEntry creature;
+                                int16 creatureI16[5];
+                            } creatureEntry;
+                        }
+                        FSkip(-10);
                     }
                     else
                     {

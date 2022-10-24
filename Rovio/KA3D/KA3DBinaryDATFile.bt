@@ -11,9 +11,11 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 //Viewing of data files from Rovio's proprietary version of the KA3D Engine (Fusion).
 
-local uint i<hidden = true> = 0;
+//local uint i<hidden = true> = 0;
 local uint i2<hidden = true> = 0;
 
 //MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS AND ANGRY BIRDS 1.2.2!
@@ -43,19 +45,6 @@ typedef struct
 
 typedef struct
 {
-    short stringSize<hidden=true>;
-    if (stringSize >= 1)
-    {
-        char theString[stringSize];
-    }
-    else
-    {
-        Printf("String %i is empty!\n", i);
-    }
-} genericString;
-
-typedef struct
-{
     local string theLabelIDString = LIDS.LIDSd.LIDStrings.theLabelIDStr[i].theString;
     short textStringSize<hidden=true>;
     if (textStringSize >= 1)
@@ -79,11 +68,11 @@ typedef struct
         {
             for (i; i < texCnt; i++)
             {
-                genericString texNameStr;
+                I16_StringEntry texNameStr;
                 short subTexCnt;
                 for (i2 = 0; i2 < subTexCnt; i2++)
                 {
-                    genericString subTexNameStr;
+                    I16_StringEntry subTexNameStr;
                     struct SubTexParam
                     {
                         short unk[2]; //First one is width?
@@ -148,7 +137,7 @@ typedef struct
                     {
                         //struct Language
                         //{
-                            genericString theLanguageStr;
+                            I16_StringEntry theLanguageStr;
                         //} ldat_lang;
                     }
                 } langs;
@@ -169,7 +158,7 @@ typedef struct
                     {
                         //struct LabelIDString
                         //{
-                            genericString theLabelIDStr;
+                            I16_StringEntry theLabelIDStr;
                         //} lid_str;
                     }
                 } LIDStrings;
@@ -225,7 +214,7 @@ typedef struct
         {
             SHORT ver;
         }
-        genericString txtrFNameStr;
+        I16_StringEntry txtrFNameStr;
         SHORT maxTextures;
         struct Textures
         {
@@ -235,7 +224,7 @@ typedef struct
                 Printf("--------TEXTURE %i START--------\n", i);
                 struct Texture
                 {
-                    genericString theTexNameStr;
+                    I16_StringEntry theTexNameStr;
                     Printf("Name: %s\n", theTexNameStr.theString);
                     struct Param
                     {
@@ -271,12 +260,12 @@ typedef struct
         {
             SHORT ver;
         }
-        genericString txtrFNameStr;
+        I16_StringEntry txtrFNameStr;
         DWORD unk;
         SHORT maxTextures;
         for (i = 0; i < maxTextures; i++)
         {
-            //genericString theTexNameStr;
+            //I16_StringEntry theTexNameStr;
             struct TParam2 //As of a new format, this changed I think
             {
                 SHORT xOff;

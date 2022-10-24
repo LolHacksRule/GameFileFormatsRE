@@ -15,12 +15,6 @@
 
 //local string name = "";
 
-typedef struct MessageFileInfo
-{
-    int32 offset;
-    int32 size; //From current message file
-};
-
 struct ACPC_MessageStudioArchive
 {
     uint32 hdr;
@@ -32,7 +26,7 @@ struct ACPC_MessageStudioArchive
     {
         for (i = 0; i < files; i++)
         {
-            MessageFileInfo msgFileInfo;
+            I32_OffsetWithSize MessageFileInfo;
         }
     } msgf;
     struct FileStrings
@@ -52,7 +46,7 @@ struct ACPC_MessageStudioArchive
             struct MessageFile
             {
                 //name = fss.fs.msgFilePath;
-                byte msgFile[msgf.msgFileInfo[i].size];
+                byte msgFile[msgf.MessageFileInfo[i].dataSize];
             } mf;
         }
     } mfs;

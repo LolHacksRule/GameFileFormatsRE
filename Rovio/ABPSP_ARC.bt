@@ -13,21 +13,10 @@
 
 //Viewing of archive (ARC) files and also BIN files of AB for PSP.
 
-typedef struct
-{
-    byte stringSize<hidden=true>;
-    if (stringSize >= 1)
-    {
-        char theString[stringSize];
-    }
-    else
-    {
-        Printf("String %i is empty!\n", i);
-    }
-} genericString;
+#include "../LHR/Common.bt"
 
 
-local uint i<hidden = true> = 0;
+//local uint i<hidden = true> = 0;
 local uint i2<hidden = true> = 0;
 
 struct ABPSP_Arc
@@ -40,7 +29,7 @@ struct ABPSP_Arc
         {
             struct IndividualFile
             {
-                genericString file;
+                Byte_StringEntry file;
                 int32 offset;
             } itm;
         }

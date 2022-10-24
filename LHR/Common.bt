@@ -38,7 +38,7 @@ typedef struct I16_StringEntry {
 	int16 byteSize;
     if (byteSize == 0)
     {
-        FSkip(2);
+        //FSkip(2);
     }
     else
     {
@@ -62,7 +62,8 @@ typedef struct U16_StringEntry {
 	uint16 byteSize;
     if (byteSize == 0)
     {
-        FSkip(2);
+        //FSkip(2);
+        Printf("String is empty!\n");
     }
     else
     {
@@ -214,20 +215,40 @@ typedef struct U64_UnicodeStringEntry {
     }
 };
 
-typedef struct XY_F32 {
+typedef struct Vector2_F32 {
 	float X;
     float Y;
 };
 
-typedef struct XYZ_F32 {
+typedef struct Vector3_F32 {
 	float X;
     float Y;
     float Z;
 };
 
-typedef struct XYZW_F32 {
+typedef struct Vector4_F32 {
 	float X;
     float Y;
     float Z;
     float W;
+};
+
+typedef struct I32_SizeWithData {
+	int32 byteSize;
+    byte data[fileByteSize];
+};
+
+typedef struct I32_OffsetWithSize {
+	int32 dataOffset;
+    int32 dataSize;
+};
+
+typedef struct U32_SizeWithData {
+	uint32 byteSize;
+    byte data[fileByteSize];
+};
+
+typedef struct U32_OffsetWithSize {
+	uint32 dataOffset;
+    int32 dataSize;
 };

@@ -11,14 +11,14 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "../LHR/Common.bt"
 
 //Original sources
 //http://www.metroid2002.com/retromodding/wiki
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
 //This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo!
 
-local uint i<hidden=true> = 0;
+//local uint i<hidden=true> = 0;
 //local uint totalLayerCount<hidden=true> = 0;
 local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
