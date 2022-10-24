@@ -15,19 +15,28 @@
 //Header: 95%
 //SDFDataInfo: 100%
 //SDFMetaData: 95%
-//DDSHeaderData: 45%
+//DDSHeaderData: 65%
 //SDFDictData: 100%
 //SDFDataEnder: 95%
 
-//Seems to work best with v22 SDF but idk, todo DDS data identification and unk data
+//Seems to work best with v22 SDF but idk, todo proper DDS data identification and unk data
 
-local uint i < hidden = true > = 0;
-local uint i2 < hidden = true > = 0;
+#include "../../LHR/Common.bt"
+
+//local uint i < hidden = true > = 0;
+//local uint i2 < hidden = true > = 0;
 
 typedef enum < uint32 > {
     SDFToc = 1414743383,
     SDFData = 1196574018,
 } SDFType;
+
+typedef struct UnknownEntry
+{
+    string massive;
+    uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
+    string ubisoft;
+};
 
 LittleEndian();
 
@@ -42,9 +51,7 @@ if (UbiSDFType == SDFToc)
         uint32 firstSDFDataID;
         uint32 SDFDataCnt;
         uint32 DDSHdrCnt;
-        string massive;
-        uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
-        string ubisoft;
+        UnknownEntry HeaderEntry <bgcolor = cRed>;
         FSkip(1);
         struct SDFDataInfo
         {
@@ -58,21 +65,17 @@ if (UbiSDFType == SDFToc)
                     } sdffsize;
                 }
                 string massive;
-            } sdffs;
+            } sdffs<bgcolor = cYellow>;
             struct SDFDataMetaData
             {
                 for (i2 = 0; i2 < SDFDataCnt; i2++)
                 {
-                    struct SDFMetaDataInfo
-                    {
-                        uint64 unk[4];
-                        string ubisoft;
-                    } sdfmi;
+                    UnknownEntry SDFMetaDataEntry <bgcolor = cRed>;
                 }
                 //FSkip(-2);
             } sdfmd;
         } sdfDataInfo;
-        /*struct DDSHeaderData
+        struct DDSHeaderData
         {
             for (i2 = 0; i2 < DDSHdrCnt; i2++)
             {
@@ -80,30 +83,32 @@ if (UbiSDFType == SDFToc)
                 {
                     uint32 DDSHeaderSize;
                     byte DDSFileHdr[DDSHeaderSize];
-                    /*byte unk[26]; //hack bad
-                    if (i2 >= 1)
+                    byte unk[200-DDSHeaderSize] <bgcolor = cRed>; //There has to be a better way
+                    /*if (i2 >= 1)
                     {
-                        //for (i2 = i2; i2 < i2; i2++)
-                        //{
+                        for (i2 = i2; i2 < i2; i2++)
+                        {
                             FSkip(4);
-                        //}
-                    }
+                        }
+                    }*/
                 } dds<bgcolor = cBlack>;
             }
-        } ddshdrs;*/
-        FSeek(2169);
+        } ddshdrs;
+        //FSeek(2169);
         //FSeek(534557);
         //FSeek(18197);
         struct SDFDictData
         {
-            byte CompressedData[compSize];
+            if (ver == 22 && compSize != 0)
+            {
+                byte ZSTDCompressedDict[compSize] <bgcolor = cGreen>;
+            }
+            if (ver < 22 && compSize != 0)
+            {
+                ZlibCompressedDict[compSize];
+            }
         } sdfDict;
-        struct SDFTOCEnder
-        {
-            string massive;
-            uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
-            string ubisoft;
-        } sdfTOCEnder;
+        UnknownEntry SDFTOCEndEntry <bgcolor = cRed>;
     } sdfTableOfContentsFile<bgcolor = cLtBlue>;
 }
 

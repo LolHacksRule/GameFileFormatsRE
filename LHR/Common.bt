@@ -12,6 +12,7 @@
 //------------------------------------------------
 
 local uint i <hidden=true> = 0;
+local uint i2 < hidden = true > = 0;
 
 typedef enum <uint16> {
 	Little = 0xFEFF,
@@ -131,6 +132,18 @@ typedef struct U32_UnicodeStringEntry {
 
 typedef struct Byte_StringEntry {
 	byte byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(1);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct UByte_StringEntry {
+	ubyte byteSize;
     if (byteSize == 0)
     {
         FSkip(1);
