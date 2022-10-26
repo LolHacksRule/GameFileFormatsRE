@@ -17,7 +17,12 @@ local uint i2 < hidden = true > = 0;
 typedef enum <uint16> {
 	Little = 0xFEFF,
     Big = 0xFFFE,
-} EndianEnum;
+} U16_EndianEnum;
+
+typedef enum <byte> {
+	UByte_Little = 0xFF,
+    UByte_Big = 0xFE,
+} UByte_EndianEnum;
 
 typedef enum <uint32> {
 	U32_False,
@@ -147,7 +152,7 @@ typedef struct UByte_StringEntry {
 	ubyte byteSize;
     if (byteSize == 0)
     {
-        FSkip(1);
+        //FSkip(1);
     }
     else
     {

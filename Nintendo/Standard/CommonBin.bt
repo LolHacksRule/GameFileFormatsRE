@@ -23,7 +23,7 @@ typedef struct N_CommonBinHdr
 {
     char       signature[8];
     N_BinVersion version;
-    EndianEnum byteOrderMark;
+    U16_EndianEnum byteOrderMark;
     byte       alignmentShift;
     byte       targetAddressSize;
     int32      offsetToFileName;

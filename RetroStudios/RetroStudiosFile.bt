@@ -17,10 +17,16 @@
 //http://www.metroid2002.com/retromodding/wiki
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
 //This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo!
+local string MessageTableBinDir = "Interface/messages/";
+local string GFXDir = "Interface/swfs/";
+local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
+local string AudioDir = "audio/";
+local string WorldDir = "Worlds/";
+
 
 //local uint i<hidden=true> = 0;
 //local uint totalLayerCount<hidden=true> = 0;
-local uint i2<hidden=true> = 0;
+//local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
 local uint terminateGameObjDetection<hidden=true> = 0;
 local uint terminateLoadUnitDetection<hidden=true> = 0;
@@ -1327,7 +1333,7 @@ typedef struct
     }
     if (AssetType == Texture)
     {
-        extensionToAdd = "ctex"; //There's also ctexarray but how is that determined
+        extensionToAdd = "ctex"; //There's also ctexarray and ctex3d but how is that determined
         addExtension = 1;
     }
     GUID AssetID;
@@ -1346,7 +1352,30 @@ typedef struct
         U32_StringEntry AssetName;
         if (addExtension)
         {
-            Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+            if (AssetType == MessageTable_MessageStudioBinaryText)
+            {
+                Printf("%s%s.%s\n", MessageTableBinDir, AssetName.theString, extensionToAdd);
+            }
+            else if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+            {
+                Printf("%s%s.%s\n", GFXDir, AssetName.theString, extensionToAdd);
+            }
+            else if (AssetType == LooseData)
+            {
+                Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName.theString, extensionToAdd);
+            }
+            else if (AssetType == CookedAudioBusHeiarchy)
+            {
+                Printf("%s%s.%s\n", AudioDir, AssetName.theString, extensionToAdd);
+            }
+            else if (AssetType == UniverseInfo)
+            {
+                Printf("%s%s.%s\n", WorldDir, AssetName.theString, extensionToAdd);
+            }
+            else
+            {
+                Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+            }
         }
         else
         {
@@ -1358,7 +1387,30 @@ typedef struct
         string AssetName;
         if (addExtension)
         {
-            Printf("%s.%s\n", AssetName, extensionToAdd);
+            if (AssetType == MessageTable_MessageStudioBinaryText)
+            {
+                Printf("%s%s.%s\n", MessageTableBinDir, AssetName, extensionToAdd);
+            }
+            else if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+            {
+                Printf("%s%s.%s\n", GFXDir, AssetName, extensionToAdd);
+            }
+            else if (AssetType == LooseData)
+            {
+                Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName, extensionToAdd);
+            }
+            else if (AssetType == CookedAudioBusHeiarchy)
+            {
+                Printf("%s%s.%s\n", AudioDir, AssetName, extensionToAdd);
+            }
+            else if (AssetType == UniverseInfo)
+            {
+                Printf("%s%s.%s\n", WorldDir, AssetName, extensionToAdd);
+            }
+            else
+            {
+                Printf("%s.%s\n", AssetName, extensionToAdd);
+            }
         }
         else
         {
