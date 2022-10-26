@@ -34,7 +34,7 @@ typedef enum < uint32 > {
 typedef struct UnknownEntry
 {
     string massive;
-    uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
+    uint64 unkData[4]; //It's the same values in sdf.sdfver after the first one, what are they?
     string ubisoft;
 };
 
@@ -83,7 +83,14 @@ if (UbiSDFType == SDFToc)
                 {
                     uint32 DDSHeaderSize;
                     byte DDSFileHdr[DDSHeaderSize];
-                    byte unk[200-DDSHeaderSize] <bgcolor = cRed>; //There has to be a better way
+                    if (HeaderEntry.unkData[3] == 3728795003314070590) //M+R KB
+                    {
+                        byte unk[200-DDSHeaderSize] <bgcolor = cRed>; //There has to be a better way
+                    }
+                    else //SBTFBW NX BASE
+                    {
+                        byte unk[148-DDSHeaderSize] <bgcolor = cRed>; //There has to be a better way
+                    }
                     /*if (i2 >= 1)
                     {
                         for (i2 = i2; i2 < i2; i2++)
@@ -99,13 +106,19 @@ if (UbiSDFType == SDFToc)
         //FSeek(18197);
         struct SDFDictData
         {
-            if (ver == 22 && compSize != 0)
+            uint32 magicCheck<hidden=true>;
+            FSkip(-4);
+            if (magicCheck == 0xFD2FB528 || magicCheck == 0xDFF25B82)
             {
                 byte ZSTDCompressedDict[compSize] <bgcolor = cGreen>;
             }
-            if (ver < 22 && compSize != 0)
+            else if (magicCheck == 0x184D2204)
             {
-                ZlibCompressedDict[compSize];
+                byte LZ4CompressedDict[compSize];
+            }
+            else
+            {
+                byte ZlibCompressedDict[compSize];
             }
         } sdfDict;
         UnknownEntry SDFTOCEndEntry <bgcolor = cRed>;
@@ -116,9 +129,9 @@ if (UbiSDFType == SDFData)
 {
     struct SDFDataFile
     {
-        string massive;
-        uint64 unk[4]; //It's the same values in sdf.sdfver after the first one, what are they?
-        string ubisoft;
+        UnknownEntry SDFDataStart;
+        //eventually...
+        //UnknownEntry SDFDataEnd;
     } sdfDataFile;
 }
 

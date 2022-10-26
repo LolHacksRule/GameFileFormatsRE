@@ -23,7 +23,7 @@ struct BezelEngineFXTriggerBin
     struct FileHdr
     {
         char FTRGHdr[4];
-        EndianEnum bezEndianEnum;
+        U16_EndianEnum bezEndianEnum;
         //if (bezEndianEnum == IsLE)
         //{
             //LittleEndian();
