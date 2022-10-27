@@ -23,7 +23,6 @@ local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
 local string AudioDir = "audio/";
 local string WorldDir = "Worlds/";
 
-
 //local uint i<hidden=true> = 0;
 //local uint totalLayerCount<hidden=true> = 0;
 //local uint i2<hidden=true> = 0;
@@ -523,14 +522,14 @@ typedef struct
     if (isPack)
     {
         FormDescriptor RuleSetConfigFormDescriptor;
-        ChunkDescriptor RSTCChunkDesc;
-        byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
+        //ChunkDescriptor RSTCChunkDesc;
+        //byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
     }
     
-    else
+    //else
     {
         ChunkDescriptor RSTCChunkDesc;
-        byte RuleSetConfigDataBlock[ContentForm.dataSize-24];
+        byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
     }
     //ChunkDescriptor DescriptionChunk;
     //uint16 unk[2];
@@ -675,12 +674,13 @@ typedef struct
     if (isPack)
     {
         FormDescriptor FiniteStateMachineFormDescriptor;
-        ChunkDescriptor FiniteStateMachineChunkDesc;
-        byte FiniteStateMachineDataBlock[FiniteStateMachineFormDescriptor.dataSize-24];
+        //ChunkDescriptor FiniteStateMachineChunkDesc;
+        //byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
     }
-    else
+    //else
     {
-        byte FiniteStateMachineDataBlock[ContentForm.dataSize];
+        ChunkDescriptor FiniteStateMachineChunkDesc;
+        byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
     }
     //for now
     
@@ -1908,7 +1908,14 @@ typedef struct
     /*
     struct CAUDData
     {
-        string fileName;
+        if (isNX)
+        {
+            U32_StringEntry macroFileName;
+        }
+        else
+        {
+            string macroFileName;
+        }
         uint32 groupNameCount;
         struct GroupNamesData
         {
