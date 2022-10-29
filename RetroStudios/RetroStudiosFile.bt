@@ -88,8 +88,8 @@ typedef enum <uint32>
     ExtendedTransformAnimation = 1481003597,
     Skeleton = 1397441868,
     Character = 1128808786,
-    GraphicalFX_Flash = 1195792416,
-    GraphicalFXLibrary_Flash = 1195792460,
+    FlashGFX = 1195792416,
+    ScaleformGFXLibrary = 1195792460,
     FiniteStateMachine = 1179864387,
     AudioLabel = 1279345228,
     AudioFormatAlloc = 1179472961,
@@ -628,8 +628,8 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor GraphicalFXLibrary_FlashFormDescriptor;
-        //byte GraphicalFXLibrary_FlashDataBlock[GraphicalFXLibrary_FlashFormDescriptor.dataSize];
+        FormDescriptor ScaleformGFXLibraryFormDescriptor;
+        //byte ScaleformGFXLibraryDataBlock[ScaleformGFXLibraryFormDescriptor.dataSize];
     }
     struct GFXLibData
     {
@@ -681,7 +681,7 @@ typedef struct
             byte theGFXFile[swfSize];
         } gfxcd;
     } gfxld;
-} GraphicalFXLibrary_FlashChunk;
+} ScaleformGFXLibraryChunk;
 
 typedef struct
 {
@@ -719,11 +719,11 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor GraphicalFX_FlashFormDescriptor;
+        FormDescriptor FlashGFXFormDescriptor;
     }
     struct GFX
     {
-        ChunkDescriptor GraphicalFX_FlashChunkDescriptor;
+        ChunkDescriptor FlashGFXChunkDescriptor;
         /*struct GFXData
         {
             GUID LibGUID;
@@ -732,7 +732,7 @@ typedef struct
             uint32 RefSWFCount;
             struct ReferencedSWFs
             {
-                for (i = 0; i < RefSWFCount-1; i++)
+                for (i = 0; i < RefSWFCount; i++)
                 {
                     struct ReferencedSWF
                     {
@@ -743,26 +743,36 @@ typedef struct
                 }
             } rswfs;
             //FSkip(48);
-            struct MainSWF
-            {
-                uint64 mainDataOff;
-                uint64 mainSWFSize;
-                char mainSWFName[48];
+            //struct MainSWF
+            //{
+                //uint64 mainDataOff;
+                //uint64 mainSWFSize;
+                //char mainSWFName[48];
                 //FSkip(dataOff-20-7);
                 if (RefSWFCount == 1)
                 {
-                    byte theSWFFile[mainSWFSize]; //add 7 since since the CWS bit is included
+                    byte theSWFFile[rswfs.rswf.SWFSize]; //add 7 since since the CWS bit is included
                 }
                 else
                 {
-                    //byte theSWFFile[(GraphicalFX_FlashChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+                    struct ReferencedSWFFiles
+                    {
+                        for (i = 0; i < RefSWFCount-1; i++)
+                        {
+                            struct ReferencedSWFFile    
+                            {
+                                byte theRefSWFFile[rswfs.rswf[i].SWFSize];
+                            } rswff;
+                        }
+                        //byte theSWFFile[(FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+                    } rswffs;
                 }
-            } mswf;
+            //} mswf;
         } gfxd;*/
         //for now read it in bytes idk how to make 010 detect the whole thing
-        byte theGFXFile[GraphicalFX_FlashChunkDescriptor.dataSize];
+        byte theGFXFiles[FlashGFXChunkDescriptor.dataSize];
     } gfx;
-} GraphicalFX_FlashChunk;
+} FlashGFXChunk;
 
 typedef struct
 {
@@ -1422,7 +1432,12 @@ typedef struct
         extensionToAdd = "cfsm";
         addExtension = 1;
     }
-    if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+    if (AssetType == FlashGFX)
+    {
+        extensionToAdd = "rfgfx";
+        addExtension = 1;
+    }
+    if (AssetType == ScaleformGFXLibrary)
     {
         extensionToAdd = "rsgfx";
         addExtension = 1;
@@ -1462,7 +1477,7 @@ typedef struct
             {
                 Printf("%s%s.%s\n", MessageTableBinDir, AssetName.theString, extensionToAdd);
             }
-            else if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+            else if (AssetType == FlashGFX || AssetType == ScaleformGFXLibrary)
             {
                 Printf("%s%s.%s\n", GFXDir, AssetName.theString, extensionToAdd);
             }
@@ -1497,7 +1512,7 @@ typedef struct
             {
                 Printf("%s%s.%s\n", MessageTableBinDir, AssetName, extensionToAdd);
             }
-            else if (AssetType == GraphicalFX_Flash || AssetType == GraphicalFXLibrary_Flash)
+            else if (AssetType == FlashGFX || AssetType == ScaleformGFXLibrary)
             {
                 Printf("%s%s.%s\n", GFXDir, AssetName, extensionToAdd);
             }
@@ -2330,13 +2345,13 @@ typedef struct
             {
                 FiniteStateMachineChunk FiniteStateMachineContent;
             }
-            else if (TMPCHECK.contentType == GraphicalFX_Flash)
+            else if (TMPCHECK.contentType == FlashGFX)
             {
-                GraphicalFX_FlashChunk GraphicalFX_FlashContent;
+                FlashGFXChunk FlashGFXContent;
             }
-            else if (TMPCHECK.contentType == GraphicalFXLibrary_Flash)
+            else if (TMPCHECK.contentType == ScaleformGFXLibrary)
             {
-                GraphicalFXLibrary_FlashChunk GraphicalFXLibrary_FlashContent;
+                ScaleformGFXLibraryChunk ScaleformGFXLibraryContent;
             }
             else if (TMPCHECK.contentType == Collision)
             {
@@ -2609,13 +2624,13 @@ struct RetroStudiosFile
     {
         FiniteStateMachineChunk FiniteStateMachineContent;
     }
-    if (ContentForm.contentType == GraphicalFX_Flash)
+    if (ContentForm.contentType == FlashGFX)
     {
-        GraphicalFX_FlashChunk GraphicalFX_FlashContent;
+        FlashGFXChunk FlashGFXContent;
     }
-    if (ContentForm.contentType == GraphicalFXLibrary_Flash)
+    if (ContentForm.contentType == ScaleformGFXLibrary)
     {
-        GraphicalFXLibrary_FlashChunk GraphicalFXLibrary_FlashContent;
+        ScaleformGFXLibraryChunk ScaleformGFXLibraryContent;
     }
     if (ContentForm.contentType == Collision)
     {
