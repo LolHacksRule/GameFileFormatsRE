@@ -751,21 +751,22 @@ typedef struct
                 //FSkip(dataOff-20-7);
                 if (RefSWFCount == 1)
                 {
-                    byte theSWFFile[rswfs.rswf.SWFSize]; //add 7 since since the CWS bit is included
+                    byte theSWFFile[FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7 since since the CWS bit is included
                 }
                 else
                 {
                     struct ReferencedSWFFiles
                     {
-                        for (i = 0; i < RefSWFCount-1; i++)
+                        for (i = 0; i < RefSWFCount; i++)
                         {
                             struct ReferencedSWFFile    
                             {
-                                byte theRefSWFFile[rswfs.rswf[i].SWFSize];
+                                byte SWFFile[rswfs.rswf[i].SWFSize];
                             } rswff;
                         }
                         //byte theSWFFile[(FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
                     } rswffs;
+                    //byte theMainSWFFile[FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
                 }
             //} mswf;
         } gfxd;*/
