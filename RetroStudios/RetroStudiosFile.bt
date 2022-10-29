@@ -66,6 +66,7 @@ typedef enum <uint32>
     Material = 1297371724,
     ShaderX  = 1396987936,
     ShaderGX2  = 1397184562,
+    ShaderNVN  = 1314278995,
     Strings = 1398035015,
     RFLO = 1380338767,
     InformationBlock = 1229866575,
@@ -73,7 +74,7 @@ typedef enum <uint32>
     Triangles = 1414678867,
     Metadata = 1296389185,
     Texture = 1415074898,
-    MiscHeader = 1212498244,
+    GenericHeader = 1212498244,
     TreeNode = 1414677829,
     Room = 1380929357,
     RoomHeader = 1380796484,
@@ -388,7 +389,7 @@ typedef struct
 typedef enum <uint32>
 {
     Reflect = 1380271692,
-} materialType;
+} MaterialType;
 
 typedef struct
 {
@@ -424,6 +425,15 @@ typedef struct
     uint32 fVer;
     uint32 dVer;
 } FormDescriptor;
+
+typedef enum <uint32>
+{
+    CafeLZSS_Uncompressed,
+    CafeLZSS_8Bit,
+    CafeLZSS_16Bit,
+    CafeLZSS_32Bit,
+    NX_Zlib = 13,
+} CompressionMode;
 
 typedef struct
 {
@@ -465,11 +475,21 @@ typedef struct
 
 typedef struct
 {
-    ChunkDescriptor ShaderPlatformChunkDesc;
+    if (isSDX != 1) //fix for material arc
+    {
+        FormDescriptor MaterialForm;
+    }
     struct SPlatformData
     {
-        /*uint32 useTOC;
-        if (useTOC == 1)
+        ChunkDescriptor ShaderPlatformChunkDesc;
+        //WIP!
+        //U32_Bool useTOC;
+        /*if (useTOC == 1)
+        {
+            Printf("TOC is not yet supported!");
+            break;
+        }*/
+        /*
         {
             uint32 TOCSize;
             struct MaterialArchiveTOC
@@ -491,15 +511,84 @@ typedef struct
             } mtrlArcToc;
             //byte TOC[TOCSize];
             //
-        }
-        //uint32 shaderParts;*/
+        }*/
+        /*uint32 shaderParts;
+        struct ShaderParts
+        {
+            for (i = 0; i < shaderParts; i++)
+            {
+                struct ShaderPart
+                {
+                    Byte_Bool state;
+                    byte unk;
+                    uint32 dSize;
+                    byte shader[dSize];
+                } sp;
+            }
+        } sps;
+        uint32 shaderMaterialInputDescs;
+        struct ShaderMaterialInputDescriptions
+        {
+            for (i = 0; i < shaderMaterialInputDescs; i++)
+            {
+                struct ShaderMaterialInputDesc
+                {
+                    MaterialType theMaterial;
+                    uint16 unk;
+                    uint32 shaderImportDescs;
+                    struct ShaderImportDescs
+                    {
+                        for (i2 = 0; i2 < shaderImportDescs; i2++)
+                        {
+                            struct ShaderImportDesc
+                            {
+                                uint64 shaderID;
+                                uint32 shaderPartIdxVertShader;
+                                uint32 shaderPartIdxFragShader;
+                                uint32 shaderPartIdxGeomShader;
+                                uint32 dmy;
+                                struct ShaderDefines
+                                {
+                                    uint32 shaderDefineStrings;
+                                    for (i = 0; i < shaderDefineStrings; i++)
+                                    {
+                                        U32_StringEntry StringEntry;
+                                    }
+                                    uint32 lenOfStrings;
+                                } sd;
+                                uint32 additional;
+                                byte additionalData[additional];
+                            } sid;
+                        }
+                    } sids;
+                } smid;
+            }
+        } smids;*/
         byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
     } SPlatform;
 } ShaderPlatformContent;
 
+typedef struct ShaderMaterialIdentifier
+{
+    MaterialType theType;
+    uint32 entries;
+    struct MaterialPermutations
+    {
+        for (i = 0; i < entries; i++)
+        {
+            struct MaterialPermutation
+            {
+                uint32 shaderID;
+                uint32 permutationID;
+            } mp;
+        }
+    } mps;
+};
+
 typedef struct
 {
     ChunkDescriptor ExportChunkDescriptor;
+    ShaderMaterialIdentifier theShaderMaterial;
 } ExportedMaterialChunk;
 
 typedef struct
@@ -507,13 +596,13 @@ typedef struct
     if (isPack)
     {
         FormDescriptor SwooshParticleSystemFormDescriptor;
-        byte SwooshParticleSystemDataBlock[SwooshParticleSystemFormDescriptor.dataSize];
+        //byte SwooshParticleSystemDataBlock[SwooshParticleSystemFormDescriptor.dataSize];
     }
-    else
+    struct DescriptionChunkData
     {
-        byte SwooshParticleSystemDataBlock[ContentForm.dataSize];
-    }
-    //ChunkDescriptor DescriptionChunk;
+        ChunkDescriptor DescriptionChunk;
+        byte SwooshParticleSystemDataBlock[DescriptionChunk.dataSize];
+    } dchd;
     //uint16 unk[2];
 } SwooshParticleSystemChunk;
 
@@ -526,11 +615,11 @@ typedef struct
         //byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
     }
     
-    //else
+    struct RuleSetConfigData
     {
         ChunkDescriptor RSTCChunkDesc;
         byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
-    }
+    } rscd;
     //ChunkDescriptor DescriptionChunk;
     //uint16 unk[2];
 } RuleSetConfigChunk;
@@ -599,12 +688,18 @@ typedef struct
     if (isPack)
     {
         FormDescriptor AnimationFormDescriptor;
-        byte AnimationDataBlock[AnimationFormDescriptor.dataSize];
     }
-    else
-    {
-        byte AnimationDataBlock[ContentForm.dataSize];
-    }
+    //struct AnimationData
+    //{
+        if (isPack)
+        {
+            byte AnimationDataBlock[AnimationFormDescriptor.dataSize];
+        }
+        else
+        {
+            byte AnimationDataBlock[ContentForm.dataSize];
+        }
+    //} ad;
 } AnimationChunk;
 
 typedef struct
@@ -677,11 +772,11 @@ typedef struct
         //ChunkDescriptor FiniteStateMachineChunkDesc;
         //byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
     }
-    //else
+    struct FiniteStateMachineData
     {
         ChunkDescriptor FiniteStateMachineChunkDesc;
         byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
-    }
+    } fsmd;
     //for now
     
     /*ChunkDescriptor FiniteStateMachineChunkDesc;
@@ -948,6 +1043,7 @@ typedef struct
                 } lufds;
             } mhd;
         } mh;
+        //Hell begins
         struct ScriptLayers
         {
             for (i2 = 0; i2 < mh.mhd.lufds.rhd.lufd.luf.lulres.lulids.totalLayerCount; i2++)
@@ -1118,30 +1214,36 @@ typedef struct
     if (isPack)
     {
         FormDescriptor SkeletonDataFormDescriptor;
-        //FSkip(-32);
-        byte SkeletonData[SkeletonDataFormDescriptor.dataSize];
     }
-    else
-    {
-        byte SkeletonData[ContentForm.dataSize];
-    }
-    /*uint16 magic;
-    uint16 ver;
-    struct JointNameArray
-    {
-        uint32 unk;
-        uint32 jointNames;
-        struct JointNames
+    //struct SkeletonData
+    //{
+        if (isPack)
         {
-            for (i = 0; i < jointNames; i++)
+            //FSkip(-32);
+            byte SkeletonData[SkeletonDataFormDescriptor.dataSize];
+        }
+        else
+        {
+            byte SkeletonData[ContentForm.dataSize];
+        }
+        /*uint16 magic;
+        uint16 ver;
+        struct JointNameArray
+        {
+            uint32 unk;
+            uint32 jointNames;
+            struct JointNames
             {
-                //struct JointName
-                //{
-                    U32_StringEntry JointNameStr;
-                //} jn;
-            }
-        } jn;
-    } jna;*/
+                for (i = 0; i < jointNames; i++)
+                {
+                    //struct JointName
+                    //{
+                        U32_StringEntry JointNameStr;
+                    //} jn;
+                }
+            } jn;
+        } jna;*/
+    //} skd;
 } SkeletonChunk;
 
 typedef struct
@@ -1182,7 +1284,7 @@ typedef struct
         {
             struct MaterialData
             {
-                uint16 zlibCheck;
+                uint16 zlibCheck<hidden=true>;
                 FSkip(-2);
                 if (zlibCheck == 30938)
                 {
@@ -1197,8 +1299,12 @@ typedef struct
                 }
                 else
                 {
-                    //ExportedMaterialChunk theEXPT;
-                    byte theExportedFile[ContentForm.dataSize];
+                    ExportedMaterialChunk theEXPT;
+                    /*struct MaterialIdentifier
+                    {
+                        
+                    } mi;*/
+                    ShaderPlatformContent PlatChunk;
                 }
             } mtrld;
         }
@@ -1568,7 +1674,12 @@ typedef struct
 typedef struct
 {
     ChunkDescriptor GPU;
-    byte theContent[GPU.dataSize];
+    //temp swap
+    LittleEndian();
+    CompressionMode theCompressionMode; 
+    //swap back
+    BigEndian();
+    byte theCompressedContent[GPU.dataSize-4];
 } GPUChunk;
 
 typedef struct
@@ -1825,30 +1936,38 @@ typedef struct
     if (isPack)
     {
         FormDescriptor CSMPFormDescriptor;
-        byte theFile[CSMPFormDescriptor.dataSize];
+        //byte theFile[CSMPFormDescriptor.dataSize];
     }
     else
     {
-        byte theFile[ContentForm.dataSize];
+        //byte theFile[ContentForm.dataSize];
     }
-    
-    //TEMP
-    /*dataType lablCheck;
-    FSkip(-4);
-    if (lablCheck == 1279345228)
+    struct AudioSampleData
     {
-        struct LABLChunk
+        dataType lablCheck<hidden=true>;
+        FSkip(-4);
+        if (lablCheck == 1279345228)
         {
-            ChunkDescriptor LABLChunkDesc;
-            byte LABLData[LABLChunkDesc.dataSize]; //
-        } LABL;
-    }
-    struct FMTAChunk
-    {
-        ChunkDescriptor FMTAChunkDesc;
-        byte FMTAData[FMTAChunkDesc.dataSize]; //
-    } FMTA;
-    struct DATAChunk
+            struct LABLChunk
+            {
+                ChunkDescriptor LABLChunkDesc;
+                byte LABLData[LABLChunkDesc.dataSize]; //
+            } LABL;
+        }
+        struct FMTAChunk
+        {
+            ChunkDescriptor FMTAChunkDesc;
+            byte FMTAData[FMTAChunkDesc.dataSize]; //
+        } FMTA;
+        struct DATAChunk
+        {
+            ChunkDescriptor DATAChunkDesc;
+            byte DSPAudioData[DATAChunkDesc.dataSize];
+        } DATA;
+    } asd;
+
+    //TEMP
+    /*struct DATAChunk
     {
         ChunkDescriptor DATAChunkDesc;
         struct DSPAudioData
@@ -1879,17 +1998,17 @@ typedef struct
         FormDescriptor CAUDFormDescriptor;
         if (isNX)
         {
-            U32_StringEntry macroFileName;
+            U32_StringEntry macroFileName<hidden=true>;
             Printf("%s.caud\n", macroFileName.theString);
         }
         else
         {
-            string macroFileName;
+            string macroFileName<hidden=true>;
             Printf("%s.caud\n", macroFileName);
         }
         FSkip(-sizeof macroFileName);
         //Printf("%s.caud\n", macroFileName);
-        byte theFile[CAUDFormDescriptor.dataSize];
+        byte CookedAudioSoundEffectData[CAUDFormDescriptor.dataSize];
     }
     else
     {
@@ -1903,8 +2022,36 @@ typedef struct
         }
         FSkip(-sizeof macroFileName);
         Printf("%s.caud\n", macroFileName);
-        byte theFile[ContentForm.dataSize];
+        byte CookedAudioSoundEffectData[ContentForm.dataSize];
     }
+    //TODO FIX
+    /*
+    if (isPack)
+    {
+        FormDescriptor CAUDFormDescriptor;
+    }
+    if (isNX)
+    {
+        U32_StringEntry macroFileName;
+    }
+    else
+    {
+        string macroFileName;
+    }
+    FSkip(-sizeof macroFileName);
+    Printf("%s.caud\n", macroFileName);
+    //For now
+    //struct CookedAudioDataData
+    //{
+        if (isPack)
+        {
+            byte CookedAudioDataData[CAUDFormDescriptor.dataSize];
+        }
+        else
+        {
+            byte CookedAudioDataData[ContentForm.dataSize];
+        }
+    //} caud;*/ 
     /*
     struct CAUDData
     {
@@ -1939,7 +2086,7 @@ typedef struct
             {
                 struct SampleInfo
                 {
-                    //uint32 infoSize;
+                    uint32 infoSize;
                     GUID assetID;
                 } smpl;
             }
@@ -1957,7 +2104,7 @@ typedef struct
     {
         GUID UniverseMessageTableGUID;
         GUID SaveSlotMessageTableGUID;
-        GUID LoadingAudioUID;
+        GUID LoadingAudioGUID;
         for (i = 0; i < 255; i++)
         {
             if (terminateUINF != 1)
@@ -2000,15 +2147,18 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor DLCNForm;
+        FormDescriptor DCLNForm;
     }
-    InfoChunk INFOChunk;
-    VerticesChunk VerticesChunkContent;
-    MaterialChunk MaterialDclnChunk;
-    TrianglesChunk TrianglesChunkContent;
-    tree_forDCLN = 1;
-    TreeChunk TreeChunkContent;
-    tree_forDCLN = 0;
+    struct DynamicCollisionData
+    {
+        InfoChunk INFOChunk;
+        VerticesChunk VerticesChunkContent;
+        MaterialChunk MaterialDclnChunk;
+        TrianglesChunk TrianglesChunkContent;
+        tree_forDCLN = 1;
+        TreeChunk TreeChunkContent;
+        tree_forDCLN = 0;
+    } dcd;
 } DynamicCollisionChunk;
 
 typedef struct
@@ -2045,7 +2195,8 @@ typedef struct
     struct GPSData
     {
         ChunkDescriptor DescChunkHdr;
-        byte theGPSFile[DescChunkHdr.dataSize];
+        GenericAssetHeader theHdr;
+        byte theGPSFile[DescChunkHdr.dataSize-4];
     } d;
 } GenericParticleSystemChunk;
 
@@ -2098,14 +2249,14 @@ typedef struct
     {
         if (DependencyGroups != 0)
         {
-            struct DependencyGroupChunks
-            {
+            //struct DependencyGroupChunks
+            //{
                 for (i2 = 0; i2 < DependencyGroups; i2++)
                 {
                     //local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
                     DependencyGroupChunk DependencyGroupChunkContent;
                 }
-            } dgcs;
+            //} dgcs;
         }
         for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
         {
@@ -2359,8 +2510,14 @@ typedef struct
 
 struct RetroStudiosFile
 {
-    BigEndian();
+    BigEndian(); 
     FormDescriptor ContentForm;
+    if (ContentForm.hdr == Export) //Read individual uncompressed shader file (WIP!)
+    {
+        FSkip(-32);
+        MaterialChunk theExport;
+        break;
+    }
     if (ContentForm.contentType == Package)
     {
         isPack = 1;
