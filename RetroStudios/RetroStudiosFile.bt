@@ -386,6 +386,23 @@ typedef struct
     float max[3];
 } AABox;
 
+typedef enum <ubyte>
+{
+    Bool,
+    F32,
+    I32,
+    Unk,
+} ValueType;
+
+typedef enum <ubyte>
+{
+    LessThan,
+    LessThanOrEqualTo,
+    EqualTo,
+    GreaterThanOrEqualTo,
+    GreaterThan,
+} ComparisionOperator;
+
 typedef enum <uint32>
 {
     Reflect = 1380271692,
@@ -618,6 +635,52 @@ typedef struct
     struct RuleSetConfigData
     {
         ChunkDescriptor RSTCChunkDesc;
+        /*uint16 rules;
+        struct Rules
+        {
+            for (i = 0; i < rules; i++)
+            {
+                struct Rule
+                {
+                    uint16 conditions;
+                    struct Conditions
+                    {
+                        uint32 condID;
+                        ComparisionOperator theComparisionOp;
+                        ValueType theValueType;
+                        if (theValueType == 0)
+                        {
+                            I32_Bool value;
+                        }
+                        if (theValueType == 1)
+                        {
+                            float value;
+                        }
+                        if (theValueType == 2)
+                        {
+                            int32 value;
+                        }
+                        if (theValueType == 3)
+                        {
+                            byte value[4];
+                        }
+                    } conds;
+                    uint16 actions;
+                    struct Actions
+                    {
+                        for (i2 = 0; i2 < actions; i2++)
+                        {
+                            struct Action
+                            {
+                                uint32 actionID;
+                                byte properties;
+                                uint32 ary[properties];
+                            } action;
+                        }
+                    } actionEntries;
+                } rule;
+            }
+        } ruleEntries;*/
         byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
     } rscd;
     //ChunkDescriptor DescriptionChunk;
@@ -818,8 +881,8 @@ typedef struct
 
 typedef struct
 {
-    dataType Event;
-    dataType Action;
+    dataType EventID;
+    dataType ActionID;
     GUID componentGUID;
     uint16 unk;
     Byte_Bool unk2[2];
