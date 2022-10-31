@@ -23,7 +23,7 @@ local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
 local string AudioDir = "audio/";
 local string WorldDir = "Worlds/"; //World files probably reside in Worlds/pakname, ie b00_mangrove_seaLion.rsd from Worlds/w01/b00_mangrove_seaLion.pak would reside in Worlds/w01_mangrove, the only one we do know is Worlds/UI/FrontEndLevel.rsd in UI.pak
 
-//local uint i<hidden=true> = 0;
+local uint i3<hidden=true> = 0;
 //local uint totalLayerCount<hidden=true> = 0;
 //local uint i2<hidden=true> = 0;
 local uint terminateUINF<hidden=true> = 0;
@@ -635,9 +635,9 @@ typedef struct
     struct RuleSetConfigData
     {
         ChunkDescriptor RSTCChunkDesc;
-        byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
-        //Fsr this errors out in a PAK despite it seems to work
-        /*
+        //byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
+        //Fsr this errors out in a PAK despite it seems to work | FIX: Use i3
+        
         struct Rules
         {   
             uint16 rules;
@@ -648,7 +648,7 @@ typedef struct
                     uint16 conditions;
                     struct Conditions
                     {
-                        for (i2 = 0; i2 < conditions; i2++)
+                        for (i3 = 0; i3 < conditions; i3++)
                         {
                             struct Condition
                             {
@@ -677,7 +677,7 @@ typedef struct
                     uint16 actions;
                     struct Actions
                     {
-                        for (i2 = 0; i2 < actions; i2++)
+                        for (i3 = 0; i3 < actions; i3++)
                         {
                             struct Action
                             {
@@ -692,7 +692,7 @@ typedef struct
                     } actionEntries;
                 } rule;
             }
-        } ruleEntries;*/
+        } ruleEntries;
     } rscd;
     //ChunkDescriptor DescriptionChunk;
     //uint16 unk[2];
