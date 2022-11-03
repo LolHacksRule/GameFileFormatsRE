@@ -268,7 +268,7 @@ struct XGSPakFile {
                         FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
                         //if (isFTGCustomV1 == 1)
                         {
-                            if (XGSPakContentMeta[i].isCompressed == True)
+                            if (XGSPakContentMeta[i].isCompressed == I32_True)
                             {
                                  byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
                             }
