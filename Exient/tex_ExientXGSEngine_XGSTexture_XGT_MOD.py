@@ -23,6 +23,7 @@
 #Fix PS3 ARGB8888 color channels
 #Comment out used code (contact if there's an error with a 0x3 texture)
 #Fix channels with PS3 RGB565
+#Support WinPhone (legacy)
 
 #Please tell me if a format that is listed isn't decoded properly
 from inc_noesis import *
@@ -93,29 +94,29 @@ def noepyLoadRGBA(data, texList):
     if imgFmt == 0x0:
         #print("RGB565_Swizzled (WIP!)")
         if platform == 0x01:
-            print("RGB565")
+            print("RGB565 (BE)")
             data = rapi.swapEndianArray(data, 2) #Thanks so much DKDave on XentaxCord
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
-            texFmt = noesis.NOESISTEX_RGBA32
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+            #texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x03:
             print("RGB565_Swizzled")
             data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
-            texFmt = noesis.NOESISTEX_RGBA32
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+            #texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x04:
             print("RGB565")
             imgWidth = imgWidth + 1 #fix for textures with odd width sizes
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
-            texFmt = noesis.NOESISTEX_RGBA32
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+            #texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x06:
             print("RGB565_Swizzled")
             data = unswizzleCTR(data, imgWidth, imgHeight, 16, 8, 4, 2)
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
-            texFmt = noesis.NOESISTEX_RGBA32
+            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+            #texFmt = noesis.NOESISTEX_RGBA32
         else:
             print("RGB565")
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
-            texFmt = noesis.NOESISTEX_RGBA32
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b5 g6 r5")
+        texFmt = noesis.NOESISTEX_RGBA32
     #RGB565
     elif imgFmt == 0x1:
         if platform == 0x07:
@@ -190,7 +191,7 @@ def noepyLoadRGBA(data, texList):
             #to view legacy Android textures
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x0E or platform == 0x04 or platform == 0x10: #ARGB8888 PS4/X360
+        elif platform == 0x0E or platform == 0x04 or platform == 0x10 or platform == 0x11: #ARGB8888 PS4/X360
             print("ARGB8888");
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "b8 g8 r8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
@@ -219,7 +220,7 @@ def noepyLoadRGBA(data, texList):
             data = Out
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8") #TODO#
             texFmt = noesis.NOESISTEX_RGBA32
-        elif platform == 0x01 or platform == 0x04 or platform == 0x09 or platform == 0x0B or platform == 0x10: #DXT1 Wii U/X360/PS3/WinPhone/Legacy Android
+        elif platform == 0x01 or platform == 0x04 or platform == 0x09 or platform == 0x0B or platform == 0x10 or platform == 0x11: #DXT1 Wii U/X360/PS3/WinPhone/Legacy Android
             print("DXT1")
             Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_DXT1
