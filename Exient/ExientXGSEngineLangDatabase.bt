@@ -17,7 +17,7 @@
 #include "../LHR/Common.bt"
 
 //local int i <hidden=true> = 0;
-local int i2 <hidden=true> = 0;
+//local int i2 <hidden=true> = 0;
 local string tempLang <hidden = true> = "";
 local string tempStringID <hidden = true> = "";
 local int printStrings <hidden=true> = 0; //Set this to 1 to print strings

@@ -22,6 +22,7 @@ typedef enum <byte> {
     CAFE = 11, //Wii U
     ORBIS = 14, //PlayStation 4
     WINPHONE = 16, //Windows Phone
+    WINPHONE_LEGACY, //Windows Phone (ABGO v1.0.0)
 } platform;
 
 typedef enum <byte> {
@@ -103,7 +104,7 @@ struct XGSTexture
         //? start
         xgstexflag1 flag1;
         xgstexflag2 flag2; //2 = VFlipped? Seen on 3DS
-        byte flag3; //Dummy? 0x3 appears on X360
+        byte flag3; //Dummy? 0x3 appears on X360/WP8
         //? end
         //char format[4];
         texFmt format;

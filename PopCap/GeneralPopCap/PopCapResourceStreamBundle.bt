@@ -20,11 +20,12 @@ https://github.com/YingFengTingYu/PopStudio
 */
 
 //Tested on various.
+#include "../../LHR/Common.bt"
 
 local int isLE <hidden=true> = 0;
 local int ver4Rsb <hidden=true> = 0;
-local int i <hidden=true> = 0;
-local int i2 <hidden=true> = 0;
+//local int i <hidden=true> = 0;
+//local int i2 <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
