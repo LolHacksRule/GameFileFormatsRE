@@ -12,7 +12,7 @@ local uint i2<hidden=true> = 0;
 local uint i3<hidden=true> = 0;
 local uint i4<hidden=true> = 0;
 
-//ONLY TESTED ON ANGRY BIRDS GO, ANGRY BIRDS TRANFORMERS AND FURBY CONNECT WORLD
+//ONLY TESTED ON ANGRY BIRDS GO, ANGRY BIRDS TRANSFORMERS AND FURBY CONNECT WORLD
 
 typedef enum <int32> {
     FMT_PVS         = 1, //General map?
