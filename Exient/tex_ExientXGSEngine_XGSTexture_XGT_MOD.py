@@ -24,8 +24,13 @@
 #Comment out used code (contact if there's an error with a 0x3 texture)
 #Fix channels with PS3 RGB565
 #Support WinPhone (legacy)
+#Added manual flag to convert format 0x3 for plat 0x0 and 0x9
 
 #Please tell me if a format that is listed isn't decoded properly
+
+IMGFMT3_PLAT0_ENFORCE = 0 #0: RGBA4444, 1: ARGB4444, 2: RGBA8888
+LEGACY_ANDROID_RGBASWAP = False #Use with certain textures from ABTF 1125
+
 from inc_noesis import *
 
 def registerNoesisTypes():
@@ -150,9 +155,16 @@ def noepyLoadRGBA(data, texList):
     #RGBA4444_OR_RGBA8888_OR_LA88
     elif imgFmt == 0x3:
         if platform == 0x00:
-            print("RGBA8888 OR RGBA4444\nIt's not possible to detect the format for this platform.\nComment the below and replace with the other function to force RGBA4444.")
-            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 g4 b4 a4")
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
+            print("It's not possible to detect the format for this platform. Please check the IMGFMT3_PLAT0_ENFORCE value to ensure the image looks accurate.")
+            if IMGFMT3_PLAT0_ENFORCE == 0: #ABGR4444
+                print("The value is set to 0, enforcing ABGR4444")
+                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 b4 g4 r4")
+            elif IMGFMT3_PLAT0_ENFORCE == 1: #RGBA4444
+                print("The value is set to 1, enforcing RGBA4444")
+                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 g4 b4 a4")
+            elif IMGFMT3_PLAT0_ENFORCE == 2: #RGBA8888
+                print("The value is set to 2, enforcing RGBA8888")
+                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x01:
             print("RGBA8888\nIf it doesn't look right, look at the below comment!")
@@ -185,11 +197,13 @@ def noepyLoadRGBA(data, texList):
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x09:
-            print("ARGB8888\nIf it doesn't look right, look at the below comment!")
-            #Replace with
-            #data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
-            #to view legacy Android textures
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
+            print("It's not possible to detect the channels for this platform. Please check the LEGACY_ANDROID_RGBASWAP value to ensure the image looks accurate.")
+            if LEGACY_ANDROID_RGBASWAP:
+                print ("Enforcing RGBA8888")
+                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+            else:
+                print ("Enforcing ARGB8888")
+                data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 b8 g8 r8")
             texFmt = noesis.NOESISTEX_RGBA32
         elif platform == 0x0E or platform == 0x04 or platform == 0x10 or platform == 0x11: #ARGB8888 PS4/X360
             print("ARGB8888");
