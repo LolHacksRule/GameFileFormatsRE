@@ -25,6 +25,7 @@
 #Fix channels with PS3 RGB565
 #Support WinPhone (legacy)
 #Added manual flag to convert format 0x3 for plat 0x0 and 0x9
+#Fixed 3DS AL44 channel order
 
 #Please tell me if a format that is listed isn't decoded properly
 
@@ -286,13 +287,13 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x18:
         print("DXT1")
         texFmt = noesis.NOESISTEX_DXT1
-    #LA44
+    #AL44
     elif imgFmt == 0x19:
-        print("LA44")
+        print("AL44")
         if platform == 0x06: #Deswizzle CTR
             print("Currently cannot convert channels!")
             data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4") #TODO, Convert this to LA44
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a4 r4") #TODO, Convert this to AL44
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT5
     elif imgFmt == 0x1a:
