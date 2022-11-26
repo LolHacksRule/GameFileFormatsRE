@@ -290,8 +290,9 @@ def noepyLoadRGBA(data, texList):
     elif imgFmt == 0x19:
         print("LA44")
         if platform == 0x06: #Deswizzle CTR
+            print("Currently cannot convert channels!")
             data = unswizzleCTR(data, imgWidth, imgHeight, 8, 8, 4, 2)
-        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4")
+        data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r4 a4") #TODO, Convert this to LA44
         texFmt = noesis.NOESISTEX_RGBA32
     #DXT5
     elif imgFmt == 0x1a:
