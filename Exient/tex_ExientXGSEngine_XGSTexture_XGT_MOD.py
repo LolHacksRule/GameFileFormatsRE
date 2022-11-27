@@ -27,6 +27,7 @@
 #Added manual flag to convert format 0x3 for plat 0x0 and 0x9
 #Fixed 3DS AL44 channel order
 #Fixed PS3 LA88 channels
+#Fixed Wii LA88 channels
 
 #Please tell me if a format that is listed isn't decoded properly
 
@@ -257,9 +258,14 @@ def noepyLoadRGBA(data, texList):
         texFmt = noesis.NOESISTEX_DXT5
     #AL88
     elif imgFmt == 0x0d:
-        print("AL88")
         if platform == 0x01: #PS3 fix, we do it here first so the channels are in the right order before the LA88 conversion
+            print("LA88")
             data = rapi.swapEndianArray(data, 2)
+        elif platform == 0x03: #Fix Wii channels by untiling first
+            print("AL88")
+            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
+        elif platform == 0x00 or platform == 0x04 or platform == 0x05 or platform == 0x07 or platform == 0x09 or platform == 0x0B or platform == 0x0E:
+            print("AL88")
         #add to convert to LA88 (Acewell)
         In = bytearray(data)
         Out = bytearray(2*len(data))
@@ -269,10 +275,10 @@ def noepyLoadRGBA(data, texList):
         #Acewell https://forum.xentax.com/viewtopic.php?t=17315
         if platform == 0x01:
             data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight, 4)
-        elif platform == 0x03:
-            print("Currently cannot convert channels!")
-            data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
-            data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8")
+        #elif platform == 0x03:
+            #print("Currently cannot convert channels!")
+            #data = untile(bs.readBytes(dataSize),imgWidth,imgHeight,4,4,16) #Attempt to deswizzle ({1,0},{2,0},{0,1},{0,2})
+            #Out = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 a8")
         elif platform == 0x05:
             print ("WIP!")
             #data = rapi.swapEndianArray(data, 6) #testing

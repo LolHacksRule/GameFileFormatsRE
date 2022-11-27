@@ -77,7 +77,7 @@ typedef enum <uint16> {
     DXT5,
     //27-39 crashes on PS3
     PVRTC_2BPP_RGBA_v2               = 29,
-    PVRTC_4BPP_RGBA_v2,                      //BC swizzled
+    PVRTC_4BPP_RGBA_v2,                     //BC swizzled
     PVRTC_4BPP_RGBA_v3,
     
     ETC2_RGB                         = 35,
