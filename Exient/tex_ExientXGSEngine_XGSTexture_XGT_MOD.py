@@ -28,6 +28,7 @@
 #Fixed 3DS AL44 channel order
 #Fixed PS3 LA88 channels
 #Fixed Wii LA88 channels
+#Add 200x200 to PS3 deswizzle blacklist
 
 #Please tell me if a format that is listed isn't decoded properly
 
@@ -173,7 +174,7 @@ def noepyLoadRGBA(data, texList):
             print("RGBA8888\nIf it doesn't look right, look at the below comment!")
             #This is honestly a mess of swizzled and unswizzled textures, there's no way to detect these
             #Acewell https://forum.xentax.com/viewtopic.php?t=17315
-            if (imgWidth != 1530 and imgHeight != 986) and (imgWidth != 1490 and imgHeight != 1292) and (imgWidth != 1854 and imgHeight != 1450) and (imgWidth != 661 and imgHeight != 218) and (imgWidth != 1466 and imgHeight != 991) and (imgWidth != 1959 and imgHeight != 1290) and (imgWidth != 1640 and imgHeight != 1737): #screw these files, there's really no flag set to identify a swizzled texture so here's the common sizes of data that most likely would not be swizzled so we won't deswizzle 'em
+            if (imgWidth != 1530 and imgHeight != 986) and (imgWidth != 1490 and imgHeight != 1292) and (imgWidth != 1854 and imgHeight != 1450) and (imgWidth != 661 and imgHeight != 218) and (imgWidth != 1466 and imgHeight != 991) and (imgWidth != 1959 and imgHeight != 1290) and (imgWidth != 1640 and imgHeight != 1737) and (imgWidth != 200 and imgHeight != 200): #screw these files, there's really no flag set to identify a swizzled texture so here's the common sizes of data that most likely would not be swizzled so we won't deswizzle 'em
                 data = rapi.imageFromMortonOrder(data, imgWidth, imgHeight, 4)
             data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "a8 r8 g8 b8")
             texFmt = noesis.NOESISTEX_RGBA32
