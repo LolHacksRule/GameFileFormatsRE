@@ -33,7 +33,7 @@
 #Please tell me if a format that is listed isn't decoded properly
 
 IMGFMT3_PLAT0_ENFORCE = 0 #0: RGBA4444, 1: ARGB4444, 2: RGBA8888
-LEGACY_ANDROID_RGBASWAP = False #Use with certain textures from ABTF 1125
+LEGACY_ANDROID_RGBASWAP = False #Use with certain textures from ABTF 1125 and GO Android 101
 
 from inc_noesis import *
 
@@ -97,6 +97,8 @@ def noepyLoadRGBA(data, texList):
         print("Platform: Orbis/PlayStation 4");
     if platform == 0x10:
         print("Platform: WinPhone");
+    if platform == 0x11:
+        print("Platform: WinPhone_OLD");
     if platform != 0x03:
         data = bs.readBytes(dataSize)
     #RGB565_ABSW_WII
