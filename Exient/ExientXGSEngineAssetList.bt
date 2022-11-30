@@ -11,7 +11,8 @@
 //   History: 
 //------------------------------------------------
 
-local int i <hidden=true> = 0;
+//local int i <hidden=true> = 0;
+#include "../LHR/Common.bt";
 
 LittleEndian();
 
@@ -31,8 +32,8 @@ struct XGSAssetList
         }
         if (ver == 8)
         {
-            byte hasDuplicatedMD5;
-            Printf("Version: 8");
+            Byte_Bool hasCompressedMD5;
+            Printf("\nVersion: 8\n");
         }
         else
         {
@@ -48,12 +49,12 @@ struct XGSAssetList
                 int16 nameBSize;
                 int32 unknown;
                 //byte dmy2[3];
-                byte MD5[16]<bgcolor = cPurple>;
+                byte FileMD5[16]<bgcolor = cPurple>;
                 if (XGSHeader.ver == 8)
                 {
-                    if (XGSHeader.hasDuplicatedMD5)
+                    if (XGSHeader.hasCompressedMD5 == Byte_True)
                     {
-                        byte UsuallyMD5Again[16]<bgcolor = cPurple>;
+                        byte CompressedFileMD5[16]<bgcolor = cPurple>;
                     }
                     else
                     {
@@ -68,8 +69,8 @@ struct XGSAssetList
                 byte d[10];
                 int64 what;
                 int32 dmy9;
-                char theFile[nameBSize]<bgcolor = cGreen>;
-                Printf(theFile + "\n");
+                char theFileName[nameBSize]<bgcolor = cGreen>;
+                Printf(theFileName + "\n");
                 //FSkip(-2);
             } HashedFile;
         }
