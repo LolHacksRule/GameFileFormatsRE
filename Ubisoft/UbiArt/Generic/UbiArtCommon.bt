@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: UbiArtCommon.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <long>
+{
+    UAF_English,
+    UAF_French,
+    UAF_Japanese,
+    UAF_German,
+    UAF_Spanish,
+    UAF_Italian,
+    UAF_Portuguese = 8,
+    UAF_Russian = 11,
+    UAF_Dutch,
+    UAF_Czech,
+    UAF_Hungarian,
+} UAF_Lang;
+
+typedef struct UAF_WString
+{
+    int32 strID;
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        wchar_t tstring[stringSize];
+        //Printf("%s(%i)\n", tstring, strID);
+    }
+};
+
+typedef struct UAF_String
+{
+    int32 strID;
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        char tstring[stringSize];
+        //Printf("%s(%i)\n", tstring, strID);
+    }
+};

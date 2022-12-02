@@ -11,63 +11,54 @@
 //   History: 
 //------------------------------------------------
 
-typedef struct String
-{
-    int32 stringSize;
-    if (stringSize != 0)
-    {
-        wchar_t tstring[stringSize];
-        int32 strID;
-        //Printf("%s(%i)\n", tstring, strID);
-    }
-    else
-    {
-        int32 strID;
-        //Printf("String ID %i is empty!\n", strID);
-    }
-} textStr;
+#include "../Generic/UbiArtCommon.bt"
+#include "../../../LHR/Common.bt"
 
 typedef struct SoundRefString
 {
+    int32 soundStrID;
+    int32 unk1;
     int32 stringSize;
     if (stringSize != 0)
     {
         wchar_t tstring[stringSize];
-        int32 unk;
-        int32 strID;
+        //int32 unk;
+        //int32 strID;
     }
     else
     {
-        int32 unk;
-        int32 strID;
+        //int32 unk;
+        //int32 strID;
     }
-    if (strID == 1)
+    //if (strID == 1)
     {
-        FSkip(-4);
+        //FSkip(-4);
     }
+    uint32 unk2;
 } soundTextStr;
 
-local int i <hidden=true> = 0;
-local int i2 <hidden=true> = 0;
+//local int i <hidden=true> = 0;
+//local int i2 <hidden=true> = 0;
 
 struct UbiArt_RayOriginsLoc
 {
     BigEndian();
     int32 langCnt;
-    FSkip(4);
+    //FSkip(4);
     struct Languages
     {
         for (i = 0; i < langCnt; i++)
         {
             struct Lang //0 = English, 1 = French, 2 = Ja
             {
+                UAF_Lang langID;
                 int32 langStrCnt;
-                int32 unk;
+                //int32 unk;
                 struct LangText
                 {
                     for (i2 = 0; i2 < langStrCnt; i2++)
                     {
-                        textStr theText;
+                        UAF_WString LocTexts;
                     }
                 } ltxt;
             } l;
@@ -75,15 +66,18 @@ struct UbiArt_RayOriginsLoc
     } langs;
     struct SoundReferences
     {
-        int32 unk; //same as LANG.LTXT.unk
-        for (i = 0; i < 720; i++)
+        int32 soundReferenceCnt;
+        for (i = 0; i < soundReferenceCnt; i++)
         {
-            struct SoundRef
-            {
-                FSkip(4);
-                soundTextStr theSoundText;
-                //FSkip(4);
-            } sr;
+            soundTextStr theSoundText;
+        }
+    } s;
+    struct SoundPaths
+    {
+        int32 soundPathCnt;
+        for (i = 0; i < soundPathCnt; i++)
+        {
+            U32_UnicodeStringEntry SoundPath;
         }
     } s;
 } ua;
