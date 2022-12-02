@@ -1,0 +1,72 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: UbiArtLoc8.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing
+//      File Mask:
+//      ID Bytes:
+//      History: 
+//------------------------------------------------
+
+//TODO: Merge this with Origins
+
+local int i <hidden=true> = 0;
+local int i2 <hidden=true> = 0;
+
+BigEndian(); //manually change if needed
+
+typedef enum <long>
+{
+    English,
+    French,
+} RO2_Lang;
+
+typedef struct LangData
+{
+    RO2_Lang    langID;
+    long        textStringCnt;
+} langData;
+
+typedef struct TextString
+{
+    long    textID;
+    long    textStringSize;
+    if (textStringSize != 0)
+    {
+        char    textString[textStringSize];
+        //Printf("%s\n", textString);
+    }
+    else
+    {
+        //Printf("------NULL TEXT STRING DETECTED------\n");
+    }
+};
+
+struct UbiArtLocalisationV8
+{
+    long   langCnt;
+    struct TextStringTable
+    {
+        for (i = 0; i < langCnt; i++)
+        {
+            struct Lang
+            {
+                //Printf("------Language: %i Strings:------\n", i);
+                langData languageData;
+                struct TextStrings
+                {
+                    for (i2 = 0; i2 < languageData.textStringCnt; i2++)
+                    {
+                        TextString txt;
+                    }
+                } ts;
+            } lang;
+            //Printf("------End Language %i Strings------\n\n", i);
+        }
+    } textStringTable;
+    //?
+    //int64 fin;
+} loc8File;

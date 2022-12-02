@@ -23,7 +23,7 @@ typedef struct String
     else
     {
         int32 strID;
-        Printf("String ID %i is empty!\n", strID);
+        //Printf("String ID %i is empty!\n", strID);
     }
 } textStr;
 
