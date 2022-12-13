@@ -57,6 +57,10 @@ def noepyLoadRGBA(data, texList):
         print("PVRTC_4BPP_RGBA\nWIP!")
         data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 4)
         texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x0007:
+        print("ETC1\nWIP!") #Introduced in Symbian
+        data = rapi.callExtensionMethod("etc_decoderaw32", data, imgWidth, imgHeight, "rgb")
+        texFmt = noesis.NOESISTEX_RGBA32
     flippedImg = rapi.imageFlipRGBA32(data, imgWidth, imgHeight, 0, 1)
     texList.append(NoeTexture(rapi.getInputName(), imgWidth, imgHeight, flippedImg, texFmt))
     return 1
