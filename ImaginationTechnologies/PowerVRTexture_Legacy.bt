@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: PowerVRTexture_Legacy.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <byte> {
+    ARGB4444 = 0,
+    RGB888 = 4,
+    ARGB4444_2 = 16,
+    ARGB1555,
+    ARGB8888,
+    RGB565,
+    PVRTC_2BPP_RGB = 24,
+    PVRTC_4BPP_RGBA,
+    ETC1 = 54,
+} texFmt;
+
+typedef enum <byte> {
+    HasMipMaps = 0x01,
+    HasNormalData = 0x04,
+    HasMipMaps_AND_HasNormalData,
+    PVRTCAlpha = 0x80,
+    PVRTCAlpha_AND_HasMipMaps,
+    PVRTCAlpha_AND_IsTwiddled,
+    PVRTCAlpha_AND_HasMipMaps_AND_IsTwiddled,
+    PVRTCAlpha_AND_HasNormalData,
+} texbitflag1;
+
+typedef enum <byte> {
+    VerticallyFlipped = 0x01,
+} texbitflag2;
+
+struct PVRTexture
+{
+    int32 hdrSize;
+    int32 width;
+    int32 height;
+    int32 mipCnt;
+    texFmt textureFormat;
+    texbitflag1 flag1; //00008x = Has PVRTC alpha channel data, 0000010x = has mipmaps, 0000020x = twiddled
+    texbitflag2 flag2; //00100x = Vertically flipped
+    byte flag3; //?
+    int32 PVRTexDataSize;
+    int32 bpp;
+    byte r[4];
+    byte g[4];
+    byte b[4];
+    byte a[4];
+    struct PVRTextureData
+    {
+        char pvrIdentifier[4];
+        int32 surfaces;
+        byte pvrTextureData[PVRTexDataSize];
+    } PVR<bgcolor=cBlue>;
+} PVRFile<bgcolor=cPurple>;
