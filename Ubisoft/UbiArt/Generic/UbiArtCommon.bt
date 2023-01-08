@@ -19,11 +19,15 @@ typedef enum <long>
     UAF_German,
     UAF_Spanish,
     UAF_Italian,
-    UAF_Portuguese = 8,
-    UAF_Russian = 11,
+    UAF_Portuguese_Legacy = 8,
+    UAF_Polish = 10,
+    UAF_Russian,
     UAF_Dutch,
-    UAF_Czech,
-    UAF_Hungarian,
+    UAF_Czech_OR_Danish,
+    UAF_Hungarian_OR_Norweigan,
+    UAF_Swedish,
+    UAF_Finnish,
+    UAF_Portuguese,
 } UAF_Lang;
 
 typedef struct UAF_WString
@@ -45,5 +49,37 @@ typedef struct UAF_String
     {
         char tstring[stringSize];
         //Printf("%s(%i)\n", tstring, strID);
+    }
+};
+
+typedef struct UAF_SoundRef
+{
+    int32 soundStrID;
+    int32 unk1;
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        wchar_t tstring[stringSize];
+        //int32 unk;
+        //int32 strID;
+    }
+    else
+    {
+        //int32 unk;
+        //int32 strID;
+    }
+    //if (strID == 1)
+    {
+        //FSkip(-4);
+    }
+    uint32 unk2;
+};
+
+typedef struct UAF_SoundPath
+{
+    int32 stringSize;
+    if (stringSize != 0)
+    {
+        wchar_t tstring[stringSize];
     }
 };

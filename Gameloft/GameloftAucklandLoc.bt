@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-local uint i <hidden = true> = 0;
+//local uint i <hidden = true> = 0;
 
 #include "../LHR/Common.bt"
 

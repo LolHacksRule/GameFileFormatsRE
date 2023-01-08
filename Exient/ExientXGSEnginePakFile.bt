@@ -239,7 +239,10 @@ struct XGSPakFile {
                         struct ZlibCompressedFile
                         {
                             FSeek(XGSPakContentMeta[i].fileOffset); //Skip here
-                            byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
+                            if (XGSPakContentMeta[i].cFileSize > 0)
+                            {
+                                byte theZlibCompressedContent[XGSPakContentMeta[i].cFileSize];
+                            }
                         } zlib;
                         //LittleEndian();
                     }

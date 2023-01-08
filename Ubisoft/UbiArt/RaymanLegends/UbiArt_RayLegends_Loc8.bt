@@ -11,6 +11,8 @@
 //      History: 
 //------------------------------------------------
 
+#include "../Generic/UbiArtCommon.bt"
+
 //TODO: Merge this with Origins
 
 local int i <hidden=true> = 0;
@@ -18,15 +20,9 @@ local int i2 <hidden=true> = 0;
 
 BigEndian(); //manually change if needed
 
-typedef enum <long>
-{
-    English,
-    French,
-} RO2_Lang;
-
 typedef struct LangData
 {
-    RO2_Lang    langID;
+    UAF_Lang    langID;
     long        textStringCnt;
 } langData;
 

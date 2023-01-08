@@ -1,0 +1,72 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: SoftBodyBinary.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: Reading the binary
+//  Category: Deserializing
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct Point
+{
+    float x;
+    float y;
+};
+
+typedef struct Spring
+{
+    uint32 pt1;
+    uint32 pt2;
+    float k;
+    float damp;
+};
+
+typedef struct Polygon
+{
+    uint16 pt[3];
+};
+
+#include "../../../LHR/Common.bt"
+
+struct JC3_Android_SoftBodyBin
+{
+    struct Header
+    {
+        float massPerPoint;
+        float edgeK;
+        float edgeDamping;
+        Byte_Bool kinematic;
+        Byte_Bool shapeMatching;
+        float shapeK;
+        float shapeDamping;
+        byte unk;
+        byte unk2[4];
+    } hdr;
+    struct Points
+    {
+        uint32 points;
+        for (i = 0; i < points; i++)
+        {
+            Point point;
+        }
+    } pnts;
+    uint32 unk;
+    struct Springs
+    {
+        uint32 springs;
+        for (i = 0; i < springs; i++)
+        {
+            Spring spring;
+        }
+    } sprngs;
+    struct Polygons
+    {
+        uint32 unk;
+        //uint32 polygons;
+        Polygon polygon; //idk how to detect
+    } polys;
+} SBSBIN;

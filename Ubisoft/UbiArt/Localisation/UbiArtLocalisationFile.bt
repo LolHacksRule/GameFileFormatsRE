@@ -1,0 +1,86 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../Generic/UbiArtCommon.bt"
+#include "../../../LHR/Common.bt"
+
+local uint WCharFlag = 0; //0: Unchecked, 1: Disable WChar, 2: Force WChar, we're doing this to check for Origins locs (LOC)
+
+//local int i <hidden=true> = 0;
+//local int i2 <hidden=true> = 0;
+
+struct UbiArt_LocalisationFile
+{
+    BigEndian();
+    int32 langCnt;
+    //FSkip(4);
+    struct Languages
+    {
+        for (i = 0; i < langCnt; i++)
+        {
+            struct Lang //0 = English, 1 = French, 2 = Ja
+            {
+                UAF_Lang langID;
+                int32 langStrCnt;
+                //int32 unk;
+                if (WCharFlag == 0) //Check for Origins/Legends
+                {
+                    FSkip(8);
+                    Byte_Bool probALetter<hidden=true>;
+                    //Byte_Bool isThisALetter;
+                    FSkip(-9);
+                    if (probALetter == Byte_False)
+                    {
+                        Printf("Unicode!\n");
+                        WCharFlag = 2;
+                    }
+                    else
+                    {
+                        Printf("UTF-8!\n");
+                        WCharFlag = 1;
+                    }
+                }
+                struct LangText
+                {
+                    for (i2 = 0; i2 < langStrCnt; i2++)
+                    {
+                        if (WCharFlag == 1)
+                        {
+                            UAF_String LocTexts;
+                        }
+                        else if (WCharFlag == 2)
+                        {
+                            UAF_WString LocTexts;
+                        }
+                    }
+                } ltxt;
+            } l;
+        }
+    } langs;
+    struct SoundReferences
+    {
+        int32 soundReferenceCnt;
+        for (i = 0; i < soundReferenceCnt; i++)
+        {
+            UAF_SoundRef SoundRef;
+        }
+    } sr;
+    struct SoundPaths
+    {
+        int32 soundPathCnt;
+        for (i = 0; i < soundPathCnt; i++)
+        {
+            U32_UnicodeStringEntry SoundPath;
+        }
+    } sp;
+} ua_loc;

@@ -55,17 +55,27 @@ struct XGSAssetList
                     if (XGSHeader.hasCompressedMD5 == Byte_True)
                     {
                         byte CompressedFileMD5[16]<bgcolor = cPurple>;
+                        if (FileMD5 != CompressedFileMD5)
+                        {
+                            int32 decompressedFileSize;
+                        }
+                        else
+                        {
+                            int32 fSize<bgcolor = cBlue>;
+                        }
                     }
                     else
                     {
                         byte dmy2[16];
+                        int32 fSize<bgcolor = cBlue>;
                     }
                 }
                 else 
                 {
                     byte MD5Again[16];
+                    int32 fSize<bgcolor = cBlue>;
                 }
-                int32 fSize<bgcolor = cBlue>;
+                //int32 fSize<bgcolor = cBlue>;
                 byte d[10];
                 int64 what;
                 int32 dmy9;
