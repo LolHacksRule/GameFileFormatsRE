@@ -1,0 +1,105 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+/*typedef enum <byte>
+{
+    Replay = 0x52504C59,
+    Settings = 0x4A43534554544559,
+} JC3_ContentType;*/
+
+typedef enum <byte>
+{
+    PNG,
+    JPG,
+} JC3_TexType;
+
+typedef struct JC3_CarInfo
+{
+    U32_StringEntry IG_CarFileName;
+    U32_StringEntry IG_CarTxtrName;
+    JC3_TexType textureType;
+};
+
+typedef struct JC3_GhostMetaData
+{
+    byte unk;
+    uint32 unk;
+    U32_StringEntry IG_CarFileName;
+};
+
+typedef struct JC3_Replay
+{
+    uint32 unk;
+};
+
+typedef struct JC3_RestoreData
+{
+    uint32 unk;
+};
+
+typedef struct JC3_Settings
+{
+    byte unk;
+    JC3_CarInfo carInfo;
+};
+
+struct JC3_SerializedArchive
+{
+    struct Header
+    {
+        U32_StringEntry serializationArchiveStr;
+        byte unk[6];
+        uint32 one;
+    } hdr;
+    struct Content
+    {
+        U32_StringEntry contentTypeStrTMP<hidden=true>;
+        //FSeek(36);
+        if (contentTypeStrTMP.theString == "JCSETTEI")
+        {
+            JC3_Settings theSettings;
+            break;
+        }
+        else if (contentTypeStrTMP.theString == "JCFUKUSEI")
+        {
+            JC3_RestoreData theRestoreData;
+            break;
+        }
+        else if (contentTypeStrTMP.theString == "OBAKEDEETA")
+        {
+            JC3_GhostMetaData theGhostMetaData;
+            break;
+        }
+        else if (contentTypeStrTMP.theString == "RPLY")
+        {
+            JC3_Replay theReplay;
+            break;
+        }
+        //if (contentTypeStrTMP.byteSize == 4)
+        {
+            //FSkip(-4);
+            //JC3_ContentType theContentType;
+        }
+        //else if (contentTypeStrTMP.byteSize == 28)
+        {
+            //FSeek(36);
+            //U32_StringEntry AngoB64;
+        }
+        {
+            FSeek(36);
+            JC3_CarInfo theCarInfo;
+        }
+    } content;
+} serialization__archive;

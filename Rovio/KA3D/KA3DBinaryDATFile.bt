@@ -16,7 +16,7 @@
 //Viewing of data files from Rovio's proprietary version of the KA3D Engine (Fusion).
 
 //local uint i<hidden = true> = 0;
-local uint i2<hidden = true> = 0;
+//local uint i2<hidden = true> = 0;
 
 //MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS AND ANGRY BIRDS 1.2.2!
 local uint forceHeaderlessText <hidden = true> = 0;

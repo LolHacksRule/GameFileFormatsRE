@@ -1,0 +1,80 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i <hidden = true> = 0;
+
+typedef enum <byte> {
+    False = 0,
+    True = 1,
+} bool;
+
+typedef struct
+{
+    int16 unk;
+    int16 code;
+    int16 unk2;
+    int16 unk3;
+    int16 unk3;
+    int16 unk4;
+    int16 unk5;
+    int16 unk6;
+    int16 unk7;
+    int16 unk8;
+    char escSeq[64];
+} FTT_CustomGlypth;
+
+
+struct XGSFont
+{
+    int32 hdr;
+    bool isFTGFont;
+    byte minor;
+    byte major;
+    byte unknown;
+    int32 chars;
+    if (isFTGFont == True)
+    {
+        int32 u;
+        int32 customGlyphs;
+        float u2;
+        int32 u3[2];
+        int16 u4[2];
+        float u5[2];
+        int32 u6;
+    }
+    for (i = 0; i < chars-1; i++)
+    {
+        struct Character
+        {
+            /*if (isFTGFont == True)
+            {
+                int32 u[2];
+                float u2;
+            }*/
+            //if
+            int16 u3;
+            int16 code;
+            int16 u4[8];
+        } charas;
+    }
+    //struct CustomGlyphs
+    //{
+        for (i = 0; i < customGlyphs; i++)
+        {
+            //struct CustomGlyph
+            //{
+                FTT_CustomGlypth theGlyph;
+            //} gl;
+        }
+    //} g;
+} XGSF;
