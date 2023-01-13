@@ -21,6 +21,13 @@ typedef enum <uint32>
     ARC_Archive = 1212371521
 } format;
 
+typedef enum <uint32>
+{
+    Raw,
+    ZlibCompressed = 65535
+} compType;
+
+//Do we need these two
 local uint arcNum<hidden = true> = 0;
 local uint fileNum<hidden = true> = 0;
 
@@ -58,12 +65,14 @@ typedef struct
 typedef struct
 {
     format magic;
-    int32 offset;
-    int32 unknown1;
+    int32 offset; //Changes by the below value
+    int32 unknown1; //Seems to be mostly 1 and the highest I've seen is 610, possibly times compressed data is greater than alignment? 1: Less than alignment, 1+: Greater than alignment by 1+ - 1 times,
     int32 size;
     int32 compressedSize;
-    int32 unknown2;
-    if (size != compressedSize)
+    compType dataCompressionType; //0: Raw, 65535: Zlib/Compressed
+    //Printf("%d\n", unknown1); //debug only
+    //if (size != compressedSize) //backup this
+    if (dataCompressionType == ZlibCompressed)
     {
         local I32_Bool isCompressed = I32_True;
     }
@@ -71,8 +80,7 @@ typedef struct
     {
         local I32_Bool isCompressed = I32_False;
     }
-    int32 stringSize;
-    char theFileName[stringSize];
+    U32_StringEntry theFileName;
 } ARCH;
 
 typedef struct
@@ -113,7 +121,7 @@ struct ArcFile
             } ARCHBlks;
             struct FileBlocks
             {
-                for (fileNum = 0; fileNum < TheArcHeader.files; fileNum++)
+                for (fileNum = 0; fileNum < TheArcHeader.files; fileNum++) //We error out here, why?
                 {
                     FSeek(ARCHBlks.TheArcArchive[fileNum].offset * TheArcHeader.alignment);
                     File theFile;
