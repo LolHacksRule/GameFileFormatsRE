@@ -1,0 +1,161 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+local uint isMetaData <hidden=true> = 0;
+local uint isWordList <hidden=true> = 1;
+local uint isSubTexBank <hidden=true> = 0;
+
+typedef enum <uint32>
+{
+    TexturePack = 0x54657850,
+    SubTextureBank = 0x53547842,
+    Wordlist = 0x5772644C,
+    SoundBank = 0x536E6442,
+    StringBank = 0x53747242,
+    MeshBank = 0x4D746842,
+} BoggleDataType;
+
+typedef struct BoggleMetaData
+{
+    uint32 allDataSz;
+    uint32 entries;
+    struct MetaDataEntries
+    {
+        for (i = 0; i < entries; i++)
+        {
+            struct MetaDataEntry
+            {
+                BoggleDataType theDataType;
+                uint32 idx; //Would be one if not used
+                uint32 dSz;
+                char str[32];
+            } me;
+        }
+    } mes;
+};
+
+typedef struct BoggleWordList
+{
+    uint32 plurals;
+    uint32 extraValues; //?
+    uint32 entries;
+    uint32 wordEntrySz;
+    local uint32 addto = 0;
+    if (plurals == 0)
+    {
+        addto = 2;
+    }
+    else
+    {
+        addto = 2;
+    }
+    //char valueStr[wordEntrySz];
+    struct WordEntries
+    {
+        struct ValueEntries
+        {
+            for (i = 0; i < addto; i++)
+            {
+                struct ValueEntry
+                {
+                    char valueStr[wordEntrySz];
+                } ves;
+            }
+        } ves;
+        if (extraValues == 1)
+        {
+            char xtraStr[wordEntrySz];
+            char xtraStr2[wordEntrySz];
+            uint64 dmy;
+        }
+        for (i2 = 0; i2 < entries; i2++)
+        {
+            struct WordEntry
+            {
+                
+                char str[wordEntrySz];
+            } we;
+        }
+    } wes;
+};
+
+typedef struct BoggleSubTexBankData
+{
+    uint32 entries;
+    struct SubTexBankDataEntries
+    {
+        for (i = 0; i < entries; i++)
+        {
+            struct SubTexBankDataEntry
+            {
+                char texNameStr[32];
+                char texNameStr2[32];
+                uint32 unk;
+                uint32 dmy;
+                uint16 width;
+                uint16 height;
+            } sde;
+        }
+    } sdes;
+};
+
+typedef struct BoggleTextureData
+{
+    uint32 entries;
+    struct DataEntries
+    {
+        for (i = 0; i < entries; i++)
+        {
+            struct DataEntry
+            {
+                //BoggleDataType theDataType;
+                //uint32 unk;
+                //uint32 dSz;
+                char texNameStr[32];
+                //char texNameStr2[32];
+                uint32 unk;
+                uint32 dmy;
+                uint16 width;
+                uint16 height;
+                uint32 unk2; //texDSz?
+            } de;
+        }
+    } des;
+};
+
+struct HasbroBoggleiOSDAT
+{
+    LittleEndian();
+    if (isWordList == 1)
+    {
+        BoggleWordList theData;
+        break;
+    }
+    else if (isSubTexBank == 1)
+    {
+        BoggleSubTexBankData theData;
+        break;
+    }
+    uint32 tmpChk<hidden=true>; //Check for meta
+    FSkip(-4);
+    if (tmpChk > 255)
+    {
+        BoggleMetaData theData;
+    }
+    else
+    {
+        BoggleTextureData theData;
+    }
+} BoggleDAT;

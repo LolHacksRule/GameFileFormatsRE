@@ -11,11 +11,11 @@
 //   History: 
 //------------------------------------------------
 
-typedef struct Point
+/*typedef struct Point
 {
     float x;
     float y;
-};
+};*/
 
 typedef struct Spring
 {
@@ -51,7 +51,7 @@ struct JC3_Android_SoftBodyBin
         uint32 points;
         for (i = 0; i < points; i++)
         {
-            Point point;
+            Vector2_F32 point;
         }
     } pnts;
     uint32 unk;

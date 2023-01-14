@@ -66,7 +66,7 @@ typedef struct
 {
     format magic;
     int32 offset; //Changes by the below value
-    int32 unknown1; //Seems to be mostly 1 and the highest I've seen is 610, possibly times compressed data is greater than alignment? 1: Less than alignment, 1+: Greater than alignment by 1+ - 1 times,
+    int32 unknown1; //Seems to be mostly 1 and the highest I've seen is 610, possibly times compressed data is greater than alignment? 1: Less than alignment, 1+: Greater than alignment by 1+ - 1 times
     int32 size;
     int32 compressedSize;
     compType dataCompressionType; //0: Raw, 65535: Zlib/Compressed

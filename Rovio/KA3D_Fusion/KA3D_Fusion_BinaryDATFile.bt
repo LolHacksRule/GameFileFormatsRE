@@ -43,7 +43,7 @@ typedef struct
     //SHORT ver;
 } contentBlockHeader;
 
-typedef struct
+/*typedef struct
 {
     local string theLabelIDString = LIDS.LIDSd.LIDStrings.theLabelIDStr[i].theString;
     short textStringSize<hidden=true>;
@@ -55,7 +55,7 @@ typedef struct
     {
         Printf("TextString %i is empty!\n", i);
     }
-} textString;
+} textString;*/
 
 typedef struct
 {
@@ -180,7 +180,7 @@ typedef struct
             {
                 struct TextGroup
                 {
-                    local string theLanguage = LDAT.LDATd.langs.theLanguageStr[i2].theString;
+                    //local string theLanguage = LDAT.LDATd.langs.theLanguageStr[i2].theString;
                     if (forceHeaderlessText != 1)
                     {
                         contentBlockHeader textGroupBlockHdr;
@@ -192,7 +192,9 @@ typedef struct
                             //struct TextGroupString
                             //{
                                 //local string theLabelID = LIDS.LIDSd.LIDStrings.lid_str[i].theStr.theString;
-                                textString TextGroupString;
+                                I16_StringEntry TextGroupString;
+                                //Printf("%s", LIDS.LIDSd.LIDStrings.theLabelIDStr[i].theString); //Remove to print string IDs
+                                //Printf("%s\n", TextGroupString[i].theString); //Remove to print strings
                             //} txgp_str;
                         }
                     } txgpd;
