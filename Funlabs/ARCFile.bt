@@ -34,13 +34,13 @@ local uint fileNum<hidden = true> = 0;
 //Set this to true to manually read uncompressed ARCH blocks in the file, WIP!
 local uint viewEmbeddedArchiveBlocks<hidden = true> = 0;
 
-local int FPos<hidden = true> = FTell();
+//local int FPos<hidden = true> = FTell();
 
-local int FSize<hidden = true> = FileSize();
+//local int FSize<hidden = true> = FileSize();
 
 //local int isEOF = FEof();
 
-local int EOF<hidden = true> = FPos + FSize;
+//local int EOF<hidden = true> = FPos + FSize;
 
 //local int pos = FTell();
 

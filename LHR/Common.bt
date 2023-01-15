@@ -14,6 +14,12 @@
 local uint i <hidden=true> = 0;
 local uint i2 < hidden = true > = 0;
 
+local int FPos<hidden = true> = FTell();
+
+local int FSize<hidden = true> = FileSize();
+
+local int EOF<hidden = true> = FPos + FSize;
+
 typedef enum <uint16> {
 	Little = 0xFEFF,
     Big = 0xFFFE,

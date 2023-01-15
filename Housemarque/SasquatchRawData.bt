@@ -11,16 +11,23 @@
 //   History: 
 //------------------------------------------------
 
-local int i<hidden=true> = 0;
+//local int i<hidden=true> = 0;
+#include "../LHR/Common.bt"
 
 struct RawData
 {
+    int32 chk<hidden=true>;
+    FSkip(-4);
+    if (chk > 16) //fix LE detect for PC
+    {
+        LittleEndian();
+    }
     int32 dataOff;
     int32 fSize;
     int64 pad;
     struct TextStrings
     {
-        for (i = 0; i < 484; i++)
+        while (FPos < EOF) //Just detect as many
         {
             struct TextString
             {
@@ -28,7 +35,10 @@ struct RawData
                 int16 unk2;
                 string textString;
                 Printf("%i:\n%s\n\n", i, textString);
+                FPos = FTell(); //Check for end
+                i++; //Increase i by 1
             } str;
         }
+        Printf("Read complete");
     } ts;
 } RAWD;

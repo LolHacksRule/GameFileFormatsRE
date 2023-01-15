@@ -1,0 +1,80 @@
+# Outland (orig filename outland.bms)
+# script for QuickBMS http://quickbms.aluigi.org
+# Modified by LolHacksRule to support AB Trilogy and generally Big Endian (UNTESTED ON NEX MACHINA)
+
+endian big #force BE for now
+math IS_BIG_ENDIAN = 1
+get ARCHIVE_SIZE asize
+
+#check for LE
+goto 0x04
+get test long
+if test >= 1000 #Definitely LE (PC)
+	Print test
+	math IS_BIG_ENDIAN = 0
+	endian little
+endif
+#now read
+goto 0x0
+for OFFSET = 0 < ARCHIVE_SIZE
+    goto OFFSET
+
+    get ID long
+    get ZSIZE long
+    get SIZE long
+    get DATA_SIZE long
+    get ID long
+    get TYPE long
+	if IS_BIG_ENDIAN != 1 #Swap the types
+		reverselong TYPE
+	endif
+    string TYPE = TYPE
+
+    math DATA_SIZE *= 0x40
+    xmath NEXT_OFFSET "OFFSET + DATA_SIZE"
+
+
+    math DUMP_IT = 1
+    if TYPE == "GEOM"
+        math DUMP_IT = 0
+    endif
+
+
+    if DUMP_IT != 0
+        # boring heuristic universal method
+        #xmath OFFSET "NEXT_OFFSET - ZSIZE"
+        for TMP = NEXT_OFFSET >= OFFSET
+            math TMP -= 4
+            goto TMP
+            get DUMMY long
+            if DUMMY != 0
+                break
+            endif
+        next
+        xmath OFFSET "((TMP + 4) - ZSIZE) & (~3)"
+        goto OFFSET
+		if IS_BIG_ENDIAN != 1
+			for #Why
+				get DUMMY byte
+				if DUMMY == 0x78
+					break
+				endif
+			next
+		endif
+        savepos OFFSET
+		if IS_BIG_ENDIAN != 1 #Why
+			math OFFSET -= 1
+        endif
+
+
+        string NAME p= "%s/*" TYPE
+        if SIZE == ZSIZE
+            log NAME OFFSET SIZE
+        else
+			comtype unzip_dynamic #Use this so detecting PS3 and 360 compression isn't a problem, still need to fix 64KB scripts for PS3
+            clog NAME OFFSET ZSIZE SIZE
+        endif
+    endif
+
+    math OFFSET = NEXT_OFFSET
+next

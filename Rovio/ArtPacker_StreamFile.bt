@@ -17,17 +17,19 @@ typedef enum <int64>
     RGBA8888 = 5928780282340063288
 } texFmt; //Rovio didn't use I64 possibly so I'd rather save text
 
-local int FPos<hidden = true> = FTell();
+#include "../LHR/Common.bt"
 
-local int FSize<hidden = true> = FileSize();
+//local int FPos<hidden = true> = FTell();
+
+//local int FSize<hidden = true> = FileSize();
 
 //local int isEOF = FEof();
 
-local int EOF<hidden = true> = FPos + FSize;
+//local int EOF<hidden = true> = FPos + FSize;
 
 BigEndian();
 
-local uint i<hidden=true> = 0;
+//local uint i<hidden=true> = 0;
 
 struct ArtPackerSTREAM
 {
