@@ -24,6 +24,7 @@ typedef enum <uint32>
 typedef enum <uint32>
 {
     Raw,
+    ZlibCompressed_RAM = 9,
     ZlibCompressed = 65535
 } compType;
 
@@ -72,7 +73,7 @@ typedef struct
     compType dataCompressionType; //0: Raw, 65535: Zlib/Compressed
     //Printf("%d\n", unknown1); //debug only
     //if (size != compressedSize) //backup this
-    if (dataCompressionType == ZlibCompressed)
+    if (dataCompressionType == ZlibCompressed || dataCompressionType == ZlibCompressed_RAM)
     {
         local I32_Bool isCompressed = I32_True;
     }
