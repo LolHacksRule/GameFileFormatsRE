@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../Nintendo/NintendoWare/caFe/GX2/NW4F_GX2_Standard.bt"
+
 local uint isWiiU = 0;
 local uint isWii = 0;
 
@@ -35,26 +37,60 @@ typedef enum <uint16>
     RGB5A3,
 } GCTPalFmt;
 
-typedef enum <uint32>
+typedef struct WiiUTexture
 {
-    BC1_SRGB = 0x431,
-    BC2_SRGB = 0x432,
-    BC3_SRGB = 0x433,
-    BC4_SNORM = 0x234,
-    BC5_SNORM = 0x235,
-} WiiUTexFmt;
+    contentType magic;
+    uint16 unknown[2]; //Must be 4096 and 1
+    NW4F_GX2_SurfaceDim surfaceDim;
+    uint32 width;
+    uint32 height;
+    //Useless, either useful outside game or dummy
+    uint32 unknown2;
+    uint32 mips;
+    NW4F_GX2_SurfaceFormat textureFormat;
+    NW4F_GX2_AAMode AAMode;
+    NW4F_GX2_SurfaceUse surfaceUse;
+    //Useless end
+    uint32 pixelSize; //If this mismatches, the tex would look weird
+    //Useless
+    uint32 dataPtr;
+    uint32 mipMapDSize;
+    uint32 mipMapPtr;
+    NW4F_GX2_TileMode tileMode;
+    uint32 swizzle;
+    //Useless end
+    uint32 alignment;
+    //Useless
+    uint32 pitch;
+    byte unknown3[64];
+    uint32 unknown4;
+    byte componentSelector[4];
+    //Useless end
+    uint32 texRegisters[5]; //The last one does little
+};
 
-struct FunLabsTexture
+typedef struct GameCubeTexture_NotReally
 {
-    struct MipHeader
-    {
-        BigEndian();
-        contentType magic;
+    contentType magic;
+    uint16 width;
+    uint16 height;
+    GCTTexFmt texFmt;
+    GCTPalFmt palFmt;
+    uint32 unk;
+    uint32 pixelSize;
+    uint32 palSize;
+    uint32 unk2[2];
+};
+
+typedef struct MipHeader
+{
+    contentType magic;
         //FSkip(2);
-        int32 dataSize; //or offset
-        int16 xOff;
-        int16 yOff;
-        int32 dataOff; //Or header size?
+        uint32 dataSize; //or offset, no effect when modifying
+        uint16 xOff;
+        uint16 yOff;
+        //Useless metadata! Modify these and nothing breaks, except it's a little harder to determine the texture externally
+        uint32 dataOff; //Or header size?
         if (dataOff == 192)
         {
             isWiiU = 1;
@@ -63,54 +99,45 @@ struct FunLabsTexture
         {
             isWii = 1;
         }
-        int32 width;
-        int32 height;
-        int16 unk2[2];
+        uint32 width;
+        uint32 height;
+        uint16 unk2[2];
         if (isWii)
         {
-            int32 unk;
-            struct WiiGCT
-            {
-                contentType magic;
-                int16 width;
-                int16 height;
-                GCTTexFmt texFmt;
-                GCTPalFmt palFmt;
-                int32 unk;
-                int32 pixelSize;
-                int32 palSize;
-                int32 unk2[2];
-            } GCT;
+            uint32 unk;
+        }
+        //Useless metadata end
+};
+
+struct Fusion_Nintexture
+{
+    BigEndian();
+    uint32 checkForHeaderless<hidden=true>;
+    FSkip(-4);
+    if (checkForHeaderless == 1465209888)
+    {
+        isWiiU = 1;
+        WiiUTexture WUT_Headerless;
+        byte theTexData[WUT_Headerless.pixelSize];
+    }
+    else if (checkForHeaderless == 1195594784)
+    {
+        isWii = 1;
+        GameCubeTexture_NotReally GCT_Headerless;
+        byte theTexData[GCT_Headerless.pixelSize];
+    }
+    else
+    {
+        MipHeader MIPh;
+        if (isWii)
+        {
+            GameCubeTexture_NotReally GCT;
         }
         if (isWiiU)
         {
-            struct WiiUTexture
-            {
-                contentType magic;
-                int16 unknown[2];
-                int32 surfaceDim;
-                int32 width;
-                int32 height;
-                int32 unknown3;
-                int32 mips;
-                WiiUTexFmt textureFormat;
-                int32 AAMode;
-                int32 surfaceUse;
-                int32 pixelSize;
-                int32 dataPtr;
-                int32 mipMapDSize;
-                int32 mipMapPtr;
-                int32 tileMode;
-                int32 swizzle;
-                int32 alignment;
-                int32 pitch;
-                FSkip(64);
-                int32 unknown3;
-                byte unknown4[4];
-                uint32 unknown5[6];
-            } WUT;
-            FSeek(dataOff);
+            WiiUTexture WUT;
+            FSeek(MIPh.dataOff);
         }
-    } MIPh;
-    byte theTexData[MIPh.dataSize];
+        byte theTexData[MIPh.dataSize];
+    }
 } TextureFile;
