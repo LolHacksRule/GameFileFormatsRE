@@ -64,7 +64,7 @@ if (UbiSDFType == SDFToc)
                         uint32 FSize;
                     } sdffsize;
                 }
-                string massive;
+                //string massive; //Uncomment for MR2
             } sdffs<bgcolor = cYellow>;
             struct SDFDataMetaData
             {
@@ -83,7 +83,7 @@ if (UbiSDFType == SDFToc)
                 {
                     uint32 DDSHeaderSize;
                     byte DDSFileHdr[DDSHeaderSize];
-                    if (HeaderEntry.unkData[3] == 3728795003314070590) //M+R KB
+                    if (HeaderEntry.unkData[3] == 3728795003314070590 || HeaderEntry.unkData[3] == 15654633386367974625) //M+R KB + 2
                     {
                         byte unk[200-DDSHeaderSize] <bgcolor = cRed>; //There has to be a better way
                     }
