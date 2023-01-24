@@ -9,7 +9,7 @@ import lib_zq_nintendo_tex as nintexture
 
 
 def registerNoesisTypes():
-    handle = noesis.register("FunLabs GameCube Texture (not really)", ".gct")
+    handle = noesis.register("Rovio Fusion GameCube Texture (not really)", ".gct")
     noesis.setHandlerTypeCheck(handle, noepyCheckType)
     noesis.setHandlerLoadRGBA(handle, noepyLoadRGBA)
     return 1

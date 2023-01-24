@@ -30,7 +30,7 @@ print_format = {0x31    :"GX2_SURFACE_FORMAT_T_BC1_UNORM",
                 0x235   :"GX2_SURFACE_FORMAT_T_BC5_SNORM",
                 0x41A   :"GX2_SURFACE_FORMAT_TCS_R8_G8_B8_A8_SRGB"}
 def registerNoesisTypes():
-    handle = noesis.register("FunLabs Wii U Texture", ".wut")
+    handle = noesis.register("Rovio Fusion Wii U Texture", ".wut")
     noesis.setHandlerTypeCheck(handle, noepyCheckType)
     noesis.setHandlerLoadRGBA(handle, noepyLoadRGBA)
     return 1
