@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint32>
+{
+    PX_RGBA8888 = 22,
+    PX_DXT1 = 64, //Confirm, def has the BC swizzle
+    PX_ETC2_RGB = 138, //Is this ETC1 or ETC2?
+} PX_TexFmt;
+
+struct ZenStudios_PinballXTexture
+{
+    uint32 PXBinaryHdr;
+    uint32 PXBinDataType;
+    PX_TexFmt texFmt;
+    uint32 width;
+    uint32 height;
+    uint32 mips;
+} PXT;
