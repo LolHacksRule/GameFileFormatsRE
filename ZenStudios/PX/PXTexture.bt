@@ -1,8 +1,8 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
+//      File: PXTexture.bt
+//   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
 //  Category: 
@@ -13,9 +13,13 @@
 
 typedef enum <uint32>
 {
+    PX_RGB888 = 20,
     PX_RGBA8888 = 22,
     PX_DXT1 = 64, //Confirm, def has the BC swizzle
+    PX_PVRTC4 = 130,
+    PX_PVRTC4A,
     PX_ETC2_RGB = 138, //Is this ETC1 or ETC2?
+    PX_WIIU_SWIZZLED_RGBA8888 = 225,
 } PX_TexFmt;
 
 struct ZenStudios_PinballXTexture
@@ -26,4 +30,5 @@ struct ZenStudios_PinballXTexture
     uint32 width;
     uint32 height;
     uint32 mips;
+    //On WiiU, the off is read at 0x32
 } PXT;
