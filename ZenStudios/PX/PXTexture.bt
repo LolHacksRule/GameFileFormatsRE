@@ -32,6 +32,10 @@ typedef enum <uint32>
     PX_PSP2_SWIZZLED_RGBA8888 = 192,
     PX_WIIU_SWIZZLED_RGBA8888 = 225,
     PX_WIIU_SWIZZLED_UNK = 240,
+    PX_NX_SWIZZLED_RGBA8888 = 352,
+    PX_NX_SWIZZLED_RGBA8888_2,
+    PX_NX_SWIZZLED_DXT1 = 368,
+    PX_NX_SWIZZLED_DXT5 = 370,
 } PX_TexFmt;
 
 struct ZenStudios_PinballXTexture
@@ -43,11 +47,14 @@ struct ZenStudios_PinballXTexture
     uint32 width;
     uint32 height;
     uint32 mips;
-    if (texFmt == 225 || texFmt == 240)
+    if (texFmt == 225 || texFmt == 240  || texFmt == 352 || texFmt == 353 || texFmt == 368 || texFmt == 370)
     {
         uint32 texSz;
-        uint32 unk;
+        if (texFmt == 225 || texFmt == 240)
+        {
+            uint32 unk;
+        }
         byte tex[texSz];
     }
-    //On WiiU, the off is read at 0x32
+    //On WiiU, the off is read at 0x32, NX is at 0x1c
 } PXT;
