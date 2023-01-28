@@ -1,0 +1,162 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//		File: PXPackage.bt
+//	 Authors: LolHacksRule
+//	 Version: 
+//	 Purpose: 
+//	Category: 
+// File Mask: 
+//	ID Bytes: 
+//	 History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+	 PXFlagU32_Raw = 0,
+} PXFlag_U32;
+
+typedef enum <byte>
+{
+	 PXFlagByte_Raw = 0
+} PXFlag_Byte;
+
+
+struct ZenStudios_PinballXPackage
+{
+	LittleEndian();
+	uint32 PXBinaryHdr;
+	uint32 PXBinDataType;
+	uint32 PXBinDataVer;
+	if (PXBinDataVer <= 2)
+	{
+		uint32 files;
+		uint32 metaTableSz;
+		if (PXBinDataVer == 0)
+		{
+			FSkip(-4);
+		}
+		uint32 isXOR<hidden=true>;
+		FSkip(-4);
+	}
+	else
+	{
+		Printf("PXP v3 is WIP!");
+		uint64 PXPSz;
+        //byte dmy[32];
+		//uint32 szl;
+        //byte dmy2[36];
+        //uint32 files;
+        //byte XORMeta[szl];
+		FSeek(0);
+		byte PXP[PXPSz];
+		break;
+	}
+	if (PXBinDataVer == 2)
+	{
+		uint16 unk[2];
+		uint16 unk2[2];
+		uint16 unk3[2];
+		uint32 unk4[2];
+	}
+	struct FileMetaData
+	{
+		for (i = 0; i < files; i++)
+		{
+			struct MetaEntry
+			{
+				uint32 dataOff;
+				uint32 uncDSz;
+				if (PXBinDataVer == 0)
+				{
+					uint32 cSz;
+					PXFlag_U32 flags;
+					Byte_StringEntry fileName;
+				}
+				else
+				{
+					PXFlag_Byte flags;
+					Byte_StringEntry fileName;
+					//Printf("%s\n", fileName.theString);
+					//Printf("%s\n", fileName.theString);
+					for(i2 = 0; i2 < 4; i2++ )
+					{
+						struct PaddingChecker
+						{
+							byte dmy;
+							if (dmy == 0x00)
+							{
+								//FSkip(1);
+								//break;
+							}
+							else
+							{
+								break;
+							}
+						} padChk<hidden = true>;
+						if (padChk.dmy != 0x00)
+						{
+							FSkip(-1);
+							break;
+						}
+					}
+					//idk
+					uint32 checkForUnusuallyLargeNum<hidden=true>;
+					FSkip(-4);
+					if (checkForUnusuallyLargeNum >= 10000000)
+					{
+						FSkip(-1);
+					}
+					uint32 cSz;
+				}
+				/*byte type;
+				FSkip(3);
+				uint32 unk;*/
+			} mentry;
+		}
+	} fmd;
+	/*struct FileEntries
+	{
+		for (i = 0; i < files; i++)
+		{
+			struct FileEntry
+			{
+				//byte data[fmd.mentry[i].cSz];
+				if (fmd.mentry[i].flags == 0)
+				{
+					byte data[fmd.mentry[i].uncDSz];
+				}
+				else if (PXBinDataVer == 0)
+				{
+					byte data[fmd.mentry[i].cSz];
+				}
+				else
+				{
+					byte chunkType;
+					if (PXBinDataVer == 0)
+					{
+						uint16 chunkSz;
+					}
+					else
+					{
+						byte chunkSz[3];
+					}
+					if (chunkType < 2 && chunkType != 0)
+					{
+						uint16 chunkCSz;
+					}
+					else if (chunkType == 4 || chunkType == 14)
+					{
+						byte chunkCSz[3];
+					}
+					else
+					{
+						Printf("Error!");	 
+					}
+				}
+			} fen;
+		}
+	} fens;*/
+} PXP;
