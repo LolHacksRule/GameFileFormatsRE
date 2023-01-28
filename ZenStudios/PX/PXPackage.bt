@@ -54,12 +54,14 @@ struct ZenStudios_PinballXPackage
 		byte PXP[PXPSz];
 		break;
 	}
-	if (PXBinDataVer == 2)
+	if (PXBinDataVer == 2) //ZP1 PS3 and PFX3 Win10 because Zen, haven't tested others
 	{
-		uint16 unk[2];
-		uint16 unk2[2];
-		uint16 unk3[2];
-		uint32 unk4[2];
+        //why
+		uint16 unk[2]; //the other is 3d90
+		uint16 unk2[2]; //the other is ccf8
+		uint16 unk3[2]; //the other is 3990
+		uint32 unk4; //Some other CRC?
+        uint32 metaTableCRC32;
 	}
 	struct FileMetaData
 	{
