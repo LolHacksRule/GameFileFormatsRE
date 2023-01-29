@@ -27,6 +27,17 @@ typedef enum <byte>
 struct ZenStudios_PinballXPackage
 {
 	LittleEndian();
+    uint32 checkForFunkyMetaHdr<hidden=true>;
+    FSkip(-4);
+    if (checkForFunkyMetaHdr == 2937534864)
+    {
+        struct FunkyMetaData
+        {
+            uint32 funkyMetaMagic;
+            uint32 strSz;
+            char hashedStr[strSz];
+        } fmd;
+    }
 	uint32 PXBinaryHdr;
 	uint32 PXBinDataType;
 	uint32 PXBinDataVer;
@@ -56,7 +67,7 @@ struct ZenStudios_PinballXPackage
 	}
 	if (PXBinDataVer == 2) //ZP1 PS3 and PFX3 Win10 because Zen, haven't tested others
 	{
-        //why
+        //why, if these mismatch game dies
 		uint16 unk[2]; //the other is 3d90
 		uint16 unk2[2]; //the other is ccf8
 		uint16 unk3[2]; //the other is 3990
