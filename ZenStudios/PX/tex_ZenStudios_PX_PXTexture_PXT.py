@@ -82,7 +82,7 @@ def noepyLoadRGBA(texData, texList):
         print("ETC") #this byte is inconsistent
         texData = rapi.callExtensionMethod("etc_decoderaw32", texData, texWidth, texHeight, "rgb")
         texFmt = noesis.NOESISTEX_RGBA32
-    elif texFmt == 0xE1:    
+    elif texFmt == 0xE1 or texFmt == 0xE2 :    
         #texData = deswizzle(texWidth, texHeight, 1, texFmt, 0, 1, 4, 4, 256, 32, 0, 0, texData)
         print("WiiU Swizzled RGBA8888\nCannot deswizzle currently!")
         texData = rapi.imageDecodeRaw(texData, texWidth, texHeight, "r8 g8 b8 a8")
