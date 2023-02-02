@@ -15,12 +15,17 @@
 
 typedef enum <uint32>
 {
-	 PXFlagU32_Raw = 0,
+    PXFlagU32_Raw = 0,
+    PXFlagU32_UseCompression = 2,
+    PXFlagU32_UseCompression_Legacy,
 } PXFlag_U32;
 
 typedef enum <byte>
 {
-	 PXFlagByte_Raw = 0
+	PXFlagByte_Raw = 0,
+    PXFlagByte_UseCompression = 2,
+    PXFlagByte_UseCompression_Legacy,
+    PXFlagByte_UseCompression_2014,
 } PXFlag_Byte;
 
 
@@ -65,7 +70,7 @@ struct ZenStudios_PinballXPackage
 		byte PXP[PXPSz];
 		break;
 	}
-	if (PXBinDataVer == 2) //ZP1 PS3 and PFX3 Win10 because Zen, haven't tested others
+	if (PXBinDataVer == 2) //ZP1 PS3, ZP2 patch wiiu and PFX3 Win10 because Zen, haven't tested others
 	{
         //why, if these mismatch game dies
 		uint16 unk[2]; //the other is 3d90
@@ -118,10 +123,15 @@ struct ZenStudios_PinballXPackage
 					//idk
 					uint32 checkForUnusuallyLargeNum<hidden=true>;
 					FSkip(-4);
-					if (checkForUnusuallyLargeNum >= 10000000)
+					if (checkForUnusuallyLargeNum >= 10000000 && checkForUnusuallyLargeNum != 1179011410)
 					{
 						FSkip(-1);
 					}
+                    //If reading 2008 PXP, comment out this and the below value
+                    if (flags == 3)
+                    {
+                        uint32 legacyCsz;
+                    }
 					uint32 cSz;
 				}
 				/*byte type;

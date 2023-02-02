@@ -22,6 +22,7 @@ typedef enum <uint32>
     PX_XBOX360_SWIZZLED_DXT_UNK = 80,
     PX_XBOX360_SWIZZLED_UNK2 = 84,
     PX_PSP2_SWIZZLED_ATI1L_UNK = 100,
+    PX_PVRTC4_LEGACY = 128, //2008 RollerCoaster
     PX_PVRTC4 = 130,
     PX_PVRTC4A,
     PX_ETC2_RGB = 138, //Is this ETC1 or ETC2?
@@ -48,7 +49,7 @@ struct ZenStudios_PinballXTexture
     PX_TexFmt texFmt;
     uint32 width;
     uint32 height;
-    if (PXBinDataType == 12)
+    if (PXBinDataType == 12 || PXBinDataType == 16)
     {
         uint32 mips;
         if (texFmt >= 224)
