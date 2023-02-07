@@ -1,0 +1,70 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: PXBinaryDataBase.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//ONLY TESTED ON PVZ X360!
+
+#include "../../LHR/Common.bt"
+#include "GLCommon.bt"
+
+typedef struct TableInfoObject
+{
+    GL_DataType theDataType;
+    Byte_StringEntry ObjectName;
+    uint64 unk[2]; //Class?
+    //FSkip(1);
+    byte UniqueTableID;
+    Byte_Bool UseDLCRoot;
+    Byte_StringEntry DataPath;
+    Byte_StringEntry NameKey;
+    Byte_StringEntry HTPPagePrefix;
+    Byte_StringEntry LogoTextureName;
+    Byte_StringEntry DropTargetIconName;
+    Byte_StringEntry SaveGameIconName;
+    Byte_StringEntry NameVOFile;
+};
+
+typedef struct ScoreBoardListObject
+{
+    Byte_StringEntry SomeString;
+    FSkip(15);
+    uint16 ScoreBoardID;
+    GL_ConstantType Type;
+    Byte_StringEntry NameID;
+};
+
+typedef struct
+{
+    for (i = 0; i < 5; i++)
+    {
+        ScoreBoardListObject ScoreBoardListObjectData;
+    }
+} ScoreBoardListArray;
+
+struct ZenStudios_PinballXBinaryDataBase
+{
+    
+    BigEndian();
+    TableInfoObject TableInfoObjectData;
+    //Byte_StringEntry SomeString;
+    ScoreBoardListArray ScoreBoardListArrayData;
+    /*while (FPos < EOF)
+    {
+        //DataType theDataType;
+        if (theDataType == 3)
+        {
+            ScoreBoardListObject ArrayData;
+        }
+        Byte_StringEntry nextEntryName;
+        FPos = FTell();
+    }*/
+} bdb;

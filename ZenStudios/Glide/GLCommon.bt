@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint16>
+{
+    GLDT_EndXMLNode = -1,
+    GLDT_Array = 3,
+    GLDT_Object = 6,
+    GLDT_FuncEnd = 11,
+} GL_DataType;
+
+typedef enum <uint32>
+{
+    GLCT_FINAL_SCORE,
+    GLCT_SCORE_PER_SEC,
+    GLCT_SCORE_SPEED, 
+    GLCT_SCORE_MULTI, 
+} GL_ConstantType;

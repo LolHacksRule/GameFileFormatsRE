@@ -20,37 +20,44 @@ typedef enum <uint32>
     PXFlagU32_UseCompression_Legacy,
 } PXFlag_U32;
 
-typedef enum <byte>
+typedef enum <ubyte>
 {
 	PXFlagByte_Raw = 0,
     PXFlagByte_UseCompression = 2,
     PXFlagByte_UseCompression_Legacy,
     PXFlagByte_UseCompression_2014,
-} PXFlag_Byte;
+} PXFlag_UByte;
+
+typedef enum <uint32>
+{
+	PXPType_Simple = 1,
+    PXPType_Hashed,
+    PXPType_XORed, //PFX3 / Zen Pinball mobile newer
+} PXPType;
 
 
 struct ZenStudios_PinballXPackage
 {
 	LittleEndian();
-    uint32 checkForFunkyMetaHdr<hidden=true>;
+    uint32 checkForJenkinsHashHdr<hidden=true>;
     FSkip(-4);
-    if (checkForFunkyMetaHdr == 2937534864)
+    if (checkForJenkinsHashHdr == 2937534864)
     {
-        struct FunkyMetaData
+        struct JenkinsHash
         {
-            uint32 funkyMetaMagic;
+            uint32 jenkinsHasherMagic;
             uint32 strSz;
             char hashedStr[strSz];
-        } fmd;
+        } jh;
     }
 	uint32 PXBinaryHdr;
 	uint32 PXBinDataType;
-	uint32 PXBinDataVer;
-	if (PXBinDataVer <= 2)
+	PXPType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
+	if (PXPDataType <= 2)
 	{
 		uint32 files;
 		uint32 metaTableSz;
-		if (PXBinDataVer == 0)
+		if (PXPDataType == 0)
 		{
 			FSkip(-4);
 		}
@@ -70,7 +77,7 @@ struct ZenStudios_PinballXPackage
 		byte PXP[PXPSz];
 		break;
 	}
-	if (PXBinDataVer == 2) //ZP1 PS3, ZP2 patch wiiu and PFX3 Win10 because Zen, haven't tested others
+	if (PXPDataType == 2) //ZP1 PS3, ZP2 patch wiiu/ps4 and PFX3 Win10 because Zen, haven't tested others
 	{
         //why, if these mismatch game dies
 		uint16 unk[2]; //the other is 3d90
@@ -87,7 +94,7 @@ struct ZenStudios_PinballXPackage
 			{
 				uint32 dataOff;
 				uint32 uncDSz;
-				if (PXBinDataVer == 0)
+				if (PXPDataType == 0)
 				{
 					uint32 cSz;
 					PXFlag_U32 flags;
@@ -95,7 +102,7 @@ struct ZenStudios_PinballXPackage
 				}
 				else
 				{
-					PXFlag_Byte flags;
+					PXFlag_UByte flags;
 					Byte_StringEntry fileName;
 					//Printf("%s\n", fileName.theString);
 					//Printf("%s\n", fileName.theString);
@@ -140,12 +147,13 @@ struct ZenStudios_PinballXPackage
 			} mentry;
 		}
 	} fmd;
-	/*struct FileEntries
+    /*
+	struct FileEntries
 	{
 		for (i = 0; i < files; i++)
 		{
 			struct FileEntry
-			{
+			{   /*
 				//byte data[fmd.mentry[i].cSz];
 				if (fmd.mentry[i].flags == 0)
 				{
@@ -178,7 +186,18 @@ struct ZenStudios_PinballXPackage
 					{
 						Printf("Error!");	 
 					}
-				}
+				}*/
+                /*if (PXPDataType == 2)
+                {
+                    if (fmd.mentry[i].flags > 0)
+                    {
+                        byte file[fmd.mentry[i].cSz];
+                    }
+                    else
+                    {
+                        byte file[fmd.mentry[i].uncDSz];
+                    }
+                }
 			} fen;
 		}
 	} fens;*/
