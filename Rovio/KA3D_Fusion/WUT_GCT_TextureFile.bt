@@ -32,6 +32,7 @@ typedef enum <uint16>
 
 typedef enum <uint16>
 {
+    Off = -1,
     IA8,
     RGB565,
     RGB5A3,
@@ -85,28 +86,28 @@ typedef struct GameCubeTexture_NotReally
 typedef struct MipHeader
 {
     contentType magic;
-        //FSkip(2);
-        uint32 dataSize; //or offset, no effect when modifying
-        uint16 xOff;
-        uint16 yOff;
-        //Useless metadata! Modify these and nothing breaks, except it's a little harder to determine the texture externally
-        uint32 dataOff; //Or header size?
-        if (dataOff == 192)
-        {
-            isWiiU = 1;
-        }
-        else
-        {
-            isWii = 1;
-        }
-        uint32 width;
-        uint32 height;
-        uint16 unk2[2];
-        if (isWii)
-        {
-            uint32 unk;
-        }
-        //Useless metadata end
+    //FSkip(2);
+    uint32 dataSize; //or offset, no effect when modifying
+    uint16 xOff;
+    uint16 yOff;
+    //Useless metadata! Modify these and nothing breaks, except it's a little harder to determine the texture externally
+    uint32 dataOff; //Or header size?
+    if (dataOff == 192)
+    {
+        isWiiU = 1;
+    }
+    else
+    {
+        isWii = 1;
+    }
+    uint32 width;
+    uint32 height;
+    uint16 unk2[2];
+    if (isWii)
+    {
+        uint32 unk;
+    }
+    //Useless metadata end
 };
 
 struct Fusion_Nintexture

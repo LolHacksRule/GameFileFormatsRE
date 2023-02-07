@@ -17,7 +17,7 @@
 
 
 //local uint i<hidden = true> = 0;
-local uint i2<hidden = true> = 0;
+//local uint i2<hidden = true> = 0;
 
 struct ABPSP_Arc
 {

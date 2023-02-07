@@ -14,13 +14,20 @@
 typedef enum <byte>
 {
     BGRA8888 = 0x85,
-    DXT1 = 0x86,
+    DXT1,
     DXT5 = 0x88,
 } texFmt;
 
 struct GlobalTexture
 {
-    BigEndian();
+    BigEndian(); //Force BE for start
+    int32 chk<hidden=true>;
+    FSkip(-4);
+    if (chk < 0) //fix LE detect for PC
+    {
+        LittleEndian();
+    }
+    //The format this will read has changed to outland_mod.bms.
     int32 unk[4];
     texFmt textureFormat;
     byte mips;
