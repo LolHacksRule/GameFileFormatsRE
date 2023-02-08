@@ -30,10 +30,10 @@ typedef enum <ubyte>
 
 typedef enum <uint32>
 {
-	PXPType_Simple = 1,
-    PXPType_Hashed,
-    PXPType_XORed, //PFX3 / Zen Pinball mobile newer
-} PXPType;
+	PinballXPackageVariantType_Simple = 1,
+    PinballXPackageVariantType_Hashed,
+    PinballXPackageVariantType_XORed, //PFX3 (PC) / Zen Pinball mobile newer
+} PinballXPackageVariantType;
 
 
 struct ZenStudios_PinballXPackage
@@ -52,7 +52,7 @@ struct ZenStudios_PinballXPackage
     }
 	uint32 PXBinaryHdr;
 	uint32 PXBinDataType;
-	PXPType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
+	PinballXPackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
 	if (PXPDataType <= 2)
 	{
 		uint32 files;
@@ -66,13 +66,17 @@ struct ZenStudios_PinballXPackage
 	}
 	else
 	{
-		Printf("PXP v3 is WIP!");
+		Printf("PXP XOR variant is WIP!");
 		uint64 PXPSz;
-        //byte dmy[32];
-		//uint32 szl;
+        byte dmy[32];
+		uint32 sz;
+        uint32 xSz[2];
+        uint32 xorSz;
+        uint32 XORMetaTableCryptKey;
+        uint32 XORMetaTableCRC32;
         //byte dmy2[36];
         //uint32 files;
-        //byte XORMeta[szl];
+        byte XORMeta[sz];
 		FSeek(0);
 		byte PXP[PXPSz];
 		break;

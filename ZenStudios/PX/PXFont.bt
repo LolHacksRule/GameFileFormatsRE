@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: PXFont.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint16>
+{
+    UNKNOWN_1 = 0, //Smth for mobile, PC, PS3 and vita
+    PXFont_CTR_ETC1SPLITALPHA,
+    PXFont_RGBA8888, //Android
+    PXFont_WiiU_DXT5 = 5,
+} PX_FontTexFmt;
+
+struct ZenStudios_PinballXFont
+{
+    LittleEndian();
+    PX_FontTexFmt texFmt;
+    uint16 width;
+    uint16 height;
+    //Read the texture data at 0x06 and that's the format
+} PXFONT;

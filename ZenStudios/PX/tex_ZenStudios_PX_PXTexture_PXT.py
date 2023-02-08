@@ -18,7 +18,6 @@ def noepyCheckType(texData):
 def noepyLoadRGBA(texData, texList):
     bs = NoeBitStream(texData)
     bs.seek(0x8)
-    #ver = bs.readByte() #Afaik I only found 01
     texFmt = bs.readInt()
     texWidth = bs.readInt()
     texHeight = bs.readInt()
