@@ -16,7 +16,10 @@
 //Original sources
 //http://www.metroid2002.com/retromodding/wiki
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
-//This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo!
+//This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine but I haven't tested it
+
+//For DKCTF only idk
+
 local string MessageTableBinDir = "Interface/messages/";
 local string GFXDir = "Interface/swfs/";
 local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
@@ -496,8 +499,8 @@ typedef struct
     {
         FormDescriptor MaterialForm;
     }
-    struct SPlatformData
-    {
+    //struct SPlatformData
+    //{
         ChunkDescriptor ShaderPlatformChunkDesc;
         //WIP!
         //U32_Bool useTOC;
@@ -582,7 +585,7 @@ typedef struct
             }
         } smids;*/
         byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
-    } SPlatform;
+    //} SPlatform;
 } ShaderPlatformContent;
 
 typedef struct ShaderMaterialIdentifier
@@ -613,14 +616,14 @@ typedef struct
     if (isPack)
     {
         FormDescriptor SwooshParticleSystemFormDescriptor;
-        //byte SwooshParticleSystemDataBlock[SwooshParticleSystemFormDescriptor.dataSize];
+        //byte SwooshParticleSystemDescBlock[SwooshParticleSystemFormDescriptor.dataSize];
     }
     struct DescriptionChunkData
     {
         ChunkDescriptor DescriptionChunk;
-        byte SwooshParticleSystemDataBlock[DescriptionChunk.dataSize];
+        byte SwooshParticleSystemDescBlock[DescriptionChunk.dataSize];
     } dchd;
-    //uint16 unk[2];
+    //GenericAssetHeader theDescChunkHdr;
 } SwooshParticleSystemChunk;
 
 typedef struct
@@ -705,8 +708,8 @@ typedef struct
         FormDescriptor ScaleformGFXLibraryFormDescriptor;
         //byte ScaleformGFXLibraryDataBlock[ScaleformGFXLibraryFormDescriptor.dataSize];
     }
-    struct GFXLibData
-    {
+    //struct GFXLibData
+    //{
         ChunkDescriptor GFXLChunk;
         struct GFXLibChunkData 
         {
@@ -754,7 +757,7 @@ typedef struct
             FSkip(-8);
             byte theGFXFile[swfSize];
         } gfxcd;
-    } gfxld;
+    //} gfxld;
 } ScaleformGFXLibraryChunk;
 
 typedef struct
@@ -763,17 +766,18 @@ typedef struct
     {
         FormDescriptor AnimationFormDescriptor;
     }
-    //struct AnimationData
-    //{
+    struct AnimationData
+    {
+        GenericAssetHeader animHdr;
         if (isPack)
         {
-            byte AnimationDataBlock[AnimationFormDescriptor.dataSize];
+            byte AnimationDataBlock[AnimationFormDescriptor.dataSize-4];
         }
         else
         {
-            byte AnimationDataBlock[ContentForm.dataSize];
+            byte AnimationDataBlock[ContentForm.dataSize-4];
         }
-    //} ad;
+    } ad;
 } AnimationChunk;
 
 typedef struct
@@ -795,8 +799,8 @@ typedef struct
     {
         FormDescriptor FlashGFXFormDescriptor;
     }
-    struct GFX
-    {
+    //struct GFX
+    //{
         ChunkDescriptor FlashGFXChunkDescriptor;
         /*struct GFXData
         {
@@ -846,7 +850,7 @@ typedef struct
         } gfxd;*/
         //for now read it in bytes idk how to make 010 detect the whole thing
         byte theGFXFiles[FlashGFXChunkDescriptor.dataSize];
-    } gfx;
+    //} gfx;
 } FlashGFXChunk;
 
 typedef struct
@@ -991,7 +995,7 @@ typedef struct
     }
     else
     {
-        //byte RoomData[ContentForm.dataSize];
+        byte RoomData[ContentForm.dataSize];
         //is meta part of this?
     }
     
@@ -1321,19 +1325,19 @@ typedef struct
     {
         FormDescriptor SkeletonDataFormDescriptor;
     }
-    //struct SkeletonData
-    //{
+    struct SkeletonData
+    {
+        GenericAssetHeader theSkeletonDataHdr;
         if (isPack)
         {
             //FSkip(-32);
-            byte SkeletonData[SkeletonDataFormDescriptor.dataSize];
+            byte SkeletonData[SkeletonDataFormDescriptor.dataSize-4];
         }
         else
         {
-            byte SkeletonData[ContentForm.dataSize];
+            byte SkeletonData[ContentForm.dataSize-4];
         }
-        /*uint16 magic;
-        uint16 ver;
+        /*
         struct JointNameArray
         {
             uint32 unk;
@@ -1349,7 +1353,7 @@ typedef struct
                 }
             } jn;
         } jna;*/
-    //} skd;
+    } skd;
 } SkeletonChunk;
 
 typedef struct
@@ -1388,8 +1392,8 @@ typedef struct
         }
         else
         {
-            struct MaterialData
-            {
+            //struct MaterialData
+            //{
                 uint16 zlibCheck<hidden=true>;
                 FSkip(-2);
                 if (zlibCheck == 30938)
@@ -1412,7 +1416,7 @@ typedef struct
                     } mi;*/
                     ShaderPlatformContent PlatChunk;
                 }
-            } mtrld;
+            //} mtrld;
         }
     }
 } MaterialChunk;
@@ -1550,7 +1554,7 @@ typedef struct
     }
     if (AssetType == Texture)
     {
-        extensionToAdd = "ctex"; //There's also ctexarray and ctex3d but how is that determined
+        extensionToAdd = "ctex/ctexarray/ctex3d"; //There's also ctexarray and ctex3d but how is that determined
         addExtension = 1;
     }
     GUID AssetID;
@@ -1730,8 +1734,8 @@ typedef struct
     {
         FormDescriptor DependencyGroupFormDescriptor;
     }
-    struct DependencyGroupData
-    {
+    //struct DependencyGroupData
+    //{
         uint32 dependencies;
         for (i = 0; i < dependencies; i++)
         {
@@ -1741,7 +1745,7 @@ typedef struct
                 GUID AssetID;
             } dependency;
         }
-    } dgd;
+    //} dgd;
 } DependencyGroupChunk;
 
 typedef struct
@@ -2214,8 +2218,8 @@ typedef struct
     {
         FormDescriptor UINFFormDescriptor;
     }
-    struct UniverseInfoData
-    {
+    //struct UniverseInfoData
+    //{
         GUID UniverseMessageTableGUID;
         GUID SaveSlotMessageTableGUID;
         GUID LoadingAudioGUID;
@@ -2243,7 +2247,7 @@ typedef struct
             }
         }
         terminateUINF = 0;
-    } universeInfo;
+    //} universeInfo;
 } UniverseInfoChunk;
 
 typedef struct
@@ -2309,8 +2313,11 @@ typedef struct
     struct GPSData
     {
         ChunkDescriptor DescChunkHdr;
-        GenericAssetHeader theHdr;
-        byte theGPSFile[DescChunkHdr.dataSize-4];
+        struct DescBlock
+        {
+            GenericAssetHeader theHdr;
+            byte theGPSFile[DescChunkHdr.dataSize-4];
+        } descblk;
     } d;
 } GenericParticleSystemChunk;
 
