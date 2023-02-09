@@ -621,7 +621,8 @@ typedef struct
     struct DescriptionChunkData
     {
         ChunkDescriptor DescriptionChunk;
-        byte SwooshParticleSystemDescBlock[DescriptionChunk.dataSize];
+        GenericAssetHeader DESCChunkAssetHdr;
+        byte SwooshParticleSystemDescBlock[DescriptionChunk.dataSize-4];
     } dchd;
     //GenericAssetHeader theDescChunkHdr;
 } SwooshParticleSystemChunk;
@@ -799,8 +800,8 @@ typedef struct
     {
         FormDescriptor FlashGFXFormDescriptor;
     }
-    //struct GFX
-    //{
+    struct GFX
+    {
         ChunkDescriptor FlashGFXChunkDescriptor;
         /*struct GFXData
         {
@@ -850,7 +851,7 @@ typedef struct
         } gfxd;*/
         //for now read it in bytes idk how to make 010 detect the whole thing
         byte theGFXFiles[FlashGFXChunkDescriptor.dataSize];
-    //} gfx;
+    } gfx;
 } FlashGFXChunk;
 
 typedef struct
@@ -884,14 +885,20 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor AnimationTransformDataFormDescriptor;
-        byte AnimationTransformData[AnimationTransformDataFormDescriptor.dataSize];
+        FormDescriptor AnimationTransformFormDescriptor;
+        //byte AnimationTransformData[AnimationTransformFormDescriptor.dataSize-24];
     }
-    else
+    struct AnimationTransformData
     {
-        byte AnimationTransformData[ContentForm.dataSize];
+        ChunkDescriptor AnimationTransformChunkDescriptor;
+        GenericAssetHeader AnimationTransformAssetHdr;
+        byte AnimationTransformData[AnimationTransformChunkDescriptor.dataSize-4];
+    } xfrmd;
+    /*else
+    {
+        //byte AnimationTransformData[ContentForm.dataSize];
         //is meta part of this?
-    }
+    }*/
 } AnimationTransformChunk;
 
 typedef struct
