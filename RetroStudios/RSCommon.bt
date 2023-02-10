@@ -1259,17 +1259,18 @@ typedef struct
     if (isPack)
     {
         RS_FormDescriptor CharacterChunkFormDescriptor;
-        byte CharacterChunkData[CharacterChunkFormDescriptor.dataSize];
+        //byte CharacterChunkData[CharacterChunkFormDescriptor.dataSize];
     }
-    else
+    /*else
     {
         byte CharacterData[ContentForm.dataSize];
         //is meta part of this?
-    }
-    /*struct CharacterData
+    }*/
+    struct CharacterData
     {
         RS_GenericAssetHeader theCharChunkAssetHdr;
-        struct CharInfo
+        byte CharacterData[CharacterChunkFormDescriptor.dataSize-4];
+        /*struct CharInfo
         {
             byte unk[16];
             byte flags[3];
@@ -1313,8 +1314,8 @@ typedef struct
                 int32 hashNode;
             }
         } aim;
-        RS_AABox mainAABox;
-    } charData;*/
+        RS_AABox mainAABox;*/
+    } charData;
 } CharacterChunk;
 
 typedef struct
