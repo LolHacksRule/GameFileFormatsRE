@@ -19,14 +19,17 @@
 //Original sources
 //http://www.metroid2002.com/retromodding/wiki
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
-//This was ported to aid with studying those 3d games from Retro's RUDE Engine. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine but I haven't tested it
+//This was ported to aid with studying those 3d games from Retro's RUDE Engine. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine
+
+//DKCTF
 
 local string MessageTableBinDir = "Interface/messages/";
-local string GFXDir = "Interface/swfs/";
+local string DKCTF_GFXDir = "Interface/swfs/";
 local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
 local string AudioDir = "audio/";
-local string WorldDir = "Worlds/"; //World files probably reside in Worlds/pakname, ie b00_mangrove_seaLion.rsd from Worlds/w01/b00_mangrove_seaLion.pak would reside in Worlds/w01_mangrove, the only one we do know is Worlds/UI/FrontEndLevel.rsd in UI.pak
+local string RUDE_WorldDir = "Worlds/"; //World files probably reside in Worlds/pakname, ie b00_mangrove_seaLion.rsd from Worlds/w01/b00_mangrove_seaLion.pak would reside in Worlds/w01_mangrove, the only one we do know is Worlds/UI/FrontEndLevel.rsd in UI.pak
 
+//Manual flags
 local uint i3<hidden=true> = 0;
 //local uint totalLayerCount<hidden=true> = 0;
 //local uint i2<hidden=true> = 0;
@@ -48,11 +51,15 @@ local uint isPack <hidden=true> = 0; //A fix for detecting pack and not reusing 
 local uint isWMDL <hidden=true> = 0;
 local uint isSMDL <hidden=true> = 0;
 local uint isNX <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead of static strings and also newer audio samples and message tables
+local uint isLEChecked <hidden=true> = 0; //Check for LE (Prime1R)
+local uint isLE <hidden=true> = 0; //Validate / force LE (Prime1R)
+local uint gameLangs = 0; //Game languages, autodetected
+
 
 struct RUDEFile
 {
     BigEndian(); 
-    //Well Retro finally made NX builds use LE which messes this up
+    //Well Retro finally made NX builds use LE which messes this up, let's keep swapping back from BE and LE
     FormDescriptor ContentForm;
     if (ContentForm.hdr == Export) //Read individual uncompressed shader file (WIP!)
     {
@@ -151,13 +158,13 @@ struct RUDEFile
     {
         FiniteStateMachineChunk FiniteStateMachineContent;
     }
-    if (ContentForm.contentType == FlashGFX)
+    if (ContentForm.contentType == DKCTF_FlashGFX)
     {
-        FlashGFXChunk FlashGFXContent;
+        DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
     }
-    if (ContentForm.contentType == ScaleformGFXLibrary)
+    if (ContentForm.contentType == DKCTF_ScaleformGFXLibrary)
     {
-        ScaleformGFXLibraryChunk ScaleformGFXLibraryContent;
+        DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
     }
     if (ContentForm.contentType == Collision)
     {

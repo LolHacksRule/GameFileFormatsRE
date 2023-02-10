@@ -34,7 +34,7 @@ typedef enum <uint32>
     Export = 1163415636,
     ExtendedTransformAnimation = 1481003597,
     FiniteStateMachine = 1179864387,
-    FlashGFX = 1195792416, //DKCTF
+    DKCTF_FlashGFX = 1195792416, //DKCTF
     Font = 1414418246,
     GPUCompressed = 1196447008,
     GeneratedGameObjectChunk = 1195855682,
@@ -64,7 +64,7 @@ typedef enum <uint32>
     RoomHeader = 1380796484,
     RuleChunk = 1381321797,
     RuleSetConfig = 1381192771,
-    ScaleformGFXLibrary = 1195792460, //DKCTF
+    DKCTF_ScaleformGFXLibrary = 1195792460, //DKCTF
     ScriptObject = 1397901648,
     ShaderGX2  = 1397184562,
     ShaderNVN  = 1314278995,
@@ -80,7 +80,7 @@ typedef enum <uint32>
     UniverseInfo = 1430867526,
     Vertices = 1447383636,
     WorldModel = 1464681548,
-    //Translations (not sure if they are also for Prime 1 remaster
+    //Translations
     US_English = 1431520590,
     US_French = 1431520850,
     US_Spanish = 1431524176,
@@ -90,6 +90,7 @@ typedef enum <uint32>
     EU_German = 1163216709,
     EU_Italian = 1163217236,
     JA_Japanese = 1246775888,
+    KO_Korean = 1263487823,
     //Prime1Remaster!
     /*Prime1R_DataEnum,
     Prime1R_SHNT,
@@ -98,8 +99,9 @@ typedef enum <uint32>
     Prime1R_CharacterProject,
     Prime1R_CookedMap,
     Prime1R_CMID,
-    Prime1R_Electric2ParticleSystem,
-    Prime1R_FMV, //Full Motion Video?
+    Prime1R_Electric2ParticleSystem,*/
+    Prime1R_FMV = 1179473456, //Full Motion Video?
+    /*
     Prime1R_GUIFrame,
     Prime1R_InputMacro,
     Prime1R_LegacyFSM,
@@ -111,7 +113,9 @@ typedef enum <uint32>
     Prime1R_LegacyNTweak,
     Prime1R_LegacyScan,
     Prime1R_LSCN, //Level Scene?
-    Prime1R_LTPB, //Light Probe?
+    */
+    Prime1R_LightProbe = 1280593986,
+    /*
     Prime1R_LegacyUniverseHint,
     Prime1R_MIDI,
     Prime1R_MIDIBank,
@@ -445,36 +449,58 @@ typedef struct
 
 typedef struct
 {
+    BigEndian();
     DataType hdr;
-    /*if (dontCheckForLE != 1)
+    if (isLEChecked != 1)
     {
-        FSkip(-4);
-        uint32 hdrChecker<hidden=true>;
-        if (hdrChecker == 538976266)
+        uint32 dataChecker<hidden=true>;
+        if (dataChecker != 0) //assume LE
         {
             LittleEndian();
+            isLE = 1;
+            Printf("Little Endian hack!\n");
         }
-        dontCheckForLE = 1;
-    }*/
+        else
+        {
+            isLE = 0;
+        }
+        FSkip(-4);
+        isLEChecked = 1;
+    }
+    if (isLE == 1)
+    {
+        LittleEndian();
+    }
     uint64 dataSize;
     uint64 unk; //pad?
+    BigEndian();
     DataType contentType;
+    if (isLE == 1)
+    {
+        LittleEndian();
+    }
     uint32 fVer;
     uint32 dVer;
+    BigEndian();
 } FormDescriptor<bgcolor=cGreen>;
 
 typedef enum <uint32>
 {
-    CafeLZSS_Uncompressed,
-    CafeLZSS_8Bit,
-    CafeLZSS_16Bit,
-    CafeLZSS_32Bit,
-    NX_Zlib = 13,
+    LZSS_Uncompressed,
+    LZSS_8Bit,
+    LZSS_16Bit,
+    LZSS_32Bit,
+    Zlib = 13,
 } CompressionMode;
 
 typedef struct
 {
+    BigEndian();
     DataType contentType;
+    if (isLE == 1)
+    {
+        LittleEndian();
+    }
     uint64 dataSize;
     uint32 unk; //pad?
     uint64 dataOff;
@@ -490,7 +516,7 @@ typedef struct
     {
         if (isNX == 0)
         {
-            if (ContentForm.fVer == 5 && ContentForm.dVer == 5)
+            if (ContentForm.fVer >= 5 && ContentForm.dVer >= 5)
             {
                 isNX = 1;
                 Printf("NX FILE DETECTED");
@@ -499,7 +525,15 @@ typedef struct
     }
     struct MessageTable
     {
-        for (i = 0; i < 9; i++) //DKCTF has 9 localizations
+        if (MessageTableFormDesc.fVer > 5 && MessageTableFormDesc.dVer > 5)
+        {
+            gameLangs = 13;
+        }
+        else
+        {
+            gameLangs = 9;
+        }
+        for (i = 0; i < gameLangs; i++) //DKCTF has 9 localizations, MP1R has 13
         {
             struct Language
             {
@@ -723,8 +757,8 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor ScaleformGFXLibraryFormDescriptor;
-        //byte ScaleformGFXLibraryDataBlock[ScaleformGFXLibraryFormDescriptor.dataSize];
+        FormDescriptor DKCTF_ScaleformGFXLibraryFormDescriptor;
+        //byte DKCTF_ScaleformGFXLibraryDataBlock[DKCTF_ScaleformGFXLibraryFormDescriptor.dataSize];
     }
     //struct GFXLibData
     //{
@@ -777,7 +811,7 @@ typedef struct
             byte theGFXFile[swfSize];
         } gfxcd<bgcolor=cGreen>;
     //} gfxld;
-} ScaleformGFXLibraryChunk;
+} DKCTF_ScaleformGFXLibraryChunk;
 
 typedef struct
 {
@@ -816,11 +850,11 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor FlashGFXFormDescriptor;
+        FormDescriptor DKCTF_FlashGFXFormDescriptor;
     }
     struct GFX
     {
-        ChunkDescriptor FlashGFXChunkDescriptor;
+        ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
         /*struct GFXData
         {
             GUID LibGUID;
@@ -848,7 +882,7 @@ typedef struct
                 //FSkip(dataOff-20-7);
                 if (RefSWFCount == 1)
                 {
-                    byte theSWFFile[FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7 since since the CWS bit is included
+                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7 since since the CWS bit is included
                 }
                 else
                 {
@@ -861,16 +895,16 @@ typedef struct
                                 byte SWFFile[rswfes.rswfe[i].SWFSize];
                             } rswff;
                         }
-                        //byte theSWFFile[(FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+                        //byte theSWFFile[(DKCTF_FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
                     } rswffs;
-                    //byte theMainSWFFile[FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
+                    //byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
                 }
             //} mswf;
         } gfxd;*/
         //for now read it in bytes idk how to make 010 detect the whole thing
-        byte theGFXFiles[FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
+        byte theGFXFiles[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
     } gfx;
-} FlashGFXChunk;
+} DKCTF_FlashGFXChunk;
 
 typedef struct
 {
@@ -1016,10 +1050,12 @@ typedef struct
     if (isPack)
     {
         FormDescriptor RoomFormDescriptor;
+        //FormDescriptor RoomHeaderFormDescriptor;
         byte RoomData[RoomFormDescriptor.dataSize]<bgcolor=cRed>;
     }
     else
     {
+        //FormDescriptor RoomHeaderFormDescriptor;
         byte RoomData[ContentForm.dataSize]<bgcolor=cRed>;
         //is meta part of this?
     }
@@ -1553,12 +1589,12 @@ typedef struct
         extensionToAdd = "cfsm";
         addExtension = 1;
     }
-    if (AssetType == FlashGFX)
+    if (AssetType == DKCTF_FlashGFX)
     {
         extensionToAdd = "rfgfx";
         addExtension = 1;
     }
-    if (AssetType == ScaleformGFXLibrary)
+    if (AssetType == DKCTF_ScaleformGFXLibrary)
     {
         extensionToAdd = "rsgfx";
         addExtension = 1;
@@ -1589,7 +1625,7 @@ typedef struct
             Printf("NX PAK DETECTED\n");
         }
     }
-    if (isNX)
+    if (isNX || isLE)
     {
         U32_StringEntry AssetName;
         if (addExtension)
@@ -1598,7 +1634,7 @@ typedef struct
             {
                 Printf("%s%s.%s\n", MessageTableBinDir, AssetName.theString, extensionToAdd);
             }
-            else if (AssetType == FlashGFX || AssetType == ScaleformGFXLibrary)
+            else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
             {
                 Printf("%s%s.%s\n", GFXDir, AssetName.theString, extensionToAdd);
             }
@@ -1612,7 +1648,22 @@ typedef struct
             }
             else if (AssetType == UniverseInfo)
             {
-                Printf("%s%s.%s\n", WorldDir, AssetName.theString, extensionToAdd);
+                Printf("%s%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
+            }
+            else if (AssetType == Room)
+            {
+                if (AssetName.theString == "KernelMPRT")
+                {
+                    Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+                }
+                else if (AssetName.theString == "UI_HUDMPR1")
+                {
+                    Printf("UI/MPR1/%s.%s\n", AssetName.theString, extensionToAdd);
+                }
+                else
+                {
+                    Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
+                }
             }
             else
             {
@@ -1633,9 +1684,9 @@ typedef struct
             {
                 Printf("%s%s.%s\n", MessageTableBinDir, AssetName, extensionToAdd);
             }
-            else if (AssetType == FlashGFX || AssetType == ScaleformGFXLibrary)
+            else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
             {
-                Printf("%s%s.%s\n", GFXDir, AssetName, extensionToAdd);
+                Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName, extensionToAdd);
             }
             else if (AssetType == LooseData)
             {
@@ -1645,9 +1696,13 @@ typedef struct
             {
                 Printf("%s%s.%s\n", AudioDir, AssetName, extensionToAdd);
             }
+            else if (AssetType == Room)
+            {
+                Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
+            }
             else if (AssetType == UniverseInfo)
             {
-                Printf("%s%s.%s\n", WorldDir, AssetName, extensionToAdd);
+                Printf("%s%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
             }
             else
             {
@@ -1674,14 +1729,27 @@ typedef struct
 
 typedef struct
 {
+    BigEndian();
     DataType assetType;
     /*if (assetType == Texture)
     {
         hasTXTRMeta = 1;
     }*/
+    if (isLE != 0)
+    {
+        LittleEndian();
+    }
     GUID assetID;
+    if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
+    {
+        int32 unk[2];
+    }
     uint64 off;
     uint64 size;
+    if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
+    {
+        int64 unk2;
+    }
 } AssetEntry;
 
 typedef struct AssetEntries
@@ -1697,6 +1765,7 @@ typedef struct
 {
     ChunkDescriptor AssetDirChunkDescriptor;
     AssetEntries AssetEntriesChunk;
+    BigEndian();
 } AssetDirectory;
 
 typedef struct
@@ -1760,6 +1829,10 @@ typedef struct
     }
     struct DependencyGroupData
     {
+        if (isLE == 1)
+        {
+            LittleEndian();
+        }
         uint32 dependenciesCnt;
         struct Dependencies
         {
@@ -1861,6 +1934,10 @@ typedef struct
                     byte texFilter;
                     byte texWrap[3];
                 } tsd;
+                if (TextureFormDescriptor.fVer == 47 && TextureFormDescriptor.dVer == 51)
+                {
+                    byte MP1R_UnknownData[2];
+                }
             } thdrd<bgcolor=cGreen>;
         } thdr;
         GPUChunk theCPUChunk;
@@ -1887,6 +1964,33 @@ typedef struct
         }*/
     } mdc<bgcolor=cRed>;
 } ModelHeaderChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor UnknownDataFormDescriptor;
+    }
+    byte UnknownData[UnknownDataFormDescriptor.dataSize];
+} UnknownChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_FMVFormDescriptor;
+    }
+    byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
+} Prime1R_FMVChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_LightProbeFormDescriptor;
+    }
+    byte LightProbeData[Prime1R_LightProbeFormDescriptor.dataSize];
+} Prime1R_LightProbeChunk;
 
 typedef struct
 {
@@ -2001,6 +2105,7 @@ typedef struct
             {
                 struct RenderMesh
                 {
+                    //Needs fixes for MP1R
                     uint32 primMode;
                     uint16 mtrlCacheIdx;
                     byte vertBufIdx;
@@ -2013,6 +2118,10 @@ typedef struct
                 } rmsh;
             }
         } rmshes;
+        if (ModelFormDescriptor.fVer == 114 && ModelFormDescriptor.dVer == 125)
+        {
+            byte MP1R_UnknownData[MeshHdr.dataSize - sizeof rmshes - 4]<bgcolor=cRed>;
+        }
     } meshContent<bgcolor=cBlue>;
 } MeshChunk;
 
@@ -2125,6 +2234,19 @@ typedef struct
             ChunkDescriptor FMTAChunkDesc;
             byte FMTAData[FMTAChunkDesc.dataSize]<bgcolor=cRed>;
         } FMTA;
+        if (CSMPFormDescriptor.dVer == 31 && CSMPFormDescriptor.fVer == 31)
+        {
+            struct CRMSChunk
+            {
+                ChunkDescriptor CRMSChunkDesc;
+                byte CRMSData[CRMSChunkDesc.dataSize]<bgcolor=cRed>;
+            } CRMS;
+            struct RAS3Chunk
+            {
+                ChunkDescriptor RAS3ChunkDesc;
+                byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
+            } RAS3;
+        }
         struct DATAChunk
         {
             ChunkDescriptor DATAChunkDesc;
@@ -2395,10 +2517,10 @@ typedef struct
     }
     /*if (hasTXTRMeta)
     {
-        MetaDataChunk theMeta;
+        RUDEFormDescriptor theMeta;
     }*/
     //Fix for reading dev files
-    if (ContentForm.fVer != 1 && ContentForm.dVer != 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
+    if (TOCForm.fVer >= 1 && TOCForm.dVer >= 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
     {
         NameTagsChunk StringTableChunk;
     }
@@ -2423,7 +2545,7 @@ typedef struct
 {
     FormDescriptor TOCForm;
     TableOfContentsContent TOCC<bgcolor=cGreen>;
-} TableOfContentsChunk;
+} TableOfContentsChunk; 
 
 
 typedef struct
@@ -2446,6 +2568,7 @@ typedef struct
         {
             FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
             FSkip(-32);
+            //If you don't want to see these, append <hidden=true> to the Content end
             if (TMPCHECK.contentType == LooseData)
             {
                 LooseDataChunk LooseDataChunkContent;
@@ -2461,6 +2584,11 @@ typedef struct
             else if (TMPCHECK.contentType == Material)
             {
                 MaterialChunk TheMaterialChunk;
+                if (TheMaterialChunk.MTRLFormDescriptor.fVer == 168 && TheMaterialChunk.MTRLFormDescriptor.dVer == 168) //Prime1R! Messed up btw
+                    {
+                        uint32 unk;
+                        byte unk2;
+                    }
             }
             else if (TMPCHECK.contentType == CookedAudioSample)
             {
@@ -2512,15 +2640,26 @@ typedef struct
             }
             else if (TMPCHECK.contentType == FiniteStateMachine)
             {
+                //Messed up for MP1R
                 FiniteStateMachineChunk FiniteStateMachineContent;
             }
-            else if (TMPCHECK.contentType == FlashGFX)
+            else if (TMPCHECK.contentType == DKCTF_FlashGFX)
             {
-                FlashGFXChunk FlashGFXContent;
+                DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
             }
-            else if (TMPCHECK.contentType == ScaleformGFXLibrary)
+            else if (TMPCHECK.contentType == DKCTF_ScaleformGFXLibrary)
             {
-                ScaleformGFXLibraryChunk ScaleformGFXLibraryContent;
+                DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_FMV)
+            {
+                Prime1R_FMVChunk Prime1R_FMVContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_LightProbe)
+            {
+                Prime1R_LightProbeChunk Prime1R_LightProbeContent;
+                uint32 unk;
+                byte unk2;
             }
             else if (TMPCHECK.contentType == Collision)
             {
@@ -2564,6 +2703,7 @@ typedef struct
             }
             else
             {
+                //UnknownChunk UnknownChunkContent;
                 Printf("UNKNOWN\n");
             }
         }
@@ -2644,7 +2784,7 @@ typedef struct
         }
         if (test == Metadata)
         {
-            MetaDataChunk MetaDataContent;
+            RUDEFormDescriptor MetaDataContent;
             NameTagsChunk NameTagsContent;
         }
     }*/
