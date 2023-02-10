@@ -54,6 +54,7 @@ local uint isNX <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead
 local uint isLEChecked <hidden=true> = 0; //Check for LE (Prime1R)
 local uint isLE <hidden=true> = 0; //Validate / force LE (Prime1R)
 local uint gameLangs = 0; //Game languages, autodetected
+//local uint compressedResources = 0; //Compressed resources (MP1R), autodetected
 
 
 struct RUDEFile
@@ -187,6 +188,20 @@ struct RUDEFile
     if (ContentForm.contentType == RuleSetConfig)
     {
         RuleSetConfigChunk RuleSetConfigContent;
+    }
+    if (ContentForm.contentType == Prime1R_DataEnum)
+    {
+        Prime1R_DataEnumChunk Prime1R_DataEnumContent;
+    }
+    if (ContentForm.contentType == GenericHeader)
+    {
+        /*uint32 checkHdr;
+        FSkip(-4);
+        if (checkHdr == RoomHeader)
+        {
+            RoomHeaderChunk RoomHeaderContent;
+        }*/
+        Printf("Reading an unknown header is unsupported.");
     }
     if (ContentForm.contentType == DynamicCollision)
     {

@@ -35,7 +35,7 @@ typedef enum <uint32>
     ExtendedTransformAnimation = 1481003597,
     FiniteStateMachine = 1179864387,
     DKCTF_FlashGFX = 1195792416, //DKCTF
-    Font = 1414418246,
+    Font = 1179602516,
     GPUCompressed = 1196447008,
     GeneratedGameObjectChunk = 1195855682,
     GeneratedScriptObject = 1196642896,
@@ -92,7 +92,8 @@ typedef enum <uint32>
     JA_Japanese = 1246775888,
     KO_Korean = 1263487823,
     //Prime1Remaster!
-    /*Prime1R_DataEnum,
+    Prime1R_DataEnum = 1162761549,
+    /*
     Prime1R_SHNT,
     Prime1R_BakedLightingLookup,
     Prime1R_CookedAudioSampleBank,
@@ -125,7 +126,9 @@ typedef enum <uint32>
     Prime1R_Vibration,
     Prime1R_SamplerVoiceBank,
     Prime1R_ShaderGraph,
-    Prime1R_ShaderHint,
+    */
+    Prime1R_ShaderHint = 1397247572,
+    /*
     Prime1R_SaveGame, //SaveGame
     Prime1R_VectorField,
     Prime1R_Sand, //Unused
@@ -525,7 +528,7 @@ typedef struct
     }
     struct MessageTable
     {
-        if (MessageTableFormDesc.fVer > 5 && MessageTableFormDesc.dVer > 5)
+        if ((isPack && MessageTableFormDesc.fVer == 10 && MessageTableFormDesc.dVer == 10) || (!isPack && ContentForm.fVer == 10 && ContentForm.dVer == 10))
         {
             gameLangs = 13;
         }
@@ -1424,7 +1427,7 @@ typedef struct
     {
         FormDescriptor MTRLFormDescriptor;
     }
-    if (ContentForm.fVer == 10 && ContentForm.fVer == 10)
+    if (ContentForm.fVer >= 10 && ContentForm.fVer >= 10)
     {
         isSDX = 1;
         ChunkDescriptor MTRLChunkDesc;
@@ -1742,13 +1745,18 @@ typedef struct
     GUID assetID;
     if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
     {
-        int32 unk[2];
+        int32 unk[2]; //TXTR: 47,51, SHNT: 4,4, MTRL: 168,168, LDTA: 11,12, ENUM: 5,5, SWSH: 61,62, MSBT: 10,10, DGRP, 3,3, FONT: 18,18, ROOM: 147,160, FSMC: 23,23, FMV: 7,7, CSMP: 31,31, LTPB: 66,73
     }
     uint64 off;
     uint64 size;
     if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
     {
-        int64 unk2;
+        uint64 csize;
+        //todo
+        /*if (csize != size)
+        {
+            compressedResources++;
+        }*/
     }
 } AssetEntry;
 
@@ -1896,7 +1904,10 @@ typedef struct
         LittleEndian();
         CompressionMode theCompressionMode; 
         //swap back
-        BigEndian();
+        if (!isLE)
+        {
+            BigEndian();
+        }
         byte theCompressedContent[GPU.dataSize-4];
     } GPUChunkContent;
 } GPUChunk<bgcolor=cPurple>;
@@ -1934,9 +1945,9 @@ typedef struct
                     byte texFilter;
                     byte texWrap[3];
                 } tsd;
-                if (TextureFormDescriptor.fVer == 47 && TextureFormDescriptor.dVer == 51)
+                if ((isPack && TextureFormDescriptor.fVer == 47 && TextureFormDescriptor.dVer == 51) || (!isPack && ContentForm.fVer == 47 && ContentForm.dVer == 51))
                 {
-                    byte MP1R_UnknownData[2];
+                    uint16 MP1R_UnknownData;
                 }
             } thdrd<bgcolor=cGreen>;
         } thdr;
@@ -1980,8 +1991,23 @@ typedef struct
     {
         FormDescriptor Prime1R_FMVFormDescriptor;
     }
-    byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
+    byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]<bgcolor=cLtBlue>; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
 } Prime1R_FMVChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_FMVFormDescriptor;
+    }
+    LittleEndian();
+    struct DataEnum
+    {
+        uint32 entries;
+        uint64 enumEntry[entries];
+        uint32 unk;
+    } dataEnum;
+} Prime1R_DataEnumChunk;
 
 typedef struct
 {
@@ -2584,11 +2610,6 @@ typedef struct
             else if (TMPCHECK.contentType == Material)
             {
                 MaterialChunk TheMaterialChunk;
-                if (TheMaterialChunk.MTRLFormDescriptor.fVer == 168 && TheMaterialChunk.MTRLFormDescriptor.dVer == 168) //Prime1R! Messed up btw
-                    {
-                        uint32 unk;
-                        byte unk2;
-                    }
             }
             else if (TMPCHECK.contentType == CookedAudioSample)
             {
@@ -2658,8 +2679,6 @@ typedef struct
             else if (TMPCHECK.contentType == Prime1R_LightProbe)
             {
                 Prime1R_LightProbeChunk Prime1R_LightProbeContent;
-                uint32 unk;
-                byte unk2;
             }
             else if (TMPCHECK.contentType == Collision)
             {
@@ -2701,6 +2720,11 @@ typedef struct
                 }
                 ModelChunk ModelContent;
             }
+            //Todo detect compressed resource
+            /*else if (TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].csize != TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].size && ContentForm.fVer == 1 && && ContentForm.dVer == 1)
+            {
+                byte CompressedData[TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry.csize];
+            }*/
             else
             {
                 //UnknownChunk UnknownChunkContent;
