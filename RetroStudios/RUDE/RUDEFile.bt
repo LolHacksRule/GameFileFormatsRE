@@ -11,14 +11,15 @@
 //   History: 
 //------------------------------------------------
 
-#include "../LHR/Common.bt"
-#include "RSCommon.bt"
+#include "../../LHR/Common.bt"
+#include "RUDECommon.bt"
 //#include "Prime1Remaster.bt
+//#include "GameSpecific/DKCTF.bt"
 
 //Original sources
 //http://www.metroid2002.com/retromodding/wiki
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
-//This was ported to aid with studying those 3d games from Retro. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine but I haven't tested it
+//This was ported to aid with studying those 3d games from Retro's RUDE Engine. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine but I haven't tested it
 
 local string MessageTableBinDir = "Interface/messages/";
 local string GFXDir = "Interface/swfs/";
@@ -48,24 +49,25 @@ local uint isWMDL <hidden=true> = 0;
 local uint isSMDL <hidden=true> = 0;
 local uint isNX <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead of static strings and also newer audio samples and message tables
 
-struct RetroStudiosFile
+struct RUDEFile
 {
     BigEndian(); 
-    RS_FormDescriptor ContentForm;
+    //Well Retro finally made NX builds use LE which messes this up
+    FormDescriptor ContentForm;
     if (ContentForm.hdr == Export) //Read individual uncompressed shader file (WIP!)
     {
         FSkip(-32);
-        RS_MaterialChunk theExport;
+        MaterialChunk theExport;
         break;
     }
     if (ContentForm.contentType == Package)
     {
         isPack = 1;
-        RS_PackageChunk ThePackageContent;
+        PackageChunk ThePackageContent;
     }
     if (ContentForm.contentType == Material)
     {
-        RS_MaterialChunk TheMaterialChunk;
+        MaterialChunk TheMaterialChunk;
         if (isSDX == 1)
         {
             checkLocalMETA = 0;
@@ -73,11 +75,11 @@ struct RetroStudiosFile
     }
     if (ContentForm.contentType == RFLO)
     {
-        RS_RenderFlowChunk RFLOContent;
+        RenderFlowChunk RFLOContent;
     }
     if (ContentForm.contentType == MessageTable_MessageStudioBinaryText)
     {
-        RS_MessageTableChunk MessageTableContent;
+        MessageTableChunk MessageTableContent;
     }
     if (ContentForm.contentType == CookedAudioSample)
     {
@@ -135,7 +137,7 @@ struct RetroStudiosFile
     }
     if (ContentForm.contentType == Skeleton)
     {
-        RS_SkeletonChunk SkeletonContent;
+        SkeletonChunk SkeletonContent;
     }
     if (ContentForm.contentType == Character)
     {
@@ -182,10 +184,14 @@ struct RetroStudiosFile
     if (ContentForm.contentType == DynamicCollision)
     {
         isCLSN = 1;
+        if (ContentForm.dVer <= 2)
+        {
+            isLegacyCLSN = 1;
+        }
         DynamicCollisionChunk DynamicCollisionContent;
     }
     if (checkLocalMETA == 1)
     {
         MetaDataChunk theMeta;
     }
-} RetroStudiosFileData;
+} RUDEFileData;

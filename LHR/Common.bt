@@ -252,6 +252,12 @@ typedef struct Vector3_F32 {
     float Z;
 };
 
+typedef struct Vector3_U32 {
+	uint32 X;
+    uint32 Y;
+    uint32 Z;
+};
+
 typedef struct Vector4_F32 {
 	float X;
     float Y;
