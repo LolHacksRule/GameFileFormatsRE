@@ -16,70 +16,70 @@
 typedef enum <uint32>
 {
     AreaOctree = 1464092740,
-    Font = 1414418246,
-    LooseData = 1279546433,
-    LooseDataContentHeader = 1279542088,
-    TableOfContentsContent = 1414480707,
-    MessageTable_MessageStudioBinaryText = 1297302100,
-    RUDEFormDescriptor = 1380340301,
+    Animation = 1095649613,
+    AssetDirectory = 1094994258,
+    AudioFormatAlloc = 1179472961,
+    AudioLabel = 1279345228,
+    Character = 1128808786,
+    Collision = 1129075534,
+    ComponentChunk = 1129270608,
+    CookedAudioBusHeiarchy = 1128350280,
     CookedAudioSample = 1129532752,
     CookedAudioSoundEffect = 1128355140,
-    AssetDirectory = 1094994258,
-    CookedAudioBusHeiarchy = 1128350280,
-    DependencyGroup = 1145524816,
-    Package = 1346454347,
-    UniverseInfo = 1430867526,
-    Collision = 1129075534,
-    DynamicCollision = 1145261134,
-    Material = 1297371724,
-    ShaderX  = 1396987936,
-    ShaderGX2  = 1397184562,
-    ShaderNVN  = 1314278995,
-    Strings = 1398035015,
-    RFLO = 1380338767,
-    Mesh = 1296388936,
-    InformationBlock = 1229866575,
-    Vertices = 1447383636,
-    Triangles = 1414678867,
-    Metadata = 1296389185,
-    Texture = 1415074898,
-    GenericHeader = 1212498244,
-    TreeNode = 1414677829,
-    Room = 1380929357,
-    RoomHeader = 1380796484,
-    Export = 1163415636,
     CookedModel = 1129137228,
-    WorldModel = 1464681548,
-    SkinnedModel = 1397572684,
-    GenericParticleSystem = 1195724368,
-    Description = 1145393987,
-    Animation = 1095649613,
-    ExtendedTransformAnimation = 1481003597,
-    Skeleton = 1397441868,
-    Character = 1128808786,
-    FlashGFX = 1195792416, //DKCTF
-    ScaleformGFXLibrary = 1195792460, //DKCTF
-    FiniteStateMachine = 1179864387,
-    AudioLabel = 1279345228,
-    AudioFormatAlloc = 1179472961,
     DSPAudioData = 1145132097,
+    DependencyGroup = 1145524816,
+    Description = 1145393987,
+    DynamicCollision = 1145261134,
+    Export = 1163415636,
+    ExtendedTransformAnimation = 1481003597,
+    FiniteStateMachine = 1179864387,
+    FlashGFX = 1195792416, //DKCTF
+    Font = 1414418246,
     GPUCompressed = 1196447008,
-    SwooshParticleSystem = 1398231880,
-    RuleSetConfig = 1381192771,
-    RuleChunk = 1381321797,
-    LightProbe = 1280332354,
-    LayerHeader = 1279804740,
-    LayerChunk = 1279351122,
-    GeneratedScriptObject = 1196642896,
-    ScriptObject = 1397901648,
-    ComponentChunk = 1129270608,
     GeneratedGameObjectChunk = 1195855682,
-    PerformanceGroupChunk = 1346851408,
+    GeneratedScriptObject = 1196642896,
+    GenericHeader = 1212498244,
+    GenericParticleSystem = 1195724368,
+    InformationBlock = 1229866575,
+    LayerChunk = 1279351122,
+    LayerHeader = 1279804740,
     LevelGeneratedChunk = 1279739214,
+    LightProbe = 1280332354,
     LoadUnitChunk = 1280659028,
     LoadUnitHeader = 1280657476,
-    LoadUnitResourcesChunk = 1280460115,
     LoadUnitLayerChunk = 1280072018,
+    LoadUnitResourcesChunk = 1280460115,
+    LooseData = 1279546433,
+    LooseDataContentHeader = 1279542088,
+    Material = 1297371724,
+    Mesh = 1296388936,
+    MessageTable_MessageStudioBinaryText = 1297302100,
+    Metadata = 1296389185,
+    Package = 1346454347,
+    PerformanceGroupChunk = 1346851408,
+    RFLO = 1380338767,
+    RUDEFormDescriptor = 1380340301,
+    Room = 1380929357,
+    RoomHeader = 1380796484,
+    RuleChunk = 1381321797,
+    RuleSetConfig = 1381192771,
+    ScaleformGFXLibrary = 1195792460, //DKCTF
+    ScriptObject = 1397901648,
+    ShaderGX2  = 1397184562,
+    ShaderNVN  = 1314278995,
+    ShaderX  = 1396987936,
+    Skeleton = 1397441868,
+    SkinnedModel = 1397572684,
+    Strings = 1398035015,
+    SwooshParticleSystem = 1398231880,
+    TableOfContentsContent = 1414480707,
+    Texture = 1415074898,
+    TreeNode = 1414677829,
+    Triangles = 1414678867,
+    UniverseInfo = 1430867526,
+    Vertices = 1447383636,
+    WorldModel = 1464681548,
     //Translations (not sure if they are also for Prime 1 remaster
     US_English = 1431520590,
     US_French = 1431520850,
@@ -91,36 +91,60 @@ typedef enum <uint32>
     EU_Italian = 1163217236,
     JA_Japanese = 1246775888,
     //Prime1Remaster!
-    /*Prime1R_Enumerator,
+    /*Prime1R_DataEnum,
     Prime1R_SHNT,
-    Prime1R_CHPR, //Character Param?
-    Prime1R_ELC2, //Electric gen 2?
-    Prime1R_LFSM, //Some script macro
-    Prime1R_MATI, //Material Info?
-    Prime1R_CMAP,
-    Prime1R_GUIF, //GUI Font/File?
-    Prime1R_LMPU,
-    Prime1R_LUHR, //Load Unit Heap Room?
-    Prime1R_VECF, //Vector Float has to be, what else starts with VEC
+    Prime1R_BakedLightingLookup,
+    Prime1R_CookedAudioSampleBank,
+    Prime1R_CharacterProject,
+    Prime1R_CookedMap,
+    Prime1R_CMID,
+    Prime1R_Electric2ParticleSystem,
+    Prime1R_FMV, //Full Motion Video?
+    Prime1R_GUIFrame,
+    Prime1R_InputMacro,
+    Prime1R_LegacyFSM,
+    Prime1R_LegacyFSM2,
+    Prime1R_LegacyMapUniverse,
+    Prime1R_LegacyPathfinding,
+    Prime1R_LegacyPathfinding2,
+    Prime1R_LegacyTweak,
+    Prime1R_LegacyNTweak,
+    Prime1R_LegacyScan,
     Prime1R_LSCN, //Level Scene?
     Prime1R_LTPB, //Light Probe?
+    Prime1R_LegacyUniverseHint,
+    Prime1R_MIDI,
+    Prime1R_MIDIBank,
+    Prime1R_MaterialInstance,
     Prime1R_MCON,
-    Prime1R_LPTH, //Level path?
-    Prime1R_SVGM, //SaveGame?
-    Prime1R_CBNK, //CookedSoundBank?
-    Prime1R_CMID,
-    Prime1R_FMV0, //Full Motion Video?
+    Prime1R_MusicCue,
+    Prime1R_Vibration,
+    Prime1R_SamplerVoiceBank,
+    Prime1R_ShaderGraph,
+    Prime1R_ShaderHint,
+    Prime1R_SaveGame, //SaveGame
+    Prime1R_VectorField,
+    Prime1R_Sand, //Unused
+    Prime1R_Locator, //Unused
+    Prime1R_StreamingAudioSample, //Unused, 0x43524153
+    Prime1R_Pathfinding, //Unused, 0x43524153
+    Prime1R_ModConContainer, //Unused
+    Prime1R_Terrain, //Unused
+    Prime1R_Occlusion, //Unused
     */
-    //Prime!
-    Prime_CollisionResponseMacro = 1297306179,
-    Prime_DecalParamScriptMacro = 1297305668,
-    //Prime_ElectricScriptMacro, //Electric gen 2?
-    //Prime_WeaponScriptMacro,
+    //Prime/Metroid!
+    /*Prime_CollisionResponseSystem = 1297306179,
+    Prime_DecalSystem = 1297305668,
+    Prime_Font,
+    Prime_ElectricSystem, //Electric gen 2?
+    Prime_WeaponSystem,
+    */
 } DataType;
 
 typedef enum <uint32>
 {
     Phong = 1346915911,
+    //Reflect,
 } MaterialType;
 
 //DKCTF Enums
