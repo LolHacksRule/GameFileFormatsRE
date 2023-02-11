@@ -55,6 +55,7 @@ local uint isLEChecked <hidden=true> = 0; //Check for LE (Prime1R)
 local uint isLE <hidden=true> = 0; //Validate / force LE (Prime1R)
 local uint gameLangs = 0; //Game languages, autodetected
 //local uint compressedResources = 0; //Compressed resources (MP1R), autodetected
+//local uint currentCompressedResource = 0; //There may be a better way but for now
 
 
 struct RUDEFile
@@ -124,12 +125,14 @@ struct RUDEFile
             isSMDL = 1;
         }
         ModelChunk ModelContent;
+        //In MP1R this breaks
         checkLocalMETA = 1;
     }
     if (ContentForm.contentType == GenericParticleSystem)
     {
         GenericParticleSystemChunk GenericParticleSystemContent;
-        //checkLocalMETA = 1;
+        //In MP1R this breaks
+        checkLocalMETA = 1;
     }
     if (ContentForm.contentType == DependencyGroup)
     {
@@ -175,6 +178,7 @@ struct RUDEFile
     if (ContentForm.contentType == SwooshParticleSystem)
     {
         SwooshParticleSystemChunk SwooshParticleSystemContent;
+        //For MP1R (archived comment out)
         checkLocalMETA = 1;
     }
     if (ContentForm.contentType == Room)
@@ -189,9 +193,21 @@ struct RUDEFile
     {
         RuleSetConfigChunk RuleSetConfigContent;
     }
+    if (ContentForm.contentType == Prime1R_LightProbe)
+    {
+        Prime1R_LightProbeChunk Prime1R_LightProbeContent;
+    }
     if (ContentForm.contentType == Prime1R_DataEnum)
     {
         Prime1R_DataEnumChunk Prime1R_DataEnumContent;
+    }
+    if (ContentForm.contentType == Prime1R_FMV)
+    {
+        Prime1R_FMVChunk Prime1R_FMVContent;
+    }
+    if (ContentForm.contentType == Material_Reflect)
+    {
+        Material_ReflectChunk Material_ReflectContent;
     }
     if (ContentForm.contentType == GenericHeader)
     {

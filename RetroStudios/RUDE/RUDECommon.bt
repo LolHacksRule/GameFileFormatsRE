@@ -27,7 +27,7 @@ typedef enum <uint32>
     CookedAudioSample = 1129532752,
     CookedAudioSoundEffect = 1128355140,
     CookedModel = 1129137228,
-    DSPAudioData = 1145132097,
+    RawData = 1145132097, //Generic data
     DependencyGroup = 1145524816,
     Description = 1145393987,
     DynamicCollision = 1145261134,
@@ -53,6 +53,8 @@ typedef enum <uint32>
     LooseData = 1279546433,
     LooseDataContentHeader = 1279542088,
     Material = 1297371724,
+    Material_Phong = 1346915911,
+    Material_Reflect = 1380271692,
     Mesh = 1296388936,
     MessageTable_MessageStudioBinaryText = 1297302100,
     Metadata = 1296389185,
@@ -150,8 +152,7 @@ typedef enum <uint32>
 
 typedef enum <uint32>
 {
-    Phong = 1346915911,
-    //Reflect,
+    
 } MaterialType;
 
 //DKCTF Enums
@@ -214,14 +215,15 @@ typedef enum <uint32>{
 } TexFmt;
 
 typedef enum <uint32>{
-    SLdrPlayerMovementControls = 0x0BB87142,
-    SLdrPlayerMovementControls_field_0 = 0xE721B25B,
-    SLdrMapControls = 0x8BF97C46,
-    SLdrMiscControls = 0xC7357581,
-    SLdrDebugControls = 0x7742A311,
-    SLdrCommandControls_enum_100071d8 = 0xD972289E,
+    DKCTF_SLdrPlayerMovementControls = 0x0BB87142,
+    DKCTF_SLdrPlayerMovementControls_field_0 = 0xE721B25B,
+    DKCTF_SLdrMapControls = 0x8BF97C46,
+    DKCTF_SLdrMiscControls = 0xC7357581,
+    DKCTF_SLdrDebugControls = 0x7742A311,
+    DKCTF_SLdrCommandControls_enum_100071d8 = 0xD972289E,
     UNKNOWN_LOOSE_DATA_TEST_1 = 0xC72CC138,
     UNKNOWN_LOOSE_DATA_TEST_2 = 0x64429B5B,
+    Prime1R_SLdrGameAreaMemorySetup = 0xC0AC6B4F,
     //Components
     CEntityGOC = 0x749749F1,
 	CFakePlayerControlsGOC = 0x4EC5FA3A,
@@ -233,18 +235,18 @@ typedef enum <uint32>{
 	CEffectGOC = 0xCD098F70,
 	CRelayGOC = 0x8FE0BFC9,
 	CCounterGOC = 0xA7DB53C1,
-	CSeaLionGOC = 0xADA85938,
-	CWarusKingGOC = 0xAAEBA313,
-	CSwitchGOC = 0x05DD288E,
+	DKCTF_CSeaLionGOC = 0xADA85938,
+	DKCTF_CWarusKingGOC = 0xAAEBA313,
+	DKCTF_CSwitchGOC = 0x05DD288E,
 	CTimerGOC = 0x9E8A4940,
 	CControllerActionGOC = 0xD616EE8B,
 	CWaypointGOC = 0xD898656D,
 	CPathControlGOC = 0xF0240D23,
 	CCameraHintGOC = 0x4FE57689,
 	CTouchableTriggerGOC = 0x97E65DDD,
-	CToucherGOC = 0x1A4117AB,
+	DKCTF_CToucherGOC = 0x1A4117AB,
 	CTriggerLogicGOC = 0xC49D730E,
-	CFiniteStateMachineGOC = 0xD47974E4,
+	DKCTF_CFiniteStateMachineGOC = 0xD47974E4,
 	CCustomInterpolationGOC = 0x1349E5AC,
 	CCameraTargetGOC = 0xC1F64515,
 	CGeneratorGOC = 0xDE522669,
@@ -396,12 +398,17 @@ typedef enum <uint32>{
 	CCreditsGOC = 0xADCD416E,
 	CHUDFadeDetectorGOC = 0xA4E4FE1D,
 	CProductionFrontEndProxyGOC = 0xAF9DEA76,
-} DKCTF_CRC;
+} GameCRC;
 
 typedef struct
 {
     //Todo, add check for DKCTF and MP1R, use the right hashes
-    DKCTF_CRC FieldNameHash;
+    BigEndian();
+    GameCRC FieldNameHash;
+    if (isLE)
+    {
+        LittleEndian();
+    }
     uint16 blockSize;
     byte theFieldBlock[blockSize];
 } Field;
@@ -462,6 +469,8 @@ typedef struct
             LittleEndian();
             isLE = 1;
             Printf("Little Endian hack!\n");
+            //Force isNX too
+            isNX = 1;
         }
         else
         {
@@ -607,7 +616,7 @@ typedef struct
             {
                 struct ShaderMaterialInputDesc
                 {
-                    MaterialType theMaterial;
+                    DataType theMaterial;
                     uint16 unk;
                     uint32 shaderImportDescs;
                     struct ShaderImportDescs
@@ -640,11 +649,11 @@ typedef struct
         } smids;*/
         byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
     //} SPlatform;
-} ShaderPlatformContent;
+} ShaderPlatformChunk;
 
 typedef struct ShaderMaterialIdentifier
 {
-    MaterialType theType;
+    DataType theType;
     uint32 entries;
     struct MaterialPermutations
     {
@@ -924,7 +933,7 @@ typedef struct
     } fsmd;
     //for now
     
-    /*ChunkDescriptor FiniteStateMachineChunkDesc;
+    /*
     uint32 someCnt;
     for (i = 0; i < someCnt; i++)
     {
@@ -983,7 +992,7 @@ typedef struct
 
 typedef struct
 {
-    DKCTF_CRC ComponentTypeCRC;
+    GameCRC ComponentTypeCRC;
     if (ComponentTypeCRC == 2314479346)
     {
         //isGameObjectComponent = 1;
@@ -1434,7 +1443,7 @@ typedef struct
         struct ShaderArcData
         {
             byte theFile[MTRLChunkDesc.dataSize];
-            ShaderPlatformContent ShaderPlatformChunk;
+            ShaderPlatformChunk ShaderPlatformContent;
         } mtrld<bgcolor=cRed>;
     }
     else
@@ -1479,7 +1488,7 @@ typedef struct
                     {
                         
                     } mi;*/
-                    ShaderPlatformContent PlatChunk;
+                    ShaderPlatformChunk PlatChunk;
                 }
             //} mtrld;
         }
@@ -1639,7 +1648,7 @@ typedef struct
             }
             else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
             {
-                Printf("%s%s.%s\n", GFXDir, AssetName.theString, extensionToAdd);
+                Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName.theString, extensionToAdd);
             }
             else if (AssetType == LooseData)
             {
@@ -1815,7 +1824,7 @@ typedef struct
         //byte LooseDataBlock[ContentForm.dataSize];
     }
     //For now
-    struct LooseDataBlock_SldrGameControls
+    struct LooseDataBlock
     {
         ChunkDescriptor LooseDataChunkDescriptor;
         struct LooseDataBlockContent
@@ -1826,7 +1835,7 @@ typedef struct
                 Field theField;
             }
         } ldbc<bgcolor=cPurple>;
-    } LooseDataBlock;
+    } ldb;
 } LooseDataChunk;
 
 typedef struct
@@ -1990,9 +1999,28 @@ typedef struct
     if (isPack)
     {
         FormDescriptor Prime1R_FMVFormDescriptor;
+        byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]<bgcolor=cLtBlue>; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
     }
-    byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]<bgcolor=cLtBlue>; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
+    else
+    {
+        byte RawMP4[ContentForm.dataSize]<bgcolor=cLtBlue>;
+    }
 } Prime1R_FMVChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Material_ReflectDescriptor;
+    }
+    ChunkDescriptor Data;
+    struct Material_ReflectChunkData
+    {
+        uint32 unk;
+        GUID GUIDEntry;
+        uint32 possiblyCRC32;
+    } mtrlrflcd;
+} Material_ReflectChunk;
 
 typedef struct
 {
@@ -2004,8 +2032,21 @@ typedef struct
     struct DataEnum
     {
         uint32 entries;
-        uint64 enumEntry[entries];
-        uint32 unk;
+        uint64 enumEntry[entries]; //Confirm
+        uint32 enumGUIDs;
+        if (enumGUIDs > 0)
+        {
+            struct EnumGUIDs
+            {
+                for (i2 = 0; i2 < enumGUIDs; i2++)
+                {
+                    struct EnumGUID
+                    {
+                        GUID GUIDEntry;
+                    } eguid;
+                }
+            } eguids;
+        }
     } dataEnum;
 } Prime1R_DataEnumChunk;
 
@@ -2014,8 +2055,12 @@ typedef struct
     if (isPack)
     {
         FormDescriptor Prime1R_LightProbeFormDescriptor;
+        byte LightProbeData[Prime1R_LightProbeFormDescriptor.dataSize];
     }
-    byte LightProbeData[Prime1R_LightProbeFormDescriptor.dataSize];
+    else
+    {
+        byte LightProbeData[ContentForm.dataSize];
+    }
 } Prime1R_LightProbeChunk;
 
 typedef struct
@@ -2084,7 +2129,7 @@ typedef struct
                     string theStr;
                 }
                 GUID materialGUID;
-                MaterialType matType;
+                DataType matType;
                 uint32 materialFlags;
                 uint32 matDataCount;
                 struct SubMaterialData
@@ -2144,7 +2189,7 @@ typedef struct
                 } rmsh;
             }
         } rmshes;
-        if (ModelFormDescriptor.fVer == 114 && ModelFormDescriptor.dVer == 125)
+        if ((isPack && ModelFormDescriptor.fVer == 114 && ModelFormDescriptor.dVer == 125) || (!isPack && ContentForm.fVer == 114 && ContentForm.dVer == 125))
         {
             byte MP1R_UnknownData[MeshHdr.dataSize - sizeof rmshes - 4]<bgcolor=cRed>;
         }
@@ -2260,7 +2305,7 @@ typedef struct
             ChunkDescriptor FMTAChunkDesc;
             byte FMTAData[FMTAChunkDesc.dataSize]<bgcolor=cRed>;
         } FMTA;
-        if (CSMPFormDescriptor.dVer == 31 && CSMPFormDescriptor.fVer == 31)
+        if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
         {
             struct CRMSChunk
             {
@@ -2323,21 +2368,29 @@ typedef struct
             Printf("%s.caud\n", macroFileName);
         }
         FSkip(-sizeof macroFileName);
-        //Printf("%s.caud\n", macroFileName);
         byte CookedAudioSoundEffectData[CAUDFormDescriptor.dataSize]<bgcolor=cRed>;
     }
     else
     {
+        if (ContentForm.fVer >= 6 && ContentForm.dVer >= 6)
+        {
+            isNX = 1; //I expected things to break but I guess it works fine
+        }
         if (isNX)
         {
+            if (isLE)
+            {
+                LittleEndian();
+            }
             U32_StringEntry macroFileName;
+            Printf("%s.caud\n", macroFileName.theString);
         }
         else
         {
             string macroFileName;
+            Printf("%s.caud\n", macroFileName);
         }
         FSkip(-sizeof macroFileName);
-        Printf("%s.caud\n", macroFileName);
         byte CookedAudioSoundEffectData[ContentForm.dataSize];
     }
     //TODO FIX
@@ -2728,10 +2781,10 @@ typedef struct
             else
             {
                 //UnknownChunk UnknownChunkContent;
-                Printf("UNKNOWN\n");
+                Printf("UNKNOWN FILE DETECTED!\n");
             }
         }
-        Printf("Hey look at that it worked :)");
+        Printf("Hey look at that it worked I think :)");
     } assetData;
 
     //TEST! For read MiscData.pak
