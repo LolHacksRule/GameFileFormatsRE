@@ -99,7 +99,9 @@ typedef enum <uint32>
     Prime1R_SHNT,
     Prime1R_BakedLightingLookup,
     Prime1R_CookedAudioSampleBank,
-    Prime1R_CharacterProject,
+    */
+    Prime1R_CharacterProject = 1128812626,
+    /*
     Prime1R_CookedMap,
     Prime1R_CMID,*/
     Prime1R_CRMS = 1129467219,
@@ -117,15 +119,19 @@ typedef enum <uint32>
     Prime1R_LegacyPathfinding2,
     Prime1R_LegacyTweak,
     Prime1R_LegacyNTweak,
-    Prime1R_LegacyScan,
-    Prime1R_LSCN, //Level Scene?
     */
+    Prime1R_LegacyScan = 1280525134, //Literally SCAN MP1
+    
     Prime1R_LightProbe = 1280593986,
     /*
-    Prime1R_LegacyUniverseHint,
+    */
+    Prime1R_LegacyUniverseHintRedundant = 1280657490,
+    /*
     Prime1R_MIDI,
     Prime1R_MIDIBank,
-    Prime1R_MaterialInstance,
+    */
+    Prime1R_MaterialInstance = 1296127049,
+    /*
     Prime1R_MCON,
     Prime1R_MusicCue,
     Prime1R_Vibration,
@@ -135,7 +141,9 @@ typedef enum <uint32>
     Prime1R_ShaderHint = 1397247572,
     /*
     Prime1R_SaveGame, //SaveGame
-    Prime1R_VectorField,
+    */
+    Prime1R_VectorField = 1447379782,
+    /*
     Prime1R_Sand, //Unused
     Prime1R_Locator, //Unused
     Prime1R_StreamingAudioSample, //Unused, 0x43524153
@@ -145,12 +153,13 @@ typedef enum <uint32>
     Prime1R_Occlusion, //Unused
     */
     //Prime/Metroid!
-    /*Prime_CollisionResponseSystem = 1297306179,
-    Prime_DecalSystem = 1297305668,
+    Prime_CollisionResponseSystem = 1129468749,
+    Prime_DecalParticleSystem = 1146114893,
+    /*
     Prime_Font,
     Prime_ElectricSystem, //Electric gen 2?
-    Prime_WeaponSystem,
     */
+    Prime_WeaponParticleSystem = 1464881997,
 } DataType;
 
 typedef enum <uint32>
@@ -681,22 +690,6 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor SwooshParticleSystemFormDescriptor;
-        //byte SwooshParticleSystemDescBlock[SwooshParticleSystemFormDescriptor.dataSize];
-    }
-    struct DescriptionChunkData
-    {
-        ChunkDescriptor DescriptionChunk;
-        GenericAssetHeader DESCChunkAssetHdr;
-        byte SwooshParticleSystemDescBlock[DescriptionChunk.dataSize-4];
-    } dchd;
-    //GenericAssetHeader theDescChunkHdr;
-} SwooshParticleSystemChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
         FormDescriptor RuleSetConfigFormDescriptor;
         //ChunkDescriptor RSTCChunkDesc;
         //byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
@@ -919,7 +912,7 @@ typedef struct
         } gfxd;
         //for now read it in bytes idk how to make 010 detect the final file sometimes
         */
-        byte theGFXFiles[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
+        byte theGFXContent[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
     } gfx;
 } DKCTF_FlashGFXChunk;
 
@@ -1459,13 +1452,16 @@ typedef struct
             struct MTRLClsnData
             {
                 uint32 collisionMaterialCount;
-                for (i = 0; i < collisionMaterialCount; i++)
+                struct CollisionMaterials
                 {
-                    struct CollisionMaterial
+                    for (i = 0; i < collisionMaterialCount; i++)
                     {
-                        uint32 unk[5];
-                    } clm;
-                }
+                        struct CollisionMaterial
+                        {
+                            uint32 unk[5];
+                        } clm;
+                    }
+                } clms;
                 //byte theFile[MTRLClsnChunkDesc.dataSize];
             } mtrld;
         }
@@ -1537,10 +1533,13 @@ typedef struct
     struct VertexData
     {
         uint32 Vertexes;
-        for (i = 0; i < Vertexes; i++)
+        struct Vertexes
         {
-            Vector3_F32 vtx;
-        }
+            for (i = 0; i < Vertexes; i++)
+            {
+                Vector3_F32 vtx;
+            }
+        } vtxs;
     } vtxd<bgcolor=cGreen>;
 } VerticesChunk;
 
@@ -1759,7 +1758,7 @@ typedef struct
     GUID assetID;
     if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
     {
-        int32 unk[2]; //TXTR: 47,51, SHNT: 4,4, MTRL: 168,168, LDTA: 11,12, ENUM: 5,5, SWSH: 61,62, MSBT: 10,10, DGRP, 3,3, FONT: 18,18, ROOM: 147,160, FSMC: 23,23, FMV: 7,7, CSMP: 31,31, LTPB: 66,73
+        int32 unk[2]; //TXTR: 47,51, SHNT: 4,4, MTRL: 168,168, LDTA: 11,12, ENUM: 5,5, SWSH: 61,62, MSBT: 10,10, DGRP, 3,3, FONT: 18,18, ROOM: 147,160, FSMC: 23,23, FMV: 7,7, CSMP: 31,31, LTPB: 66,73, CMAP: 13,13
     }
     uint64 off;
     uint64 size;
@@ -1767,10 +1766,11 @@ typedef struct
     {
         uint64 csize;
         //todo
-        /*if (csize != size)
+        if (csize != size)
         {
+            Printf("COMPRESSED!\n");
             compressedResources++;
-        }*/
+        }
     }
 } AssetEntry;
 
@@ -1995,9 +1995,44 @@ typedef struct
     if (isPack)
     {
         FormDescriptor UnknownDataFormDescriptor;
+        byte UnknownData[UnknownDataFormDescriptor.dataSize];
     }
-    byte UnknownData[UnknownDataFormDescriptor.dataSize];
+    else
+    {
+        byte UnknownData[ContentForm.dataSize];
+    }
 } UnknownChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_ScanFormDescriptor;
+    }
+    struct ScanContent
+    {
+        struct Header
+        {
+            uint32 ver;
+            uint32 magic; //0xBADBEEF
+            uint32 frameID;
+            uint32 scanTextStringID;
+            uint32 scanSpeedFlag;
+            uint32 logBookCategory;
+            /*Prime_ScanIconFlag*/ byte scanIconFlag;
+        } hdr;
+        struct ScanImages
+        {
+            uint32 textureID;
+            float appearance;
+            uint32 imgPos;
+            uint32 width;
+            uint32 height;
+            float interval;
+            float fadeDuration;
+        } scImgs[4]; //How do we kno
+    } sc;
+} Prime1_ScanChunk;
 
 typedef struct
 {
@@ -2011,6 +2046,58 @@ typedef struct
         byte RawMP4[ContentForm.dataSize]<bgcolor=cLtBlue>;
     }
 } Prime1R_FMVChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
+        byte RawData[Prime1R_LegacyUniverseHintRedundantFormDescriptor.dataSize];
+    }
+    else
+    {
+        byte RawData[ContentForm.dataSize];
+    }
+} Prime1R_LegacyUniverseHintRedundantChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime_ParticleSystemFormDescriptor;
+    }
+    ChunkDescriptor Prime_ParticleSystemChunkDescriptor;
+    struct Prime_ParticleSystemData
+    {
+        GenericAssetHeader ParticleSystemDataMagic;
+        byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4];
+    } pdpsd;
+} Prime_ParticleSystemChunk;
+
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_VectorFieldFormDescriptor;
+        byte RawData[Prime1R_VectorFieldFormDescriptor.dataSize];
+    }
+    else
+    {
+        byte RawData[ContentForm.dataSize];
+    }
+} Prime1R_VectorFieldChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_MaterialInstanceFormDescriptor;
+        //byte RawData[Prime1R_MaterialInstanceFormDescriptor.dataSize]<bgcolor=cLtBlue>;
+    }
+    ChunkDescriptor Prime1R_MaterialInstanceChunkDescriptor;
+    byte RawData[Prime1R_MaterialInstanceChunkDescriptor.dataSize]<bgcolor=cLtBlue>;
+} Prime1R_MaterialInstanceChunk;
 
 typedef struct
 {
@@ -2194,7 +2281,7 @@ typedef struct
                 } rmsh;
             }
         } rmshes;
-        if ((isPack && ModelFormDescriptor.fVer == 114 && ModelFormDescriptor.dVer == 125) || (!isPack && ContentForm.fVer == 114 && ContentForm.dVer == 125))
+        if ((isPack && ModelFormDescriptor.fVer >= 114 && ModelFormDescriptor.dVer >= 125) || (!isPack && ContentForm.fVer >= 114 && ContentForm.dVer >= 125))
         {
             byte MP1R_UnknownData[MeshHdr.dataSize - sizeof rmshes - 4]<bgcolor=cRed>;
         }
@@ -2235,10 +2322,17 @@ typedef struct
 typedef struct
 {
     ChunkDescriptor SkinnedModelHeaderDescriptor;
-    struct SkinnedModelHeaderContent
+    if (isLE) //Just read the things in bytes instead for now
     {
-        uint32 unk;
-    } s;
+        byte SkinnedModelHeaderData[SkinnedModelHeaderDescriptor.dataSize];
+    }
+    else
+    {
+        struct SkinnedModelHeaderContent
+        {
+            uint32 unk;
+        } s;
+    }
 } SkinnedModelHeaderChunk;
 
 typedef struct
@@ -2312,7 +2406,7 @@ typedef struct
         } FMTA;
         if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
         {
-            uint32 checkForCRMS<hidden=true>;
+            uint32 checkForCRMS;
             FSkip(-4);
             if (checkForCRMS == 1397576259) //There's no way to check without a guess
             {
@@ -2326,6 +2420,14 @@ typedef struct
                     ChunkDescriptor RAS3ChunkDesc;
                     byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
                 } RAS3;
+            }
+            else if (checkForCRMS == 861094226) //There's prob a better way but idk
+            {
+                struct RAS3Chunk2
+                {
+                    ChunkDescriptor RAS3ChunkDesc;
+                    byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
+                } RAS3_chnk;
             }
         }
         struct DATAChunk
@@ -2367,6 +2469,11 @@ typedef struct
         FormDescriptor CAUDFormDescriptor;
         if (isNX)
         {
+            if (CAUDFormDescriptor.dVer == 31 && CAUDFormDescriptor.fVer == 31)
+            {
+                //MP1R pack is broken
+                LittleEndian();
+            }
             U32_StringEntry macroFileName<hidden=true>;
             //Recover the filename
             Printf("%s.caud\n", macroFileName.theString);
@@ -2579,10 +2686,6 @@ typedef struct
         FormDescriptor GENPForm;
         //byte theFile[GENPForm.dataSize];
     }
-    else
-    {
-        //byte theFile[ContentForm.dataSize];
-    }
     //ChunkDescriptor DescChunkHdr;
     struct GPSData
     {
@@ -2743,15 +2846,31 @@ typedef struct
             {
                 Prime1R_LightProbeChunk Prime1R_LightProbeContent;
             }
+            else if (TMPCHECK.contentType == Prime_DecalParticleSystem || TMPCHECK.contentType == Prime_WeaponParticleSystem || TMPCHECK.contentType == Prime_CollisionResponseSystem || TMPCHECK.contentType == SwooshParticleSystem)
+            {
+                Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
+            {
+                Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_VectorField)
+            {
+                Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_LegacyScan /*|| TMPCHECK.contentType == Prime1_Scan*/)
+            {
+                /*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
+            }
+            else if (TMPCHECK.contentType == Prime1R_CharacterProject)
+            {
+                UnknownChunk Prime1R_CharacterProjectContent;
+            }
             else if (TMPCHECK.contentType == Collision)
             {
                 isCLSN = 1;
                 CollisionChunk CollisionContent;
                 isCLSN = 0;
-            }
-            else if (TMPCHECK.contentType == SwooshParticleSystem)
-            {
-                SwooshParticleSystemChunk SwooshParticleSystemContent;
             }
             else if (TMPCHECK.contentType == Room)
             {

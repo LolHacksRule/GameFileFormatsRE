@@ -54,7 +54,7 @@ local uint isNX <hidden=true> = 0; //Check for NX, NX uses Int32 strings instead
 local uint isLEChecked <hidden=true> = 0; //Check for LE (Prime1R)
 local uint isLE <hidden=true> = 0; //Validate / force LE (Prime1R)
 local uint gameLangs = 0; //Game languages, autodetected
-//local uint compressedResources = 0; //Compressed resources (MP1R), autodetected
+local uint compressedResources = 0; //Compressed resources (MP1R), autodetected
 //local uint currentCompressedResource = 0; //There may be a better way but for now
 
 
@@ -175,12 +175,6 @@ struct RUDEFile
         isCLSN = 1;
         CollisionChunk CollisionContent;
     }
-    if (ContentForm.contentType == SwooshParticleSystem)
-    {
-        SwooshParticleSystemChunk SwooshParticleSystemContent;
-        //For MP1R (archived comment out)
-        checkLocalMETA = 1;
-    }
     if (ContentForm.contentType == Room)
     {
         RoomChunk RoomContent;
@@ -193,9 +187,21 @@ struct RUDEFile
     {
         RuleSetConfigChunk RuleSetConfigContent;
     }
+    if (ContentForm.contentType == Prime_DecalParticleSystem || ContentForm.contentType == Prime_WeaponParticleSystem || ContentForm.contentType == Prime_CollisionResponseSystem || ContentForm.contentType == SwooshParticleSystem)
+    {
+        Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
+    }
     if (ContentForm.contentType == Prime1R_LightProbe)
     {
         Prime1R_LightProbeChunk Prime1R_LightProbeContent;
+    }
+    if (ContentForm.contentType == Prime1R_CharacterProject)
+    {
+        UnknownChunk Prime1R_CharacterProjectContent;
+    }
+    if (ContentForm.contentType == Prime1R_LegacyScan /*|| Prime1_Scan*/)
+    {
+        /*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
     }
     if (ContentForm.contentType == Prime1R_DataEnum)
     {
@@ -204,6 +210,18 @@ struct RUDEFile
     if (ContentForm.contentType == Prime1R_FMV)
     {
         Prime1R_FMVChunk Prime1R_FMVContent;
+    }
+    if (ContentForm.contentType == Prime1R_MaterialInstance)
+    {
+        Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
+    }
+    if (ContentForm.contentType == Prime1R_LegacyUniverseHintRedundant)
+    {
+        Prime1R_LegacyUniverseHintRedundantChunk Prime1R_LegacyUniverseHintRedundantContent;
+    }
+    if (ContentForm.contentType == Prime1R_VectorField)
+    {
+        Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
     }
     if (ContentForm.contentType == Material_Reflect)
     {
