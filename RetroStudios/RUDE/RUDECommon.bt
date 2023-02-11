@@ -101,7 +101,10 @@ typedef enum <uint32>
     Prime1R_CookedAudioSampleBank,
     Prime1R_CharacterProject,
     Prime1R_CookedMap,
-    Prime1R_CMID,
+    Prime1R_CMID,*/
+    Prime1R_CRMS = 1129467219,
+    Prime1R_RAS3 = 1380012851,
+    /*
     Prime1R_Electric2ParticleSystem,*/
     Prime1R_FMV = 1179473456, //Full Motion Video?
     /*
@@ -398,13 +401,13 @@ typedef enum <uint32>{
 	CCreditsGOC = 0xADCD416E,
 	CHUDFadeDetectorGOC = 0xA4E4FE1D,
 	CProductionFrontEndProxyGOC = 0xAF9DEA76,
-} GameCRC;
+} GameCRC32;
 
 typedef struct
 {
     //Todo, add check for DKCTF and MP1R, use the right hashes
     BigEndian();
-    GameCRC FieldNameHash;
+    GameCRC32 FieldNameHash;
     if (isLE)
     {
         LittleEndian();
@@ -992,7 +995,7 @@ typedef struct
 
 typedef struct
 {
-    GameCRC ComponentTypeCRC;
+    GameCRC32 ComponentTypeCRC;
     if (ComponentTypeCRC == 2314479346)
     {
         //isGameObjectComponent = 1;
@@ -2307,16 +2310,21 @@ typedef struct
         } FMTA;
         if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
         {
-            struct CRMSChunk
+            uint32 checkForCRMS<hidden=true>;
+            FSkip(-4);
+            if (checkForCRMS == 1397576259) //There's no way to check without a guess
             {
-                ChunkDescriptor CRMSChunkDesc;
-                byte CRMSData[CRMSChunkDesc.dataSize]<bgcolor=cRed>;
-            } CRMS;
-            struct RAS3Chunk
-            {
-                ChunkDescriptor RAS3ChunkDesc;
-                byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
-            } RAS3;
+                struct CRMSChunk
+                {
+                    ChunkDescriptor CRMSChunkDesc;
+                    byte CRMSData[CRMSChunkDesc.dataSize]<bgcolor=cRed>;
+                } CRMS;
+                struct RAS3Chunk
+                {
+                    ChunkDescriptor RAS3ChunkDesc;
+                    byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
+                } RAS3;
+            }
         }
         struct DATAChunk
         {
