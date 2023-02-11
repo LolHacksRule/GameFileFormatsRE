@@ -98,24 +98,27 @@ typedef enum <uint32>
     /*
     Prime1R_SHNT,
     Prime1R_BakedLightingLookup,
-    Prime1R_CookedAudioSampleBank,
     */
+    Prime1R_CookedAudioSampleBank = 1128418891,
     Prime1R_CharacterProject = 1128812626,
     /*
-    Prime1R_CookedMap,
-    Prime1R_CMID,*/
+    Prime1R_CookedMap,*/
+    Prime1R_CookedMIDI = 1129138500,
     Prime1R_CRMS = 1129467219,
     Prime1R_RAS3 = 1380012851,
-    /*
-    Prime1R_Electric2ParticleSystem,*/
+    Prime1R_Electric2ParticleSystem = 1162625842,
     Prime1R_FMV = 1179473456, //Full Motion Video?
     /*
     Prime1R_GUIFrame,
     Prime1R_InputMacro,
-    Prime1R_LegacyFSM,
+    */
+    Prime1R_LegacyFSM = 1279677261,
+    /*
     Prime1R_LegacyFSM2,
     Prime1R_LegacyMapUniverse,
-    Prime1R_LegacyPathfinding,
+    */
+    Prime1R_LegacyPathfinding = 1280332872,
+    /*
     Prime1R_LegacyPathfinding2,
     Prime1R_LegacyTweak,
     Prime1R_LegacyNTweak,
@@ -1848,6 +1851,12 @@ typedef struct
     if (isPack)
     {
         FormDescriptor DependencyGroupFormDescriptor;
+        if (DependencyGroupFormDescriptor.hdr != DependencyGroup && isLE == 1)
+        {
+            Printf("Compressed dependency groups are unsupported. Terminating...");
+            terminate = 1;
+            break;
+        }
     }
     struct DependencyGroupData
     {
@@ -2064,6 +2073,16 @@ typedef struct
 {
     if (isPack)
     {
+        FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
+    }
+    ChunkDescriptor CookedMIDIChunkDescriptor;
+    byte RawData[CookedMIDIChunkDescriptor.dataSize];
+} Prime1R_CookedMIDIChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
         FormDescriptor Prime_ParticleSystemFormDescriptor;
     }
     ChunkDescriptor Prime_ParticleSystemChunkDescriptor;
@@ -2073,6 +2092,44 @@ typedef struct
         byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4];
     } pdpsd;
 } Prime_ParticleSystemChunk;
+
+typedef struct
+{
+    uint32 PolyIdx[2];
+    float EdgeLen;
+    float unk;
+} Prime_EdgeEntry;
+
+typedef struct
+{
+    uint32 vertexes;
+    uint32 vertexStartIdx;
+    uint32 edges;
+    uint32 edgeStartIdx;
+    uint16 unk1;
+    uint16 unk2;
+    float  area;
+    Vector3_F32 normal;
+    AABox theAAB;
+    uint32 selfIdx;
+} Prime_PolygonEntry;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime_ParticleSystemFormDescriptor;
+    }
+    struct Prime_PathFindingContent
+    {
+        uint32 ver;
+        uint32 vertexes;
+        Vector2_F32 vertexEntry[vertexes];
+        uint32 edges;
+        Prime_EdgeEntry edgeEntry[edges];
+        uint32 polygons;
+    } pdpsd;
+} Prime_PathFindingChunk;
 
 
 typedef struct
@@ -2110,7 +2167,7 @@ typedef struct
     {
         uint32 unk;
         GUID GUIDEntry;
-        uint32 possiblyCRC32;
+        float someFloatIdk;
     } mtrlrflcd;
 } Material_ReflectChunk;
 
@@ -2406,7 +2463,7 @@ typedef struct
         } FMTA;
         if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
         {
-            uint32 checkForCRMS;
+            uint32 checkForCRMS<hidden=true>;
             FSkip(-4);
             if (checkForCRMS == 1397576259) //There's no way to check without a guess
             {
@@ -2681,25 +2738,6 @@ typedef struct
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor GENPForm;
-        //byte theFile[GENPForm.dataSize];
-    }
-    //ChunkDescriptor DescChunkHdr;
-    struct GPSData
-    {
-        ChunkDescriptor DescChunkHdr;
-        struct DescBlock
-        {
-            GenericAssetHeader theHdr<bgcolor=cGreen>;
-            byte theGPSFile[DescChunkHdr.dataSize-4]<bgcolor=cRed>;
-        } descblk;
-    } d;
-} GenericParticleSystemChunk;
-
-typedef struct
-{
     AssetDirectory AssetDirChunk;
     DataType checkForMETA<hidden=true>;
     FSkip(-4);
@@ -2756,164 +2794,171 @@ typedef struct
                 }
             //} dgcs;
         }
-        for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
+        if (terminate != 1)
         {
-            FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
-            FSkip(-32);
-            //If you don't want to see these, append <hidden=true> to the Content end
-            if (TMPCHECK.contentType == LooseData)
+            for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
             {
-                LooseDataChunk LooseDataChunkContent;
-            }
-            else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
-            {
-                CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
-            }
-            else if (TMPCHECK.contentType == MessageTable_MessageStudioBinaryText)
-            {
-                MessageTableChunk MessageTableContent;
-            }
-            else if (TMPCHECK.contentType == Material)
-            {
-                MaterialChunk TheMaterialChunk;
-            }
-            else if (TMPCHECK.contentType == CookedAudioSample)
-            {
-                CookedAudioSampleChunk CookedAudioSampleContent;
-            }
-            else if (TMPCHECK.contentType == CookedAudioSoundEffect)
-            {
-                CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
-            }
-            else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
-            {
-                CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
-            }
-            else if (TMPCHECK.contentType == Texture)
-            {
-                TextureChunk TextureContent;
-            }
-            else if (TMPCHECK.contentType == UniverseInfo)
-            {
-                UniverseInfoChunk UniverseInfoContent;
-            }
-            else if (TMPCHECK.contentType == GenericParticleSystem)
-            {
-                GenericParticleSystemChunk GenericParticleSystemContent;
-            }
-            else if (TMPCHECK.contentType == DependencyGroup)
-            {
-                DependencyGroupChunk DependencyGroupContent;
-            }
-            else if (TMPCHECK.contentType == Animation)
-            {
-                AnimationChunk AnimationContent;
-            }
-            else if (TMPCHECK.contentType == ExtendedTransformAnimation)
-            {
-                AnimationTransformChunk AnimationTransformContent;
-            }
-            else if (TMPCHECK.contentType == Skeleton)
-            {
-                SkeletonChunk SkeletonContent;
-            }
-            else if (TMPCHECK.contentType == Character)
-            {
-                CharacterChunk CharacterContent;
-            }
-            else if (TMPCHECK.contentType == UniverseInfo)
-            {
-                UniverseInfoChunk UniverseInfoContent;
-            }
-            else if (TMPCHECK.contentType == FiniteStateMachine)
-            {
-                //Messed up for MP1R
-                FiniteStateMachineChunk FiniteStateMachineContent;
-            }
-            else if (TMPCHECK.contentType == DKCTF_FlashGFX)
-            {
-                DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
-            }
-            else if (TMPCHECK.contentType == DKCTF_ScaleformGFXLibrary)
-            {
-                DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_FMV)
-            {
-                Prime1R_FMVChunk Prime1R_FMVContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_LightProbe)
-            {
-                Prime1R_LightProbeChunk Prime1R_LightProbeContent;
-            }
-            else if (TMPCHECK.contentType == Prime_DecalParticleSystem || TMPCHECK.contentType == Prime_WeaponParticleSystem || TMPCHECK.contentType == Prime_CollisionResponseSystem || TMPCHECK.contentType == SwooshParticleSystem)
-            {
-                Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
-            {
-                Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_VectorField)
-            {
-                Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_LegacyScan /*|| TMPCHECK.contentType == Prime1_Scan*/)
-            {
-                /*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
-            }
-            else if (TMPCHECK.contentType == Prime1R_CharacterProject)
-            {
-                UnknownChunk Prime1R_CharacterProjectContent;
-            }
-            else if (TMPCHECK.contentType == Collision)
-            {
-                isCLSN = 1;
-                CollisionChunk CollisionContent;
-                isCLSN = 0;
-            }
-            else if (TMPCHECK.contentType == Room)
-            {
-                RoomChunk RoomContent;
-            }
-            else if (TMPCHECK.contentType == RuleSetConfig)
-            {
-                RuleSetConfigChunk RuleSetConfigContent;
-            }
-            else if (TMPCHECK.contentType == LightProbe)
-            {
-                LightProbeChunk LightProbeContent;
-            }
-            else if (TMPCHECK.contentType == DynamicCollision)
-            {
-                isCLSN = 1;
-                DynamicCollisionChunk DynamicCollisionContent;
-                isCLSN = 0;
-            }
-            else if (TMPCHECK.contentType == CookedModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
-            {
-                if (TMPCHECK.contentType == WorldModel)
+                FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
+                FSkip(-32);
+                //If you don't want to see these, append <hidden=true> to the Content end
+                if (TMPCHECK.contentType == LooseData)
                 {
-                    isWMDL = 1;
+                    LooseDataChunk LooseDataChunkContent;
                 }
-                if (TMPCHECK.contentType == SkinnedModel)
+                else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
                 {
-                    isSMDL = 1;
+                    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
                 }
-                ModelChunk ModelContent;
+                else if (TMPCHECK.contentType == MessageTable_MessageStudioBinaryText)
+                {
+                    MessageTableChunk MessageTableContent;
+                }
+                else if (TMPCHECK.contentType == Material)
+                {
+                    MaterialChunk TheMaterialChunk;
+                }
+                else if (TMPCHECK.contentType == CookedAudioSample)
+                {
+                    CookedAudioSampleChunk CookedAudioSampleContent;
+                }
+                else if (TMPCHECK.contentType == CookedAudioSoundEffect)
+                {
+                    CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
+                }
+                else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
+                {
+                    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
+                }
+                else if (TMPCHECK.contentType == Texture)
+                {
+                    TextureChunk TextureContent;
+                }
+                else if (TMPCHECK.contentType == UniverseInfo)
+                {
+                    UniverseInfoChunk UniverseInfoContent;
+                }
+                else if (TMPCHECK.contentType == DependencyGroup)
+                {
+                    DependencyGroupChunk DependencyGroupContent;
+                }
+                else if (TMPCHECK.contentType == Animation)
+                {
+                    AnimationChunk AnimationContent;
+                }
+                else if (TMPCHECK.contentType == ExtendedTransformAnimation)
+                {
+                    AnimationTransformChunk AnimationTransformContent;
+                }
+                else if (TMPCHECK.contentType == Skeleton)
+                {
+                    SkeletonChunk SkeletonContent;
+                }
+                else if (TMPCHECK.contentType == Character)
+                {
+                    CharacterChunk CharacterContent;
+                }
+                else if (TMPCHECK.contentType == UniverseInfo)
+                {
+                    UniverseInfoChunk UniverseInfoContent;
+                }
+                else if (TMPCHECK.contentType == FiniteStateMachine)
+                {
+                    //Messed up for MP1R
+                    FiniteStateMachineChunk FiniteStateMachineContent;
+                }
+                else if (TMPCHECK.contentType == DKCTF_FlashGFX)
+                {
+                    DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
+                }
+                else if (TMPCHECK.contentType == DKCTF_ScaleformGFXLibrary)
+                {
+                    DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_FMV)
+                {
+                    Prime1R_FMVChunk Prime1R_FMVContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_LightProbe)
+                {
+                    Prime1R_LightProbeChunk Prime1R_LightProbeContent;
+                }
+                else if (TMPCHECK.contentType == Prime_DecalParticleSystem || TMPCHECK.contentType == Prime_WeaponParticleSystem || TMPCHECK.contentType == Prime_CollisionResponseSystem || TMPCHECK.contentType == SwooshParticleSystem || TMPCHECK.contentType == GenericParticleSystem)
+                {
+                    Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
+                }
+                if (TMPCHECK.contentType == Prime1R_CookedAudioSampleBank)
+                {
+                    UnknownChunk Prime1R_CookedAudioSampleBankContent;
+                }
+                if (TMPCHECK.contentType == Prime1R_LegacyFSM)
+                {
+                    UnknownChunk Prime1R_LegacyFSMContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
+                {
+                    Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_VectorField)
+                {
+                    Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_LegacyScan /*|| TMPCHECK.contentType == Prime1_Scan*/)
+                {
+                    /*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_CharacterProject)
+                {
+                    UnknownChunk Prime1R_CharacterProjectContent;
+                }
+                else if (TMPCHECK.contentType == Collision)
+                {
+                    isCLSN = 1;
+                    CollisionChunk CollisionContent;
+                    isCLSN = 0;
+                }
+                else if (TMPCHECK.contentType == Room)
+                {
+                    RoomChunk RoomContent;
+                }
+                else if (TMPCHECK.contentType == RuleSetConfig)
+                {
+                    RuleSetConfigChunk RuleSetConfigContent;
+                }
+                else if (TMPCHECK.contentType == LightProbe)
+                {
+                    LightProbeChunk LightProbeContent;
+                }
+                else if (TMPCHECK.contentType == DynamicCollision)
+                {
+                    isCLSN = 1;
+                    DynamicCollisionChunk DynamicCollisionContent;
+                    isCLSN = 0;
+                }
+                else if (TMPCHECK.contentType == CookedModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
+                {
+                    if (TMPCHECK.contentType == WorldModel)
+                    {
+                        isWMDL = 1;
+                    }
+                    if (TMPCHECK.contentType == SkinnedModel)
+                    {
+                        isSMDL = 1;
+                    }
+                    ModelChunk ModelContent;
+                }
+                //Todo detect compressed resource
+                /*else if (TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].csize != TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].size && ContentForm.fVer == 1 && && ContentForm.dVer == 1)
+                {
+                    byte CompressedData[TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry.csize];
+                }*/
+                else
+                {
+                    //UnknownChunk UnknownChunkContent;
+                    Printf("UNKNOWN FILE DETECTED!\n");
+                }
             }
-            //Todo detect compressed resource
-            /*else if (TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].csize != TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].size && ContentForm.fVer == 1 && && ContentForm.dVer == 1)
-            {
-                byte CompressedData[TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry.csize];
-            }*/
-            else
-            {
-                //UnknownChunk UnknownChunkContent;
-                Printf("UNKNOWN FILE DETECTED!\n");
-            }
+            Printf("Hey look at that it worked I think :)");
         }
-        Printf("Hey look at that it worked I think :)");
     } assetData;
 
     //TEST! For read MiscData.pak

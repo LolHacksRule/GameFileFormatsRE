@@ -28,6 +28,7 @@ local string DKCTF_GFXDir = "Interface/swfs/";
 local string LooseDataTweaksDir = "LooseDataTweaks/Controls/";
 local string AudioDir = "audio/";
 local string RUDE_WorldDir = "Worlds/"; //World files probably reside in Worlds/pakname, ie b00_mangrove_seaLion.rsd from Worlds/w01/b00_mangrove_seaLion.pak would reside in Worlds/w01_mangrove, the only one we do know is Worlds/UI/FrontEndLevel.rsd in UI.pak
+local uint terminate = 0;
 
 //Manual flags
 local uint i3<hidden=true> = 0;
@@ -128,12 +129,6 @@ struct RUDEFile
         //In MP1R this breaks
         checkLocalMETA = 1;
     }
-    if (ContentForm.contentType == GenericParticleSystem)
-    {
-        GenericParticleSystemChunk GenericParticleSystemContent;
-        //In MP1R this breaks
-        checkLocalMETA = 1;
-    }
     if (ContentForm.contentType == DependencyGroup)
     {
         DependencyGroupChunk DependencyGroupContent;
@@ -177,7 +172,7 @@ struct RUDEFile
     }
     if (ContentForm.contentType == Room)
     {
-        RoomChunk RoomContent;
+        UnknownChunk RoomContent;
     }
     if (ContentForm.contentType == LooseData)
     {
@@ -187,7 +182,7 @@ struct RUDEFile
     {
         RuleSetConfigChunk RuleSetConfigContent;
     }
-    if (ContentForm.contentType == Prime_DecalParticleSystem || ContentForm.contentType == Prime_WeaponParticleSystem || ContentForm.contentType == Prime_CollisionResponseSystem || ContentForm.contentType == SwooshParticleSystem)
+    if (ContentForm.contentType == Prime_DecalParticleSystem || ContentForm.contentType == Prime_WeaponParticleSystem || ContentForm.contentType == Prime_CollisionResponseSystem || ContentForm.contentType == SwooshParticleSystem || ContentForm.contentType == Prime1R_Electric2ParticleSystem || ContentForm.contentType == GenericParticleSystem)
     {
         Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
     }
@@ -207,6 +202,18 @@ struct RUDEFile
     {
         Prime1R_DataEnumChunk Prime1R_DataEnumContent;
     }
+    if (ContentForm.contentType == Prime1R_CookedAudioSampleBank)
+    {
+        UnknownChunk Prime1R_CookedAudioSampleBankContent;
+    }
+    if (ContentForm.contentType == Prime1R_LegacyFSM)
+    {
+        UnknownChunk Prime1R_LegacyFSMContent;
+    }
+    if (ContentForm.contentType == Prime1R_LegacyPathfinding)
+    {
+        UnknownChunk Prime1R_LegacyPathfindingContent;
+    }
     if (ContentForm.contentType == Prime1R_FMV)
     {
         Prime1R_FMVChunk Prime1R_FMVContent;
@@ -218,6 +225,10 @@ struct RUDEFile
     if (ContentForm.contentType == Prime1R_LegacyUniverseHintRedundant)
     {
         Prime1R_LegacyUniverseHintRedundantChunk Prime1R_LegacyUniverseHintRedundantContent;
+    }
+    if (ContentForm.contentType == Prime1R_CookedMIDI)
+    {
+        Prime1R_CookedMIDIChunk Prime1R_CookedMIDIContent;
     }
     if (ContentForm.contentType == Prime1R_VectorField)
     {
