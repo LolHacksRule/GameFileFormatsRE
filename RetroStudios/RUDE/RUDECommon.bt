@@ -870,17 +870,18 @@ typedef struct
     struct GFX
     {
         ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
+        //FSR HUD.rfgfx, MasterShell.rfgfx and PauseMenu.rfgfx is broken this way, just those dang files
         /*struct GFXData
         {
             GUID LibGUID;
-            GUID PossiblyAnotherGUID;
+            GUID PossiblyAnotherGUID; //Always 0 but it might be
             //FSkip(12);
             uint32 SWFCount;
             struct SWFEntries
             {
-                for (i = 0; i < RefSWFCount; i++)
+                for (i = 0; i < SWFCount; i++)
                 {
-                    struct SWFEntries
+                    struct SWFEntry
                     {
                         uint64 dataOff;
                         uint64 SWFSize;
@@ -895,15 +896,15 @@ typedef struct
                 //uint64 mainSWFSize;
                 //char mainSWFName[48];
                 //FSkip(dataOff-20-7);
-                if (RefSWFCount == 1)
+                if (SWFCount == 1)
                 {
-                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7 since since the CWS bit is included
+                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfes-36]; //add 7 since since the CWS bit is included
                 }
                 else
                 {
                     struct SWFFiles
                     {
-                        for (i = 0; i < RefSWFCount; i++)
+                        for (i = 0; i < SWFCount; i++)
                         {
                             struct SWFFile    
                             {
@@ -915,8 +916,9 @@ typedef struct
                     //byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
                 }
             //} mswf;
-        } gfxd;*/
-        //for now read it in bytes idk how to make 010 detect the whole thing
+        } gfxd;
+        //for now read it in bytes idk how to make 010 detect the final file sometimes
+        */
         byte theGFXFiles[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
     } gfx;
 } DKCTF_FlashGFXChunk;
