@@ -2317,14 +2317,23 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor Prime1R_FMVFormDescriptor;
+        FormDescriptor Prime1R_DataEnumFormDescriptor;
     }
     LittleEndian();
-    struct DataEnum
-    {
-        uint32 entries;
-        uint64 enumEntry[entries]; //Confirm
-        uint32 enumGUIDs;
+    //struct DataEnum
+    //{
+        uint32 enums<bgcolor=cPurple>;
+        if (enums > 0)
+        {
+            struct EnumEntries
+            {
+                for (i2 = 0; i2 < enums; i2++)
+                {
+                    uint64 EnumEntry; //Confirm
+                }
+            } ee<bgcolor=cPurple>;
+        }
+        uint32 enumGUIDs<bgcolor=cGreen>;
         if (enumGUIDs > 0)
         {
             struct EnumGUIDs
@@ -2336,9 +2345,9 @@ typedef struct
                         GUID GUIDEntry;
                     } eguid;
                 }
-            } eguids;
+            } eguids<bgcolor=cGreen>;
         }
-    } dataEnum;
+    //} dataEnum;
 } Prime1R_DataEnumChunk;
 
 typedef struct
@@ -2650,7 +2659,7 @@ typedef struct
         else
         {
             string macroFileName<hidden=true>;
-            Printf("%s.caud\n", macroFileName); //For now this is broken outside paks, I'll prob fix it soon I hope
+            Printf("%s.caud\n", macroFileName); //For now this is broken outside paks for NS, I'll prob fix it soon I hope
         }
         FSkip(-sizeof macroFileName);
         byte CookedAudioSoundEffectData[ContentForm.dataSize]<bgcolor=cRed>;
@@ -2850,15 +2859,22 @@ typedef struct
     {
         MetaDataChunk theMeta;
     }
+    BigEndian();
+    DataType checkForSTRG<hidden=true>;
+    FSkip(-4);
+    if (checkForSTRG == Strings) //Actually check instead
+    {
+        NameTagsChunk StringTableChunk;
+    }
     /*if (hasTXTRMeta)
     {
         RUDEFormDescriptor theMeta;
     }*/
-    //Fix for reading dev files
-    if (TOCForm.dataSize > 64) //Here's a more simple fix, bascially an AssetDirectory chunk that is 64 bytes prob wouldn't have nametags
+    //Fix for reading dev files, we don't need it anymore
+    /*if (TOCForm.dataSize > 64) //Here's a more simple fix, basically an AssetDirectory chunk that is 64 bytes prob wouldn't have nametags
     {
-        NameTagsChunk StringTableChunk;
-    }
+        //NameTagsChunk StringTableChunk;
+    }*/
     /*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == DynamicCollision)
     {
         isCLSN = 1;

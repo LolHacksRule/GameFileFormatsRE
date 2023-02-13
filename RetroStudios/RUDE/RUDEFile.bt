@@ -260,8 +260,8 @@ struct RUDEFile
         }
         DynamicCollisionChunk DynamicCollisionContent;
     }
-    if (checkLocalMETA == 1)
+    /*if (checkLocalMETA == 1)
     {
         MetaDataChunk theMeta;
-    }
+    }*/ //This is only from modding tools when they extract a package so we don't need it
 } RUDEFileData;
