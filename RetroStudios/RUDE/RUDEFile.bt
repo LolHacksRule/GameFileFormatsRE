@@ -14,10 +14,9 @@
 #include "../../LHR/Common.bt"
 #include "RUDECommon.bt"
 //#include "Prime1Remaster.bt
-//#include "GameSpecific/DKCTF.bt"
 
 //Original sources
-//http://www.metroid2002.com/retromodding/wiki
+//http://www.metroid2002.com/retromodding/wiki / https://wiki.axiodl.com
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
 //This was ported to aid with studying those 3d games from Retro's RUDE Engine. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine
 
@@ -83,9 +82,9 @@ struct RUDEFile
             checkLocalMETA = 0;
         }
     }
-    if (ContentForm.contentType == RFLO)
+    if (ContentForm.contentType == RenderFlow)
     {
-        RenderFlowChunk RFLOContent;
+        RenderFlowChunk RenderFlowContent;
     }
     if (ContentForm.contentType == MessageTable_MessageStudioBinaryText)
     {
@@ -182,7 +181,7 @@ struct RUDEFile
     {
         RuleSetConfigChunk RuleSetConfigContent;
     }
-    if (ContentForm.contentType == Prime_DecalParticleSystem || ContentForm.contentType == Prime_WeaponParticleSystem || ContentForm.contentType == Prime_CollisionResponseSystem || ContentForm.contentType == SwooshParticleSystem || ContentForm.contentType == Prime1R_Electric2ParticleSystem || ContentForm.contentType == GenericParticleSystem)
+    if (ContentForm.contentType == Prime_DecalParticleSystem || ContentForm.contentType == Prime_WeaponParticleSystem || ContentForm.contentType == Prime_CollisionResponseSystem || ContentForm.contentType == SwooshParticleSystem || ContentForm.contentType == Prime1R_Electric2ParticleSystem || ContentForm.contentType == GenericParticleSystem || ContentForm.contentType == Prime_ElectricParticleSystem)
     {
         Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
     }
@@ -229,6 +228,10 @@ struct RUDEFile
     if (ContentForm.contentType == Prime1R_CookedMIDI)
     {
         Prime1R_CookedMIDIChunk Prime1R_CookedMIDIContent;
+    }
+    if (ContentForm.contentType == Prime1R_ModConContainer)
+    {
+        Prime1R_ModConContainerChunk Prime1R_ModConContainerContent;
     }
     if (ContentForm.contentType == Prime1R_VectorField)
     {

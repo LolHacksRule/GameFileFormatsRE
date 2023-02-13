@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Prime1 Enums
+typedef enum <uint32>{
+    Fast,
+    Slow
+} Prime1_ScanSpeedFlag;
+
+typedef enum <uint32>{
+    Disabled,
+    SpacePirateData,
+    ChozoLore,
+    Creatures,
+    Artifacts
+} Prime1_LogBookCategory;
+
+typedef enum <byte>{
+    Orange,
+    Red
+} Prime1_ScanIconFlag;

@@ -11,6 +11,9 @@
 //   History: 
 //------------------------------------------------
 
+#include "GameSpecific/DKCTF.bt"
+#include "GameSpecific/Prime1.bt"
+
 //Format info
 
 typedef enum <uint32>
@@ -35,7 +38,6 @@ typedef enum <uint32>
     ExtendedTransformAnimation = 1481003597,
     FiniteStateMachine = 1179864387,
     DKCTF_FlashGFX = 1195792416, //DKCTF
-    Font = 1179602516,
     GPUCompressed = 1196447008,
     GeneratedGameObjectChunk = 1195855682,
     GeneratedScriptObject = 1196642896,
@@ -60,7 +62,7 @@ typedef enum <uint32>
     Metadata = 1296389185,
     Package = 1346454347,
     PerformanceGroupChunk = 1346851408,
-    RFLO = 1380338767,
+    RenderFlow = 1380338767,
     RUDEFormDescriptor = 1380340301,
     Room = 1380929357,
     RoomHeader = 1380796484,
@@ -96,7 +98,6 @@ typedef enum <uint32>
     //Prime1Remaster!
     Prime1R_DataEnum = 1162761549,
     /*
-    Prime1R_SHNT,
     Prime1R_BakedLightingLookup,
     */
     Prime1R_CookedAudioSampleBank = 1128418891,
@@ -108,15 +109,11 @@ typedef enum <uint32>
     Prime1R_RAS3 = 1380012851,
     Prime1R_Electric2ParticleSystem = 1162625842,
     Prime1R_FMV = 1179473456, //Full Motion Video?
-    /*
-    Prime1R_GUIFrame,
-    Prime1R_InputMacro,
-    */
+    Prime1R_GUIFrame = 1196771654,
+    //Prime1R_InputMacro,
     Prime1R_LegacyFSM = 1279677261,
-    /*
-    Prime1R_LegacyFSM2,
-    Prime1R_LegacyMapUniverse,
-    */
+    Prime1R_LegacyFSM2 = 844318284, // Unused
+    //Prime1R_LegacyMapUniverse,
     Prime1R_LegacyPathfinding = 1280332872,
     /*
     Prime1R_LegacyPathfinding2,
@@ -129,54 +126,46 @@ typedef enum <uint32>
     /*
     */
     Prime1R_LegacyUniverseHintRedundant = 1280657490,
-    /*
-    Prime1R_MIDI,
-    Prime1R_MIDIBank,
-    */
+    Prime1R_MIDI = 1296647241,
+    //Prime1R_MIDIBank,
     Prime1R_MaterialInstance = 1296127049,
+    Prime1R_ModConContainer = 1296256846,
+    Prime1R_ModConCollisionData = 1296253764,
+    Prime1R_ModConCollisionDataNONProduction = 1296253774,
+    Prime1R_ModConDecalData = 1296254020,
+    Prime1R_ModConVisualDataNonProduction = 1296258638,
+    Prime1R_ModConVertexBlendData = 1296258626,
+    Prime1R_ModConVertexBlendDataNonProduction = 1112949581,
+    Prime1R_ModConContainerHeader = 1296255044,
+    Prime1R_ModOcclusionDataNonProduction = 1296256836,
+    Prime1R_ModConRenderCollisionData = 1296257603,
+    Prime1R_ModConVisualData = 1296258628,
     /*
-    Prime1R_MCON,
     Prime1R_MusicCue,
     Prime1R_Vibration,
     Prime1R_SamplerVoiceBank,
     Prime1R_ShaderGraph,
     */
     Prime1R_ShaderHint = 1397247572,
-    /*
-    Prime1R_SaveGame, //SaveGame
-    */
+    Prime1R_SaveGame = 1296520787, //SaveGame
     Prime1R_VectorField = 1447379782,
+    Prime1R_Sand = 1145979219, //Unused
     /*
-    Prime1R_Sand, //Unused
     Prime1R_Locator, //Unused
     Prime1R_StreamingAudioSample, //Unused, 0x43524153
     Prime1R_Pathfinding, //Unused, 0x43524153
     Prime1R_ModConContainer, //Unused
     Prime1R_Terrain, //Unused
-    Prime1R_Occlusion, //Unused
     */
+    Prime1R_Occlusion = 1279476559, //Unused
     //Prime/Metroid!
     Prime_CollisionResponseSystem = 1129468749,
     Prime_DecalParticleSystem = 1146114893,
-    /*
-    Prime_Font,
-    Prime_ElectricSystem, //Electric gen 2?
-    */
+    Prime_Font = 1179602516,
+    Prime_ElectricParticleSystem = 1162629965,
     Prime_WeaponParticleSystem = 1464881997,
+    Prime_ScannableObject = 1396916558,
 } DataType;
-
-typedef enum <uint32>
-{
-    
-} MaterialType;
-
-//DKCTF Enums
-
-typedef enum <byte>{
-    StandardLevel,
-    Boss,
-    KONGBonusLevel
-} DKCTF_LevelType;
 
 typedef enum <uint32>{
     GX2_SURFACE_DIM_TEXTURE_1D,
@@ -425,6 +414,8 @@ typedef struct
         LittleEndian();
     }
     uint16 blockSize;
+    /*uint16 subfields;
+    GameCRC32 FieldEntry;*/
     byte theFieldBlock[blockSize];
 } Field;
 
@@ -532,6 +523,182 @@ typedef struct
     uint32 unk; //pad?
     uint64 dataOff;
 } ChunkDescriptor<bgcolor=cGreen>;
+
+typedef struct
+{
+    ChunkDescriptor MTRLSub;
+    struct MtrlSubContent
+    {
+        /*uint32 materials;
+        struct Materials
+        {
+            for (i = 0; i < materials; i++)
+            {
+                if (isNX)
+                {
+                    U32_StringEntry theStr;
+                }
+                else
+                {
+                    string theStr;
+                }
+                GUID materialGUID;
+                DataType matType;
+                uint32 materialFlags;
+                uint32 matDataCount;
+                struct SubMaterialData
+                {
+                    for (i2 = 0; i2 < matDataCount; i2++)
+                    {
+                        struct SubMatDataEntry
+                        {
+                            uint32 dataID;
+                            uint32 type;
+                            if (type == 0)
+                            {
+                                GUID theTexAssetID;
+                                uint32 flags;
+                                uint32 filter;
+                                uint32 wrap[3];
+                            }
+                            if (type == 1)
+                            {
+                                float matColorData[4];
+                            }
+                            if (type == 2)
+                            {
+                                float matScalarData;
+                            }
+                        } sme;
+                    }
+                } mtrld;
+            }
+        } mtrls;*/
+        byte mtrlSubData[MTRLSub.dataSize]<bgcolor=cRed>;
+    } mtrlSubContent;
+} MaterialSubChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor DKCTF_ScaleformGFXLibraryFormDescriptor;
+        //byte DKCTF_ScaleformGFXLibraryDataBlock[DKCTF_ScaleformGFXLibraryFormDescriptor.dataSize];
+    }
+    //struct GFXLibData
+    //{
+        ChunkDescriptor GFXLChunk;
+        struct GFXLibChunkData 
+        {
+            uint32 referencedTextures;
+            struct ReferencedTxtrs
+            {
+                for (i = 0; i < referencedTextures; i++)
+                {
+                    struct ReferencedTxtr
+                    {
+                        GUID texRef;
+                        if (isNX == 0)
+                        {
+                            byte checkForNX<hidden=true>;
+                            FSkip(-1);
+                            if (checkForNX == 0)
+                            {
+                                isNX = 1;
+                                Printf("NX PAK DETECTED");
+                            }
+                        }
+                        if (isNX)
+                        {
+                            U32_StringEntry texName;
+                        }
+                        else
+                        {
+                            string texName;
+                        }
+                    } rtxtr;
+                }
+            } rtxrs;
+            if (isNX)
+            {
+                U32_StringEntry theSWFName;
+            }
+            else
+            {
+                string theSWFName;
+            }
+            FSkip(4);
+            //At least MP1R doesn't use GFX
+            LittleEndian(); //temp swap endian
+            uint32 swfSize<hidden=true>;
+            BigEndian(); //temp swap endian
+            FSkip(-8);
+            byte theGFXFile[swfSize];
+        } gfxcd<bgcolor=cGreen>;
+    //} gfxld;
+} DKCTF_ScaleformGFXLibraryChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor DKCTF_FlashGFXFormDescriptor;
+    }
+    struct GFX
+    {
+        ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
+        //FSR HUD.rfgfx, MasterShell.rfgfx and PauseMenu.rfgfx is broken this way, just those dang files
+        /*struct GFXData
+        {
+            GUID LibGUID;
+            GUID PossiblyAnotherGUID; //Always 0 but it might be
+            //FSkip(12);
+            uint32 SWFCount;
+            struct SWFEntries
+            {
+                for (i = 0; i < SWFCount; i++)
+                {
+                    struct SWFEntry
+                    {
+                        uint64 dataOff;
+                        uint64 SWFSize;
+                        char SWFName[48];
+                    } rswfe;
+                }
+            } rswfes;
+            //FSkip(48);
+            //struct MainSWF
+            //{
+                //uint64 mainDataOff;
+                //uint64 mainSWFSize;
+                //char mainSWFName[48];
+                //FSkip(dataOff-20-7);
+                if (SWFCount == 1)
+                {
+                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfes-36]; //add 7 since since the CWS bit is included
+                }
+                else
+                {
+                    struct SWFFiles
+                    {
+                        for (i = 0; i < SWFCount; i++)
+                        {
+                            struct SWFFile    
+                            {
+                                byte SWFFile[rswfes.rswfe[i].SWFSize];
+                            } rswff;
+                        }
+                        //byte theSWFFile[(DKCTF_FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+                    } rswffs;
+                    //byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
+                }
+            //} mswf;
+        } gfxd;
+        //for now read it in bytes idk how to make 010 detect the final file sometimes
+        */
+        byte theGFXContent[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
+    } gfx;
+} DKCTF_FlashGFXChunk;
 
 typedef struct
 {
@@ -768,66 +935,6 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor DKCTF_ScaleformGFXLibraryFormDescriptor;
-        //byte DKCTF_ScaleformGFXLibraryDataBlock[DKCTF_ScaleformGFXLibraryFormDescriptor.dataSize];
-    }
-    //struct GFXLibData
-    //{
-        ChunkDescriptor GFXLChunk;
-        struct GFXLibChunkData 
-        {
-            uint32 referencedTextures;
-            struct ReferencedTxtrs
-            {
-                for (i = 0; i < referencedTextures; i++)
-                {
-                    struct ReferencedTxtr
-                    {
-                        GUID texRef;
-                        if (isNX == 0)
-                        {
-                            byte checkForNX<hidden=true>;
-                            FSkip(-1);
-                            if (checkForNX == 0)
-                            {
-                                isNX = 1;
-                                Printf("NX PAK DETECTED");
-                            }
-                        }
-                        if (isNX)
-                        {
-                            U32_StringEntry texName;
-                        }
-                        else
-                        {
-                            string texName;
-                        }
-                    } rtxtr;
-                }
-            } rtxrs;
-            if (isNX)
-            {
-                U32_StringEntry theSWFName;
-            }
-            else
-            {
-                string theSWFName;
-            }
-            FSkip(4);
-            //At least MP1R doesn't use GFX
-            LittleEndian(); //temp swap endian
-            uint32 swfSize<hidden=true>;
-            BigEndian(); //temp swap endian
-            FSkip(-8);
-            byte theGFXFile[swfSize];
-        } gfxcd<bgcolor=cGreen>;
-    //} gfxld;
-} DKCTF_ScaleformGFXLibraryChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
         FormDescriptor AnimationFormDescriptor;
     }
     struct AnimationData
@@ -856,68 +963,6 @@ typedef struct
         byte LightProbeDataBlock[ContentForm.dataSize];
     }
 } LightProbeChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor DKCTF_FlashGFXFormDescriptor;
-    }
-    struct GFX
-    {
-        ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
-        //FSR HUD.rfgfx, MasterShell.rfgfx and PauseMenu.rfgfx is broken this way, just those dang files
-        /*struct GFXData
-        {
-            GUID LibGUID;
-            GUID PossiblyAnotherGUID; //Always 0 but it might be
-            //FSkip(12);
-            uint32 SWFCount;
-            struct SWFEntries
-            {
-                for (i = 0; i < SWFCount; i++)
-                {
-                    struct SWFEntry
-                    {
-                        uint64 dataOff;
-                        uint64 SWFSize;
-                        char SWFName[48];
-                    } rswfe;
-                }
-            } rswfes;
-            //FSkip(48);
-            //struct MainSWF
-            //{
-                //uint64 mainDataOff;
-                //uint64 mainSWFSize;
-                //char mainSWFName[48];
-                //FSkip(dataOff-20-7);
-                if (SWFCount == 1)
-                {
-                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfes-36]; //add 7 since since the CWS bit is included
-                }
-                else
-                {
-                    struct SWFFiles
-                    {
-                        for (i = 0; i < SWFCount; i++)
-                        {
-                            struct SWFFile    
-                            {
-                                byte SWFFile[rswfes.rswfe[i].SWFSize];
-                            } rswff;
-                        }
-                        //byte theSWFFile[(DKCTF_FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
-                    } rswffs;
-                    //byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
-                }
-            //} mswf;
-        } gfxd;
-        //for now read it in bytes idk how to make 010 detect the final file sometimes
-        */
-        byte theGFXContent[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
-    } gfx;
-} DKCTF_FlashGFXChunk;
 
 typedef struct
 {
@@ -1573,66 +1618,132 @@ typedef struct
         extensionToAdd = "mstbin";
         addExtension = 1;
     }
-    if (AssetType == LooseData)
+    else if (AssetType == SwooshParticleSystem)
+    {
+        extensionToAdd = "swshpsys";
+        addExtension = 1;
+    }
+    else if (AssetType == GenericParticleSystem)
+    {
+        extensionToAdd = "gpsys";
+        addExtension = 1;
+    }
+    else if (AssetType == LooseData)
     {
         extensionToAdd = "ldata";
         addExtension = 1;
     }
-    if (AssetType == UniverseInfo)
+    else if (AssetType == UniverseInfo)
     {
         extensionToAdd = "uinfo";
         addExtension = 1;
     }
-    if (AssetType == CookedAudioBusHeiarchy)
+    else if (AssetType == CookedAudioBusHeiarchy)
     {
         extensionToAdd = "cabh";
         addExtension = 1;
     }
-    if (AssetType == Material)
+    else if (AssetType == Material)
     {
         extensionToAdd = "cmat";
         addExtension = 1;
     }
-    if (AssetType == Character)
+    else if (AssetType == CookedModel)
+    {
+        extensionToAdd = "cmdl";
+        addExtension = 1;
+    }
+    else if (AssetType == SkinnedModel)
+    {
+        extensionToAdd = "smdl";
+        addExtension = 1;
+    }
+    else if (AssetType == Character)
     {
         extensionToAdd = "char";
         addExtension = 1;
     }
-    if (AssetType == CookedAudioSample)
+    else if (AssetType == CookedAudioSample)
     {
         extensionToAdd = "csmp";
         addExtension = 1;
     }
-    if (AssetType == FiniteStateMachine)
+    else if (AssetType == FiniteStateMachine)
     {
         extensionToAdd = "cfsm";
         addExtension = 1;
     }
-    if (AssetType == DKCTF_FlashGFX)
+    else if (AssetType == DKCTF_FlashGFX)
     {
         extensionToAdd = "rfgfx";
         addExtension = 1;
     }
-    if (AssetType == DKCTF_ScaleformGFXLibrary)
+    else if (AssetType == DKCTF_ScaleformGFXLibrary)
     {
         extensionToAdd = "rsgfx";
         addExtension = 1;
     }
-    if (AssetType == CookedAudioSoundEffect)
+    else if (AssetType == CookedAudioSoundEffect)
     {
         extensionToAdd = "caud";
         addExtension = 1;
     }
-    if (AssetType == Room)
+    else if (AssetType == Room)
     {
         extensionToAdd = "rsd";
         addExtension = 1;
     }
-    if (AssetType == Texture)
+    else if (AssetType == Texture)
     {
         extensionToAdd = "ctex/ctexarray/ctex3d"; //There's also ctexarray and ctex3d but how is that determined
         addExtension = 1;
     }
+    /*
+    else if (AssetType == Prime1R_LegacyScan)
+    {
+        extensionToAdd = "lscan"; //Let's guess LSCAN since LDATA is similarly named
+        addExtension = 1;
+    }
+    else if (AssetType == Prime1R_ShaderHint)
+    {
+        extensionToAdd = "shint"; //another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime_Font)
+    {
+        extensionToAdd = "font"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime_WeaponParticleSystem)
+    {
+        extensionToAdd = "wpsys"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime1R_Electric2ParticleSystem)
+    {
+        extensionToAdd = "elec2psys"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime1R_Electric2ParticleSystem)
+    {
+        extensionToAdd = "elec2psys"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime1R_LegacyUniverseHintRedundant)
+    {
+        extensionToAdd = "luhr"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime_ElectricParticleSystem)
+    {
+        extensionToAdd = "elecpsys"; //yet another guess
+        addExtension = 1;
+    }
+    else if (AssetType == Prime1R_CharacterProject)
+    {
+        extensionToAdd = "acs/ancs"; //yet another guess
+        addExtension = 1;
+    }*/
     GUID AssetID;
     if (isNX == 0) //If this is 0, it's an NX PAK
     {
@@ -1851,7 +1962,7 @@ typedef struct
     if (isPack)
     {
         FormDescriptor DependencyGroupFormDescriptor;
-        if (DependencyGroupFormDescriptor.hdr != DependencyGroup && isLE == 1)
+        if (DependencyGroupFormDescriptor.hdr != DependencyGroup && DependencyGroupFormDescriptor.hdr != RUDEFormDescriptor && isLE == 1)
         {
             Printf("Compressed dependency groups are unsupported. Terminating...");
             terminate = 1;
@@ -2004,11 +2115,11 @@ typedef struct
     if (isPack)
     {
         FormDescriptor UnknownDataFormDescriptor;
-        byte UnknownData[UnknownDataFormDescriptor.dataSize];
+        byte UnknownData[UnknownDataFormDescriptor.dataSize]<bgcolor=cRed>;
     }
     else
     {
-        byte UnknownData[ContentForm.dataSize];
+        byte UnknownData[ContentForm.dataSize]<bgcolor=cRed>;
     }
 } UnknownChunk;
 
@@ -2026,9 +2137,9 @@ typedef struct
             uint32 magic; //0xBADBEEF
             uint32 frameID;
             uint32 scanTextStringID;
-            uint32 scanSpeedFlag;
-            uint32 logBookCategory;
-            /*Prime_ScanIconFlag*/ byte scanIconFlag;
+            Prime1_ScanSpeedFlag scanSpeedFlag;
+            Prime1_LogBookCategory logBookCategory;
+            Prime1_ScanIconFlag scanIconFlag;
         } hdr;
         struct ScanImages
         {
@@ -2061,7 +2172,7 @@ typedef struct
     if (isPack)
     {
         FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
-        byte RawData[Prime1R_LegacyUniverseHintRedundantFormDescriptor.dataSize];
+        byte RawData[Prime1R_LegacyUniverseHintRedundantFormDescriptor.dataSize]<bgcolor=cRed>;
     }
     else
     {
@@ -2073,11 +2184,42 @@ typedef struct
 {
     if (isPack)
     {
-        FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
+        FormDescriptor CookedMIDIRedundantFormDescriptor;
     }
     ChunkDescriptor CookedMIDIChunkDescriptor;
-    byte RawData[CookedMIDIChunkDescriptor.dataSize];
+    byte RawData[CookedMIDIChunkDescriptor.dataSize]<bgcolor=cRed>;
 } Prime1R_CookedMIDIChunk;
+
+typedef struct
+{
+    if (isPack)
+    {
+        FormDescriptor Prime1R_ModConContainerFormDescriptor;
+    }
+    struct ModConContainerHeader
+    {
+        ChunkDescriptor ModConContainerHeaderChunkDescriptor;
+        uint32 modelHeaderChunkData; //some value, prob i32
+    } MCHD;
+    struct ModConVertexData
+    {
+        ChunkDescriptor ModConContainerVertexDataChunkDescriptor;
+        byte RawData[ModConContainerVertexDataChunkDescriptor.dataSize]; 
+    } MCVD;
+    struct ModConCollisionData
+    {
+        ChunkDescriptor ModConCollisionDataChunkDescriptor;
+        struct ChunkedData
+        {
+            VerticesChunk MCCDVert;
+            MaterialSubChunk MCCDMtrl;
+            TrianglesChunk MCCDTris;
+            TreeChunk MCCDTree;
+        } chunked_data;
+    } MCCD;
+    uint32 peek;
+    //byte RawData[CookedMIDIChunkDescriptor.dataSize];
+} Prime1R_ModConContainerChunk;
 
 typedef struct
 {
@@ -2088,8 +2230,8 @@ typedef struct
     ChunkDescriptor Prime_ParticleSystemChunkDescriptor;
     struct Prime_ParticleSystemData
     {
-        GenericAssetHeader ParticleSystemDataMagic;
-        byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4];
+        GenericAssetHeader ParticleSystemDataMagic<bgcolor=cGreen>;
+        byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4]<bgcolor=cRed>;
     } pdpsd;
 } Prime_ParticleSystemChunk;
 
@@ -2258,60 +2400,6 @@ typedef struct
         } unknownfloats;
     } wmdc;
 } WorldModelHeaderChunk;
-
-typedef struct
-{
-    ChunkDescriptor MTRLSub;
-    struct MtrlSubContent
-    {
-        /*uint32 materials;
-        struct Materials
-        {
-            for (i = 0; i < materials; i++)
-            {
-                if (isNX)
-                {
-                    U32_StringEntry theStr;
-                }
-                else
-                {
-                    string theStr;
-                }
-                GUID materialGUID;
-                DataType matType;
-                uint32 materialFlags;
-                uint32 matDataCount;
-                struct SubMaterialData
-                {
-                    for (i2 = 0; i2 < matDataCount; i2++)
-                    {
-                        struct SubMatDataEntry
-                        {
-                            uint32 dataID;
-                            uint32 type;
-                            if (type == 0)
-                            {
-                                GUID theTexAssetID;
-                                uint32 flags;
-                                uint32 filter;
-                                uint32 wrap[3];
-                            }
-                            if (type == 1)
-                            {
-                                float matColorData[4];
-                            }
-                            if (type == 2)
-                            {
-                                float matScalarData;
-                            }
-                        } sme;
-                    }
-                } mtrld;
-            }
-        } mtrls;*/
-        byte mtrlSubData[MTRLSub.dataSize]<bgcolor=cRed>;
-    } mtrlSubContent;
-} MaterialSubChunk;
 
 typedef struct
 {
@@ -2546,7 +2634,7 @@ typedef struct
     }
     else
     {
-        if (ContentForm.fVer >= 6 && ContentForm.dVer >= 6)
+        if (ContentForm.fVer > 6 && ContentForm.dVer > 6)
         {
             isNX = 1; //I expected things to break but I guess it works fine
         }
@@ -2556,16 +2644,16 @@ typedef struct
             {
                 LittleEndian();
             }
-            U32_StringEntry macroFileName;
+            U32_StringEntry macroFileName<hidden=true>;
             Printf("%s.caud\n", macroFileName.theString);
         }
         else
         {
-            string macroFileName;
-            Printf("%s.caud\n", macroFileName);
+            string macroFileName<hidden=true>;
+            Printf("%s.caud\n", macroFileName); //For now this is broken outside paks, I'll prob fix it soon I hope
         }
         FSkip(-sizeof macroFileName);
-        byte CookedAudioSoundEffectData[ContentForm.dataSize];
+        byte CookedAudioSoundEffectData[ContentForm.dataSize]<bgcolor=cRed>;
     }
     //TODO FIX
     /*
@@ -2638,7 +2726,7 @@ typedef struct
 } CookedAudioSoundEffectChunk;
 
 typedef struct
-{
+{   //TODO is this the same for MP1R
     if (isPack)
     {
         FormDescriptor UINFFormDescriptor;
@@ -2648,29 +2736,43 @@ typedef struct
         GUID UniverseMessageTableGUID;
         GUID SaveSlotMessageTableGUID;
         GUID LoadingAudioGUID;
-        for (i = 0; i < 255; i++)
+        struct AreaInfos
         {
-            if (terminateUINF != 1)
+            for (i = 0; i < 255; i++)
             {
-                struct AreaInfo
+                if (terminateUINF != 1)
                 {
-                    ChunkDescriptor Universe_ROOMFormDescriptor;
-                    GUID RoomGUID;
-                    U32_StringEntry theLocalizedAreaName;
-                    byte WorldNum;
-                    byte ActNum;
-                    DKCTF_LevelType LevelType; //0 means it's a standard level, if 1, it's a boss, setting this to 1 or 0 on one that is a boss doesn't display the level complete UI (confirm), 2 means it's a KONG letter bonus level
-                    uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9, if the level type is a boss, this is ignored.
-                    uint32 unk3[5]<bgcolor=cRed>;
+                    struct AreaInfoEntry
+                    {
+                        ChunkDescriptor Universe_ROOMFormDescriptor;
+                        struct RoomEntryChunk
+                        {
+                            GUID RoomGUID;
+                            U32_StringEntry theLocalizedAreaName;
+                            byte WorldNum;
+                            byte ActNum;
+                            DKCTF_LevelType LevelType; //0 means it's a standard level, if 1, it's a boss, setting this to 1 or 0 on one that is a boss doesn't display the level complete UI (confirm), 2 means it's a KONG letter bonus level
+                            uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9, if the level type is a boss, this is ignored.
+                            uint32 unk3[5]<bgcolor=cRed>;
+                        } rec;
+                    } aie;
+                    /*if (isPack && sizeof aies == UINFFormDescriptor.dataSize - 48) //this is better but how do I do it
+                    {
+                        terminateUINF = 1;
+                    }
+                    else if (!isPack && sizeof aies == ContentForm.dataSize - 48)
+                    {
+                        terminateUINF = 1;
+                    }*/
                     DataType checkForEOF<hidden=true>;
                     FSkip(-4);
                     if (checkForEOF == RUDEFormDescriptor)
                     {
                         terminateUINF = 1;
                     }
-                } areaInfo;
+                }
             }
-        }
+        } aies;
         terminateUINF = 0;
     //} universeInfo;
 } UniverseInfoChunk<bgcolor=cPurple>;
@@ -2722,18 +2824,21 @@ typedef struct
     {
         FormDescriptor CLSNForm;
     }
-    VerticesChunk VerticesChunkContent;
-    if (isCLSN && CLSNForm.fVer != 2 && CLSNForm.dVer != 2)
+    struct CollisionData
     {
-        MaterialChunk MaterialClsnChunk;
-    }
-    else
-    {
-        isLegacyCLSN = 1;
-    }
-    TrianglesChunk TrianglesChunkContent;
-    TreeChunk TreeChunkContent;
-    isLegacyCLSN = 0;
+        VerticesChunk VerticesChunkContent;
+        if (isCLSN && CLSNForm.fVer != 2 && CLSNForm.dVer != 2)
+        {
+            MaterialChunk MaterialClsnChunk;
+        }
+        else
+        {
+            isLegacyCLSN = 1;
+        }
+        TrianglesChunk TrianglesChunkContent;
+        TreeChunk TreeChunkContent;
+        isLegacyCLSN = 0;
+    } CLSN;
 } CollisionChunk;
 
 typedef struct
@@ -2750,7 +2855,7 @@ typedef struct
         RUDEFormDescriptor theMeta;
     }*/
     //Fix for reading dev files
-    if (TOCForm.fVer >= 1 && TOCForm.dVer >= 1 && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != Collision && AssetDirChunk[0].AssetEntriesChunk.theAssetEntry.assetType != DynamicCollision)
+    if (TOCForm.dataSize > 64) //Here's a more simple fix, bascially an AssetDirectory chunk that is 64 bytes prob wouldn't have nametags
     {
         NameTagsChunk StringTableChunk;
     }
@@ -2886,17 +2991,21 @@ typedef struct
                 {
                     Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
                 }
-                if (TMPCHECK.contentType == Prime1R_CookedAudioSampleBank)
+                else if (TMPCHECK.contentType == Prime1R_CookedAudioSampleBank)
                 {
                     UnknownChunk Prime1R_CookedAudioSampleBankContent;
                 }
-                if (TMPCHECK.contentType == Prime1R_LegacyFSM)
+                else if (TMPCHECK.contentType == Prime1R_LegacyFSM)
                 {
                     UnknownChunk Prime1R_LegacyFSMContent;
                 }
                 else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
                 {
                     Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
+                }
+                else if (TMPCHECK.contentType == Prime1R_ModConContainer)
+                {
+                    Prime1R_ModConContainerChunk Prime1R_ModConContainerContent;
                 }
                 else if (TMPCHECK.contentType == Prime1R_VectorField)
                 {
@@ -3045,7 +3154,7 @@ typedef struct
 typedef struct
 {
     ChunkDescriptor RFLODesc;
-    byte theRFLO[RFLODesc.dataSize];
+    byte theRFLO[RFLODesc.dataSize]<bgcolor=cRed>;
     /*struct RenderFlowContent
     {
         /*uint32 unk;
