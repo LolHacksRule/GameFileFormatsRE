@@ -1,14 +1,14 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
-//   Version: 
-//   Purpose: 
-//  Category: 
+//		File: 
+//	 Authors: 
+//	 Version: 
+//	 Purpose: 
+//	Category: 
 // File Mask: 
-//  ID Bytes: 
-//   History: 
+//	ID Bytes: 
+//	 History: 
 //------------------------------------------------
 
 #include "GameSpecific/DKCTF.bt"
@@ -18,218 +18,218 @@
 
 typedef enum <uint32>
 {
-    AreaOctree = 1464092740,
-    Animation = 1095649613,
-    AssetDirectory = 1094994258,
-    AudioFormatAlloc = 1179472961,
-    AudioLabel = 1279345228,
-    Character = 1128808786,
-    Collision = 1129075534,
-    ComponentChunk = 1129270608,
-    CookedAudioBusHeiarchy = 1128350280,
-    CookedAudioSample = 1129532752,
-    CookedAudioSoundEffect = 1128355140,
-    CookedModel = 1129137228,
-    RawData = 1145132097, //Generic data
-    DependencyGroup = 1145524816,
-    Description = 1145393987,
-    DynamicCollision = 1145261134,
-    Export = 1163415636,
-    ExtendedTransformAnimation = 1481003597,
-    FiniteStateMachine = 1179864387,
-    DKCTF_FlashGFX = 1195792416, //DKCTF
-    GPUCompressed = 1196447008,
-    GeneratedGameObjectChunk = 1195855682,
-    GeneratedScriptObject = 1196642896,
-    GenericHeader = 1212498244,
-    GenericParticleSystem = 1195724368,
-    InformationBlock = 1229866575,
-    LayerChunk = 1279351122,
-    LayerHeader = 1279804740,
-    LevelGeneratedChunk = 1279739214,
-    LightProbe = 1280332354,
-    LoadUnitChunk = 1280659028,
-    LoadUnitHeader = 1280657476,
-    LoadUnitLayerChunk = 1280072018,
-    LoadUnitResourcesChunk = 1280460115,
-    LooseData = 1279546433,
-    LooseDataContentHeader = 1279542088,
-    Material = 1297371724,
-    Material_Phong = 1346915911,
-    Material_Reflect = 1380271692,
-    Mesh = 1296388936,
-    MessageTable_MessageStudioBinaryText = 1297302100,
-    Metadata = 1296389185,
-    Package = 1346454347,
-    PerformanceGroupChunk = 1346851408,
-    RenderFlow = 1380338767,
-    RUDEFormDescriptor = 1380340301,
-    Room = 1380929357,
-    RoomHeader = 1380796484,
-    RuleChunk = 1381321797,
-    RuleSetConfig = 1381192771,
-    DKCTF_ScaleformGFXLibrary = 1195792460, //DKCTF
-    ScriptObject = 1397901648,
-    ShaderGX2  = 1397184562,
-    ShaderNVN  = 1314278995,
-    ShaderX  = 1396987936,
-    Skeleton = 1397441868,
-    SkinnedModel = 1397572684,
-    Strings = 1398035015,
-    SwooshParticleSystem = 1398231880,
-    TableOfContentsContent = 1414480707,
-    Texture = 1415074898,
-    TreeNode = 1414677829,
-    Triangles = 1414678867,
-    UniverseInfo = 1430867526,
-    Vertices = 1447383636,
-    WorldModel = 1464681548,
-    //Translations
-    US_English = 1431520590,
-    US_French = 1431520850,
-    US_Spanish = 1431524176,
-    EU_English = 1163216206,
-    EU_French = 1163216466,
-    EU_Spanish = 1163219792,
-    EU_German = 1163216709,
-    EU_Italian = 1163217236,
-    JA_Japanese = 1246775888,
-    KO_Korean = 1263487823,
-    //Prime1Remaster!
-    Prime1R_DataEnum = 1162761549,
-    /*
-    Prime1R_BakedLightingLookup,
-    */
-    Prime1R_CookedAudioSampleBank = 1128418891,
-    Prime1R_CharacterProject = 1128812626,
-    /*
-    Prime1R_CookedMap,*/
-    Prime1R_CookedMIDI = 1129138500,
-    Prime1R_CRMS = 1129467219,
-    Prime1R_RAS3 = 1380012851,
-    Prime1R_Electric2ParticleSystem = 1162625842,
-    Prime1R_FMV = 1179473456, //Full Motion Video?
-    Prime1R_GUIFrame = 1196771654,
-    //Prime1R_InputMacro,
-    Prime1R_LegacyFSM = 1279677261,
-    Prime1R_LegacyFSM2 = 844318284, // Unused
-    //Prime1R_LegacyMapUniverse,
-    Prime1R_LegacyPathfinding = 1280332872,
-    /*
-    Prime1R_LegacyPathfinding2,
-    Prime1R_LegacyTweak,
-    Prime1R_LegacyNTweak,
-    */
-    Prime1R_LegacyScan = 1280525134, //Literally SCAN MP1
-    
-    Prime1R_LightProbe = 1280593986,
-    /*
-    */
-    Prime1R_LegacyUniverseHintRedundant = 1280657490,
-    Prime1R_MIDI = 1296647241,
-    //Prime1R_MIDIBank,
-    Prime1R_MaterialInstance = 1296127049,
-    Prime1R_ModConContainer = 1296256846,
-    Prime1R_ModConCollisionData = 1296253764,
-    Prime1R_ModConCollisionDataNONProduction = 1296253774,
-    Prime1R_ModConDecalData = 1296254020,
-    Prime1R_ModConVisualDataNonProduction = 1296258638,
-    Prime1R_ModConVertexBlendData = 1296258626,
-    Prime1R_ModConVertexBlendDataNonProduction = 1112949581,
-    Prime1R_ModConContainerHeader = 1296255044,
-    Prime1R_ModOcclusionDataNonProduction = 1296256836,
-    Prime1R_ModConRenderCollisionData = 1296257603,
-    Prime1R_ModConVisualData = 1296258628,
-    /*
-    Prime1R_MusicCue,
-    Prime1R_Vibration,
-    Prime1R_SamplerVoiceBank,
-    Prime1R_ShaderGraph,
-    */
-    Prime1R_ShaderHint = 1397247572,
-    Prime1R_SaveGame = 1296520787, //SaveGame
-    Prime1R_VectorField = 1447379782,
-    Prime1R_Sand = 1145979219, //Unused
-    /*
-    Prime1R_Locator, //Unused
-    Prime1R_StreamingAudioSample, //Unused, 0x43524153
-    Prime1R_Pathfinding, //Unused, 0x43524153
-    Prime1R_ModConContainer, //Unused
-    Prime1R_Terrain, //Unused
-    */
-    Prime1R_Occlusion = 1279476559, //Unused
-    //Prime/Metroid!
-    Prime_CollisionResponseSystem = 1129468749,
-    Prime_DecalParticleSystem = 1146114893,
-    Prime_Font = 1179602516,
-    Prime_ElectricParticleSystem = 1162629965,
-    Prime_WeaponParticleSystem = 1464881997,
-    Prime_ScannableObject = 1396916558,
+	AreaOctree = 1464092740,
+	Animation = 1095649613,
+	AssetDirectory = 1094994258,
+	AudioFormatAlloc = 1179472961,
+	AudioLabel = 1279345228,
+	Character = 1128808786,
+	Collision = 1129075534,
+	ComponentChunk = 1129270608,
+	CookedAudioBusHeiarchy = 1128350280,
+	CookedAudioSample = 1129532752,
+	CookedAudioSoundEffect = 1128355140,
+	CookedModel = 1129137228,
+	RawData = 1145132097, //Generic data
+	DependencyGroup = 1145524816,
+	Description = 1145393987,
+	DynamicCollision = 1145261134,
+	Export = 1163415636,
+	ExtendedTransformAnimation = 1481003597,
+	FiniteStateMachine = 1179864387,
+	DKCTF_FlashGFX = 1195792416, //DKCTF
+	GPUCompressed = 1196447008,
+	GeneratedGameObjectChunk = 1195855682,
+	GeneratedScriptObject = 1196642896,
+	GenericHeader = 1212498244,
+	GenericParticleSystem = 1195724368,
+	InformationBlock = 1229866575,
+	LayerChunk = 1279351122,
+	LayerHeader = 1279804740,
+	LevelGenerated = 1279739214,
+	LightProbe = 1280332354,
+	LoadUnit = 1280659028,
+	LoadUnitHeader = 1280657476,
+	LoadUnitLayerChunk = 1280072018,
+	LoadUnitResourcesChunk = 1280460115,
+	LooseData = 1279546433,
+	LooseDataContentHeader = 1279542088,
+	Material = 1297371724,
+	Material_Phong = 1346915911,
+	Material_Reflect = 1380271692,
+	Mesh = 1296388936,
+	MessageTable_MessageStudioBinaryText = 1297302100,
+	Metadata = 1296389185,
+	Package = 1346454347,
+	PerformanceGroupChunk = 1346851408,
+	RenderFlow = 1380338767,
+	RUDEFormDescriptor = 1380340301,
+	RoomSettingsData = 1380929357,
+	RoomHeader = 1380796484,
+	RuleChunk = 1381321797,
+	RuleSetConfig = 1381192771,
+	DKCTF_ScaleformGFXLibrary = 1195792460, //DKCTF
+	ScriptObject = 1397901648,
+	ShaderGX2  = 1397184562,
+	ShaderNVN  = 1314278995,
+	ShaderX  = 1396987936,
+	Skeleton = 1397441868,
+	SkinnedModel = 1397572684,
+	Strings = 1398035015,
+	SwooshParticleSystem = 1398231880,
+	TableOfContentsContent = 1414480707,
+	Texture = 1415074898,
+	TreeNode = 1414677829,
+	Triangles = 1414678867,
+	UniverseInfo = 1430867526,
+	Vertices = 1447383636,
+	WorldModel = 1464681548,
+	//Translations
+	US_English = 1431520590,
+	US_French = 1431520850,
+	US_Spanish = 1431524176,
+	EU_English = 1163216206,
+	EU_French = 1163216466,
+	EU_Spanish = 1163219792,
+	EU_German = 1163216709,
+	EU_Italian = 1163217236,
+	JA_Japanese = 1246775888,
+	KO_Korean = 1263487823,
+	//Prime1Remaster!
+	Prime1R_DataEnum = 1162761549,
+	/*
+	Prime1R_BakedLightingLookup,
+	*/
+	Prime1R_CookedAudioSampleBank = 1128418891,
+	Prime1R_CharacterProject = 1128812626,
+	/*
+	Prime1R_CookedMap,*/
+	Prime1R_CookedMIDI = 1129138500,
+	Prime1R_CRMS = 1129467219,
+	Prime1R_RAS3 = 1380012851,
+	Prime1R_Electric2ParticleSystem = 1162625842,
+	Prime1R_FMV = 1179473456, //Full Motion Video?
+	Prime1R_GUIFrame = 1196771654,
+	//Prime1R_InputMacro,
+	Prime1R_LegacyFSM = 1279677261,
+	Prime1R_LegacyFSM2 = 844318284, // Unused
+	//Prime1R_LegacyMapUniverse,
+	Prime1R_LegacyPathfinding = 1280332872,
+	/*
+	Prime1R_LegacyPathfinding2,
+	Prime1R_LegacyTweak,
+	Prime1R_LegacyNTweak,
+	*/
+	Prime1R_LegacyScan = 1280525134, //Literally SCAN MP1
+	
+	Prime1R_LightProbe = 1280593986,
+	/*
+	*/
+	Prime1R_LegacyUniverseHintRedundant = 1280657490,
+	Prime1R_MIDI = 1296647241,
+	//Prime1R_MIDIBank,
+	Prime1R_MaterialInstance = 1296127049,
+	Prime1R_ModConContainer = 1296256846,
+	Prime1R_ModConCollisionData = 1296253764,
+	Prime1R_ModConCollisionDataNONProduction = 1296253774,
+	Prime1R_ModConDecalData = 1296254020,
+	Prime1R_ModConVisualDataNonProduction = 1296258638,
+	Prime1R_ModConVertexBlendData = 1296258626,
+	Prime1R_ModConVertexBlendDataNonProduction = 1112949581,
+	Prime1R_ModConContainerHeader = 1296255044,
+	Prime1R_ModOcclusionDataNonProduction = 1296256836,
+	Prime1R_ModConRenderCollisionData = 1296257603,
+	Prime1R_ModConVisualData = 1296258628,
+	/*
+	Prime1R_MusicCue,
+	Prime1R_Vibration,
+	Prime1R_SamplerVoiceBank,
+	Prime1R_ShaderGraph,
+	*/
+	Prime1R_ShaderHint = 1397247572,
+	Prime1R_SaveGame = 1296520787, //SaveGame
+	Prime1R_VectorField = 1447379782,
+	Prime1R_Sand = 1145979219, //Unused
+	/*
+	Prime1R_Locator, //Unused
+	Prime1R_StreamingAudioSample, //Unused, 0x43524153
+	Prime1R_Pathfinding, //Unused, 0x43524153
+	Prime1R_ModConContainer, //Unused
+	Prime1R_Terrain, //Unused
+	*/
+	Prime1R_Occlusion = 1279476559, //Unused
+	//Prime/Metroid!
+	Prime_CollisionResponseSystem = 1129468749,
+	Prime_DecalParticleSystem = 1146114893,
+	Prime_Font = 1179602516,
+	Prime_ElectricParticleSystem = 1162629965,
+	Prime_WeaponParticleSystem = 1464881997,
+	Prime_ScannableObject = 1396916558,
 } DataType;
 
 typedef enum <uint32>{
-    GX2_SURFACE_DIM_TEXTURE_1D,
-    GX2_SURFACE_DIM_TEXTURE_2D,
-    GX2_SURFACE_DIM_TEXTURE_3D,
-    GX2_SURFACE_DIM_TEXTURE_CUBE,
-    GX2_SURFACE_DIM_TEXTURE_1D_ARRAY,
-    GX2_SURFACE_DIM_TEXTURE_2D_ARRAY,
-    GX2_SURFACE_DIM_TEXTURE_2D_MSAA,
-    GX2_SURFACE_DIM_TEXTURE_2D_MSAA_ARRAY
+	GX2_SURFACE_DIM_TEXTURE_1D,
+	GX2_SURFACE_DIM_TEXTURE_2D,
+	GX2_SURFACE_DIM_TEXTURE_3D,
+	GX2_SURFACE_DIM_TEXTURE_CUBE,
+	GX2_SURFACE_DIM_TEXTURE_1D_ARRAY,
+	GX2_SURFACE_DIM_TEXTURE_2D_ARRAY,
+	GX2_SURFACE_DIM_TEXTURE_2D_MSAA,
+	GX2_SURFACE_DIM_TEXTURE_2D_MSAA_ARRAY
 } TexType;
 
 typedef enum <uint32>{
-    GX2_SURFACE_FORMAT_UNORM_R8,
-    GX2_SURFACE_FORMAT_SNORM_R8,
-    GX2_SURFACE_FORMAT_UINT_R8,
-    GX2_SURFACE_FORMAT_SINT_R8,
-    GX2_SURFACE_FORMAT_UNORM_R16,
-    GX2_SURFACE_FORMAT_SNORM_R16,
-    GX2_SURFACE_FORMAT_UINT_R16,
-    GX2_SURFACE_FORMAT_SINT_R16,
-    GX2_SURFACE_FORMAT_FLOAT_R16,
-    GX2_SURFACE_FORMAT_UINT_R32,
-    GX2_SURFACE_FORMAT_SINT_R32,
-    GX2_SURFACE_FORMAT_INVALID,
-    GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8,
-    GX2_SURFACE_FORMAT_SRGB_R8_G8_B8_A8,
-    GX2_SURFACE_FORMAT_FLOAT_R16_G16_B16_A16,
-    GX2_SURFACE_FORMAT_FLOAT_R32_G32_B32_A32,
-    GX2_SURFACE_FORMAT_UNORM_R16_2,
-    GX2_SURFACE_FORMAT_UNORM_R16_3,
-    GX2_SURFACE_FORMAT_UNORM_R24_X8,
-    GX2_SURFACE_FORMAT_FLOAT_R32,
-    GX2_SURFACE_FORMAT_UNORM_BC1,
-    GX2_SURFACE_FORMAT_SRGB_BC1,
-    GX2_SURFACE_FORMAT_UNORM_BC2,
-    GX2_SURFACE_FORMAT_SRGB_BC2,
-    GX2_SURFACE_FORMAT_UNORM_BC3,
-    GX2_SURFACE_FORMAT_SRGB_BC3,
-    GX2_SURFACE_FORMAT_UNORM_BC4,
-    GX2_SURFACE_FORMAT_SNORM_BC4,
-    GX2_SURFACE_FORMAT_UNORM_BC5,
-    GX2_SURFACE_FORMAT_SNORM_BC5,
-    GX2_SURFACE_FORMAT_FLOAT_R11_G11_B10,
-    GX2_SURFACE_FORMAT_FLOAT_R32_2,
-    GX2_SURFACE_FORMAT_FLOAT_R16_G16,
-    GX2_SURFACE_FORMAT_UNORM_R8_G8,
-    NX_ASTC_2D_12X10 = 54,
-    NX_ASTC_2D_6X5,
-    NX_ASTC_2D_UNKNOWN = 58
+	GX2_SURFACE_FORMAT_UNORM_R8,
+	GX2_SURFACE_FORMAT_SNORM_R8,
+	GX2_SURFACE_FORMAT_UINT_R8,
+	GX2_SURFACE_FORMAT_SINT_R8,
+	GX2_SURFACE_FORMAT_UNORM_R16,
+	GX2_SURFACE_FORMAT_SNORM_R16,
+	GX2_SURFACE_FORMAT_UINT_R16,
+	GX2_SURFACE_FORMAT_SINT_R16,
+	GX2_SURFACE_FORMAT_FLOAT_R16,
+	GX2_SURFACE_FORMAT_UINT_R32,
+	GX2_SURFACE_FORMAT_SINT_R32,
+	GX2_SURFACE_FORMAT_INVALID,
+	GX2_SURFACE_FORMAT_UNORM_R8_G8_B8_A8,
+	GX2_SURFACE_FORMAT_SRGB_R8_G8_B8_A8,
+	GX2_SURFACE_FORMAT_FLOAT_R16_G16_B16_A16,
+	GX2_SURFACE_FORMAT_FLOAT_R32_G32_B32_A32,
+	GX2_SURFACE_FORMAT_UNORM_R16_2,
+	GX2_SURFACE_FORMAT_UNORM_R16_3,
+	GX2_SURFACE_FORMAT_UNORM_R24_X8,
+	GX2_SURFACE_FORMAT_FLOAT_R32,
+	GX2_SURFACE_FORMAT_UNORM_BC1,
+	GX2_SURFACE_FORMAT_SRGB_BC1,
+	GX2_SURFACE_FORMAT_UNORM_BC2,
+	GX2_SURFACE_FORMAT_SRGB_BC2,
+	GX2_SURFACE_FORMAT_UNORM_BC3,
+	GX2_SURFACE_FORMAT_SRGB_BC3,
+	GX2_SURFACE_FORMAT_UNORM_BC4,
+	GX2_SURFACE_FORMAT_SNORM_BC4,
+	GX2_SURFACE_FORMAT_UNORM_BC5,
+	GX2_SURFACE_FORMAT_SNORM_BC5,
+	GX2_SURFACE_FORMAT_FLOAT_R11_G11_B10,
+	GX2_SURFACE_FORMAT_FLOAT_R32_2,
+	GX2_SURFACE_FORMAT_FLOAT_R16_G16,
+	GX2_SURFACE_FORMAT_UNORM_R8_G8,
+	NX_ASTC_2D_12X10 = 54,
+	NX_ASTC_2D_6X5,
+	NX_ASTC_2D_UNKNOWN = 58
 } TexFmt;
 
 typedef enum <uint32>{
-    DKCTF_SLdrPlayerMovementControls = 0x0BB87142,
-    DKCTF_SLdrPlayerMovementControls_field_0 = 0xE721B25B,
-    DKCTF_SLdrMapControls = 0x8BF97C46,
-    DKCTF_SLdrMiscControls = 0xC7357581,
-    DKCTF_SLdrDebugControls = 0x7742A311,
-    DKCTF_SLdrCommandControls_enum_100071d8 = 0xD972289E,
-    UNKNOWN_LOOSE_DATA_TEST_1 = 0xC72CC138,
-    UNKNOWN_LOOSE_DATA_TEST_2 = 0x64429B5B,
-    Prime1R_SLdrGameAreaMemorySetup = 0xC0AC6B4F,
-    //Components
-    CEntityGOC = 0x749749F1,
+	DKCTF_SLdrPlayerMovementControls = 0x0BB87142,
+	DKCTF_SLdrPlayerMovementControls_field_0 = 0xE721B25B,
+	DKCTF_SLdrMapControls = 0x8BF97C46,
+	DKCTF_SLdrMiscControls = 0xC7357581,
+	DKCTF_SLdrDebugControls = 0x7742A311,
+	DKCTF_SLdrCommandControls_enum_100071d8 = 0xD972289E,
+	UNKNOWN_LOOSE_DATA_TEST_1 = 0xC72CC138,
+	UNKNOWN_LOOSE_DATA_TEST_2 = 0x64429B5B,
+	Prime1R_SLdrGameAreaMemorySetup = 0xC0AC6B4F,
+	//Components
+	CEntityGOC = 0x749749F1,
 	CFakePlayerControlsGOC = 0x4EC5FA3A,
 	CStaticCollisionGOC = 0x57153AA4,
 	CRenderWorldGOC = 0x41956904,
@@ -406,2805 +406,2930 @@ typedef enum <uint32>{
 
 typedef struct
 {
-    //Todo, add check for DKCTF and MP1R, use the right hashes
-    BigEndian();
-    GameCRC32 FieldNameHash;
-    if (isLE)
-    {
-        LittleEndian();
-    }
-    uint16 blockSize;
-    /*uint16 subfields;
-    GameCRC32 FieldEntry;*/
-    byte theFieldBlock[blockSize];
+	//Todo, add check for DKCTF and MP1R, use the right hashes
+	BigEndian();
+	GameCRC32 FieldNameHash;
+	if (isLE)
+	{
+		LittleEndian();
+	}
+	uint16 blockSize;
+	/*uint16 subfields;
+	GameCRC32 FieldEntry;*/
+	byte theFieldBlock[blockSize];
 } Field;
 
 typedef struct
 {
-    uint16 typeID;
-    uint16 version;
+	uint16 typeID;
+	uint16 version;
 } GenericAssetHeader;
 
 typedef struct
 {
-    Vector3_F32 min;
-    Vector3_F32 max;
+	Vector3_F32 min;
+	Vector3_F32 max;
 } AABox;
 
 typedef enum <ubyte>
 {
-    Bool,
-    F32,
-    I32,
-    Unk,
+	Bool,
+	F32,
+	I32,
+	Unk,
 } ValueType;
 
 typedef enum <ubyte>
 {
-    LessThan,
-    LessThanOrEqualTo,
-    EqualTo,
-    GreaterThanOrEqualTo,
-    GreaterThan,
+	LessThan,
+	LessThanOrEqualTo,
+	EqualTo,
+	GreaterThanOrEqualTo,
+	GreaterThan,
 } ComparisionOperator;
 
 typedef struct
 {
-    //uint32 unk;
-    uint32 unk;
-    uint32 alloc;
-    uint32 headerSize;
-    uint32 dataAlign;
-    uint32 cDataOff;
-    uint32 cDataSize;
-    uint32 dSize;
-    uint32 cSize;
-    uint32 compOff;
-    //FSkip(4);
+	//uint32 unk;
+	uint32 unk;
+	uint32 alloc;
+	uint32 headerSize;
+	uint32 dataAlign;
+	uint32 cDataOff;
+	uint32 cDataSize;
+	uint32 dSize;
+	uint32 cSize;
+	uint32 compOff;
+	//FSkip(4);
 } TextureMetadata;
 
 typedef struct
 {
-    BigEndian();
-    DataType hdr;
-    if (isLEChecked != 1)
-    {
-        uint32 dataChecker<hidden=true>;
-        if (dataChecker != 0) //assume LE
-        {
-            LittleEndian();
-            isLE = 1;
-            Printf("Little Endian hack!\n");
-            //Force isNX too
-            isNX = 1;
-        }
-        else
-        {
-            isLE = 0;
-        }
-        FSkip(-4);
-        isLEChecked = 1;
-    }
-    if (isLE == 1)
-    {
-        LittleEndian();
-    }
-    uint64 dataSize;
-    uint64 unk; //pad?
-    BigEndian();
-    DataType contentType;
-    if (isLE == 1)
-    {
-        LittleEndian();
-    }
-    uint32 fVer;
-    uint32 dVer;
-    BigEndian();
+	BigEndian();
+	DataType hdr;
+	if (isLEChecked != 1)
+	{
+		uint32 dataChecker<hidden=true>;
+		if (dataChecker != 0) //assume LE
+		{
+			LittleEndian();
+			isLE = 1;
+			Printf("Little Endian hack!\n");
+			//Force isNX too
+			isNX = 1;
+		}
+		else
+		{
+			isLE = 0;
+		}
+		FSkip(-4);
+		isLEChecked = 1;
+	}
+	if (isLE == 1)
+	{
+		LittleEndian();
+	}
+	uint64 dataSize;
+	uint64 unk; //pad?
+	BigEndian();
+	DataType contentType;
+	if (isLE == 1)
+	{
+		LittleEndian();
+	}
+	uint32 fVer;
+	uint32 dVer;
+	BigEndian();
 } FormDescriptor<bgcolor=cGreen>;
 
 typedef enum <uint32>
 {
-    LZSS_Uncompressed,
-    LZSS_8Bit,
-    LZSS_16Bit,
-    LZSS_32Bit,
-    Zlib = 13,
+	LZSS_Uncompressed,
+	LZSS_8Bit,
+	LZSS_16Bit,
+	LZSS_32Bit,
+	Zlib = 13,
 } CompressionMode;
 
 typedef struct
 {
-    BigEndian();
-    DataType contentType;
-    if (isLE == 1)
-    {
-        LittleEndian();
-    }
-    uint64 dataSize;
-    uint32 unk; //pad?
-    uint64 dataOff;
+	BigEndian();
+	DataType contentType;
+	if (isLE == 1)
+	{
+		LittleEndian();
+	}
+	uint64 dataSize;
+	uint32 unk; //pad?
+	uint64 dataOff;
 } ChunkDescriptor<bgcolor=cGreen>;
 
 typedef struct
 {
-    ChunkDescriptor MTRLSub;
-    struct MtrlSubContent
-    {
-        /*uint32 materials;
-        struct Materials
-        {
-            for (i = 0; i < materials; i++)
-            {
-                if (isNX)
-                {
-                    U32_StringEntry theStr;
-                }
-                else
-                {
-                    string theStr;
-                }
-                GUID materialGUID;
-                DataType matType;
-                uint32 materialFlags;
-                uint32 matDataCount;
-                struct SubMaterialData
-                {
-                    for (i2 = 0; i2 < matDataCount; i2++)
-                    {
-                        struct SubMatDataEntry
-                        {
-                            uint32 dataID;
-                            uint32 type;
-                            if (type == 0)
-                            {
-                                GUID theTexAssetID;
-                                uint32 flags;
-                                uint32 filter;
-                                uint32 wrap[3];
-                            }
-                            if (type == 1)
-                            {
-                                float matColorData[4];
-                            }
-                            if (type == 2)
-                            {
-                                float matScalarData;
-                            }
-                        } sme;
-                    }
-                } mtrld;
-            }
-        } mtrls;*/
-        byte mtrlSubData[MTRLSub.dataSize]<bgcolor=cRed>;
-    } mtrlSubContent;
-} MaterialSubChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor DKCTF_ScaleformGFXLibraryFormDescriptor;
-        //byte DKCTF_ScaleformGFXLibraryDataBlock[DKCTF_ScaleformGFXLibraryFormDescriptor.dataSize];
-    }
-    //struct GFXLibData
-    //{
-        ChunkDescriptor GFXLChunk;
-        struct GFXLibChunkData 
-        {
-            uint32 referencedTextures;
-            struct ReferencedTxtrs
-            {
-                for (i = 0; i < referencedTextures; i++)
-                {
-                    struct ReferencedTxtr
-                    {
-                        GUID texRef;
-                        if (isNX == 0)
-                        {
-                            byte checkForNX<hidden=true>;
-                            FSkip(-1);
-                            if (checkForNX == 0)
-                            {
-                                isNX = 1;
-                                Printf("NX PAK DETECTED");
-                            }
-                        }
-                        if (isNX)
-                        {
-                            U32_StringEntry texName;
-                        }
-                        else
-                        {
-                            string texName;
-                        }
-                    } rtxtr;
-                }
-            } rtxrs;
-            if (isNX)
-            {
-                U32_StringEntry theSWFName;
-            }
-            else
-            {
-                string theSWFName;
-            }
-            FSkip(4);
-            //At least MP1R doesn't use GFX
-            LittleEndian(); //temp swap endian
-            uint32 swfSize<hidden=true>;
-            BigEndian(); //temp swap endian
-            FSkip(-8);
-            byte theGFXFile[swfSize];
-        } gfxcd<bgcolor=cGreen>;
-    //} gfxld;
-} DKCTF_ScaleformGFXLibraryChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor DKCTF_FlashGFXFormDescriptor;
-    }
-    struct GFX
-    {
-        ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
-        //FSR HUD.rfgfx, MasterShell.rfgfx and PauseMenu.rfgfx is broken this way, just those dang files
-        /*struct GFXData
-        {
-            GUID LibGUID;
-            GUID PossiblyAnotherGUID; //Always 0 but it might be
-            //FSkip(12);
-            uint32 SWFCount;
-            struct SWFEntries
-            {
-                for (i = 0; i < SWFCount; i++)
-                {
-                    struct SWFEntry
-                    {
-                        uint64 dataOff;
-                        uint64 SWFSize;
-                        char SWFName[48];
-                    } rswfe;
-                }
-            } rswfes;
-            //FSkip(48);
-            //struct MainSWF
-            //{
-                //uint64 mainDataOff;
-                //uint64 mainSWFSize;
-                //char mainSWFName[48];
-                //FSkip(dataOff-20-7);
-                if (SWFCount == 1)
-                {
-                    byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfes-36]; //add 7 since since the CWS bit is included
-                }
-                else
-                {
-                    struct SWFFiles
-                    {
-                        for (i = 0; i < SWFCount; i++)
-                        {
-                            struct SWFFile    
-                            {
-                                byte SWFFile[rswfes.rswfe[i].SWFSize];
-                            } rswff;
-                        }
-                        //byte theSWFFile[(DKCTF_FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
-                    } rswffs;
-                    //byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
-                }
-            //} mswf;
-        } gfxd;
-        //for now read it in bytes idk how to make 010 detect the final file sometimes
-        */
-        byte theGFXContent[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
-    } gfx;
-} DKCTF_FlashGFXChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor MessageTableFormDesc;
-    }
-    if (isPack != 1)
-    {
-        if (isNX == 0)
-        {
-            if (ContentForm.fVer >= 5 && ContentForm.dVer >= 5)
-            {
-                isNX = 1;
-                Printf("NX FILE DETECTED");
-            }
-        }
-    }
-    struct MessageTable
-    {
-        if ((isPack && MessageTableFormDesc.fVer == 10 && MessageTableFormDesc.dVer == 10) || (!isPack && ContentForm.fVer == 10 && ContentForm.dVer == 10))
-        {
-            gameLangs = 13;
-        }
-        else
-        {
-            gameLangs = 9;
-        }
-        for (i = 0; i < gameLangs; i++) //DKCTF has 9 localizations, MP1R has 13
-        {
-            struct Language
-            {
-                ChunkDescriptor MessageTableChunkDesc;
-                byte   NMSBinTextFile[MessageTableChunkDesc.dataSize]; //Literally Nintendy's message fmt
-            } messLng<bgcolor=cGreen>;
-        }
-    } messageTable;
-} MessageTableChunk;
-
-typedef struct
-{
-    if (isSDX != 1) //fix for material arc
-    {
-        FormDescriptor MaterialForm;
-    }
-    //struct SPlatformData
-    //{
-        ChunkDescriptor ShaderPlatformChunkDesc;
-        //WIP!
-        //U32_Bool useTOC;
-        /*if (useTOC == 1)
-        {
-            Printf("TOC is not yet supported!");
-            break;
-        }*/
-        /*
-        {
-            uint32 TOCSize;
-            struct MaterialArchiveTOC
-            {
-                uint32 shaderSourceTocCnt;
-                struct ShaderSourceTocEntries
-                {
-                    for (i = 0; i < shaderSourceTocCnt; i++)
-                    {
-                        struct ShaderSourceTocEntry
-                        {
-                            uint32 unk1;
-                            uint32 unk[4];
-                        } sste;
-                    }
-                } sstes;
-                //uint32 MTRLTocCnt;
-                //uint32 MTRLTocEntry[MTRLTocCnt];
-            } mtrlArcToc;
-            //byte TOC[TOCSize];
-            //
-        }*/
-        /*uint32 shaderParts;
-        struct ShaderParts
-        {
-            for (i = 0; i < shaderParts; i++)
-            {
-                struct ShaderPart
-                {
-                    Byte_Bool state;
-                    byte unk;
-                    uint32 dSize;
-                    byte shader[dSize];
-                } sp;
-            }
-        } sps;
-        uint32 shaderMaterialInputDescs;
-        struct ShaderMaterialInputDescriptions
-        {
-            for (i = 0; i < shaderMaterialInputDescs; i++)
-            {
-                struct ShaderMaterialInputDesc
-                {
-                    DataType theMaterial;
-                    uint16 unk;
-                    uint32 shaderImportDescs;
-                    struct ShaderImportDescs
-                    {
-                        for (i2 = 0; i2 < shaderImportDescs; i2++)
-                        {
-                            struct ShaderImportDesc
-                            {
-                                uint64 shaderID;
-                                uint32 shaderPartIdxVertShader;
-                                uint32 shaderPartIdxFragShader;
-                                uint32 shaderPartIdxGeomShader;
-                                uint32 dmy;
-                                struct ShaderDefines
-                                {
-                                    uint32 shaderDefineStrings;
-                                    for (i = 0; i < shaderDefineStrings; i++)
-                                    {
-                                        U32_StringEntry StringEntry;
-                                    }
-                                    uint32 lenOfStrings;
-                                } sd;
-                                uint32 additional;
-                                byte additionalData[additional];
-                            } sid;
-                        }
-                    } sids;
-                } smid;
-            }
-        } smids;*/
-        byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
-    //} SPlatform;
-} ShaderPlatformChunk;
-
-typedef struct ShaderMaterialIdentifier
-{
-    DataType theType;
-    uint32 entries;
-    struct MaterialPermutations
-    {
-        for (i = 0; i < entries; i++)
-        {
-            struct MaterialPermutation
-            {
-                uint32 shaderID;
-                uint32 permutationID;
-            } mp;
-        }
-    } mps;
-};
-
-typedef struct
-{
-    ChunkDescriptor ExportChunkDescriptor;
-    ShaderMaterialIdentifier theShaderMaterial;
-} ExportedMaterialChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor RuleSetConfigFormDescriptor;
-        //ChunkDescriptor RSTCChunkDesc;
-        //byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
-    }
-    
-    struct RuleSetConfigData
-    {
-        ChunkDescriptor RSTCChunkDesc;
-        //byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
-        //Fsr this errors out in a PAK despite it seems to work | FIX: Use i3
-        
-        struct Rules
-        {   
-            uint16 rules;
-            for (i = 0; i < rules; i++)
-            {
-                struct Rule
-                {
-                    uint16 conditions;
-                    struct Conditions
-                    {
-                        for (i3 = 0; i3 < conditions; i3++)
-                        {
-                            struct Condition
-                            {
-                                uint32 condID;
-                                ComparisionOperator theComparisionOp;
-                                ValueType theValueType;
-                                if (theValueType == 0)
-                                {
-                                    I32_Bool value;
-                                }
-                                if (theValueType == 1)
-                                {
-                                    float value;
-                                }
-                                if (theValueType == 2)
-                                {
-                                    int32 value;
-                                }
-                                if (theValueType == 3)
-                                {
-                                    byte value[4];
-                                }
-                            } cond;
-                        }
-                    } conds;
-                    uint16 actions;
-                    struct Actions
-                    {
-                        for (i3 = 0; i3 < actions; i3++)
-                        {
-                            struct Action
-                            {
-                                uint32 actionID;
-                                byte properties;
-                                if (properties != 0)
-                                {
-                                    uint32 ary[properties];
-                                }
-                            } action;
-                        }
-                    } actionEntries;
-                } rule;
-            }
-        } ruleEntries;
-    } rscd;
-    //ChunkDescriptor DescriptionChunk;
-    //uint16 unk[2];
-} RuleSetConfigChunk<bgcolor=cBlue>;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor AnimationFormDescriptor;
-    }
-    struct AnimationData
-    {
-        GenericAssetHeader animHdr<bgcolor=cGreen>;
-        if (isPack)
-        {
-            byte AnimationDataBlock[AnimationFormDescriptor.dataSize-4]<bgcolor=cRed>;
-        }
-        else
-        {
-            byte AnimationDataBlock[ContentForm.dataSize-4]<bgcolor=cRed>;
-        }
-    } ad;
-} AnimationChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor LightProbeFormDescriptor;
-        byte LightProbeDataBlock[LightProbeFormDescriptor.dataSize];
-    }
-    else
-    {
-        byte LightProbeDataBlock[ContentForm.dataSize];
-    }
-} LightProbeChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor FiniteStateMachineFormDescriptor;
-        //ChunkDescriptor FiniteStateMachineChunkDesc;
-        //byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
-    }
-    struct FiniteStateMachineData
-    {
-        ChunkDescriptor FiniteStateMachineChunkDesc;
-        byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize]<bgcolor=cRed>;
-    } fsmd;
-    //for now
-    
-    /*
-    uint32 someCnt;
-    for (i = 0; i < someCnt; i++)
-    {
-        struct UnknownData
-        {
-            string name;
-            GUID theGUID; //?
-        } unkd;
-    }*/
-} FiniteStateMachineChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor AnimationTransformFormDescriptor;
-        //byte AnimationTransformData[AnimationTransformFormDescriptor.dataSize-24];
-    }
-    struct AnimationTransformData
-    {
-        ChunkDescriptor AnimationTransformChunkDescriptor;
-        GenericAssetHeader AnimationTransformAssetHdr;
-        byte AnimationTransformData[AnimationTransformChunkDescriptor.dataSize-4];
-    } xfrmd;
-    /*else
-    {
-        //byte AnimationTransformData[ContentForm.dataSize];
-        //is meta part of this?
-    }*/
-} AnimationTransformChunk;
-
-typedef struct
-{
-    DataType EventID;
-    DataType ActionID;
-    GUID componentGUID;
-    uint16 unk;
-    Byte_Bool unk2[2];
-} Connection;
-
-typedef struct
-{
-    DataType linkID;
-    GUID componentGUID;
-    Byte_Bool unk;
-} ScriptLink;
-
-typedef struct
-{
-    DataType unk1;
-    DataType SubCompType;
-    GUID SubCompGUID;
-    byte unk2[3];
-    Byte_Bool unk;
-} SubComponent;
-
-typedef struct
-{
-    GameCRC32 ComponentTypeCRC;
-    if (ComponentTypeCRC == 2314479346)
-    {
-        //isGameObjectComponent = 1;
-    }
-    GUID componentGUID;
-    U32_StringEntry theComponentName;
-    //FSkip(16);
-    //uint32 guids;
-    //GUID theGUID;
-    if (isGameObjectComponent == 0)
-    {
-        uint16 connections;
-        if (connections != 0)
-        {
-            struct Connections
-            {
-                for (i = 0; i < connections; i++)
-                {
-                    Connection theConn;
-                }
-            } conns;
-        }
-        //We die here
-        //uint32 testScriptLinksVar;
-        uint32 scriptLinks;
-        if (scriptLinks != 0)
-        {
-            struct ScriptLinks
-            {
-                for (i2 = 0; i2 < scriptLinks; i2++)
-                {
-                    Field theSL;
-                }
-            } slnks;
-        }
-    }
-    else
-    {
-        uint16 subComponents;
-        if (subComponents != 0)
-        {
-            struct SubComponents
-            {
-                for (i2 = 0; i2 < subComponents; i2++)
-                {
-                    SubComponent theSubComp;
-                }
-            } subcs;
-        }
-        else
-        {
-            FSkip(1);
-        }
-    }
-} Component;
-
-typedef struct
-{
-    ChunkDescriptor ComponentChunkDescriptor;
-    byte theComponent[ComponentChunkDescriptor.dataSize]; //For now
-    //Component theComponent;
-    isGameObjectComponent = 0;
-} GameObjectComponent;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor RoomFormDescriptor;
-        //FormDescriptor RoomHeaderFormDescriptor;
-        byte RoomData[RoomFormDescriptor.dataSize]<bgcolor=cRed>;
-    }
-    else
-    {
-        //FormDescriptor RoomHeaderFormDescriptor;
-        byte RoomData[ContentForm.dataSize]<bgcolor=cRed>;
-        //is meta part of this?
-    }
-    
-    /*struct RoomData
-    {
-        struct MainHeader
-        {
-            FormDescriptor RoomHeaderFormDescriptor;
-            struct RoomHeaderForm
-            {
-                struct RoomHeader
-                {
-                    ChunkDescriptor RoomHeaderChunkDescriptor;
-                    uint16 RoomHeaderUnkU16; //Always 3
-                } rhdr;
-                //struct RoomHeaderData
-                //{
-                    //local uint16 totalLoadUnits<hidden=true> = LoadUnits+LoadUnits;
-                    struct PerformanceGroup
-                    {
-                        ChunkDescriptor PerformanceGroupsChunkDescriptor;
-                        struct PerformanceGroupEntries
-                        {
-                            uint16 pgcount;
-                            for (i = 0; i < pgcount; i++)
-                            {
-                                struct PerformanceGroupEntry
-                                {
-                                    U32_StringEntry groupName;
-                                    GUID editorID;
-                                    Byte_Bool active;
-                                    uint16 refLayerGUIDs;
-                                    if (refLayerGUIDs != 0)
-                                    {
-                                        struct ReferencedLayerGUIDs
-                                        {
-                                            for (i2 = 0; i2 < refLayerGUIDs; i2++)
-                                            {
-                                                struct ReferencedLayerGUID
-                                                {
-                                                    GUID theRefGUID;
-                                                } rlyrguid;
-                                            }
-                                        } rlyrguids;
-                                    }
-                                } pge;
-                            }
-                        } pges;
-                    } pgc;
-                    struct LevelGenerated
-                    {
-                        ChunkDescriptor LevelGeneratedChunkDescriptor;
-                        struct LevelGeneratedData
-                        {
-                            uint16 objCount;
-                            if (objCount != 0)
-                            {
-                                struct GeneratedObjects
-                                {
-                                    for (i = 0; i < objCount; i++)
-                                    {
-                                        struct GenObject
-                                        {
-                                            GUID GenObjectID;
-                                            GUID LyrID;
-                                        } gobj;
-                                    }
-                                } gobjs;
-                            }
-                        } lgd;
-                    } lg;
-                    struct LoadUnitForms
-                    {
-                        for (i = 0; i < 20; i++)
-                        {
-                            if (terminateLoadUnitDetection != 1)
-                            {
-                                struct LoadUnitForm
-                                {
-                                    FormDescriptor LoadUnitFormsFormDescriptor;
-                                    struct LoadUnitFormsData
-                                    {
-                                        struct LevelUnitHead
-                                        {
-                                            ChunkDescriptor LevelUnitHeadDescriptor;
-                                            struct LevelUnitHeaderData
-                                            {
-                                                U32_StringEntry theStr;
-                                                GUID loadUnitGUID;
-                                                uint16 flags;
-                                            } LUHD;
-                                        } LUH;
-                                        struct LevelUnitResources
-                                        {
-                                            ChunkDescriptor LevelUnitResourcesChunkDescriptor;
-                                            struct LevelUnitResourcesData
-                                            {
-                                                uint32 resCnt;
-                                                if (resCnt != 0)
-                                                {
-                                                    struct LevelUnitResIDs
-                                                    {
-                                                        for (i = 0; i < resCnt; i++)
-                                                        {
-                                                            struct LevelUnitResID
-                                                            {
-                                                                GUID LevelResID;
-                                                            } luri;
-                                                        } 
-                                                    } lurids;
-                                                }
-                                            } luresids;
-                                        } lres;
-                                        struct LevelUnitLayers
-                                        {
-                                            ChunkDescriptor LevelUnitLayersChunkDescriptor;
-                                            struct LevelUnitLayersData
-                                            {
-                                                uint32 layerCount;
-                                                local uint32 totalLayerCount = layerCount+layerCount;
-                                                //Printf("%i\n", totalLayerCount);
-                                                if (layerCount != 0)
-                                                {
-                                                    struct LevelUnitLayerEntries
-                                                    {
-                                                        for (i = 0; i < layerCount; i++)
-                                                        {
-                                                            struct LevelUnitLayerEntry
-                                                            {
-                                                                GUID LevelResID;
-                                                            } lari;
-                                                        } 
-                                                    } larids;
-                                                }
-                                            } lulids;
-                                        } lulres;
-                                    } luf;
-                                } lufd;
-                                FSkip(20);
-                                DataType checkForLUNT<hidden=true>;
-                                FSkip(-24);
-                                if (checkForLUNT != LoadUnitChunk)
-                                {
-                                    terminateLoadUnitDetection = 1;
-                                    Printf("End of Load Units!\n");
-                                }
-                            }
-                        }
-                        terminateLoadUnitDetection = 0;
-                    //} rhd;
-                } lufds;
-            } mhd;
-        } mh;
-        //Hell begins
-        Printf("Script Layers: %i\n", mh.mhd.lufds.lufd.luf.lulres.lulids.totalLayerCount);
-        struct ScriptLayers
-        {
-            for (i2 = 0; i2 < mh.mhd.lufds.lufd.luf.lulres.lulids.totalLayerCount; i2++)
-            {
-                struct ScriptLayer
-                {
-                    FormDescriptor ScriptLayersFormDescriptor;
-                    struct ScriptLayerData
-                    {
-                        struct LayerHeader
-                        {
-                            ChunkDescriptor ScriptLayerHeadChunkDescriptor;
-                            struct LayerHeaderData
-                            {
-                                U32_StringEntry ScriptLayerName;
-                                GUID ScriptLayerGUID;
-                                uint16 unk;
-                                uint16 loadUnitIDs;
-                                if (loadUnitIDs != 0)
-                                {
-                                    struct LoadUnitIDs
-                                    {
-                                        for (i = 0; i < loadUnitIDs; i++)
-                                        {
-                                            struct LoadUnitGUIDEntry
-                                            {
-                                                GUID LoadUnitGUID;
-                                            } luge;
-                                        }
-                                    } luids;
-                                }
-                                GUID unknownGUID;
-                                Byte_Bool unknownFlag;
-                            } lyrhdrd;
-                        } lyrhdr;
-                        struct GeneratedScriptObject
-                        {
-                            FormDescriptor GeneratedScriptObjFormDescriptor;
-                            if (GeneratedScriptObjFormDescriptor.dataSize != 0)
-                            {
-                                for (i = 0; i < 255; i++)
-                                {
-                                    if (terminateGameObjDetection != 1)
-                                    {
-                                        struct GenGameObjData
-                                        {
-                                            ChunkDescriptor GenGameObjChunkDesc;
-                                            GUID objID;
-                                            uint16 componentCount;
-                                            struct GameObjectComponents
-                                            {
-                                                for (i = 0; i < componentCount; i++)
-                                                {
-                                                    GameObjectComponent theComponent;
-                                                }
-                                            } gobjcs;
-                                            DataType checkForRFRM<hidden=true>;
-                                            FSkip(-4);
-                                            if (checkForRFRM == RUDEFormDescriptor)
-                                            {
-                                                terminateGameObjDetection = 1;
-                                                Printf("End of Generated Game Objects!\n");
-                                            }
-                                        } ggobjd;
-                                    }
-                                }
-                            }
-                        } gso;
-                        terminateGameObjDetection = 0;
-                        struct ScriptObject
-                        {
-                            FormDescriptor ScriptObjectFormDescriptor;
-                            if (ScriptObjectFormDescriptor.dataSize != 0)
-                            {
-                                struct Data
-                                {
-                                    for (i = 0; i < 2000; i++)
-                                    {
-                                        if (terminateGameObjDetection != 1)
-                                        {
-                                            {
-                                                GameObjectComponent theGOBJ;
-                                            }
-                                            DataType checkForRFRM<hidden=true>; //if we error out here from standalone files, we're fine
-                                            FSkip(-4);
-                                            if (checkForRFRM == RUDEFormDescriptor)
-                                            {
-                                                terminateGameObjDetection = 1;
-                                                Printf("End of Game Objects!\n");
-                                            }
-                                    
-                                        }
-                                    }
-                                } d;
-                            }
-                            //i = 0;
-                        } sro;
-                        terminateGameObjDetection = 0;
-                    } sld;
-                } sl;
-            }
-        } sld;
-    } rd;*/
-} RoomChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor CharacterChunkFormDescriptor;
-        //byte CharacterChunkData[CharacterChunkFormDescriptor.dataSize];
-    }
-    /*else
-    {
-        byte CharacterData[ContentForm.dataSize];
-        //is meta part of this?
-    }*/
-    struct CharacterData
-    {
-        GenericAssetHeader theCharChunkAssetHdr<bgcolor=cGreen>;
-        byte CharacterData[CharacterChunkFormDescriptor.dataSize-4]<bgcolor=cRed>;
-        /*struct CharInfo
-        {
-            byte unk[16];
-            byte flags[3];
-        } charInfo;
-        string theName;
-        GUID skelObjectID;
-        int32 charModelSets;
-        struct CharModelSets
-        {
-            for (i = 0; i < charModelSets; i++)
-            {
-                struct CharModelSet
-                {
-                    string charModelName;
-                    GUID SMDLGUID;
-                    AABox charModelSetAABox;
-                } cms;
-            }
-        } cmss;
-        int32 charAnimInfos;
-        struct CharAnimInfos
-        {
-            for (i = 0; i < charAnimInfos; i++)
-            {
-                struct CharAnimInfo
-                {
-                    string charModelName;
-                    GUID SMDLGUID;
-                    uint32 unk[2];
-                    uint16 unk2[2];
-                    byte unk3;
-                    AABox charAnimAABox;
-                } cmi;
-            }
-        } cmis;
-        struct AnimIDMap
-        {
-            int32 hashNodes;
-            for (i = 0; i < hashNodes; i++)
-            {
-                int32 hashNode;
-            }
-        } aim;
-        AABox mainAABox;*/
-    } charData;
-} CharacterChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor SkeletonDataFormDescriptor;
-    }
-    struct SkeletonData
-    {
-        GenericAssetHeader theSkeletonDataHdr<bgcolor=cGreen>;
-        if (isPack)
-        {
-            //FSkip(-32);
-            byte SkeletonData[SkeletonDataFormDescriptor.dataSize-4]<bgcolor=cRed>;
-        }
-        else
-        {
-            byte SkeletonData[ContentForm.dataSize-4]<bgcolor=cRed>;
-        }
-        /*
-        struct JointNameArray
-        {
-            uint32 unk;
-            uint32 jointNames;
-            struct JointNames
-            {
-                for (i = 0; i < jointNames; i++)
-                {
-                    //struct JointName
-                    //{
-                        U32_StringEntry JointNameStr;
-                    //} jn;
-                }
-            } jn;
-        } jna;*/
-    } skd;
-} SkeletonChunk;
-
-typedef struct
-{
-    if (isPack == 1 && !isCLSN)
-    {
-        FormDescriptor MTRLFormDescriptor;
-    }
-    if (ContentForm.fVer >= 10 && ContentForm.fVer >= 10)
-    {
-        isSDX = 1;
-        ChunkDescriptor MTRLChunkDesc;
-        struct ShaderArcData
-        {
-            byte theFile[MTRLChunkDesc.dataSize];
-            ShaderPlatformChunk ShaderPlatformContent;
-        } mtrld<bgcolor=cRed>;
-    }
-    else
-    {
-        if (isCLSN)
-        {
-            ChunkDescriptor MTRLClsnChunkDesc;
-            struct MTRLClsnData
-            {
-                uint32 collisionMaterialCount;
-                struct CollisionMaterials
-                {
-                    for (i = 0; i < collisionMaterialCount; i++)
-                    {
-                        struct CollisionMaterial
-                        {
-                            uint32 unk[5];
-                        } clm;
-                    }
-                } clms;
-                //byte theFile[MTRLClsnChunkDesc.dataSize];
-            } mtrld;
-        }
-        else
-        {
-            //struct MaterialData
-            //{
-                uint16 zlibCheck<hidden=true>;
-                FSkip(-2);
-                if (zlibCheck == 30938)
-                {
-                    if (isPack)
-                    {
-                        byte theZlibCompressedFile[MTRLFormDescriptor.dataSize]<bgcolor=cPurple>;
-                    }
-                    else
-                    {
-                        byte theZlibCompressedFile[ContentForm.dataSize]<bgcolor=cPurple>;
-                    }
-                }
-                else
-                {
-                    ExportedMaterialChunk theEXPT;
-                    /*struct MaterialIdentifier
-                    {
-                        
-                    } mi;*/
-                    ShaderPlatformChunk PlatChunk;
-                }
-            //} mtrld;
-        }
-    }
-} MaterialChunk<bgcolor=cPurple>;
-
-typedef struct
-{
-    uint32 indiceX;
-    uint32 indiceY;
-    uint32 indiceZ;
-    if (isCLSN && isLegacyCLSN != 1)
-    {
-        uint16 idx;
-        uint16 unk;
-    }
-} CollisionTriangle;
-
-typedef struct
-{
-    //float min_4;
-    AABox LeafNodeAABox;
-    //float max_4;
-    if (tree_forDCLN == 0)
-    {
-        uint32 unk1;
-        uint32 unk2;
-        uint32 unk3;
-    }
-    else
-    {
-        float unk1;
-        float unk2;
-        float unk3;
-    }
-} LeafNode;
-
-typedef struct
-{
-    ChunkDescriptor VerticesChunkDescriptor;
-    struct VertexData
-    {
-        uint32 Vertexes;
-        struct Vertexes
-        {
-            for (i = 0; i < Vertexes; i++)
-            {
-                Vector3_F32 vtx;
-            }
-        } vtxs;
-    } vtxd<bgcolor=cGreen>;
-} VerticesChunk;
-
-typedef struct
-{
-    ChunkDescriptor TrianglesChunkDescriptor;
-    struct TriangleData
-    {
-        uint32 TriangleCount;
-        for (i = 0; i < TriangleCount; i++)
-        {
-            CollisionTriangle theCollisionTriangle;
-        }
-    } triData<bgcolor=cPurple>;
-} TrianglesChunk;
-
-typedef struct
-{
-    local string extensionToAdd<hidden=true> = "";
-    DataType AssetType;
-    if (AssetType == DependencyGroup)
-    {
-        DependencyGroups++;
-    }
-    //Add true ext names from log in Kiosk
-    if (AssetType == MessageTable_MessageStudioBinaryText)
-    {
-        extensionToAdd = "mstbin";
-        addExtension = 1;
-    }
-    else if (AssetType == SwooshParticleSystem)
-    {
-        extensionToAdd = "swshpsys";
-        addExtension = 1;
-    }
-    else if (AssetType == GenericParticleSystem)
-    {
-        extensionToAdd = "gpsys";
-        addExtension = 1;
-    }
-    else if (AssetType == LooseData)
-    {
-        extensionToAdd = "ldata";
-        addExtension = 1;
-    }
-    else if (AssetType == UniverseInfo)
-    {
-        extensionToAdd = "uinfo";
-        addExtension = 1;
-    }
-    else if (AssetType == CookedAudioBusHeiarchy)
-    {
-        extensionToAdd = "cabh";
-        addExtension = 1;
-    }
-    else if (AssetType == Material)
-    {
-        extensionToAdd = "cmat";
-        addExtension = 1;
-    }
-    else if (AssetType == CookedModel)
-    {
-        extensionToAdd = "cmdl";
-        addExtension = 1;
-    }
-    else if (AssetType == SkinnedModel)
-    {
-        extensionToAdd = "smdl";
-        addExtension = 1;
-    }
-    else if (AssetType == Character)
-    {
-        extensionToAdd = "char";
-        addExtension = 1;
-    }
-    else if (AssetType == CookedAudioSample)
-    {
-        extensionToAdd = "csmp";
-        addExtension = 1;
-    }
-    else if (AssetType == FiniteStateMachine)
-    {
-        extensionToAdd = "cfsm";
-        addExtension = 1;
-    }
-    else if (AssetType == DKCTF_FlashGFX)
-    {
-        extensionToAdd = "rfgfx";
-        addExtension = 1;
-    }
-    else if (AssetType == DKCTF_ScaleformGFXLibrary)
-    {
-        extensionToAdd = "rsgfx";
-        addExtension = 1;
-    }
-    else if (AssetType == CookedAudioSoundEffect)
-    {
-        extensionToAdd = "caud";
-        addExtension = 1;
-    }
-    else if (AssetType == Room)
-    {
-        extensionToAdd = "rsd";
-        addExtension = 1;
-    }
-    else if (AssetType == Texture)
-    {
-        extensionToAdd = "ctex/ctexarray/ctex3d"; //There's also ctexarray and ctex3d but how is that determined
-        addExtension = 1;
-    }
-    /*
-    else if (AssetType == Prime1R_LegacyScan)
-    {
-        extensionToAdd = "lscan"; //Let's guess LSCAN since LDATA is similarly named
-        addExtension = 1;
-    }
-    else if (AssetType == Prime1R_ShaderHint)
-    {
-        extensionToAdd = "shint"; //another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime_Font)
-    {
-        extensionToAdd = "font"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime_WeaponParticleSystem)
-    {
-        extensionToAdd = "wpsys"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime1R_Electric2ParticleSystem)
-    {
-        extensionToAdd = "elec2psys"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime1R_Electric2ParticleSystem)
-    {
-        extensionToAdd = "elec2psys"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime1R_LegacyUniverseHintRedundant)
-    {
-        extensionToAdd = "luhr"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime_ElectricParticleSystem)
-    {
-        extensionToAdd = "elecpsys"; //yet another guess
-        addExtension = 1;
-    }
-    else if (AssetType == Prime1R_CharacterProject)
-    {
-        extensionToAdd = "acs/ancs"; //yet another guess
-        addExtension = 1;
-    }*/
-    GUID AssetID;
-    if (isNX == 0) //If this is 0, it's an NX PAK
-    {
-        byte checkForNX<hidden=true>;
-        FSkip(-1);
-        if (checkForNX == 0)
-        {
-            isNX = 1;
-            Printf("NX PAK DETECTED\n");
-        }
-    }
-    if (isNX || isLE)
-    {
-        U32_StringEntry AssetName;
-        if (addExtension)
-        {
-            if (AssetType == MessageTable_MessageStudioBinaryText)
-            {
-                Printf("%s%s.%s\n", MessageTableBinDir, AssetName.theString, extensionToAdd);
-            }
-            else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
-            {
-                Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName.theString, extensionToAdd);
-            }
-            else if (AssetType == LooseData)
-            {
-                Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName.theString, extensionToAdd);
-            }
-            else if (AssetType == CookedAudioBusHeiarchy)
-            {
-                Printf("%s%s.%s\n", AudioDir, AssetName.theString, extensionToAdd);
-            }
-            else if (AssetType == UniverseInfo)
-            {
-                Printf("%s%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
-            }
-            else if (AssetType == Room)
-            {
-                if (AssetName.theString == "KernelMPRT")
-                {
-                    Printf("%s.%s\n", AssetName.theString, extensionToAdd);
-                }
-                else if (AssetName.theString == "UI_HUDMPR1")
-                {
-                    Printf("UI/MPR1/%s.%s\n", AssetName.theString, extensionToAdd);
-                }
-                else
-                {
-                    Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
-                }
-            }
-            else
-            {
-                Printf("%s.%s\n", AssetName.theString, extensionToAdd);
-            }
-        }
-        else
-        {
-            Printf("%s\n", AssetName.theString);
-        }
-    }
-    else
-    {
-        string AssetName;
-        if (addExtension)
-        {
-            if (AssetType == MessageTable_MessageStudioBinaryText)
-            {
-                Printf("%s%s.%s\n", MessageTableBinDir, AssetName, extensionToAdd);
-            }
-            else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
-            {
-                Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName, extensionToAdd);
-            }
-            else if (AssetType == LooseData)
-            {
-                Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName, extensionToAdd);
-            }
-            else if (AssetType == CookedAudioBusHeiarchy)
-            {
-                Printf("%s%s.%s\n", AudioDir, AssetName, extensionToAdd);
-            }
-            else if (AssetType == Room)
-            {
-                Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
-            }
-            else if (AssetType == UniverseInfo)
-            {
-                Printf("%s%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
-            }
-            else
-            {
-                Printf("%s.%s\n", AssetName, extensionToAdd);
-            }
-        }
-        else
-        {
-            Printf("%s\n", AssetName);
-        }
-    }
-    addExtension = 0;
-} NameTagChunk;
-
-typedef struct
-{
-    ChunkDescriptor NameTagChunkDescriptor;
-    uint32 nameTagCount;
-    for (i = 0; i < nameTagCount; i++)
-    {
-        NameTagChunk theNameTag;
-    }
-} NameTagsChunk;
-
-typedef struct
-{
-    BigEndian();
-    DataType assetType;
-    /*if (assetType == Texture)
-    {
-        hasTXTRMeta = 1;
-    }*/
-    if (isLE != 0)
-    {
-        LittleEndian();
-    }
-    GUID assetID;
-    if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
-    {
-        int32 unk[2]; //TXTR: 47,51, SHNT: 4,4, MTRL: 168,168, LDTA: 11,12, ENUM: 5,5, SWSH: 61,62, MSBT: 10,10, DGRP, 3,3, FONT: 18,18, ROOM: 147,160, FSMC: 23,23, FMV: 7,7, CSMP: 31,31, LTPB: 66,73, CMAP: 13,13
-    }
-    uint64 off;
-    uint64 size;
-    if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
-    {
-        uint64 csize;
-        //todo
-        if (csize != size)
-        {
-            Printf("COMPRESSED!\n");
-            compressedResources++;
-        }
-    }
-} AssetEntry;
-
-typedef struct AssetEntries
-{
-    int32 assetCount;
-    for (i = 0; i < assetCount; i++)
-    {
-        AssetEntry theAssetEntry;
-    }
-} AssetEntries;
-
-typedef struct
-{
-    ChunkDescriptor AssetDirChunkDescriptor;
-    AssetEntries AssetEntriesChunk;
-    BigEndian();
-} AssetDirectory;
-
-typedef struct
-{
-    ChunkDescriptor TreeChunkDesc;
-    struct TreeData
-    {
-        uint32 LeafNodes;
-        //struct Ver
-        for (i = 0; i < LeafNodes; i++)
-        {
-            LeafNode theLeafNode;
-            //if TreeChunkDesc
-            //LeafNode theExLeafNode;
-        }
-        if (tree_forDCLN == 1)
-        {
-            tree_forDCLN = 0;
-            for (i = 0; i < LeafNodes; i++)
-            {
-                LeafNode theDCLNLeafNode;
-                //if TreeChunkDesc
-                //LeafNode theExLeafNode;
-            }
-        }
-    } treeData<bgcolor=cPurple>;
-} TreeChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor LooseDataFormDescriptor;
-        //ChunkDescriptor LooseDataChunkDescriptor;
-        //byte LooseDataBlock[LooseDataFormDescriptor.dataSize-24];
-    }
-    else
-    {
-        //byte LooseDataBlock[ContentForm.dataSize];
-    }
-    //For now
-    struct LooseDataBlock
-    {
-        ChunkDescriptor LooseDataChunkDescriptor;
-        struct LooseDataBlockContent
-        {
-            uint16 fieldCount;
-            for (i = 0; i < fieldCount; i++)
-            {
-                Field theField;
-            }
-        } ldbc<bgcolor=cPurple>;
-    } ldb;
-} LooseDataChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor DependencyGroupFormDescriptor;
-        if (DependencyGroupFormDescriptor.hdr != DependencyGroup && DependencyGroupFormDescriptor.hdr != RUDEFormDescriptor && isLE == 1)
-        {
-            Printf("Compressed dependency groups are unsupported. Terminating...");
-            terminate = 1;
-            break;
-        }
-    }
-    struct DependencyGroupData
-    {
-        if (isLE == 1)
-        {
-            LittleEndian();
-        }
-        uint32 dependenciesCnt;
-        struct Dependencies
-        {
-            for (i = 0; i < dependenciesCnt; i++)
-            {
-                struct Dependency
-                {
-                    DataType resID;
-                    GUID AssetID;
-                } dependency;
-            }
-        } dependencies;
-    } dgd<bgcolor=cGreen>;
-} DependencyGroupChunk;
-
-typedef struct
-{
-    ChunkDescriptor MetaDataChunkDescriptor;
-    struct MetaData
-    {
-        if (MetaDataChunkDescriptor.dataOff != 0)
-        {
-            uint32 metaDataEntryCount;
-            struct MetaDataOffsetEntries
-            {
-                for (i = 0; i < metaDataEntryCount; i++)
-                {
-                    struct MetaDataOffsetEntry
-                    {
-                        GUID AssetID;
-                        uint32 metaDataOff;
-                    } metaDataOffEntry;
-                }
-            } mdos;
-            /*for (i2 = 0; i2 < metaDataEntryCount; i2++)
-            {
-                struct ChunkMeta
-                {
-                    if (AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].assetType == Texture)
-                    {
-                        TextureMetadata theTmt;
-                    }
-                } cm;
-            }*/
-            byte metaDataBlock[MetaDataChunkDescriptor.dataSize-sizeof mdos-4]; //For now
-        }
-        else
-        {
-            byte metaDataBlock[MetaDataChunkDescriptor.dataSize];
-        }
-    } metaDataContent;
-} MetaDataChunk;
-
-typedef struct
-{
-    ChunkDescriptor GPU;
-    struct GPUChunkData
-    {
-        //So now I probably have to fix this for MP1R, fun
-        //temp swap
-        LittleEndian();
-        CompressionMode theCompressionMode; 
-        //swap back
-        if (!isLE)
-        {
-            BigEndian();
-        }
-        byte theCompressedContent[GPU.dataSize-4];
-    } GPUChunkContent;
-} GPUChunk<bgcolor=cPurple>;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor TextureFormDescriptor;
-    }
-    if (isPack == 0 && ContentForm.fVer == 15 && ContentForm.dVer == 16)
-    {
-        checkLocalMETA = 1;
-    }
-    struct TextureData
-    {
-        struct TextureHeader
-        {
-            ChunkDescriptor TextureHeaderDescriptor;
-            struct TextureHeaderData
-            {
-                TexType texType;
-                TexFmt texFmt;
-                //Printf("%i:%i\n", i2, texFmt);
-                uint32 width;
-                uint32 height;
-                uint32 depth;
-                uint32 tileMode;
-                uint32 swizzle;
-                uint32 mips;
-                uint32 mipSizes[mips];
-                struct TextureSamplerData
-                {
-                    uint32 flags;
-                    byte texFilter;
-                    byte texWrap[3];
-                } tsd;
-                if ((isPack && TextureFormDescriptor.fVer == 47 && TextureFormDescriptor.dVer == 51) || (!isPack && ContentForm.fVer == 47 && ContentForm.dVer == 51))
-                {
-                    uint16 MP1R_UnknownData;
-                }
-            } thdrd<bgcolor=cGreen>;
-        } thdr;
-        GPUChunk theCPUChunk;
-    } txtr; //wip
-} TextureChunk;
-
-typedef struct
-{
-    ChunkDescriptor ModelHeaderDescriptor;
-    struct ModelHeaderContent
-    {
-        byte MDLHdrContent[ModelHeaderDescriptor.dataSize];
-        //Broken on Skinned Models
-        /*uint32 opaqueMeshes;
-        uint32 onePassMeshes;
-        uint32 twoPassMeshes;
-        uint32 oneBitMeshes;
-        uint32 additiveMeshes;
-        AABox theModelHdrAABox;
-        uint32 mdlDataSources;
-        for (i = 0; i < mdlDataSources; i++)
-        {
-            uint32 type;
-        }*/
-    } mdc<bgcolor=cRed>;
-} ModelHeaderChunk;
-
-typedef struct
-{
-    if (isPack)
-    {
-        FormDescriptor UnknownDataFormDescriptor;
-        byte UnknownData[UnknownDataFormDescriptor.dataSize]<bgcolor=cRed>;
-    }
-    else
-    {
-        byte UnknownData[ContentForm.dataSize]<bgcolor=cRed>;
-    }
+	if (isPack)
+	{
+		FormDescriptor UnknownDataFormDescriptor;
+		byte UnknownData[UnknownDataFormDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		byte UnknownData[ContentForm.dataSize]<bgcolor=cRed>;
+	}
 } UnknownChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_ScanFormDescriptor;
+	ChunkDescriptor MTRLSub;
+	struct MtrlSubContent
+	{
+		/*uint32 materials;
+		struct Materials
+		{
+			for (i = 0; i < materials; i++)
+			{
+				if (isNX)
+				{
+					U32_StringEntry theStr;
+				}
+				else
+				{
+					string theStr;
+				}
+				GUID materialGUID;
+				DataType matType;
+				uint32 materialFlags;
+				uint32 matDataCount;
+				struct SubMaterialData
+				{
+					for (i2 = 0; i2 < matDataCount; i2++)
+					{
+						struct SubMatDataEntry
+						{
+							uint32 dataID;
+							uint32 type;
+							if (type == 0)
+							{
+								GUID theTexAssetID;
+								uint32 flags;
+								uint32 filter;
+								uint32 wrap[3];
+							}
+							if (type == 1)
+							{
+								float matColorData[4];
+							}
+							if (type == 2)
+							{
+								float matScalarData;
+							}
+						} sme;
+					}
+				} mtrld;
+			}
+		} mtrls;*/
+		byte mtrlSubData[MTRLSub.dataSize]<bgcolor=cRed>;
+	} mtrlSubContent;
+} MaterialSubChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor DKCTF_ScaleformGFXLibraryFormDescriptor;
+		//byte DKCTF_ScaleformGFXLibraryDataBlock[DKCTF_ScaleformGFXLibraryFormDescriptor.dataSize];
+	}
+	//struct GFXLibData
+	//{
+		ChunkDescriptor GFXLChunk;
+		struct GFXLibChunkData 
+		{
+			uint32 referencedTextures;
+			struct ReferencedTxtrs
+			{
+				for (i = 0; i < referencedTextures; i++)
+				{
+					struct ReferencedTxtr
+					{
+						GUID texRef;
+						if (isNX == 0)
+						{
+							byte checkForNX<hidden=true>;
+							FSkip(-1);
+							if (checkForNX == 0)
+							{
+								isNX = 1;
+								Printf("NX PAK DETECTED");
+							}
+						}
+						if (isNX)
+						{
+							U32_StringEntry texName;
+						}
+						else
+						{
+							string texName;
+						}
+					} rtxtr;
+				}
+			} rtxrs;
+			if (isNX)
+			{
+				U32_StringEntry theSWFName;
+			}
+			else
+			{
+				string theSWFName;
+			}
+			FSkip(4);
+			//At least MP1R doesn't use GFX
+			LittleEndian(); //temp swap endian
+			uint32 swfSize<hidden=true>;
+			BigEndian(); //temp swap endian
+			FSkip(-8);
+			byte theGFXFile[swfSize];
+		} gfxcd<bgcolor=cGreen>;
+	//} gfxld;
+} DKCTF_ScaleformGFXLibraryChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor DKCTF_FlashGFXFormDescriptor;
+	}
+	struct GFX
+	{
+		ChunkDescriptor DKCTF_FlashGFXChunkDescriptor;
+		//FSR HUD.rfgfx, MasterShell.rfgfx and PauseMenu.rfgfx is broken this way, just those dang files
+		/*struct GFXData
+		{
+			GUID LibGUID;
+			GUID PossiblyAnotherGUID; //Always 0 but it might be
+			//FSkip(12);
+			uint32 SWFCount;
+			struct SWFEntries
+			{
+				for (i = 0; i < SWFCount; i++)
+				{
+					struct SWFEntry
+					{
+						uint64 dataOff;
+						uint64 SWFSize;
+						char SWFName[48];
+					} rswfe;
+				}
+			} rswfes;
+			//FSkip(48);
+			//struct MainSWF
+			//{
+				//uint64 mainDataOff;
+				//uint64 mainSWFSize;
+				//char mainSWFName[48];
+				//FSkip(dataOff-20-7);
+				if (SWFCount == 1)
+				{
+					byte theSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfes-36]; //add 7 since since the CWS bit is included
+				}
+				else
+				{
+					struct SWFFiles
+					{
+						for (i = 0; i < SWFCount; i++)
+						{
+							struct SWFFile	  
+							{
+								byte SWFFile[rswfes.rswfe[i].SWFSize];
+							} rswff;
+						}
+						//byte theSWFFile[(DKCTF_FlashGFXChunkDescriptor.dataSize) - (sizeof rswfs) - 100];
+					} rswffs;
+					//byte theMainSWFFile[DKCTF_FlashGFXChunkDescriptor.dataSize-sizeof rswfs-36]; //add 7
+				}
+			//} mswf;
+		} gfxd;
+		//for now read it in bytes idk how to make 010 detect the final file sometimes
+		*/
+		byte theGFXContent[DKCTF_FlashGFXChunkDescriptor.dataSize]<bgcolor=cPurple>;
+	} gfx;
+} DKCTF_FlashGFXChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor MessageTableFormDesc;
+	}
+	if (isPack != 1)
+	{
+		if (isNX == 0)
+		{
+			if (ContentForm.fVer >= 5 && ContentForm.dVer >= 5)
+			{
+				isNX = 1;
+				Printf("NX FILE DETECTED");
+			}
+		}
+	}
+	struct MessageTable
+	{
+		if ((isPack && MessageTableFormDesc.fVer == 10 && MessageTableFormDesc.dVer == 10) || (!isPack && ContentForm.fVer == 10 && ContentForm.dVer == 10))
+		{
+			gameLangs = 13;
+		}
+		else
+		{
+			gameLangs = 9;
+		}
+		for (i = 0; i < gameLangs; i++) //DKCTF has 9 localizations, MP1R has 13
+		{
+			struct Language
+			{
+				ChunkDescriptor MessageTableChunkDesc;
+				byte   NMSBinTextFile[MessageTableChunkDesc.dataSize]; //Literally Nintendy's message fmt
+			} messLng<bgcolor=cGreen>;
+		}
+	} messageTable;
+} MessageTableChunk;
+
+typedef struct
+{
+	if (isSDX != 1) //fix for material arc
+	{
+		FormDescriptor MaterialForm;
+	}
+	//struct SPlatformData
+	//{
+		ChunkDescriptor ShaderPlatformChunkDesc;
+		//WIP!
+		//U32_Bool useTOC;
+		/*if (useTOC == 1)
+		{
+			Printf("TOC is not yet supported!");
+			break;
+		}*/
+		/*
+		{
+			uint32 TOCSize;
+			struct MaterialArchiveTOC
+			{
+				uint32 shaderSourceTocCnt;
+				struct ShaderSourceTocEntries
+				{
+					for (i = 0; i < shaderSourceTocCnt; i++)
+					{
+						struct ShaderSourceTocEntry
+						{
+							uint32 unk1;
+							uint32 unk[4];
+						} sste;
+					}
+				} sstes;
+				//uint32 MTRLTocCnt;
+				//uint32 MTRLTocEntry[MTRLTocCnt];
+			} mtrlArcToc;
+			//byte TOC[TOCSize];
+			//
+		}*/
+		/*uint32 shaderParts;
+		struct ShaderParts
+		{
+			for (i = 0; i < shaderParts; i++)
+			{
+				struct ShaderPart
+				{
+					Byte_Bool state;
+					byte unk;
+					uint32 dSize;
+					byte shader[dSize];
+				} sp;
+			}
+		} sps;
+		uint32 shaderMaterialInputDescs;
+		struct ShaderMaterialInputDescriptions
+		{
+			for (i = 0; i < shaderMaterialInputDescs; i++)
+			{
+				struct ShaderMaterialInputDesc
+				{
+					DataType theMaterial;
+					uint16 unk;
+					uint32 shaderImportDescs;
+					struct ShaderImportDescs
+					{
+						for (i2 = 0; i2 < shaderImportDescs; i2++)
+						{
+							struct ShaderImportDesc
+							{
+								uint64 shaderID;
+								uint32 shaderPartIdxVertShader;
+								uint32 shaderPartIdxFragShader;
+								uint32 shaderPartIdxGeomShader;
+								uint32 dmy;
+								struct ShaderDefines
+								{
+									uint32 shaderDefineStrings;
+									for (i = 0; i < shaderDefineStrings; i++)
+									{
+										U32_StringEntry StringEntry;
+									}
+									uint32 lenOfStrings;
+								} sd;
+								uint32 additional;
+								byte additionalData[additional];
+							} sid;
+						}
+					} sids;
+				} smid;
+			}
+		} smids;*/
+		byte SPlatformData[ShaderPlatformChunkDesc.dataSize];
+	//} SPlatform;
+} ShaderPlatformChunk;
+
+typedef struct ShaderMaterialIdentifier
+{
+	DataType theType;
+	uint32 entries;
+	struct MaterialPermutations
+	{
+		for (i = 0; i < entries; i++)
+		{
+			struct MaterialPermutation
+			{
+				uint32 shaderID;
+				uint32 permutationID;
+			} mp;
+		}
+	} mps;
+};
+
+typedef struct
+{
+	ChunkDescriptor ExportChunkDescriptor;
+	ShaderMaterialIdentifier theShaderMaterial;
+} ExportedMaterialChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor RuleSetConfigFormDescriptor;
+		//ChunkDescriptor RSTCChunkDesc;
+		//byte RuleSetConfigDataBlock[RuleSetConfigFormDescriptor.dataSize-24];
+	}
+	
+	struct RuleSetConfigData
+	{
+		ChunkDescriptor RSTCChunkDesc;
+		//byte RuleSetConfigDataBlock[RSTCChunkDesc.dataSize];
+		//Fsr this errors out in a PAK despite it seems to work | FIX: Use i3
+		
+		struct Rules
+		{	
+			uint16 rules;
+			for (i = 0; i < rules; i++)
+			{
+				struct Rule
+				{
+					uint16 conditions;
+					struct Conditions
+					{
+						for (i3 = 0; i3 < conditions; i3++)
+						{
+							struct Condition
+							{
+								uint32 condID;
+								ComparisionOperator theComparisionOp;
+								ValueType theValueType;
+								if (theValueType == 0)
+								{
+									I32_Bool value;
+								}
+								if (theValueType == 1)
+								{
+									float value;
+								}
+								if (theValueType == 2)
+								{
+									int32 value;
+								}
+								if (theValueType == 3)
+								{
+									byte value[4];
+								}
+							} cond;
+						}
+					} conds;
+					uint16 actions;
+					struct Actions
+					{
+						for (i3 = 0; i3 < actions; i3++)
+						{
+							struct Action
+							{
+								uint32 actionID;
+								byte properties;
+								if (properties != 0)
+								{
+									uint32 ary[properties];
+								}
+							} action;
+						}
+					} actionEntries;
+				} rule;
+			}
+		} ruleEntries;
+	} rscd;
+	//ChunkDescriptor DescriptionChunk;
+	//uint16 unk[2];
+} RuleSetConfigChunk<bgcolor=cBlue>;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor AnimationFormDescriptor;
+	}
+	struct AnimationData
+	{
+		GenericAssetHeader animHdr<bgcolor=cGreen>;
+		if (isPack)
+		{
+			byte AnimationDataBlock[AnimationFormDescriptor.dataSize-4]<bgcolor=cRed>;
+		}
+		else
+		{
+			byte AnimationDataBlock[ContentForm.dataSize-4]<bgcolor=cRed>;
+		}
+	} ad;
+} AnimationChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor LightProbeFormDescriptor;
+		byte LightProbeDataBlock[LightProbeFormDescriptor.dataSize];
+	}
+	else
+	{
+		byte LightProbeDataBlock[ContentForm.dataSize];
+	}
+} LightProbeChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor FiniteStateMachineFormDescriptor;
+		//ChunkDescriptor FiniteStateMachineChunkDesc;
+		//byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize];
+	}
+	struct FiniteStateMachineData
+	{
+		ChunkDescriptor FiniteStateMachineChunkDesc;
+		byte FiniteStateMachineDataBlock[FiniteStateMachineChunkDesc.dataSize]<bgcolor=cRed>;
+	} fsmd;
+	//for now
+	
+	/*
+	uint32 someCnt;
+	for (i = 0; i < someCnt; i++)
+	{
+		struct UnknownData
+		{
+			string name;
+			GUID theGUID; //?
+		} unkd;
+	}*/
+} FiniteStateMachineChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor AnimationTransformFormDescriptor;
+		//byte AnimationTransformData[AnimationTransformFormDescriptor.dataSize-24];
+	}
+	struct AnimationTransformData
+	{
+		ChunkDescriptor AnimationTransformChunkDescriptor;
+		GenericAssetHeader AnimationTransformAssetHdr;
+		byte AnimationTransformData[AnimationTransformChunkDescriptor.dataSize-4];
+	} xfrmd;
+	/*else
+	{
+		//byte AnimationTransformData[ContentForm.dataSize];
+		//is meta part of this?
+	}*/
+} AnimationTransformChunk;
+
+typedef struct
+{
+	DataType EventID;
+	DataType ActionID;
+	GUID componentGUID;
+	uint16 unk;
+	Byte_Bool unk2[2];
+} Connection;
+
+typedef struct
+{
+	DataType linkID;
+	GUID componentGUID;
+	Byte_Bool unk;
+} ScriptLink;
+
+typedef struct
+{
+	DataType unk1;
+	DataType SubCompType;
+	GUID SubCompGUID;
+	byte unk2[3];
+	Byte_Bool unk;
+} SubComponent;
+
+typedef struct
+{
+	GameCRC32 ComponentTypeCRC;
+	if (ComponentTypeCRC == 2314479346)
+	{
+		//isGameObjectComponent = 1;
+	}
+	GUID componentGUID;
+	U32_StringEntry theComponentName;
+	//FSkip(16);
+	//uint32 guids;
+	//GUID theGUID;
+	if (isGameObjectComponent == 0)
+	{
+		uint16 connections;
+		if (connections != 0)
+		{
+			struct Connections
+			{
+				for (i = 0; i < connections; i++)
+				{
+					Connection theConn;
+				}
+			} conns;
+		}
+		//We die here
+		//uint32 testScriptLinksVar;
+		uint32 scriptLinks;
+		if (scriptLinks != 0)
+		{
+			struct ScriptLinks
+			{
+				for (i2 = 0; i2 < scriptLinks; i2++)
+				{
+					Field theSL;
+				}
+			} slnks;
+		}
+	}
+	else
+	{
+		uint16 subComponents;
+		if (subComponents != 0)
+		{
+			struct SubComponents
+			{
+				for (i2 = 0; i2 < subComponents; i2++)
+				{
+					SubComponent theSubComp;
+				}
+			} subcs;
+		}
+		else
+		{
+			FSkip(1);
+		}
+	}
+} Component;
+
+typedef struct
+{
+	ChunkDescriptor ComponentChunkDescriptor;
+	byte theComponent[ComponentChunkDescriptor.dataSize]; //For now
+	//Component theComponent;
+	isGameObjectComponent = 0;
+} GameObjectComponent;
+
+typedef struct PerformanceGroupChunk
+{
+	ChunkDescriptor PerformanceGroupsChunkDescriptor;
+	if (isPack == 0 && isLE == 1) //Prime1R
+	{
+		byte Prime1R_PerformanceGroupData[PerformanceGroupsChunkDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23) //Prime1R
+	{
+		byte Prime1R_PerformanceGroupData[PerformanceGroupsChunkDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		struct PerformanceGroupData
+		{
+			uint16 pgentrycount;
+			struct PerformanceGroupEntries
+			{
+				for (i = 0; i < pgentrycount; i++)
+				{
+					struct PerformanceGroupEntry
+					{
+						U32_StringEntry groupName;
+						GUID editorID;
+						Byte_Bool active;
+						uint16 refLayerGUIDs;
+						if (refLayerGUIDs != 0)
+						{
+							struct ReferencedLayerGUIDs
+							{
+								for (i2 = 0; i2 < refLayerGUIDs; i2++)
+								{
+									struct ReferencedLayerGUID
+									{
+										GUID theRefGUID;
+									} rlyrguid;
+								}
+							} rlyrguids;
+						 }
+					} pge;
+				 }
+			} pges;
+		 } pged;
+	}
+};
+
+typedef struct LevelGeneratedChunk
+{
+	ChunkDescriptor LevelGeneratedChunkDescriptor;
+	struct LevelGeneratedData
+	{
+		uint16 objCount;
+		if (objCount != 0)
+		{
+			struct GeneratedObjects
+			{
+				for (i = 0; i < objCount; i++)
+				{
+					struct GenObject
+					{
+						GUID GenObjectID;
+						GUID LyrID;
+					} gobj;
+				}
+			} gobjs;
+		}
+	} lgd;
+};
+
+typedef struct DockChunk
+{
+	ChunkDescriptor DockChunkDescriptor;
+	byte DockData[DockChunkDescriptor.dataSize];
+};
+
+typedef struct BacklightChunk
+{
+	ChunkDescriptor BacklightChunkDescriptor;
+	byte BacklightData[BacklightChunkDescriptor.dataSize];
+};
+
+typedef struct LoadUnitsChunk
+{
+	ChunkDescriptor LoadUnitsChunkDescriptor;
+	uint16 LoadUnits;
+};
+
+typedef struct LoadUnitChunk
+{
+	FormDescriptor LoadUnitFormsFormDescriptor;
+	struct LoadUnitFormsData
+	{
+		struct LevelUnitHead
+		{
+			ChunkDescriptor LevelUnitHeadDescriptor;
+			if (isPack == 0 && isLE == 1) //Prime1R
+			{
+				byte LevelUnitHeaderData[LevelUnitHeadDescriptor.dataSize]<bgcolor=cRed>;
+			}
+			else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23) //Prime1R
+			{
+				byte LevelUnitHeaderData[LevelUnitHeadDescriptor.dataSize]<bgcolor=cRed>;
+			}
+			else
+			{
+				struct LevelUnitHeaderData
+				{
+					U32_StringEntry theStr;
+					GUID loadUnitGUID;
+					uint16 flags;
+				} LUHD;
+			}
+		} LUH;
+		struct LevelUnitResources
+		{
+			ChunkDescriptor LevelUnitResourcesChunkDescriptor;
+			struct LevelUnitResourcesData
+			{
+				uint32 resCnt;
+				if (resCnt != 0)
+				{
+					struct LevelUnitResIDs
+					{
+						for (i = 0; i < resCnt; i++)
+						{
+							struct LevelUnitResID
+							{
+								GUID LevelResID;
+							} luri;
+						} 
+					} lurids;
+				}
+			} luresids;
+		} lres;
+		struct LevelUnitLayers
+		{
+			ChunkDescriptor LevelUnitLayersChunkDescriptor;
+			struct LevelUnitLayersData
+			{
+				uint32 layerCount;
+				local uint32 totalLayerCount = layerCount+layerCount;
+                if (printDebugLogs == 1)
+                {
+				    Printf("%i\n", totalLayerCount);
+                }
+				if (layerCount != 0)
+				{
+					struct LevelUnitLayerEntries
+					{
+						for (i = 0; i < layerCount; i++)
+						{
+							struct LevelUnitLayerEntry
+							{
+								GUID LevelResID;
+							} lari;
+						} 
+					} larids;
+				}
+			} lulids;
+		} lulres;
+	} luf;
+};
+
+typedef struct StringPoolChunk
+{
+	ChunkDescriptor StringPoolChunkDescriptor;
+	byte UnknownData[StringPoolChunkDescriptor.dataSize];
+};
+
+typedef struct ShaderDataChunk
+{
+	LittleEndian(); //Force LE
+	FormDescriptor ShaderDataFormDescriptor;
+	byte ShaderData[ShaderDataFormDescriptor.dataSize];
+	/*struct ShaderData
+	{
+		ChunkDescriptor ShaderDataChunkDescriptor;
+		byte UnknownData[ShaderDataChunkDescriptor.dataSize];
+		ChunkDescriptor SDENChunkDescriptor;
+		byte UnknownData2[SDENChunkDescriptor.dataSize];
+	} SHDR_DATA;*/
+};
+
+typedef struct LayerHeaderChunk
+{
+	ChunkDescriptor LayerHeaderChunkDescriptor;
+	U32_StringEntry ScriptLayerName;
+	GUID ScriptLayerGUID;
+	if (isLE == 1)
+	{
+		uint32 unk;
+	}
+	else
+	{
+		uint16 unk;
+	}
+	uint16 loadUnitIDs;
+	if (loadUnitIDs != 0)
+	{
+		struct LoadUnitIDs
+		{
+			for (i = 0; i < loadUnitIDs; i++)
+			{
+				struct LoadUnitGUIDEntry
+				{
+					GUID LoadUnitGUID;
+				} luge;
+			}
+		} luids;
+	 }
+	 GUID unknownGUID;
+	 Byte_Bool unknownFlag;
+};
+
+typedef struct LayerChunk
+{
+	FormDescriptor LayerFormDescriptor;
+	LayerHeaderChunk LayerHeaderChunkEntry;
+	FormDescriptor GeneratedScriptObjFormDescriptor;
+	FormDescriptor ScriptObjectFormDescriptor;
+	if (ScriptObjectFormDescriptor.dataSize != 0)
+	{
+		struct ComponentData
+		{
+			for (i = 0; i < 2000; i++)
+			{
+				if (terminateGameObjDetection != 1)
+				{
+					{
+					    GameObjectComponent theGOBJ;
+					}
+				    BigEndian();
+				    DataType checkForRFRM<hidden=true>; //if we error out here from standalone files, we're fine
+				    FSkip(-4);
+				    if (checkForRFRM == RUDEFormDescriptor)
+				    {
+				        terminateGameObjDetection = 1;
+					    Printf("End of Game Objects!\n");
+				    }					
+			    }
+		    }
+	    } d;
     }
-    struct ScanContent
-    {
-        struct Header
+	terminateGameObjDetection == 0;
+    //i = 0;
+};
+
+typedef struct LayersChunk
+{
+	if (isLE == 1)
+	{
+		FormDescriptor LayersFormDescriptor;
+	}
+	struct LayerEntries
+	{
+		LayerChunk LayerEntry;
+	} le;
+};
+
+typedef struct RoomSettingsDataChunk
+{
+	if (isPack)
+	{
+		FormDescriptor RoomSettingsDataFormDescriptor;
+		//FormDescriptor RoomHeaderFormDescriptor;
+		//byte RoomData[RoomFormDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		//FormDescriptor RoomHeaderFormDescriptor;
+		//byte RoomData[ContentForm.dataSize]<bgcolor=cRed>;
+		//is meta part of this?
+	}
+
+	struct RSD_Header
+	{
+		FormDescriptor RoomSettingsDataRoomHeaderFormDescriptor;
+		struct RSD_MainHeaderData
+		{
+			ChunkDescriptor RoomSettingsDataRoomHeaderChunkDescriptor;
+			if (isPack == 0 && isLE == 1) //Prime1R
+			{
+				byte Prime1R_RoomSettingsHeader[RoomSettingsDataRoomHeaderChunkDescriptor.dataSize]<bgcolor=cRed>;
+			}
+			else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23) //Prime1R
+			{
+				byte Prime1R_RoomSettingsHeader[RoomSettingsDataRoomHeaderChunkDescriptor.dataSize]<bgcolor=cRed>;
+			}
+			else
+			{
+				uint16 DKCTF_unk<bgcolor=cRed>; //Always 3
+			}
+			PerformanceGroupChunk PerformanceGroupChunkContent;
+			LevelGeneratedChunk LevelGeneratedChunkContent;
+			if (isPack == 0 && isLE == 1) //Prime1R
+			{
+				UnknownChunk DockChunkContent;
+				BacklightChunk BLITChunkContent;
+				LoadUnitsChunk LUNSChunkContent;
+			}
+			else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23) //Prime1R
+			{
+				DockChunk DockChunkContent;
+				BacklightChunk BacklightChunkContent;
+				LoadUnitsChunk LoadUnitsChunkContent;
+			}
+			struct LoadUnitEntries
+			{
+			    if (isPack == 0 && isLE == 1)
+				{
+				    for (i = 0; i < LoadUnitsChunkContent.LoadUnits; i++)
+					{
+					    UnknownChunk LoadUnitEntry;
+					}
+				}
+				else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23)
+				{
+				    for (i = 0; i < LoadUnitsChunkContent.LoadUnits; i++)
+					{
+					    LoadUnitChunk LoadUnitEntry;
+					}
+				}
+				else
+				{
+				    for (i = 0; i < 20; i++) //Detect as many
+					{
+					    if (terminateLoadUnitDetection != 1)
+						{
+						    LoadUnitChunk LoadUnitEntry;
+							FSkip(20);
+							DataType checkForLUNT<hidden=true>;
+							FSkip(-24);
+							if (checkForLUNT != LoadUnit)
+							{
+							    terminateLoadUnitDetection = 1;
+								Printf("End of Load Units!\n");
+							}
+						}
+					}
+				}
+		    } rsd_loadunitentries;
+		} rsd_mainhdr_data;
+		if (isPack == 0 && isLE == 1)
+		{
+		    StringPoolChunk StringPoolChunkContent;
+			ShaderDataChunk ShaderDataChunkContent;
+		}
+		else if (isPack == 1 && RoomSettingsDataFormDescriptor.fVer > 23 && RoomSettingsDataFormDescriptor.dVer > 23)
+		{
+		    StringPoolChunk StringPoolChunkContent;
+			ShaderDataChunk ShaderDataChunkContent;
+		}
+		LayersChunk LayersChunkContent;
+		//} rsd_hdr;
+	} rsd_bin;
+};
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor CharacterChunkFormDescriptor;
+		//byte CharacterChunkData[CharacterChunkFormDescriptor.dataSize];
+	}
+	/*else
+	{
+		byte CharacterData[ContentForm.dataSize];
+		//is meta part of this?
+	}*/
+	struct CharacterData
+	{
+		GenericAssetHeader theCharChunkAssetHdr<bgcolor=cGreen>;
+		byte CharacterData[CharacterChunkFormDescriptor.dataSize-4]<bgcolor=cRed>;
+		/*struct CharInfo
+		{
+			byte unk[16];
+			byte flags[3];
+		} charInfo;
+		string theName;
+		GUID skelObjectID;
+		int32 charModelSets;
+		struct CharModelSets
+		{
+			for (i = 0; i < charModelSets; i++)
+			{
+				struct CharModelSet
+				{
+					string charModelName;
+					GUID SMDLGUID;
+					AABox charModelSetAABox;
+				} cms;
+			}
+		} cmss;
+		int32 charAnimInfos;
+		struct CharAnimInfos
+		{
+			for (i = 0; i < charAnimInfos; i++)
+			{
+				struct CharAnimInfo
+				{
+					string charModelName;
+					GUID SMDLGUID;
+					uint32 unk[2];
+					uint16 unk2[2];
+					byte unk3;
+					AABox charAnimAABox;
+				} cmi;
+			}
+		} cmis;
+		struct AnimIDMap
+		{
+			int32 hashNodes;
+			for (i = 0; i < hashNodes; i++)
+			{
+				int32 hashNode;
+			}
+		} aim;
+		AABox mainAABox;*/
+	} charData;
+} CharacterChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor SkeletonDataFormDescriptor;
+	}
+	struct SkeletonData
+	{
+		GenericAssetHeader theSkeletonDataHdr<bgcolor=cGreen>;
+		if (isPack)
+		{
+			//FSkip(-32);
+			byte SkeletonData[SkeletonDataFormDescriptor.dataSize-4]<bgcolor=cRed>;
+		}
+		else
+		{
+			byte SkeletonData[ContentForm.dataSize-4]<bgcolor=cRed>;
+		}
+		/*
+		struct JointNameArray
+		{
+			uint32 unk;
+			uint32 jointNames;
+			struct JointNames
+			{
+				for (i = 0; i < jointNames; i++)
+				{
+					//struct JointName
+					//{
+						U32_StringEntry JointNameStr;
+					//} jn;
+				}
+			} jn;
+		} jna;*/
+	} skd;
+} SkeletonChunk;
+
+typedef struct
+{
+	if (isPack == 1 && !isCLSN)
+	{
+		FormDescriptor MTRLFormDescriptor;
+	}
+	if (ContentForm.fVer >= 10 && ContentForm.fVer >= 10)
+	{
+		isSDX = 1;
+		ChunkDescriptor MTRLChunkDesc;
+		struct ShaderArcData
+		{
+			byte theFile[MTRLChunkDesc.dataSize];
+			ShaderPlatformChunk ShaderPlatformContent;
+		} mtrld<bgcolor=cRed>;
+	}
+	else
+	{
+		if (isCLSN)
+		{
+			ChunkDescriptor MTRLClsnChunkDesc;
+			struct MTRLClsnData
+			{
+				uint32 collisionMaterialCount;
+				struct CollisionMaterials
+				{
+					for (i = 0; i < collisionMaterialCount; i++)
+					{
+						struct CollisionMaterial
+						{
+							uint32 unk[5];
+						} clm;
+					}
+				} clms;
+				//byte theFile[MTRLClsnChunkDesc.dataSize];
+			} mtrld;
+		}
+		else
+		{
+			//struct MaterialData
+			//{
+				uint16 zlibCheck<hidden=true>;
+				FSkip(-2);
+				if (zlibCheck == 30938)
+				{
+					if (isPack)
+					{
+						byte theZlibCompressedFile[MTRLFormDescriptor.dataSize]<bgcolor=cPurple>;
+					}
+					else
+					{
+						byte theZlibCompressedFile[ContentForm.dataSize]<bgcolor=cPurple>;
+					}
+				}
+				else
+				{
+					ExportedMaterialChunk theEXPT;
+					/*struct MaterialIdentifier
+					{
+						
+					} mi;*/
+					ShaderPlatformChunk PlatChunk;
+				}
+			//} mtrld;
+		}
+	}
+} MaterialChunk<bgcolor=cPurple>;
+
+typedef struct
+{
+	uint32 indiceX;
+	uint32 indiceY;
+	uint32 indiceZ;
+	if (isCLSN && isLegacyCLSN != 1)
+	{
+		uint16 idx;
+		uint16 unk;
+	}
+} CollisionTriangle;
+
+typedef struct
+{
+	//float min_4;
+	AABox LeafNodeAABox;
+	//float max_4;
+	if (tree_forDCLN == 0)
+	{
+		uint32 unk1;
+		uint32 unk2;
+		uint32 unk3;
+        if (printDebugLogs)
         {
-            uint32 ver;
-            uint32 magic; //0xBADBEEF
-            uint32 frameID;
-            uint32 scanTextStringID;
-            Prime1_ScanSpeedFlag scanSpeedFlag;
-            Prime1_LogBookCategory logBookCategory;
-            Prime1_ScanIconFlag scanIconFlag;
-        } hdr;
-        struct ScanImages
+            Printf("LeafNode[%i]: AABox Min X: %f Y: %f Z: %f | AABox Max X: %f Y: %f Z: %f | Unknown1: %i | Unknown2: %i | Unknown3: %i\n", i, LeafNodeAABox.min.X, LeafNodeAABox.min.Y, LeafNodeAABox.min.Z, LeafNodeAABox.max.X, LeafNodeAABox.max.Y, LeafNodeAABox.max.Z, unk1, unk2, unk3);
+        }
+	}
+	else
+	{
+		float unk1;
+		float unk2;
+		float unk3;
+        if (printDebugLogs)
         {
-            uint32 textureID;
-            float appearance;
-            uint32 imgPos;
-            uint32 width;
-            uint32 height;
-            float interval;
-            float fadeDuration;
-        } scImgs[4]; //How do we kno
-    } sc;
+            Printf("LeafNode[%i]: AABox Min X: %f Y: %f Z: %f | AABox Max X: %f Y: %f Z: %f | Unknown1: %f | Unknown2: %f | Unknown3: %f\n", i, LeafNodeAABox.min.X, LeafNodeAABox.min.Y, LeafNodeAABox.min.Z, LeafNodeAABox.max.X, LeafNodeAABox.max.Y, LeafNodeAABox.max.Z, unk1, unk2, unk3);
+        }
+	}
+} LeafNode;
+
+typedef struct
+{
+	ChunkDescriptor VerticesChunkDescriptor;
+	struct VertexData
+	{
+		uint32 vertexCnt;
+        if (printDebugLogs)
+        {
+            Printf("VERTEX CHUNK DEBUG | Vertexes: %i\n", vertexCnt);
+        }
+		struct Vertexes
+		{
+			for (i = 0; i < vertexCnt; i++)
+			{
+				Vector3_F32 vtx;
+                if (printDebugLogs == 1)
+                {
+                    Printf("Vertex[%i]: X: %f Y: %f Z: %f\n", i, vtx.X, vtx.Y, vtx.Z);
+                }
+			}
+		} vtxs;
+	} vtxd<bgcolor=cGreen>;
+} VerticesChunk;
+
+typedef struct
+{
+	ChunkDescriptor TrianglesChunkDescriptor;
+	struct TriangleData
+	{
+		uint32 TriangleCount;
+        if (printDebugLogs)
+        {
+            Printf("TRIANGLE CHUNK DEBUG | Triangles: %i\n", TriangleCount);
+        }
+        struct CollisionTriangles
+        {
+		    for (i = 0; i < TriangleCount; i++)
+		    {
+			    CollisionTriangle theCollisionTriangle;
+                if (printDebugLogs)
+                {
+                    Printf("Triangle[%i]: X: %i Y: %i Z: %i \n", i, theCollisionTriangle.indiceX, theCollisionTriangle.indiceY, theCollisionTriangle.indiceZ);
+                }
+		    }
+        } ctris;
+	} triData<bgcolor=cPurple>;
+} TrianglesChunk;
+
+typedef struct
+{
+	local string extensionToAdd<hidden=true> = "";
+	DataType AssetType;
+	if (AssetType == DependencyGroup)
+	{
+		DependencyGroups++;
+	}
+	//Add true ext names from log in Kiosk
+	if (AssetType == MessageTable_MessageStudioBinaryText)
+	{
+		extensionToAdd = "mstbin";
+		addExtension = 1;
+	}
+	else if (AssetType == SwooshParticleSystem)
+	{
+		extensionToAdd = "swshpsys";
+		addExtension = 1;
+	}
+	else if (AssetType == GenericParticleSystem)
+	{
+		extensionToAdd = "gpsys";
+		addExtension = 1;
+	}
+	else if (AssetType == LooseData)
+	{
+		extensionToAdd = "ldata";
+		addExtension = 1;
+	}
+	else if (AssetType == UniverseInfo)
+	{
+		extensionToAdd = "uinfo";
+		addExtension = 1;
+	}
+	else if (AssetType == CookedAudioBusHeiarchy)
+	{
+		extensionToAdd = "cabh";
+		addExtension = 1;
+	}
+	else if (AssetType == Material)
+	{
+		extensionToAdd = "cmat";
+		addExtension = 1;
+	}
+	else if (AssetType == CookedModel)
+	{
+		extensionToAdd = "cmdl";
+		addExtension = 1;
+	}
+	else if (AssetType == SkinnedModel)
+	{
+		extensionToAdd = "smdl";
+		addExtension = 1;
+	}
+	else if (AssetType == Character)
+	{
+		extensionToAdd = "char";
+		addExtension = 1;
+	}
+	else if (AssetType == CookedAudioSample)
+	{
+		extensionToAdd = "csmp";
+		addExtension = 1;
+	}
+	else if (AssetType == FiniteStateMachine)
+	{
+		extensionToAdd = "cfsm";
+		addExtension = 1;
+	}
+	else if (AssetType == DKCTF_FlashGFX)
+	{
+		extensionToAdd = "rfgfx";
+		addExtension = 1;
+	}
+	else if (AssetType == DKCTF_ScaleformGFXLibrary)
+	{
+		extensionToAdd = "rsgfx";
+		addExtension = 1;
+	}
+	else if (AssetType == CookedAudioSoundEffect)
+	{
+		extensionToAdd = "caud";
+		addExtension = 1;
+	}
+	else if (AssetType == RoomSettingsData)
+	{
+		extensionToAdd = "rsd";
+		addExtension = 1;
+	}
+	else if (AssetType == Texture)
+	{
+		extensionToAdd = "ctex/ctexarray/ctex3d"; //There's also ctexarray and ctex3d but how is that determined
+		addExtension = 1;
+	}
+	/*
+	else if (AssetType == Prime1R_LegacyScan)
+	{
+		extensionToAdd = "lscan"; //Let's guess LSCAN since LDATA is similarly named
+		addExtension = 1;
+	}
+	else if (AssetType == Prime1R_ShaderHint)
+	{
+		extensionToAdd = "shint"; //another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime_Font)
+	{
+		extensionToAdd = "font"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime_WeaponParticleSystem)
+	{
+		extensionToAdd = "wpsys"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime1R_Electric2ParticleSystem)
+	{
+		extensionToAdd = "elec2psys"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime1R_Electric2ParticleSystem)
+	{
+		extensionToAdd = "elec2psys"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime1R_LegacyUniverseHintRedundant)
+	{
+		extensionToAdd = "luhr"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime_ElectricParticleSystem)
+	{
+		extensionToAdd = "elecpsys"; //yet another guess
+		addExtension = 1;
+	}
+	else if (AssetType == Prime1R_CharacterProject)
+	{
+		extensionToAdd = "acs/ancs"; //yet another guess
+		addExtension = 1;
+	}*/
+	GUID AssetID;
+	if (isNX == 0) //If this is 0, it's an NX PAK
+	{
+		byte checkForNX<hidden=true>;
+		FSkip(-1);
+		if (checkForNX == 0)
+		{
+			isNX = 1;
+			Printf("NX PAK DETECTED\n");
+		}
+	}
+	if (isNX || isLE)
+	{
+		U32_StringEntry AssetName;
+		if (addExtension)
+		{
+			if (AssetType == MessageTable_MessageStudioBinaryText)
+			{
+				Printf("%s%s.%s\n", MessageTableBinDir, AssetName.theString, extensionToAdd);
+			}
+			else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
+			{
+				Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName.theString, extensionToAdd);
+			}
+			else if (AssetType == LooseData)
+			{
+				Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName.theString, extensionToAdd);
+			}
+			else if (AssetType == CookedAudioBusHeiarchy)
+			{
+				Printf("%s%s.%s\n", AudioDir, AssetName.theString, extensionToAdd);
+			}
+			else if (AssetType == UniverseInfo)
+			{
+				Printf("%s%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
+			}
+			else if (AssetType == RoomSettingsData)
+			{
+				if (AssetName.theString == "KernelMPRT")
+				{
+					Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+				}
+				else if (AssetName.theString == "UI_HUDMPR1")
+				{
+					Printf("UI/MPR1/%s.%s\n", AssetName.theString, extensionToAdd);
+				}
+				else
+				{
+					Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName.theString, extensionToAdd);
+				}
+			}
+			else
+			{
+				Printf("%s.%s\n", AssetName.theString, extensionToAdd);
+			}
+		}
+		else
+		{
+			Printf("%s\n", AssetName.theString);
+		}
+	}
+	else
+	{
+		string AssetName;
+		if (addExtension)
+		{
+			if (AssetType == MessageTable_MessageStudioBinaryText)
+			{
+				Printf("%s%s.%s\n", MessageTableBinDir, AssetName, extensionToAdd);
+			}
+			else if (AssetType == DKCTF_FlashGFX || AssetType == DKCTF_ScaleformGFXLibrary)
+			{
+				Printf("%s%s.%s\n", DKCTF_GFXDir, AssetName, extensionToAdd);
+			}
+			else if (AssetType == LooseData)
+			{
+				Printf("%s%s.%s\n", LooseDataTweaksDir, AssetName, extensionToAdd);
+			}
+			else if (AssetType == CookedAudioBusHeiarchy)
+			{
+				Printf("%s%s.%s\n", AudioDir, AssetName, extensionToAdd);
+			}
+			else if (AssetType == RoomSettingsData)
+			{
+				Printf("%s*WORLDSUBDIR*/%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
+			}
+			else if (AssetType == UniverseInfo)
+			{
+				Printf("%s%s.%s\n", RUDE_WorldDir, AssetName, extensionToAdd);
+			}
+			else
+			{
+				Printf("%s.%s\n", AssetName, extensionToAdd);
+			}
+		}
+		else
+		{
+			Printf("%s\n", AssetName);
+		}
+	}
+	addExtension = 0;
+} NameTagChunk;
+
+typedef struct
+{
+	ChunkDescriptor NameTagChunkDescriptor;
+	uint32 nameTagCount;
+	for (i = 0; i < nameTagCount; i++)
+	{
+		NameTagChunk theNameTag;
+	}
+} NameTagsChunk;
+
+typedef struct
+{
+	BigEndian();
+	DataType assetType;
+	/*if (assetType == Texture)
+	{
+		hasTXTRMeta = 1;
+	}*/
+	if (isLE != 0)
+	{
+		LittleEndian();
+	}
+	GUID assetID;
+	if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
+	{
+		int32 unk[2]; //TXTR: 47,51, SHNT: 4,4, MTRL: 168,168, LDTA: 11,12, ENUM: 5,5, SWSH: 61,62, MSBT: 10,10, DGRP, 3,3, FONT: 18,18, ROOM: 147,160, FSMC: 23,23, FMV: 7,7, CSMP: 31,31, LTPB: 66,73, CMAP: 13,13
+	}
+	uint64 off;
+	uint64 size;
+	if (TOCForm.fVer == 3 && TOCForm.dVer == 3) //Prime1R!
+	{
+		uint64 csize;
+		//todo
+		if (csize != size)
+		{
+			Printf("COMPRESSED!\n");
+			compressedResources++;
+		}
+	}
+} AssetEntry;
+
+typedef struct AssetEntries
+{
+	int32 assetCount;
+	for (i = 0; i < assetCount; i++)
+	{
+		AssetEntry theAssetEntry;
+	}
+} AssetEntries;
+
+typedef struct
+{
+	ChunkDescriptor AssetDirChunkDescriptor;
+	AssetEntries AssetEntriesChunk;
+	BigEndian();
+} AssetDirectory;
+
+typedef struct
+{
+	ChunkDescriptor TreeChunkDesc;
+	struct TreeData
+	{
+		uint32 LeafNodes;
+        if (printDebugLogs)
+        {
+            Printf("Leaf Nodes: %i\n", LeafNodes);
+        }
+		struct LeafNodes
+        {
+		    for (i = 0; i < LeafNodes; i++)
+		    {
+			    LeafNode theLeafNode;
+			    //if TreeChunkDesc
+			    //LeafNode theExLeafNode;
+		    }
+		    if (tree_forDCLN == 1)
+		    {
+			    tree_forDCLN = 0;
+			    for (i = 0; i < LeafNodes; i++)
+			    {
+				    LeafNode theDCLNLeafNode;
+				    //if TreeChunkDesc
+				    //LeafNode theExLeafNode;
+			    }
+		    }
+        } leafNodes;
+	} treeData<bgcolor=cPurple>;
+} TreeChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor LooseDataFormDescriptor;
+		//ChunkDescriptor LooseDataChunkDescriptor;
+		//byte LooseDataBlock[LooseDataFormDescriptor.dataSize-24];
+	}
+	else
+	{
+		//byte LooseDataBlock[ContentForm.dataSize];
+	}
+	//For now
+	struct LooseDataBlock
+	{
+		ChunkDescriptor LooseDataChunkDescriptor;
+		struct LooseDataBlockContent
+		{
+			uint16 fieldCount;
+			for (i = 0; i < fieldCount; i++)
+			{
+				Field theField;
+			}
+		} ldbc<bgcolor=cPurple>;
+	} ldb;
+} LooseDataChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor DependencyGroupFormDescriptor;
+		if (DependencyGroupFormDescriptor.hdr != DependencyGroup && DependencyGroupFormDescriptor.hdr != RUDEFormDescriptor && isLE == 1)
+		{
+			Printf("Compressed dependency groups are unsupported. Terminating...");
+			terminate = 1;
+			break;
+		}
+	}
+	struct DependencyGroupData
+	{
+		if (isLE == 1)
+		{
+			LittleEndian();
+		}
+		uint32 dependenciesCnt;
+		struct Dependencies
+		{
+			for (i = 0; i < dependenciesCnt; i++)
+			{
+				struct Dependency
+				{
+					DataType resID;
+					GUID AssetID;
+				} dependency;
+			}
+		} dependencies;
+	} dgd<bgcolor=cGreen>;
+} DependencyGroupChunk;
+
+typedef struct
+{
+	ChunkDescriptor MetaDataChunkDescriptor;
+	struct MetaData
+	{
+		if (MetaDataChunkDescriptor.dataOff != 0)
+		{
+			uint32 metaDataEntryCount;
+			struct MetaDataOffsetEntries
+			{
+				for (i = 0; i < metaDataEntryCount; i++)
+				{
+					struct MetaDataOffsetEntry
+					{
+						GUID AssetID;
+						uint32 metaDataOff;
+					} metaDataOffEntry;
+				}
+			} mdos;
+			/*for (i2 = 0; i2 < metaDataEntryCount; i2++)
+			{
+				struct ChunkMeta
+				{
+					if (AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].assetType == Texture)
+					{
+						TextureMetadata theTmt;
+					}
+				} cm;
+			}*/
+			byte metaDataBlock[MetaDataChunkDescriptor.dataSize-sizeof mdos-4]; //For now
+		}
+		else
+		{
+			byte metaDataBlock[MetaDataChunkDescriptor.dataSize];
+		}
+	} metaDataContent;
+} MetaDataChunk;
+
+typedef struct
+{
+	ChunkDescriptor GPU;
+	struct GPUChunkData
+	{
+		//So now I probably have to fix this for MP1R, fun
+		//temp swap
+		LittleEndian();
+		CompressionMode theCompressionMode; 
+		//swap back
+		if (!isLE)
+		{
+			BigEndian();
+		}
+		byte theCompressedContent[GPU.dataSize-4];
+	} GPUChunkContent;
+} GPUChunk<bgcolor=cPurple>;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor TextureFormDescriptor;
+	}
+	if (isPack == 0 && ContentForm.fVer == 15 && ContentForm.dVer == 16)
+	{
+		checkLocalMETA = 1;
+	}
+	struct TextureData
+	{
+		struct TextureHeader
+		{
+			ChunkDescriptor TextureHeaderDescriptor;
+			struct TextureHeaderData
+			{
+				TexType texType;
+				TexFmt texFmt;
+                if (printDebugLogs)
+                {
+				    Printf("TEXTURE DEBUG[%i] | Format = %i\n", i2, texFmt);
+                }
+				uint32 width;
+				uint32 height;
+				uint32 depth;
+				uint32 tileMode;
+				uint32 swizzle;
+				uint32 mips;
+				uint32 mipSizes[mips];
+				struct TextureSamplerData
+				{
+					uint32 flags;
+					byte texFilter;
+					byte texWrap[3];
+				} tsd;
+				if ((isPack && TextureFormDescriptor.fVer == 47 && TextureFormDescriptor.dVer == 51) || (!isPack && ContentForm.fVer == 47 && ContentForm.dVer == 51))
+				{
+					uint16 MP1R_UnknownData;
+				}
+			} thdrd<bgcolor=cGreen>;
+		} thdr;
+		GPUChunk theCPUChunk;
+	} txtr; //wip
+} TextureChunk;
+
+typedef struct
+{
+	ChunkDescriptor ModelHeaderDescriptor;
+	struct ModelHeaderContent
+	{
+		byte MDLHdrContent[ModelHeaderDescriptor.dataSize];
+		//Broken on Skinned Models
+		/*uint32 opaqueMeshes;
+		uint32 onePassMeshes;
+		uint32 twoPassMeshes;
+		uint32 oneBitMeshes;
+		uint32 additiveMeshes;
+		AABox theModelHdrAABox;
+		uint32 mdlDataSources;
+		for (i = 0; i < mdlDataSources; i++)
+		{
+			uint32 type;
+		}*/
+	} mdc<bgcolor=cRed>;
+} ModelHeaderChunk;
+
+typedef struct
+{
+	if (isPack)
+	{
+		FormDescriptor Prime1R_ScanFormDescriptor;
+	}
+	struct ScanContent
+	{
+		struct Header
+		{
+			uint32 ver;
+			uint32 magic; //0xBADBEEF
+			uint32 frameID;
+			uint32 scanTextStringID;
+			Prime1_ScanSpeedFlag scanSpeedFlag;
+			Prime1_LogBookCategory logBookCategory;
+			Prime1_ScanIconFlag scanIconFlag;
+		} hdr;
+		struct ScanImages
+		{
+			uint32 textureID;
+			float appearance;
+			uint32 imgPos;
+			uint32 width;
+			uint32 height;
+			float interval;
+			float fadeDuration;
+		} scImgs[4]; //How do we kno
+	} sc;
 } Prime1_ScanChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_FMVFormDescriptor;
-        byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]<bgcolor=cLtBlue>; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
-    }
-    else
-    {
-        byte RawMP4[ContentForm.dataSize]<bgcolor=cLtBlue>;
-    }
+	if (isPack)
+	{
+		FormDescriptor Prime1R_FMVFormDescriptor;
+		byte RawMP4[Prime1R_FMVFormDescriptor.dataSize]<bgcolor=cLtBlue>; //Retro you literally had them outside in DKCTF why did you pack them, reduce memory and load time? Ensure ever single thing is packed?
+	}
+	else
+	{
+		byte RawMP4[ContentForm.dataSize]<bgcolor=cLtBlue>;
+	}
 } Prime1R_FMVChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
-        byte RawData[Prime1R_LegacyUniverseHintRedundantFormDescriptor.dataSize]<bgcolor=cRed>;
-    }
-    else
-    {
-        byte RawData[ContentForm.dataSize];
-    }
+	if (isPack)
+	{
+		FormDescriptor Prime1R_LegacyUniverseHintRedundantFormDescriptor;
+		byte RawData[Prime1R_LegacyUniverseHintRedundantFormDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		byte RawData[ContentForm.dataSize];
+	}
 } Prime1R_LegacyUniverseHintRedundantChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor CookedMIDIRedundantFormDescriptor;
-    }
-    ChunkDescriptor CookedMIDIChunkDescriptor;
-    byte RawData[CookedMIDIChunkDescriptor.dataSize]<bgcolor=cRed>;
+	if (isPack)
+	{
+		FormDescriptor CookedMIDIRedundantFormDescriptor;
+	}
+	ChunkDescriptor CookedMIDIChunkDescriptor;
+	byte RawData[CookedMIDIChunkDescriptor.dataSize]<bgcolor=cRed>;
 } Prime1R_CookedMIDIChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_ModConContainerFormDescriptor;
-    }
-    struct ModConContainerHeader
-    {
-        ChunkDescriptor ModConContainerHeaderChunkDescriptor;
-        uint32 modelHeaderChunkData; //some value, prob i32
-    } MCHD;
-    struct ModConVertexData
-    {
-        ChunkDescriptor ModConContainerVertexDataChunkDescriptor;
-        byte RawData[ModConContainerVertexDataChunkDescriptor.dataSize]; 
-    } MCVD;
-    struct ModConCollisionData
-    {
-        ChunkDescriptor ModConCollisionDataChunkDescriptor;
-        struct ChunkedData
-        {
-            VerticesChunk MCCDVert;
-            MaterialSubChunk MCCDMtrl;
-            TrianglesChunk MCCDTris;
-            TreeChunk MCCDTree;
-        } chunked_data;
-    } MCCD;
-    uint32 peek;
-    //byte RawData[CookedMIDIChunkDescriptor.dataSize];
+	if (isPack)
+	{
+		FormDescriptor Prime1R_ModConContainerFormDescriptor;
+	}
+	struct ModConContainerHeader
+	{
+		ChunkDescriptor ModConContainerHeaderChunkDescriptor;
+		uint32 modelHeaderChunkData; //some value, prob i32
+	} MCHD;
+	struct ModConVertexData
+	{
+		ChunkDescriptor ModConContainerVertexDataChunkDescriptor;
+		byte RawData[ModConContainerVertexDataChunkDescriptor.dataSize]; 
+	} MCVD;
+	struct ModConCollisionData
+	{
+		ChunkDescriptor ModConCollisionDataChunkDescriptor;
+		struct ChunkedData
+		{
+			VerticesChunk MCCDVert;
+			MaterialSubChunk MCCDMtrl;
+			TrianglesChunk MCCDTris;
+			TreeChunk MCCDTree;
+		} chunked_data;
+	} MCCD;
+	uint32 peek;
+	//byte RawData[CookedMIDIChunkDescriptor.dataSize];
 } Prime1R_ModConContainerChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime_ParticleSystemFormDescriptor;
-    }
-    ChunkDescriptor Prime_ParticleSystemChunkDescriptor;
-    struct Prime_ParticleSystemData
-    {
-        GenericAssetHeader ParticleSystemDataMagic<bgcolor=cGreen>;
-        byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4]<bgcolor=cRed>;
-    } pdpsd;
+	if (isPack)
+	{
+		FormDescriptor Prime_ParticleSystemFormDescriptor;
+	}
+	ChunkDescriptor Prime_ParticleSystemChunkDescriptor;
+	struct Prime_ParticleSystemData
+	{
+		GenericAssetHeader ParticleSystemDataMagic<bgcolor=cGreen>;
+		byte RawData[Prime_ParticleSystemChunkDescriptor.dataSize-4]<bgcolor=cRed>;
+	} pdpsd;
 } Prime_ParticleSystemChunk;
 
 typedef struct
 {
-    uint32 PolyIdx[2];
-    float EdgeLen;
-    float unk;
+	uint32 PolyIdx[2];
+	float EdgeLen;
+	float unk;
 } Prime_EdgeEntry;
 
 typedef struct
 {
-    uint32 vertexes;
-    uint32 vertexStartIdx;
-    uint32 edges;
-    uint32 edgeStartIdx;
-    uint16 unk1;
-    uint16 unk2;
-    float  area;
-    Vector3_F32 normal;
-    AABox theAAB;
-    uint32 selfIdx;
+	uint32 vertexes;
+	uint32 vertexStartIdx;
+	uint32 edges;
+	uint32 edgeStartIdx;
+	uint16 unk1;
+	uint16 unk2;
+	float  area;
+	Vector3_F32 normal;
+	AABox theAAB;
+	uint32 selfIdx;
 } Prime_PolygonEntry;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime_ParticleSystemFormDescriptor;
-    }
-    struct Prime_PathFindingContent
-    {
-        uint32 ver;
-        uint32 vertexes;
-        Vector2_F32 vertexEntry[vertexes];
-        uint32 edges;
-        Prime_EdgeEntry edgeEntry[edges];
-        uint32 polygons;
-    } pdpsd;
+	if (isPack)
+	{
+		FormDescriptor Prime_ParticleSystemFormDescriptor;
+	}
+	struct Prime_PathFindingContent
+	{
+		uint32 ver;
+		uint32 vertexes;
+		Vector2_F32 vertexEntry[vertexes];
+		uint32 edges;
+		Prime_EdgeEntry edgeEntry[edges];
+		uint32 polygons;
+	} pdpsd;
 } Prime_PathFindingChunk;
 
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_VectorFieldFormDescriptor;
-        byte RawData[Prime1R_VectorFieldFormDescriptor.dataSize];
-    }
-    else
-    {
-        byte RawData[ContentForm.dataSize];
-    }
+	if (isPack)
+	{
+		FormDescriptor Prime1R_VectorFieldFormDescriptor;
+		byte RawData[Prime1R_VectorFieldFormDescriptor.dataSize];
+	}
+	else
+	{
+		byte RawData[ContentForm.dataSize];
+	}
 } Prime1R_VectorFieldChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_MaterialInstanceFormDescriptor;
-        //byte RawData[Prime1R_MaterialInstanceFormDescriptor.dataSize]<bgcolor=cLtBlue>;
-    }
-    ChunkDescriptor Prime1R_MaterialInstanceChunkDescriptor;
-    byte RawData[Prime1R_MaterialInstanceChunkDescriptor.dataSize]<bgcolor=cLtBlue>;
+	if (isPack)
+	{
+		FormDescriptor Prime1R_MaterialInstanceFormDescriptor;
+		//byte RawData[Prime1R_MaterialInstanceFormDescriptor.dataSize]<bgcolor=cLtBlue>;
+	}
+	ChunkDescriptor Prime1R_MaterialInstanceChunkDescriptor;
+	byte RawData[Prime1R_MaterialInstanceChunkDescriptor.dataSize]<bgcolor=cLtBlue>;
 } Prime1R_MaterialInstanceChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Material_ReflectDescriptor;
-    }
-    ChunkDescriptor Data;
-    struct Material_ReflectChunkData
-    {
-        uint32 unk;
-        GUID GUIDEntry;
-        float someFloatIdk;
-    } mtrlrflcd;
+	if (isPack)
+	{
+		FormDescriptor Material_ReflectDescriptor;
+	}
+	ChunkDescriptor Data;
+	struct Material_ReflectChunkData
+	{
+		uint32 unk;
+		GUID GUIDEntry;
+		float someFloatIdk;
+	} mtrlrflcd;
 } Material_ReflectChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_DataEnumFormDescriptor;
-    }
-    LittleEndian();
-    //struct DataEnum
-    //{
-        uint32 enums<bgcolor=cPurple>;
-        if (enums > 0)
-        {
-            struct EnumEntries
-            {
-                for (i2 = 0; i2 < enums; i2++)
-                {
-                    uint64 EnumEntry; //Confirm
-                }
-            } ee<bgcolor=cPurple>;
-        }
-        uint32 enumGUIDs<bgcolor=cGreen>;
-        if (enumGUIDs > 0)
-        {
-            struct EnumGUIDs
-            {
-                for (i2 = 0; i2 < enumGUIDs; i2++)
-                {
-                    struct EnumGUID
-                    {
-                        GUID GUIDEntry;
-                    } eguid;
-                }
-            } eguids<bgcolor=cGreen>;
-        }
-    //} dataEnum;
+	if (isPack)
+	{
+		FormDescriptor Prime1R_DataEnumFormDescriptor;
+	}
+	LittleEndian();
+	//struct DataEnum
+	//{
+		uint32 enums<bgcolor=cPurple>;
+		if (enums > 0)
+		{
+			struct EnumEntries
+			{
+				for (i2 = 0; i2 < enums; i2++)
+				{
+					uint64 EnumEntry; //Confirm
+				}
+			} ee<bgcolor=cPurple>;
+		}
+		uint32 enumGUIDs<bgcolor=cGreen>;
+		if (enumGUIDs > 0)
+		{
+			struct EnumGUIDs
+			{
+				for (i2 = 0; i2 < enumGUIDs; i2++)
+				{
+					struct EnumGUID
+					{
+						GUID GUIDEntry;
+					} eguid;
+				}
+			} eguids<bgcolor=cGreen>;
+		}
+	//} dataEnum;
 } Prime1R_DataEnumChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor Prime1R_LightProbeFormDescriptor;
-        byte LightProbeData[Prime1R_LightProbeFormDescriptor.dataSize];
-    }
-    else
-    {
-        byte LightProbeData[ContentForm.dataSize];
-    }
+	if (isPack)
+	{
+		FormDescriptor Prime1R_LightProbeFormDescriptor;
+		byte LightProbeData[Prime1R_LightProbeFormDescriptor.dataSize];
+	}
+	else
+	{
+		byte LightProbeData[ContentForm.dataSize];
+	}
 } Prime1R_LightProbeChunk;
 
 typedef struct
 {
-    DataType AROTMagic;
-    uint32 unk[4];
-    AABox theAABox;
-    uint32 unkCount;
-    uint32 unkUInt32s[unkCount];
-    uint32 unkCount2;
-    uint32 unkUInt32s2[unkCount2];
-    uint32 unkCount3;
-    byte   unkBytes[unkCount3];
-    uint32 aaboxesCount;
-    struct AABoxes
-    {
-        for (i = 0; i < aaboxesCount; i++)
-        {
-            AABox theAABox;
-        }
-    } aaboxes;
+	DataType AROTMagic;
+	uint32 unk[4];
+	AABox theAABox;
+	uint32 unkCount;
+	uint32 unkUInt32s[unkCount];
+	uint32 unkCount2;
+	uint32 unkUInt32s2[unkCount2];
+	uint32 unkCount3;
+	byte   unkBytes[unkCount3];
+	uint32 aaboxesCount;
+	struct AABoxes
+	{
+		for (i = 0; i < aaboxesCount; i++)
+		{
+			AABox theAABox;
+		}
+	} aaboxes;
 } Octree;
 
 typedef struct
 {
-    ChunkDescriptor WorldModelHeaderDescriptor;
-    struct WorldModelHeaderContent
-    {
-        byte unk;
-        Octree theOctree;
-        uint32 mainAABoxesCount;
-        struct MainAABoxes
-        {
-            for (i = 0; i < mainAABoxesCount; i++)
-            {
-                AABox theMainAABox;
-            }
-        } mainaaboxesstruct;
-        uint32 unknownFloatCount;
-        struct UnknownFloats
-        {
-            for (i = 0; i < unknownFloatCount; i++)
-            {
-                float unknownFloat;
-            }
-        } unknownfloats;
-    } wmdc;
+	ChunkDescriptor WorldModelHeaderDescriptor;
+	struct WorldModelHeaderContent
+	{
+		byte unk;
+		Octree theOctree;
+		uint32 mainAABoxesCount;
+		struct MainAABoxes
+		{
+			for (i = 0; i < mainAABoxesCount; i++)
+			{
+				AABox theMainAABox;
+			}
+		} mainaaboxesstruct;
+		uint32 unknownFloatCount;
+		struct UnknownFloats
+		{
+			for (i = 0; i < unknownFloatCount; i++)
+			{
+				float unknownFloat;
+			}
+		} unknownfloats;
+	} wmdc;
 } WorldModelHeaderChunk;
 
 typedef struct
 {
-    ChunkDescriptor MeshHdr;
-    struct MeshContent
-    {
-        uint32 entries;
-        struct RenderMeshes
-        {
-            for (i = 0; i < entries; i++)
-            {
-                struct RenderMesh
-                {
-                    //Needs fixes for MP1R
-                    uint32 primMode;
-                    uint16 mtrlCacheIdx;
-                    byte vertBufIdx;
-                    byte idxBufIdx;
-                    uint32 idxBufOff;
-                    uint32 count;
-                    uint16 unk;
-                    byte unk54[2];
-                    byte flags;
-                } rmsh;
-            }
-        } rmshes;
-        if ((isPack && ModelFormDescriptor.fVer >= 114 && ModelFormDescriptor.dVer >= 125) || (!isPack && ContentForm.fVer >= 114 && ContentForm.dVer >= 125))
-        {
-            byte MP1R_UnknownData[MeshHdr.dataSize - sizeof rmshes - 4]<bgcolor=cRed>;
-        }
-    } meshContent<bgcolor=cBlue>;
+	ChunkDescriptor MeshHdr;
+	struct MeshContent
+	{
+		uint32 entries;
+		struct RenderMeshes
+		{
+			for (i = 0; i < entries; i++)
+			{
+				struct RenderMesh
+				{
+					//Needs fixes for MP1R
+					uint32 primMode;
+					uint16 mtrlCacheIdx;
+					byte vertBufIdx;
+					byte idxBufIdx;
+					uint32 idxBufOff;
+					uint32 count;
+					uint16 unk;
+					byte unk54[2];
+					byte flags;
+				} rmsh;
+			}
+		} rmshes;
+		if ((isPack && ModelFormDescriptor.fVer >= 114 && ModelFormDescriptor.dVer >= 125) || (!isPack && ContentForm.fVer >= 114 && ContentForm.dVer >= 125))
+		{
+			byte MP1R_UnknownData[MeshHdr.dataSize - sizeof rmshes - 4]<bgcolor=cRed>;
+		}
+	} meshContent<bgcolor=cBlue>;
 } MeshChunk;
 
 typedef struct
 {
-    ChunkDescriptor VertexBuffHdr;
-    struct VertexBuffContent
-    {
-        /*uint32 entries;
-        for (i = 0; i < entries; i++)
-        {
-            struct VertexBuffer
-            {
-                uint32 vtxBuffCnt;
-            } vtxB;
-        }*/
-        byte vtxData[VertexBuffHdr.dataSize]<bgcolor=cRed>;
-    } vtxBContent;
+	ChunkDescriptor VertexBuffHdr;
+	struct VertexBuffContent
+	{
+		/*uint32 entries;
+		for (i = 0; i < entries; i++)
+		{
+			struct VertexBuffer
+			{
+				uint32 vtxBuffCnt;
+			} vtxB;
+		}*/
+		byte vtxData[VertexBuffHdr.dataSize]<bgcolor=cRed>;
+	} vtxBContent;
 } VertexBufferChunk;
 
 typedef struct
 {
-    ChunkDescriptor IndexBuffHdr;
-    struct IndexBuffContent
-    {
-        uint32 entries;
-        for (i = 0; i < entries; i++)
-        {
-            uint32 idxBuf;
-        }
-        //byte idxBData[IndexBuffHdr.dataSize];
-    } idxBContent<bgcolor=cGreen>;
+	ChunkDescriptor IndexBuffHdr;
+	struct IndexBuffContent
+	{
+		uint32 entries;
+		for (i = 0; i < entries; i++)
+		{
+			uint32 idxBuf;
+		}
+		//byte idxBData[IndexBuffHdr.dataSize];
+	} idxBContent<bgcolor=cGreen>;
 } IndexBufferChunk;
 
 typedef struct
 {
-    ChunkDescriptor SkinnedModelHeaderDescriptor;
-    if (isLE) //Just read the things in bytes instead for now
-    {
-        byte SkinnedModelHeaderData[SkinnedModelHeaderDescriptor.dataSize];
-    }
-    else
-    {
-        struct SkinnedModelHeaderContent
-        {
-            uint32 unk;
-        } s;
-    }
+	ChunkDescriptor SkinnedModelHeaderDescriptor;
+	if (isLE) //Just read the things in bytes instead for now
+	{
+		byte SkinnedModelHeaderData[SkinnedModelHeaderDescriptor.dataSize];
+	}
+	else
+	{
+		struct SkinnedModelHeaderContent
+		{
+			uint32 unk;
+		} s;
+	}
 } SkinnedModelHeaderChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor ModelFormDescriptor;
-    }
-    struct ModelChunkData
-    {
-        if (isWMDL)
-        {
-            WorldModelHeaderChunk WorldModelHeader;
-            isWMDL = 0;
-        }
-        if (isSMDL)
-        {
-            SkinnedModelHeaderChunk SkinnedModelHeader;
-            isSMDL = 0;
-        }
-        ModelHeaderChunk ModelHeader;
-        MaterialSubChunk MaterialSub;
-        MeshChunk MeshData;
-        VertexBufferChunk VertexBufferData;
-        IndexBufferChunk IndexBufferData;
-        GPUChunk GPUModelData;
-    } mcd;
-    //wip
+	if (isPack)
+	{
+		FormDescriptor ModelFormDescriptor;
+	}
+	struct ModelChunkData
+	{
+		if (isWMDL)
+		{
+			WorldModelHeaderChunk WorldModelHeader;
+			isWMDL = 0;
+		}
+		if (isSMDL)
+		{
+			SkinnedModelHeaderChunk SkinnedModelHeader;
+			isSMDL = 0;
+		}
+		ModelHeaderChunk ModelHeader;
+		MaterialSubChunk MaterialSub;
+		MeshChunk MeshData;
+		VertexBufferChunk VertexBufferData;
+		IndexBufferChunk IndexBufferData;
+		GPUChunk GPUModelData;
+	} mcd;
+	//wip
 } ModelChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor CABHFormDescriptor;
-        byte theFile[CABHFormDescriptor.dataSize]<bgcolor=cRed>;
-    }
-    else
-    {
-        byte theFile[ContentForm.dataSize]<bgcolor=cRed>;
-    }
+	if (isPack)
+	{
+		FormDescriptor CABHFormDescriptor;
+		byte theFile[CABHFormDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		byte theFile[ContentForm.dataSize]<bgcolor=cRed>;
+	}
 } CookedAudioBusHeirachyChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor CSMPFormDescriptor;
-        //byte theFile[CSMPFormDescriptor.dataSize];
-    }
-    else
-    {
-        //byte theFile[ContentForm.dataSize];
-    }
-    struct AudioSampleData
-    {
-        DataType lablCheck<hidden=true>;
-        FSkip(-4);
-        if (lablCheck == 1279345228)
-        {
-            struct LABLChunk
-            {
-                ChunkDescriptor LABLChunkDesc;
-                byte LABLData[LABLChunkDesc.dataSize]<bgcolor=cRed>;
-            } LABL;
-        }
-        struct FMTAChunk
-        {
-            ChunkDescriptor FMTAChunkDesc;
-            byte FMTAData[FMTAChunkDesc.dataSize]<bgcolor=cRed>;
-        } FMTA;
-        if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
-        {
-            uint32 checkForCRMS<hidden=true>;
-            FSkip(-4);
-            if (checkForCRMS == 1397576259) //There's no way to check without a guess
-            {
-                struct CRMSChunk
-                {
-                    ChunkDescriptor CRMSChunkDesc;
-                    byte CRMSData[CRMSChunkDesc.dataSize]<bgcolor=cRed>;
-                } CRMS;
-                struct RAS3Chunk
-                {
-                    ChunkDescriptor RAS3ChunkDesc;
-                    byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
-                } RAS3;
-            }
-            else if (checkForCRMS == 861094226) //There's prob a better way but idk
-            {
-                struct RAS3Chunk2
-                {
-                    ChunkDescriptor RAS3ChunkDesc;
-                    byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
-                } RAS3_chnk;
-            }
-        }
-        struct DATAChunk
-        {
-            ChunkDescriptor DATAChunkDesc;
-            byte DSPAudioData[DATAChunkDesc.dataSize]<bgcolor=cRed>;
-        } DATA;
-    } asd;
+	if (isPack)
+	{
+		FormDescriptor CSMPFormDescriptor;
+		//byte theFile[CSMPFormDescriptor.dataSize];
+	}
+	else
+	{
+		//byte theFile[ContentForm.dataSize];
+	}
+	struct AudioSampleData
+	{
+		DataType lablCheck<hidden=true>;
+		FSkip(-4);
+		if (lablCheck == 1279345228)
+		{
+			struct LABLChunk
+			{
+				ChunkDescriptor LABLChunkDesc;
+				byte LABLData[LABLChunkDesc.dataSize]<bgcolor=cRed>;
+			} LABL;
+		}
+		struct FMTAChunk
+		{
+			ChunkDescriptor FMTAChunkDesc;
+			byte FMTAData[FMTAChunkDesc.dataSize]<bgcolor=cRed>;
+		} FMTA;
+		if ((isPack && CSMPFormDescriptor.fVer == 31 && CSMPFormDescriptor.dVer == 31) || (!isPack && ContentForm.fVer == 31 && ContentForm.dVer == 31))
+		{
+			uint32 checkForCRMS<hidden=true>;
+			FSkip(-4);
+			if (checkForCRMS == 1397576259) //There's no way to check without a guess
+			{
+				struct CRMSChunk
+				{
+					ChunkDescriptor CRMSChunkDesc;
+					byte CRMSData[CRMSChunkDesc.dataSize]<bgcolor=cRed>;
+				} CRMS;
+				struct RAS3Chunk
+				{
+					ChunkDescriptor RAS3ChunkDesc;
+					byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
+				} RAS3;
+			}
+			else if (checkForCRMS == 861094226) //There's prob a better way but idk
+			{
+				struct RAS3Chunk2
+				{
+					ChunkDescriptor RAS3ChunkDesc;
+					byte RAS3Data[RAS3ChunkDesc.dataSize]<bgcolor=cRed>;
+				} RAS3_chnk;
+			}
+		}
+		struct DATAChunk
+		{
+			ChunkDescriptor DATAChunkDesc;
+			byte DSPAudioData[DATAChunkDesc.dataSize]<bgcolor=cRed>;
+		} DATA;
+	} asd;
 
-    //TEMP
-    /*struct DATAChunk
-    {
-        ChunkDescriptor DATAChunkDesc;
-        struct DSPAudioData
-        {
-            /*byte unk[3];
-            uint32 samples;
-            uint32 adpcmNibbles;
-            //uint32 unk;
-            //FSkip(11);
-            uint32  sampleRate;
-            uint16 loop;
-            uint16 fmt;
-            uint32 loopStart;
-            uint32 loopEnd;
-            uint32 curAddr;
-            int16 decodeCoeffs[32];
-            uint16 gain;
-            uint16 initPredictor[2];
-            byte DSPAudioData[DATAChunkDesc.dataSize]; //
-        } dsp;
-    } DATA;*/
+	//TEMP
+	/*struct DATAChunk
+	{
+		ChunkDescriptor DATAChunkDesc;
+		struct DSPAudioData
+		{
+			/*byte unk[3];
+			uint32 samples;
+			uint32 adpcmNibbles;
+			//uint32 unk;
+			//FSkip(11);
+			uint32	sampleRate;
+			uint16 loop;
+			uint16 fmt;
+			uint32 loopStart;
+			uint32 loopEnd;
+			uint32 curAddr;
+			int16 decodeCoeffs[32];
+			uint16 gain;
+			uint16 initPredictor[2];
+			byte DSPAudioData[DATAChunkDesc.dataSize]; //
+		} dsp;
+	} DATA;*/
 } CookedAudioSampleChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor CAUDFormDescriptor;
-        if (isNX)
-        {
-            if (CAUDFormDescriptor.dVer == 31 && CAUDFormDescriptor.fVer == 31)
-            {
-                //MP1R pack is broken
-                LittleEndian();
-            }
-            U32_StringEntry macroFileName<hidden=true>;
-            //Recover the filename
-            Printf("%s.caud\n", macroFileName.theString);
-        }
-        else
-        {
-            string macroFileName<hidden=true>;
-            //Recover the filename
-            Printf("%s.caud\n", macroFileName);
-        }
-        FSkip(-sizeof macroFileName);
-        byte CookedAudioSoundEffectData[CAUDFormDescriptor.dataSize]<bgcolor=cRed>;
-    }
-    else
-    {
-        if (ContentForm.fVer > 6 && ContentForm.dVer > 6)
-        {
-            isNX = 1; //I expected things to break but I guess it works fine
-        }
-        if (isNX)
-        {
-            if (isLE)
-            {
-                LittleEndian();
-            }
-            U32_StringEntry macroFileName<hidden=true>;
-            Printf("%s.caud\n", macroFileName.theString);
-        }
-        else
-        {
-            string macroFileName<hidden=true>;
-            Printf("%s.caud\n", macroFileName); //For now this is broken outside paks for NS, I'll prob fix it soon I hope
-        }
-        FSkip(-sizeof macroFileName);
-        byte CookedAudioSoundEffectData[ContentForm.dataSize]<bgcolor=cRed>;
-    }
-    //TODO FIX
-    /*
-    if (isPack)
-    {
-        FormDescriptor CAUDFormDescriptor;
-    }
-    if (isNX)
-    {
-        U32_StringEntry macroFileName;
-    }
-    else
-    {
-        string macroFileName;
-    }
-    FSkip(-sizeof macroFileName);
-    Printf("%s.caud\n", macroFileName);
-    //For now
-    //struct CookedAudioDataData
-    //{
-        if (isPack)
-        {
-            byte CookedAudioDataData[CAUDFormDescriptor.dataSize];
-        }
-        else
-        {
-            byte CookedAudioDataData[ContentForm.dataSize];
-        }
-    //} caud;*/ 
-    /*
-    struct CAUDData
-    {
-        if (isNX)
-        {
-            U32_StringEntry macroFileName;
-        }
-        else
-        {
-            string macroFileName;
-        }
-        uint32 groupNameCount;
-        struct GroupNamesData
-        {
-            for (i = 0; i < groupNameCount; i++)
-            {
-                struct GroupName
-                {
-                    string GroupNameStr;
-                } gn;
-            }
-        } gns;
-        float unk[2];
-        uint32 unk2;
-        uint16 unk3[2];
-        byte unk4[3];
-        float unk5;
-        uint32 asamples;
-        struct Samples
-        {
-            for (i = 0; i < asamples; i++)
-            {
-                struct SampleInfo
-                {
-                    uint32 infoSize;
-                    GUID assetID;
-                } smpl;
-            }
-        } samples;
-    } caudData;*/
+	if (isPack)
+	{
+		FormDescriptor CAUDFormDescriptor;
+		if (isNX)
+		{
+			if (CAUDFormDescriptor.dVer == 31 && CAUDFormDescriptor.fVer == 31)
+			{
+				//MP1R pack is broken
+				LittleEndian();
+			}
+			U32_StringEntry macroFileName<hidden=true>;
+			//Recover the filename
+			Printf("%s.caud\n", macroFileName.theString);
+		}
+		else
+		{
+			string macroFileName<hidden=true>;
+			//Recover the filename
+			Printf("%s.caud\n", macroFileName);
+		}
+		FSkip(-sizeof macroFileName);
+		byte CookedAudioSoundEffectData[CAUDFormDescriptor.dataSize]<bgcolor=cRed>;
+	}
+	else
+	{
+		if (ContentForm.fVer > 6 && ContentForm.dVer > 6)
+		{
+			isNX = 1; //I expected things to break but I guess it works fine
+		}
+		if (isNX)
+		{
+			if (isLE)
+			{
+				LittleEndian();
+			}
+			U32_StringEntry macroFileName<hidden=true>;
+			Printf("%s.caud\n", macroFileName.theString);
+		}
+		else
+		{
+			string macroFileName<hidden=true>;
+			Printf("%s.caud\n", macroFileName); //For now this is broken outside paks for NS, I'll prob fix it soon I hope
+		}
+		FSkip(-sizeof macroFileName);
+		byte CookedAudioSoundEffectData[ContentForm.dataSize]<bgcolor=cRed>;
+	}
+	//TODO FIX
+	/*
+	if (isPack)
+	{
+		FormDescriptor CAUDFormDescriptor;
+	}
+	if (isNX)
+	{
+		U32_StringEntry macroFileName;
+	}
+	else
+	{
+		string macroFileName;
+	}
+	FSkip(-sizeof macroFileName);
+	Printf("%s.caud\n", macroFileName);
+	//For now
+	//struct CookedAudioDataData
+	//{
+		if (isPack)
+		{
+			byte CookedAudioDataData[CAUDFormDescriptor.dataSize];
+		}
+		else
+		{
+			byte CookedAudioDataData[ContentForm.dataSize];
+		}
+	//} caud;*/ 
+	/*
+	struct CAUDData
+	{
+		if (isNX)
+		{
+			U32_StringEntry macroFileName;
+		}
+		else
+		{
+			string macroFileName;
+		}
+		uint32 groupNameCount;
+		struct GroupNamesData
+		{
+			for (i = 0; i < groupNameCount; i++)
+			{
+				struct GroupName
+				{
+					string GroupNameStr;
+				} gn;
+			}
+		} gns;
+		float unk[2];
+		uint32 unk2;
+		uint16 unk3[2];
+		byte unk4[3];
+		float unk5;
+		uint32 asamples;
+		struct Samples
+		{
+			for (i = 0; i < asamples; i++)
+			{
+				struct SampleInfo
+				{
+					uint32 infoSize;
+					GUID assetID;
+				} smpl;
+			}
+		} samples;
+	} caudData;*/
 } CookedAudioSoundEffectChunk;
 
 typedef struct
-{   //TODO is this the same for MP1R
-    if (isPack)
-    {
-        FormDescriptor UINFFormDescriptor;
-    }
-    //struct UniverseInfoData
-    //{
-        GUID UniverseMessageTableGUID;
-        GUID SaveSlotMessageTableGUID;
-        GUID LoadingAudioGUID;
-        struct AreaInfos
-        {
-            for (i = 0; i < 255; i++)
-            {
-                if (terminateUINF != 1)
-                {
-                    struct AreaInfoEntry
-                    {
-                        ChunkDescriptor Universe_ROOMFormDescriptor;
-                        struct RoomEntryChunk
-                        {
-                            GUID RoomGUID;
-                            U32_StringEntry theLocalizedAreaName;
-                            byte WorldNum;
-                            byte ActNum;
-                            DKCTF_LevelType LevelType; //0 means it's a standard level, if 1, it's a boss, setting this to 1 or 0 on one that is a boss doesn't display the level complete UI (confirm), 2 means it's a KONG letter bonus level
-                            uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9, if the level type is a boss, this is ignored.
-                            uint32 unk3[5]<bgcolor=cRed>;
-                        } rec;
-                    } aie;
-                    /*if (isPack && sizeof aies == UINFFormDescriptor.dataSize - 48) //this is better but how do I do it
-                    {
-                        terminateUINF = 1;
-                    }
-                    else if (!isPack && sizeof aies == ContentForm.dataSize - 48)
-                    {
-                        terminateUINF = 1;
-                    }*/
-                    DataType checkForEOF<hidden=true>;
-                    FSkip(-4);
-                    if (checkForEOF == RUDEFormDescriptor)
-                    {
-                        terminateUINF = 1;
-                    }
-                }
-            }
-        } aies;
-        terminateUINF = 0;
-    //} universeInfo;
+{	//TODO is this the same for MP1R
+	if (isPack)
+	{
+		FormDescriptor UINFFormDescriptor;
+	}
+	//struct UniverseInfoData
+	//{
+		GUID UniverseMessageTableGUID;
+		GUID SaveSlotMessageTableGUID;
+		GUID LoadingAudioGUID;
+		struct AreaInfos
+		{
+			for (i = 0; i < 255; i++)
+			{
+				if (terminateUINF != 1)
+				{
+					struct AreaInfoEntry
+					{
+						ChunkDescriptor Universe_ROOMFormDescriptor;
+						struct RoomEntryChunk
+						{
+							GUID RoomGUID;
+							U32_StringEntry theLocalizedAreaName;
+							byte WorldNum;
+							byte ActNum;
+							DKCTF_LevelType LevelType; //0 means it's a standard level, if 1, it's a boss, setting this to 1 or 0 on one that is a boss doesn't display the level complete UI (confirm), 2 means it's a KONG letter bonus level
+							uint16 PuzzlePieces_ForDisplay; //The amount of Puzzle Pieces to display on the GUI, setting this to more than 9 enforces 9, if the level type is a boss, this is ignored.
+							uint32 unk3[5]<bgcolor=cRed>;
+						} rec;
+					} aie;
+					/*if (isPack && sizeof aies == UINFFormDescriptor.dataSize - 48) //this is better but how do I do it
+					{
+						terminateUINF = 1;
+					}
+					else if (!isPack && sizeof aies == ContentForm.dataSize - 48)
+					{
+						terminateUINF = 1;
+					}*/
+					DataType checkForEOF<hidden=true>;
+					FSkip(-4);
+					if (checkForEOF == RUDEFormDescriptor)
+					{
+						terminateUINF = 1;
+					}
+				}
+			}
+		} aies;
+		terminateUINF = 0;
+	//} universeInfo;
 } UniverseInfoChunk<bgcolor=cPurple>;
 
 typedef struct
 {
-    ChunkDescriptor InfoChunkDescriptor;
-    //double unk[3];
-    struct InfoData
-    {
-        //float unk[6];
-        double unk[3];
-    } infoData;
+	ChunkDescriptor InfoChunkDescriptor;
+	//double unk[3];
+	struct InfoData
+	{
+		//float unk[6];
+		double unk[3];
+        if (printDebugLogs == 1)
+        {
+            Printf("INFO CHUNK DEBUG | Unk: %f, %f, %f\n", unk[0], unk[1], unk[2]);
+        }
+	} infoData;
 } InfoChunk<bgcolor=cBlue>;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor DCLNForm;
-        if (DCLNForm.dVer <= 2)
-        {
-            isLegacyCLSN = 1;
-        }
-    }
-    struct DynamicCollisionData
-    {
-        InfoChunk INFOChunk;
-        VerticesChunk VerticesChunkContent;
-        if (isLegacyCLSN == 0)
-        {
-            MaterialChunk MaterialDclnChunk;
-        }
-        else
-        {
-            isLegacyCLSN = 1;
-        }
-        TrianglesChunk TrianglesChunkContent;
-        tree_forDCLN = 1;
-        TreeChunk TreeChunkContent;
-        tree_forDCLN = 0;
-        isLegacyCLSN = 0;
-    } dcd;
+	if (isPack)
+	{
+		FormDescriptor DCLNForm;
+		if (DCLNForm.dVer <= 2)
+		{
+			isLegacyCLSN = 1;
+		}
+	}
+	struct DynamicCollisionData
+	{
+		InfoChunk INFOChunk;
+		VerticesChunk VerticesChunkContent;
+		if (isLegacyCLSN == 0)
+		{
+			MaterialChunk MaterialDclnChunk;
+		}
+		else
+		{
+			isLegacyCLSN = 1;
+		}
+		TrianglesChunk TrianglesChunkContent;
+		tree_forDCLN = 1;
+		TreeChunk TreeChunkContent;
+		tree_forDCLN = 0;
+		isLegacyCLSN = 0;
+	} dcd;
 } DynamicCollisionChunk;
 
 typedef struct
 {
-    if (isPack)
-    {
-        FormDescriptor CLSNForm;
-    }
-    struct CollisionData
-    {
-        VerticesChunk VerticesChunkContent;
-        if (isCLSN && CLSNForm.fVer != 2 && CLSNForm.dVer != 2)
-        {
-            MaterialChunk MaterialClsnChunk;
-        }
-        else
-        {
-            isLegacyCLSN = 1;
-        }
-        TrianglesChunk TrianglesChunkContent;
-        TreeChunk TreeChunkContent;
-        isLegacyCLSN = 0;
-    } CLSN;
+	if (isPack)
+	{
+		FormDescriptor CLSNForm;
+	}
+	struct CollisionData
+	{
+		VerticesChunk VerticesChunkContent;
+		if (isCLSN && CLSNForm.fVer != 2 && CLSNForm.dVer != 2)
+		{
+			MaterialChunk MaterialClsnChunk;
+		}
+		else
+		{
+			isLegacyCLSN = 1;
+		}
+		TrianglesChunk TrianglesChunkContent;
+		TreeChunk TreeChunkContent;
+		isLegacyCLSN = 0;
+	} CLSN;
 } CollisionChunk;
 
 typedef struct
 {
-    AssetDirectory AssetDirChunk;
-    DataType checkForMETA<hidden=true>;
-    FSkip(-4);
-    if (checkForMETA == Metadata)
-    {
-        MetaDataChunk theMeta;
-    }
-    BigEndian();
-    DataType checkForSTRG<hidden=true>;
-    FSkip(-4);
-    if (checkForSTRG == Strings) //Actually check instead
-    {
-        NameTagsChunk StringTableChunk;
-    }
-    /*if (hasTXTRMeta)
-    {
-        RUDEFormDescriptor theMeta;
-    }*/
-    //Fix for reading dev files, we don't need it anymore
-    /*if (TOCForm.dataSize > 64) //Here's a more simple fix, basically an AssetDirectory chunk that is 64 bytes prob wouldn't have nametags
-    {
-        //NameTagsChunk StringTableChunk;
-    }*/
-    /*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == DynamicCollision)
-    {
-        isCLSN = 1;
-        DynamicCollisionChunk theDCLN;
-    }
-    if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == Collision)
-    {
-        CollisionChunk theCSLN;
-    }
-    if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == LooseData)
-    {
-        LooseDataChunk theLDTA;
-        break; //just stop here
-    }*/
-    //end
+	AssetDirectory AssetDirChunk;
+	DataType checkForMETA<hidden=true>;
+	FSkip(-4);
+	if (checkForMETA == Metadata)
+	{
+		MetaDataChunk theMeta;
+	}
+	BigEndian();
+	DataType checkForSTRG<hidden=true>;
+	FSkip(-4);
+	if (checkForSTRG == Strings) //Actually check instead
+	{
+		NameTagsChunk StringTableChunk;
+	}
+	/*if (hasTXTRMeta)
+	{
+		RUDEFormDescriptor theMeta;
+	}*/
+	//Fix for reading dev files, we don't need it anymore
+	/*if (TOCForm.dataSize > 64) //Here's a more simple fix, basically an AssetDirectory chunk that is 64 bytes prob wouldn't have nametags
+	{
+		//NameTagsChunk StringTableChunk;
+	}*/
+	/*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == DynamicCollision)
+	{
+		isCLSN = 1;
+		DynamicCollisionChunk theDCLN;
+	}
+	if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == Collision)
+	{
+		CollisionChunk theCSLN;
+	}
+	if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.assetType == LooseData)
+	{
+		LooseDataChunk theLDTA;
+		break; //just stop here
+	}*/
+	//end
 } TableOfContentsContent;
 
 typedef struct
 {
-    FormDescriptor TOCForm;
-    TableOfContentsContent TOCC<bgcolor=cGreen>;
+	FormDescriptor TOCForm;
+	TableOfContentsContent TOCC<bgcolor=cGreen>;
 } TableOfContentsChunk; 
 
 
 typedef struct
 {
-    TableOfContentsChunk TOCChunk;
-    struct AssetData
-    {
-        if (DependencyGroups != 0)
-        {
-            //struct DependencyGroupChunks
-            //{
-                for (i2 = 0; i2 < DependencyGroups; i2++)
-                {
-                    //local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
-                    DependencyGroupChunk DependencyGroupChunkContent;
-                }
-            //} dgcs;
-        }
-        if (terminate != 1)
-        {
-            for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
-            {
-                FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
-                FSkip(-32);
-                //If you don't want to see these, append <hidden=true> to the Content end
-                if (TMPCHECK.contentType == LooseData)
-                {
-                    LooseDataChunk LooseDataChunkContent;
-                }
-                else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
-                {
-                    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
-                }
-                else if (TMPCHECK.contentType == MessageTable_MessageStudioBinaryText)
-                {
-                    MessageTableChunk MessageTableContent;
-                }
-                else if (TMPCHECK.contentType == Material)
-                {
-                    MaterialChunk TheMaterialChunk;
-                }
-                else if (TMPCHECK.contentType == CookedAudioSample)
-                {
-                    CookedAudioSampleChunk CookedAudioSampleContent;
-                }
-                else if (TMPCHECK.contentType == CookedAudioSoundEffect)
-                {
-                    CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
-                }
-                else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
-                {
-                    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
-                }
-                else if (TMPCHECK.contentType == Texture)
-                {
-                    TextureChunk TextureContent;
-                }
-                else if (TMPCHECK.contentType == UniverseInfo)
-                {
-                    UniverseInfoChunk UniverseInfoContent;
-                }
-                else if (TMPCHECK.contentType == DependencyGroup)
-                {
-                    DependencyGroupChunk DependencyGroupContent;
-                }
-                else if (TMPCHECK.contentType == Animation)
-                {
-                    AnimationChunk AnimationContent;
-                }
-                else if (TMPCHECK.contentType == ExtendedTransformAnimation)
-                {
-                    AnimationTransformChunk AnimationTransformContent;
-                }
-                else if (TMPCHECK.contentType == Skeleton)
-                {
-                    SkeletonChunk SkeletonContent;
-                }
-                else if (TMPCHECK.contentType == Character)
-                {
-                    CharacterChunk CharacterContent;
-                }
-                else if (TMPCHECK.contentType == UniverseInfo)
-                {
-                    UniverseInfoChunk UniverseInfoContent;
-                }
-                else if (TMPCHECK.contentType == FiniteStateMachine)
-                {
-                    //Messed up for MP1R
-                    FiniteStateMachineChunk FiniteStateMachineContent;
-                }
-                else if (TMPCHECK.contentType == DKCTF_FlashGFX)
-                {
-                    DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
-                }
-                else if (TMPCHECK.contentType == DKCTF_ScaleformGFXLibrary)
-                {
-                    DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_FMV)
-                {
-                    Prime1R_FMVChunk Prime1R_FMVContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_LightProbe)
-                {
-                    Prime1R_LightProbeChunk Prime1R_LightProbeContent;
-                }
-                else if (TMPCHECK.contentType == Prime_DecalParticleSystem || TMPCHECK.contentType == Prime_WeaponParticleSystem || TMPCHECK.contentType == Prime_CollisionResponseSystem || TMPCHECK.contentType == SwooshParticleSystem || TMPCHECK.contentType == GenericParticleSystem)
-                {
-                    Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_CookedAudioSampleBank)
-                {
-                    UnknownChunk Prime1R_CookedAudioSampleBankContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_LegacyFSM)
-                {
-                    UnknownChunk Prime1R_LegacyFSMContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
-                {
-                    Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_ModConContainer)
-                {
-                    Prime1R_ModConContainerChunk Prime1R_ModConContainerContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_VectorField)
-                {
-                    Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_LegacyScan /*|| TMPCHECK.contentType == Prime1_Scan*/)
-                {
-                    /*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
-                }
-                else if (TMPCHECK.contentType == Prime1R_CharacterProject)
-                {
-                    UnknownChunk Prime1R_CharacterProjectContent;
-                }
-                else if (TMPCHECK.contentType == Collision)
-                {
-                    isCLSN = 1;
-                    CollisionChunk CollisionContent;
-                    isCLSN = 0;
-                }
-                else if (TMPCHECK.contentType == Room)
-                {
-                    RoomChunk RoomContent;
-                }
-                else if (TMPCHECK.contentType == RuleSetConfig)
-                {
-                    RuleSetConfigChunk RuleSetConfigContent;
-                }
-                else if (TMPCHECK.contentType == LightProbe)
-                {
-                    LightProbeChunk LightProbeContent;
-                }
-                else if (TMPCHECK.contentType == DynamicCollision)
-                {
-                    isCLSN = 1;
-                    DynamicCollisionChunk DynamicCollisionContent;
-                    isCLSN = 0;
-                }
-                else if (TMPCHECK.contentType == CookedModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
-                {
-                    if (TMPCHECK.contentType == WorldModel)
-                    {
-                        isWMDL = 1;
-                    }
-                    if (TMPCHECK.contentType == SkinnedModel)
-                    {
-                        isSMDL = 1;
-                    }
-                    ModelChunk ModelContent;
-                }
-                //Todo detect compressed resource
-                /*else if (TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].csize != TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].size && ContentForm.fVer == 1 && && ContentForm.dVer == 1)
-                {
-                    byte CompressedData[TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry.csize];
-                }*/
-                else
-                {
-                    //UnknownChunk UnknownChunkContent;
-                    Printf("UNKNOWN FILE DETECTED!\n");
-                }
-            }
-            Printf("Hey look at that it worked I think :)");
-        }
-    } assetData;
+	TableOfContentsChunk TOCChunk;
+	struct AssetData
+	{
+		if (DependencyGroups != 0)
+		{
+			//struct DependencyGroupChunks
+			//{
+				for (i2 = 0; i2 < DependencyGroups; i2++)
+				{
+					//local string TempName = TOCChunk.TOCC.StringTableChunk.theNameTag.AssetName;
+					DependencyGroupChunk DependencyGroupChunkContent;
+				}
+			//} dgcs;
+		}
+		if (terminate != 1)
+		{
+			for (i2; i2 < TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.assetCount; i2++)
+			{
+				FormDescriptor TMPCHECK<hidden=true>; //check the header and then go back
+				FSkip(-32);
+				//If you don't want to see these, append <hidden=true> to the Content end
+				if (TMPCHECK.contentType == LooseData)
+				{
+					LooseDataChunk LooseDataChunkContent;
+				}
+				else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
+				{
+					CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
+				}
+				else if (TMPCHECK.contentType == MessageTable_MessageStudioBinaryText)
+				{
+					MessageTableChunk MessageTableContent;
+				}
+				else if (TMPCHECK.contentType == Material)
+				{
+					MaterialChunk TheMaterialChunk;
+				}
+				else if (TMPCHECK.contentType == CookedAudioSample)
+				{
+					CookedAudioSampleChunk CookedAudioSampleContent;
+				}
+				else if (TMPCHECK.contentType == CookedAudioSoundEffect)
+				{
+					CookedAudioSoundEffectChunk CookedAudioSoundEffectContent;
+				}
+				else if (TMPCHECK.contentType == CookedAudioBusHeiarchy)
+				{
+					CookedAudioBusHeirachyChunk CookedAudioBusHeirachyContent;
+				}
+				else if (TMPCHECK.contentType == Texture)
+				{
+					TextureChunk TextureContent;
+				}
+				else if (TMPCHECK.contentType == UniverseInfo)
+				{
+					UniverseInfoChunk UniverseInfoContent;
+				}
+				else if (TMPCHECK.contentType == DependencyGroup)
+				{
+					DependencyGroupChunk DependencyGroupContent;
+				}
+				else if (TMPCHECK.contentType == Animation)
+				{
+					AnimationChunk AnimationContent;
+				}
+				else if (TMPCHECK.contentType == ExtendedTransformAnimation)
+				{
+					AnimationTransformChunk AnimationTransformContent;
+				}
+				else if (TMPCHECK.contentType == Skeleton)
+				{
+					SkeletonChunk SkeletonContent;
+				}
+				else if (TMPCHECK.contentType == Character)
+				{
+					CharacterChunk CharacterContent;
+				}
+				else if (TMPCHECK.contentType == UniverseInfo)
+				{
+					UniverseInfoChunk UniverseInfoContent;
+				}
+				else if (TMPCHECK.contentType == FiniteStateMachine)
+				{
+					//Messed up for MP1R
+					FiniteStateMachineChunk FiniteStateMachineContent;
+				}
+				else if (TMPCHECK.contentType == DKCTF_FlashGFX)
+				{
+					DKCTF_FlashGFXChunk DKCTF_FlashGFXContent;
+				}
+				else if (TMPCHECK.contentType == DKCTF_ScaleformGFXLibrary)
+				{
+					DKCTF_ScaleformGFXLibraryChunk DKCTF_ScaleformGFXLibraryContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_FMV)
+				{
+					Prime1R_FMVChunk Prime1R_FMVContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_LightProbe)
+				{
+					Prime1R_LightProbeChunk Prime1R_LightProbeContent;
+				}
+				else if (TMPCHECK.contentType == Prime_DecalParticleSystem || TMPCHECK.contentType == Prime_WeaponParticleSystem || TMPCHECK.contentType == Prime_CollisionResponseSystem || TMPCHECK.contentType == SwooshParticleSystem || TMPCHECK.contentType == GenericParticleSystem)
+				{
+					Prime_ParticleSystemChunk Prime_ParticleSystemChunkContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_CookedAudioSampleBank)
+				{
+					UnknownChunk Prime1R_CookedAudioSampleBankContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_LegacyFSM)
+				{
+					UnknownChunk Prime1R_LegacyFSMContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_MaterialInstance)
+				{
+					Prime1R_MaterialInstanceChunk Prime1R_MaterialInstanceContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_ModConContainer)
+				{
+					Prime1R_ModConContainerChunk Prime1R_ModConContainerContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_VectorField)
+				{
+					Prime1R_VectorFieldChunk Prime1R_VectorFieldContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_LegacyScan /*|| TMPCHECK.contentType == Prime1_Scan*/)
+				{
+					/*Prime1_ScanChunk*/ UnknownChunk Prime1R_LegacyScanContent;
+				}
+				else if (TMPCHECK.contentType == Prime1R_CharacterProject)
+				{
+					UnknownChunk Prime1R_CharacterProjectContent;
+				}
+				else if (TMPCHECK.contentType == Collision)
+				{
+					isCLSN = 1;
+					CollisionChunk CollisionContent;
+					isCLSN = 0;
+				}
+				else if (TMPCHECK.contentType == RoomSettingsData)
+				{
+					UnknownChunk RoomSettingsDataContent;
+				}
+				else if (TMPCHECK.contentType == RuleSetConfig)
+				{
+					RuleSetConfigChunk RuleSetConfigContent;
+				}
+				else if (TMPCHECK.contentType == LightProbe)
+				{
+					LightProbeChunk LightProbeContent;
+				}
+				else if (TMPCHECK.contentType == DynamicCollision)
+				{
+					isCLSN = 1;
+					DynamicCollisionChunk DynamicCollisionContent;
+					isCLSN = 0;
+				}
+				else if (TMPCHECK.contentType == CookedModel || TMPCHECK.contentType == SkinnedModel || TMPCHECK.contentType == WorldModel)
+				{
+					if (TMPCHECK.contentType == WorldModel)
+					{
+						isWMDL = 1;
+					}
+					if (TMPCHECK.contentType == SkinnedModel)
+					{
+						isSMDL = 1;
+					}
+					ModelChunk ModelContent;
+				}
+				//Todo detect compressed resource
+				/*else if (TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].csize != TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry[i2].size && ContentForm.fVer == 1 && && ContentForm.dVer == 1)
+				{
+					byte CompressedData[TOCChunk.TOCC.AssetDirChunk.AssetEntriesChunk.theAssetEntry.csize];
+				}*/
+				else
+				{
+					//UnknownChunk UnknownChunkContent;
+					Printf("UNKNOWN FILE DETECTED!\n");
+				}
+			}
+			Printf("Hey look at that it worked I think :)");
+		}
+	} assetData;
 
-    //TEST! For read MiscData.pak
-    //DependencyGroupChunk DependencyGroupContent;
-    /*LooseDataChunk LooseDataChunkContent;
-    LooseDataChunk LooseDataChunkContent2;
-    LooseDataChunk LooseDataChunkContent3;
-    LooseDataChunk LooseDataChunkContent4;
-    LooseDataChunk LooseDataChunkContent5;
-    LooseDataChunk LooseDataChunkContent6;
-    LooseDataChunk LooseDataChunkContent7;
-    CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
-    MessageTableChunk_NMS_MSBT MessageTableContent;
-    CookedAudioSampleChunk theCSMP;
-    CookedAudioSoundEffectChunk theCAUD;
-    MessageTableChunk_NMS_MSBT MessageTableContent2;
-    UniverseInfoChunk UniverseInfoContent;
-    UniverseInfoChunk UniverseInfoContent2;
-    MessageTableChunk_NMS_MSBT MessageTableContent3;
-    LooseDataChunk LooseDataChunkContent8;
-    LooseDataChunk LooseDataChunkContent9;
-    LooseDataChunk LooseDataChunkContent10;
-    LooseDataChunk LooseDataChunkContent11;
-    LooseDataChunk LooseDataChunkContent12;
-    LooseDataChunk LooseDataChunkContent13;
-    LooseDataChunk LooseDataChunkContent14;
-    LooseDataChunk LooseDataChunkContent15;
-    LooseDataChunk LooseDataChunkContent16;
-    LooseDataChunk LooseDataChunkContent17;
-    LooseDataChunk LooseDataChunkContent18;
-    LooseDataChunk LooseDataChunkContent19;*/
-    /*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.off != 0)
-    {
-        NameTagsChunk NameTagsContent;
-    }
-    //replace if possible
-    //if (AssetDirChunk.AssetEntriesChunk.assetCount != 1)
-    {
-        DataType test<hidden=true>;
-        FSkip(-4);
-        if (test == RUDEFormDescriptor)
-        {
-            FormDescriptor UNKForm;
-            if (UNKForm.contentType == LooseData)
-            {
-                LooseDataChunk LooseDataChunkContent;
-            }
-            if (UNKForm.contentType == DynamicCollision)
-            {
-                InfoChunk InfoChunkData;
-                VerticesChunk VerticesChunkContent;
-                TrianglesChunk TrianglesChunkContent;
-                TreeChunk TreeChunkContent;
-            }
-            if (UNKForm.contentType == Collision)
-            {
-                VerticesChunk VerticesChunkContent;
-                TrianglesChunk TrianglesChunkContent;
-                TreeChunk TreeChunkContent;
-            }
-        }
-        if (test == STRG)
-        {
-            NameTagsChunk NameTagsContent;
-            FormDescriptor UNKForm2;
-            if (UNKForm2.contentType == LooseData)
-            {
-                LooseDataChunk LooseDataChunkContent;
-            }
-            if (UNKForm2.contentType == DependencyGroup)
-            {
-                DependencyGroupChunk DependencyGroupContent;
-            }
-        }
-        if (test == Metadata)
-        {
-            RUDEFormDescriptor MetaDataContent;
-            NameTagsChunk NameTagsContent;
-        }
-    }*/
-    //end
+	//TEST! For read MiscData.pak
+	//DependencyGroupChunk DependencyGroupContent;
+	/*LooseDataChunk LooseDataChunkContent;
+	LooseDataChunk LooseDataChunkContent2;
+	LooseDataChunk LooseDataChunkContent3;
+	LooseDataChunk LooseDataChunkContent4;
+	LooseDataChunk LooseDataChunkContent5;
+	LooseDataChunk LooseDataChunkContent6;
+	LooseDataChunk LooseDataChunkContent7;
+	CookedAudioBusHeirachyChunk CookedAudioBusHeirachyChunkContent;
+	MessageTableChunk_NMS_MSBT MessageTableContent;
+	CookedAudioSampleChunk theCSMP;
+	CookedAudioSoundEffectChunk theCAUD;
+	MessageTableChunk_NMS_MSBT MessageTableContent2;
+	UniverseInfoChunk UniverseInfoContent;
+	UniverseInfoChunk UniverseInfoContent2;
+	MessageTableChunk_NMS_MSBT MessageTableContent3;
+	LooseDataChunk LooseDataChunkContent8;
+	LooseDataChunk LooseDataChunkContent9;
+	LooseDataChunk LooseDataChunkContent10;
+	LooseDataChunk LooseDataChunkContent11;
+	LooseDataChunk LooseDataChunkContent12;
+	LooseDataChunk LooseDataChunkContent13;
+	LooseDataChunk LooseDataChunkContent14;
+	LooseDataChunk LooseDataChunkContent15;
+	LooseDataChunk LooseDataChunkContent16;
+	LooseDataChunk LooseDataChunkContent17;
+	LooseDataChunk LooseDataChunkContent18;
+	LooseDataChunk LooseDataChunkContent19;*/
+	/*if (AssetDirChunk.AssetEntriesChunk.assetCount == 1 && AssetDirChunk.AssetEntriesChunk.theAssetEntry.off != 0)
+	{
+		NameTagsChunk NameTagsContent;
+	}
+	//replace if possible
+	//if (AssetDirChunk.AssetEntriesChunk.assetCount != 1)
+	{
+		DataType test<hidden=true>;
+		FSkip(-4);
+		if (test == RUDEFormDescriptor)
+		{
+			FormDescriptor UNKForm;
+			if (UNKForm.contentType == LooseData)
+			{
+				LooseDataChunk LooseDataChunkContent;
+			}
+			if (UNKForm.contentType == DynamicCollision)
+			{
+				InfoChunk InfoChunkData;
+				VerticesChunk VerticesChunkContent;
+				TrianglesChunk TrianglesChunkContent;
+				TreeChunk TreeChunkContent;
+			}
+			if (UNKForm.contentType == Collision)
+			{
+				VerticesChunk VerticesChunkContent;
+				TrianglesChunk TrianglesChunkContent;
+				TreeChunk TreeChunkContent;
+			}
+		}
+		if (test == STRG)
+		{
+			NameTagsChunk NameTagsContent;
+			FormDescriptor UNKForm2;
+			if (UNKForm2.contentType == LooseData)
+			{
+				LooseDataChunk LooseDataChunkContent;
+			}
+			if (UNKForm2.contentType == DependencyGroup)
+			{
+				DependencyGroupChunk DependencyGroupContent;
+			}
+		}
+		if (test == Metadata)
+		{
+			RUDEFormDescriptor MetaDataContent;
+			NameTagsChunk NameTagsContent;
+		}
+	}*/
+	//end
 } PackageChunk;
 
 typedef struct
 {
-    ChunkDescriptor RFLODesc;
-    byte theRFLO[RFLODesc.dataSize]<bgcolor=cRed>;
-    /*struct RenderFlowContent
-    {
-        /*uint32 unk;
-    uint32 stringCount;
-    for (i = 0; i < stringCount; i++)
-    {
-        struct FlowString
-        {
-            uint16 unk3;
-            uint16 index;
-            if (i == 0)
-            {
-                string theSceneStr;
-                local string theStr = "";
-            }
-            else
-            {
-                string theStr;
-            }
-            if (theStr == "Color" || theStr == "Depth" || theStr == "GBuffer" || theStr == "Diffuse" || theStr == "Specular")
-            {
-                int32 width;
-                int32 height;
-                byte unk1;
-                byte unk2;
-                byte unk4;
-                byte unk5;
-                byte unk6;
-            }
-            if (theStr == "ForwardRenderBlock")
-            {
-                //int16 unk;
-            }
-        } fs;
-    }
-    } theRFLOContent;*/
+	ChunkDescriptor RFLODesc;
+	byte theRFLO[RFLODesc.dataSize]<bgcolor=cRed>;
+	/*struct RenderFlowContent
+	{
+		/*uint32 unk;
+	uint32 stringCount;
+	for (i = 0; i < stringCount; i++)
+	{
+		struct FlowString
+		{
+			uint16 unk3;
+			uint16 index;
+			if (i == 0)
+			{
+				string theSceneStr;
+				local string theStr = "";
+			}
+			else
+			{
+				string theStr;
+			}
+			if (theStr == "Color" || theStr == "Depth" || theStr == "GBuffer" || theStr == "Diffuse" || theStr == "Specular")
+			{
+				int32 width;
+				int32 height;
+				byte unk1;
+				byte unk2;
+				byte unk4;
+				byte unk5;
+				byte unk6;
+			}
+			if (theStr == "ForwardRenderBlock")
+			{
+				//int16 unk;
+			}
+		} fs;
+	}
+	} theRFLOContent;*/
 } RenderFlowChunk; //WIP
