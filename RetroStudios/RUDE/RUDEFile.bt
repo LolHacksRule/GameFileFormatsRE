@@ -20,6 +20,8 @@
 //https://github.com/kinnay/Nintendo-File-Formats/wiki
 //This was ported to aid with studying those 3d games from Retro's RUDE Engine. Only tested on DKCTF and Retail Demo! The MP1 remaster also uses this engine
 
+//Use this for reading MP1R archives with compressed resources https://github.com/PrimeDecomp/PrimeRemasterStructs, this is such a mess in comparison, I primarily plan to only support DKCTF so don't expect me to fix it
+
 //DKCTF
 
 local string MessageTableBinDir = "Interface/messages/";
@@ -56,7 +58,7 @@ local uint isLE <hidden=true> = 0; //Validate / force LE (Prime1R)
 local uint gameLangs = 0; //Game languages, autodetected
 local uint compressedResources = 0; //Compressed resources (MP1R), autodetected
 //local uint currentCompressedResource = 0; //There may be a better way but for now
-local uint printDebugLogs = 1; //Perform printouts for known chunk data, will prob lag on very large files, esp packages
+local uint printDebugLogs = 0; //Perform printouts for known chunk data, will prob lag on very large files, esp packages
 
 
 struct RUDEFile

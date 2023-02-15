@@ -14,6 +14,8 @@
 #include "GameSpecific/DKCTF.bt"
 #include "GameSpecific/Prime1.bt"
 
+//Use this for reading MP1R archives with compressed resources https://github.com/PrimeDecomp/PrimeRemasterStructs, this is such a mess in comparison, I primarily plan to only support DKCTF so don't expect me to fix it
+
 //Format info
 
 typedef enum <uint32>
@@ -474,7 +476,7 @@ typedef struct
 		{
 			LittleEndian();
 			isLE = 1;
-			Printf("Little Endian hack!\n");
+			Printf("Little Endian hack!\nHighly recommended to use https://github.com/PrimeDecomp/PrimeRemasterStructs instead, it's better and reads the files with less memory consumption, archives with compressed files too\n");
 			//Force isNX too
 			isNX = 1;
 		}
