@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint isBej3 = 0;
+
+#include "../../../LHR/Common.bt"
+
+typedef struct HighScoreEntry
+{
+    U16_StringEntry CurPlayerName;
+    uint32 score;
+    uint32 unk;
+    if (isBej3)
+    {
+        time_t timeStamp;
+    }
+    else
+    {
+        time64_t timeStamp;
+    }
+};
+
+struct Bejeweled3HighscoresDAT
+{
+    LittleEndian();
+    uint32 checkForBej3<hidden=true>;
+    if (checkForBej3 == 1)
+    {
+        isBej3 = 1;
+    }
+    else
+    {
+        FSkip(-4);
+    }
+    uint32 magic;
+    if (isBej3)
+    {
+        uint32 bej3modes;
+        for (i = 0; i < bej3modes; i++)
+        {
+            struct Bej3Mode
+            {
+                U16_StringEntry ModeName;
+                HighScoreEntry hse[10]<optimize=false>;
+            } bj3mode;
+        }
+    }
+    else
+    {
+        HighScoreEntry hse[10]<optimize=false>;
+    }
+    
+} HISCORES_DAT;

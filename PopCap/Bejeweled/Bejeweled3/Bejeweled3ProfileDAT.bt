@@ -1,0 +1,113 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: Bejeweled3ProfileDAT.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+local uint isBej3 <hidden=true> = 0;
+
+typedef enum <uint32>
+{
+    Locked,
+    Lvl1,
+    Lvl2,
+    Lvl3,
+    Lvl4,
+} Bej3_BadgeLevel;
+
+typedef struct
+{
+    uint32 unk;
+    if (saveVer == 62)
+    {
+        uint32 totalScore;
+    }
+    else
+    {
+        uint32 totalTimePlayed;
+    }
+    uint32 stats[3]; //Highscore table
+    if (saveVer == 71)
+    {
+        uint32 GemsMatched;
+        struct FavoriteGemColors //Bruh you really couldn't use a single int to hold one of these
+        {
+            U32_Bool FavoriteGemColorRed;
+            U32_Bool FavoriteGemColorWhite;
+            U32_Bool FavoriteGemColorGreen;
+            U32_Bool FavoriteGemColorYellow;
+            U32_Bool FavoriteGemColorPurple;
+            U32_Bool FavoriteGemColorOrange;
+            U32_Bool FavoriteGemColorBlue;
+        } fgclrs;
+        uint32 FlameGems;
+        uint32 StarGems;
+        uint32 HyperCubes;
+        uint32 MoreStats[5]; //Highscore table
+    }
+    else
+    {
+        uint32 MoreStats[14]; //Highscore table
+    }
+    if (saveVer == 62)
+    {
+        uint32 BejBlitz_Coins;
+    }
+    else
+    {
+        uint32 unk2[5];
+    }
+    uint32 bestScore;
+} Bej3GameStats;
+
+typedef struct
+{
+    byte ExtraTime;
+    byte BonusMultiplier;
+    byte MysteryGem;
+    byte Detonator; //Check
+    byte Scrambler; //Check
+} BejBlitzOfflinePowerUps;
+
+struct Bejeweled3ProfileDAT
+{
+    LittleEndian();
+    uint32 magic;
+    uint32 saveVer;
+    if (saveVer >= 60)
+    {
+        if (saveVer == 62)
+        {
+            uint32 offlineRank;
+        }
+        Bej3GameStats gameStats;
+        uint32 intra[5];
+        Bej3_BadgeLevel badgeLevels[12];
+        Byte_Bool customCursors;
+        uint32 tutorialFlags; //1: Skip on boot
+        uint16 tipIdx;
+        if (saveVer == 71)
+        {
+            FSeek(0x118);
+        }
+        Byte_Bool questsCompleted[8*5];
+        U16_StringEntry fbName;
+        U16_StringEntry fbPass;
+        Byte_Bool fbAutoLogin;
+        if (saveVer == 62)
+        {
+            FSeek(0xF4);
+            BejBlitzOfflinePowerUps BejBlitz_OfflinePowerUps; //You can have these on all at once and the game doesn't care
+        }
+    }
+    uint32 localDataMap;
+} PROFILE_DAT;

@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: Bejeweled3UsersDAT.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+struct Bejeweled3UsersDAT
+{
+    LittleEndian();
+    uint32 magic;
+    uint16 ver; //Blitz 1.09.7400 : 7, 3 1.08.6128: 8
+    U16_StringEntry CurPlayerName;
+    Byte_Bool unk;
+    Byte_Bool unk2;
+    time64_t createTimeStamp;
+    uint16 unk3;
+    uint32 unk4;
+    uint16 unk5;
+    uint32 totalPlays;
+    time64_t lastPlayTimeStamp;
+    //0x32 of LolHacksRule is timestamp
+    //FSeek(0x32);
+    time64_t currTimeStamp;
+    U16_StringEntry NameEnd;
+} USERS_DAT;
