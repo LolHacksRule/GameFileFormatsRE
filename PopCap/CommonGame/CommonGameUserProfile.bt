@@ -1,0 +1,55 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: CommonGameUsersDAT.dat
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    Peggle = 1,
+    PeggleNights,
+    Zuma = 4,
+    PlantsVsZombies = 14,
+    ZumasRevenge = 197,
+} SaveVersion;
+
+struct PopCapCommonGameUsersDAT
+{
+    SaveVersion saveVersion; //1: Peggle/Extreme, 2: Peggle Nights/WOW, 4: Zuma, 14: PVZ 2009 (0.1.1.1014 and 0.9.9.1029), 197: Zuma's Revenge, they never changed really anything until ZR
+    uint16 profiles;
+    struct ProfileEntries
+    {
+        for (i = 0; i < profiles; i++)
+        {
+            struct ProfileEntry
+            {
+                U16_StringEntry profileName;
+                uint32 loads; //How many times the game loaded the save
+                uint32 id; //Index of profile list
+                if (saveVersion == ZumasRevenge)
+                {
+                    struct ZumasRevengeUserProfileParam_DisplayOnly
+                    {
+                        uint32 adventureLives;
+                        uint32 adventurePoints;
+                        uint32 adventureLevel;
+                        uint32 adventureZone;
+                        uint32 heroicFrogLives;
+                        uint32 heroicFrogPoints;
+                        uint32 heroicFrogLevel;
+                        uint32 heroicFrogZone;
+                    } zr_prm;
+                }
+            } pe;
+        }
+    } pes;
+} PCGUD;
