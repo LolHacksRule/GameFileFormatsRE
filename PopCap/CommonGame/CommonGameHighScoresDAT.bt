@@ -56,7 +56,7 @@ struct PopCapCommonGameHighscoresDAT
     } stgs;
     if (saveVersion == Zuma)
     {
-        uint32 unkEntries; //advhighscores?
+        uint32 unkEntries; //advhighscores? LowTime?
         struct UnknownData
         {
             U16_StringEntry levelName<optimize=false>;
