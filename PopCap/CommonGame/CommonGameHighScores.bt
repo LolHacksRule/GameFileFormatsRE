@@ -1,0 +1,67 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: CommonGameUsersDAT.dat
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    Zuma = 1,
+    Peggle,
+    PeggleNights,
+} SaveVersion;
+
+struct PopCapCommonGameHighscoresDAT
+{
+    SaveVersion saveVersion; //1: Zuma, 2: Peggle, 3: Peggle Nights/WOW
+    if (saveVersion != Zuma)
+    {
+        uint32 stages;
+    }
+    else
+    {
+        uint16 stages;
+    }
+    struct Stages
+    {
+        for (i = 0; i < stages; i++)
+        {
+            struct StageEntry
+            {
+                U16_StringEntry stageName;
+                if (saveVersion != Zuma)
+                {
+                    uint32 highScoreEntries; //Peggle has 10
+                }
+                else
+                {
+                    uint16 highScoreEntries; //Zuma has 3
+                }
+                struct HighScoreEntry
+                {
+                    U16_StringEntry playerName;
+                    uint32 score;
+                } pe[highScoreEntries]<optimize=false>;
+            } se;
+        }
+    } stgs;
+    if (saveVersion == Zuma)
+    {
+        uint32 unkEntries; //advhighscores?
+        struct UnknownData
+        {
+            U16_StringEntry levelName<optimize=false>;
+            U16_StringEntry playerName<optimize=false>;
+            uint32 unk;
+        } unkd[unkEntries]<optimize=false>;
+    }
+} PCGHD;
