@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: ZumaCURVFile.bt
+//      File: ZumaCurveFile.bt
 //   Authors: LolHacksRule
 //   Version: 1.0
 //   Purpose: 
@@ -20,7 +20,7 @@ https://hclxing.wordpress.com/2017/06/27/reverse-engineering-zuma-deluxes-level-
 Mostly decompiled WP7 ver
 */
 
-//Reads BOTH Zuma Deluxe, Flash and Revenge's curve formats
+//Reads BOTH Zuma Deluxe, Flash and Revenge's curve formats, which are the same for Blitz
 
 //V1: ?
 //V2: PC/MAC (Yes)
@@ -117,6 +117,7 @@ typedef struct
 
 struct ZumaCurveFile
 {
+    LittleEndian();
     char CURV[4]<bgcolor=cGreen>;
     uint32 version<bgcolor=cPurple>;
     if (version > 3)
