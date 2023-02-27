@@ -13,7 +13,7 @@
 
 #include "../../LHR/Common.bt"
 
-local int i <hidden=true> = 0;
+//local int i <hidden=true> = 0;
 
 typedef enum <int32>
 {
