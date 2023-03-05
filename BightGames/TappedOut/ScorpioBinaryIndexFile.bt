@@ -1,0 +1,48 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct ScorpioBinaryIndexFile
+{
+    BigEndian();
+    uint32 hdr;
+    uint16 ver;
+    uint32 dataSize;
+    byte unk;
+    uint16 unk2;
+    Byte_StringEntry arcSrcDir;
+    uint16 unk3;
+    uint16 unk4;
+    uint16 unk6;
+    uint16 unk7;
+    uint32 arcCRC32;
+    uint16 archivedFiles;
+    struct ArchivedFiles
+    {
+        for (i = 0; i < archivedFiles; i++)
+        {   
+            struct ArchivedFile
+            {
+                uint16 chunkSz;
+                Byte_StringEntry str;
+                Byte_StringEntry fmtExt;
+                Byte_StringEntry strAgain;
+                uint32 fSize;
+                uint16 unk8;
+                uint16 arcFileID;
+            } af;
+        }
+    } afs;
+    uint32 unk10;
+} IndexFile;

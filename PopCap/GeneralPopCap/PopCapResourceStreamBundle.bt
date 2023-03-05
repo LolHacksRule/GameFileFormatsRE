@@ -54,8 +54,9 @@ typedef enum <int32> {
 typedef struct SubGroupInfo //Accurate?
 {
     //byte subGroupInfoData[subGroupBlockSize];
-    string thePoolName;
-    FSkip(128 - sizeof thePoolName); 
+    char thePoolName[128];
+    //string thePoolName;
+    //Skip(128 - sizeof thePoolName); 
     //FSkip(4);
     for (i2 = 0; i2 < 7; i2++)
     {
@@ -63,7 +64,7 @@ typedef struct SubGroupInfo //Accurate?
         {
             int32 idx;
             int32 ratio;
-            string lang;
+            string lang; //Breaks Bej3 1.0.0 RSB, todo fix
             if (sizeof lang == 5)
             {
                 FSkip(3);
@@ -81,8 +82,9 @@ typedef struct SubGroupInfo //Accurate?
 typedef struct ResGroupInfo
 {
     //byte subGroupInfoData[rsb1Hdr.resGroupFileNameTableItemSize];
-    string thePoolName;
-    FSkip(128 - sizeof thePoolName); 
+    char thePoolName[128];
+    //string thePoolName;
+    //FSkip(128 - sizeof thePoolName); 
     int32 resGroupOffset;
     int32 resGroupSize;
     int32 resGroupIdx;
@@ -103,8 +105,9 @@ typedef struct ResGroupInfo
 typedef struct AutoPool
 {
     //byte autoPoolData[rsb1Hdr.AutoPoolTableItemSize];
-    string thePoolName;
-    FSkip(128 - sizeof thePoolName); 
+    char thePoolName[128];
+    //string thePoolName;
+    //FSkip(128 - sizeof thePoolName); 
     int32 resGroupFileOffset;
     int32 resGroupFileSize;
     int32 autoPoolNum;
@@ -179,7 +182,7 @@ typedef struct ResListXMLPtxInfo
     {
         string theFile;
     } pt3;
-} resListXmlPTXInfo;
+} resListXmlPTXInfo<bgcolor=cRed>;
 
 typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting PVZ2's from CDN to work was a doozy
 {
@@ -230,7 +233,7 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
     }
     //FSkip(-256);
     //FSkip(fileOff);
-    int32 isPTX;
+    I32_Bool isPTX;
     if (dataCmnSize == 1)
     {
         isCompressedPTXFile = 1;
@@ -242,7 +245,7 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
     }
     if (fileIdxLen != 0)
     {
-        if (isPTX == 1)
+        if (isPTX == I32_True)
         {
             struct PopTextureFile
             {
@@ -348,7 +351,6 @@ struct ResourceStreamBundle
     struct ResStreamBundleHeader
     {
         char header[4]<bgcolor = cBlue>;
-    
         if (header == "rsb1")
         {
             BigEndian();
@@ -396,7 +398,7 @@ struct ResourceStreamBundle
         int32 xmlPart3Off;
         if (ver4Rsb)
         {
-            int32 resourceBundleLen; //?
+            int32 resourceStreamBundleLen; //?
         }
     } rsb1Hdr;
     //struct StringTable
