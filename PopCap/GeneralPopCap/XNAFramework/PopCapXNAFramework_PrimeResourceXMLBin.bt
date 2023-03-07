@@ -1,0 +1,67 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+typedef struct SubGroup
+{
+    UByte_StringEntry SubGroupName;
+    uint32 ArtRes;
+    uint32 LocSet;
+};
+
+typedef struct ResGroup
+{
+    UByte_StringEntry RESGROUP;
+    UByte_StringEntry ResGroupName;
+    uint32 subGroupEntries;
+    //SubGroup SubGroups[subGroupEntries]<optimize=false>;
+};
+
+typedef struct CompositeResGroup
+{
+    UByte_StringEntry COMPOSITE;
+    UByte_StringEntry CompositeName;
+    uint32 subGroupEntries;
+    SubGroup SubGroups[subGroupEntries]<optimize=false>;
+};
+
+struct PopCapXNAFramework_PrimeResourceXMLBin
+{
+    struct XNAResXMLBin
+    {
+        FSkip(128); //Comment out if raw
+        uint32 compositeResGroupEntries;
+        if (compositeResGroupEntries != 0)
+        {
+            struct CompositeResGroups
+            {
+                for (i = 0; i < compositeResGroupEntries; i++)
+                {
+                    CompositeResGroup compositeResGroup;
+                }
+            } crgs;
+        }
+        uint32 resGroupEntries;
+        if (resGroupEntries != 0)
+        {
+            struct ResGroups
+            {
+                for (i = 0; i < resGroupEntries; i++)
+                {
+                    ResGroup resGroup;
+                }
+            } rgs;
+        }
+    } resources_xml;
+} resources_xml_xnb;
