@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
+{
+    char magic[4];
+    uint32 ver;
+    uint32 entries;
+    if (entries)
+    {
+        struct XMLEntries
+        {
+            for (i = 0; i != entries; i++)
+            {
+                uint32 offInStrTbl;
+                uint16 strSz;
+            }
+        } xe;
+        struct XMLStringTable
+        {
+            for (i = 0; i != entries; i++)
+            {
+                struct XMLStringEntry
+                {
+                    char XMLString[xe.strSz[i]];
+                } xse;
+            }
+        } xstr;
+    }
+    //uint16 unk[entries];
+    //uint16 unk2[entries];
+    //uint16 unk3[entries];
+} resources_bxml;
