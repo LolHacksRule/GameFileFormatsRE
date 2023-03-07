@@ -15,29 +15,63 @@
 
 struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
 {
-    char magic[4];
-    uint32 ver;
-    uint32 entries;
-    if (entries)
+    char magic[4]<bgcolor=cGreen>;
+    uint32 ver<bgcolor=cGreen>;
+    uint32 XMLEntries<bgcolor=cGreen>;
+    if (XMLEntries)
     {
-        struct XMLEntries
+        struct XMLData
         {
-            for (i = 0; i != entries; i++)
+            struct XMLMetaEntries
             {
-                uint32 offInStrTbl;
-                uint16 strSz;
-            }
-        } xe;
-        struct XMLStringTable
-        {
-            for (i = 0; i != entries; i++)
-            {
-                struct XMLStringEntry
+                for (i = 0; i != XMLEntries; i++)
                 {
-                    char XMLString[xe.strSz[i]];
-                } xse;
-            }
-        } xstr;
+                    struct XMLMetaEntry
+                    {
+                        uint32 offInStrTbl;
+                        uint16 strSz;
+                    } xme;
+                }
+            } xmes;
+            struct XMLStringTable
+            {
+                for (i = 0; i != XMLEntries; i++)
+                {
+                    struct XMLStringEntry
+                    {
+                        char XMLString[xmes.xme[i].strSz];
+                    } xse;
+                }
+            } xstr;
+        } xdata<bgcolor=cGreen>;
+        uint32 unk<bgcolor=cRed>;
+        if (unk)
+        {
+            struct UnknownData
+            {
+                for (i = 0; i != unk; i++)
+                {
+                    struct UnknownDataEntry
+                    {
+                        byte unk1;
+                        int16 unk2;
+                        int16 unk3;
+                    } unkde;
+                }
+            } unkd<bgcolor=cRed>;
+            struct UnknownData2
+            {
+                while (FPos < EOF) //Read until EOF
+                {
+                    struct UnknownData2Entry
+                    {
+                        int16 unk4;
+                        int16 unk5;
+                        FPos = FTell();
+                    } unk2de;
+                }
+            } unkd2<bgcolor=cRed>;
+        }
     }
     //uint16 unk[entries];
     //uint16 unk2[entries];
