@@ -129,7 +129,7 @@ typedef struct Resource
     }
     else if (resType == RenderEffect)
     {
-        RenderEffectRes TheRenderEffect;
+        RenderEffectRes TheRenderEffect<bgcolor=cGreen>;
     }
 };
 
@@ -164,30 +164,27 @@ typedef struct CompositeResGroup
 
 struct PopCapXNAFramework_PrimeResourceXMLBin
 {
-    struct XNAResXMLBin
+    FSkip(128); //Comment out if raw
+    int32 compositeResGroupEntries<bgcolor=cGreen>;
+    if (compositeResGroupEntries)
     {
-        FSkip(128); //Comment out if raw
-        int32 compositeResGroupEntries<bgcolor=cGreen>;
-        if (compositeResGroupEntries)
+        struct CompositeResGroups
         {
-            struct CompositeResGroups
+            for (i = 0; i < compositeResGroupEntries; i++)
             {
-                for (i = 0; i < compositeResGroupEntries; i++)
-                {
-                    CompositeResGroup compositeResGroup;
-                }
-            } crgs<bgcolor=cGreen>;
-        }
-        int32 resGroupEntries<bgcolor=cGreen>;
-        if (resGroupEntries)
+                CompositeResGroup compositeResGroup;
+            }
+        } crgs<bgcolor=cGreen>;
+    }
+    int32 resGroupEntries<bgcolor=cGreen>;
+    if (resGroupEntries)
+    {
+        struct ResGroups
         {
-            struct ResGroups
+            for (i = 0; i < resGroupEntries; i++)
             {
-                for (i = 0; i < resGroupEntries; i++)
-                {
-                    ResGroup resGroup<bgcolor=cPurple>;
-                }
-            } rgs;
-        }
-    } resources_xml;
+                ResGroup resGroup<bgcolor=cPurple>;
+            }
+        } rgs;
+    }
 } resources_xml_xnb;

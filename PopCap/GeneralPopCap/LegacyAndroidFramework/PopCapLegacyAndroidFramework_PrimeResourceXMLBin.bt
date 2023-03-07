@@ -16,8 +16,8 @@
 struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
 {
     char magic[4]<bgcolor=cGreen>;
-    uint32 ver<bgcolor=cGreen>;
-    uint32 XMLEntries<bgcolor=cGreen>;
+    int32 ver<bgcolor=cGreen>;
+    int32 XMLEntries<bgcolor=cGreen>;
     if (XMLEntries)
     {
         struct XMLData
@@ -28,8 +28,8 @@ struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
                 {
                     struct XMLMetaEntry
                     {
-                        uint32 offInStrTbl;
-                        uint16 strSz;
+                        int32 offInStrTbl;
+                        int16 strSz;
                     } xme;
                 }
             } xmes;
@@ -40,11 +40,15 @@ struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
                     struct XMLStringEntry
                     {
                         char XMLString[xmes.xme[i].strSz];
+                        /*if (xmes.xme[i].strSz != 0)
+                        {
+                            Printf("%s\n", XMLString);
+                        }*/
                     } xse;
                 }
             } xstr;
         } xdata<bgcolor=cGreen>;
-        uint32 unk<bgcolor=cRed>;
+        int32 unk<bgcolor=cRed>;
         if (unk)
         {
             struct UnknownData
