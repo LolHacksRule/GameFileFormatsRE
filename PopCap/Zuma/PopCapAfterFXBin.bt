@@ -1,10 +1,10 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: PopCapPAX.bt
+//      File: PopCapAfterFXBin.bt
 //      Authors: LolHacksRule
 //      Version: 1
-//      Purpose: Gets data out of PAX files from a related library (PopCap AELib/Additive X?)) known as AELib in the proprietary version of the PopCap (SexyApp/Sexy App) Framework.
+//      Purpose: Gets data out of PAX files from a related library (PopCap AELib/Additive/AfterEffects X?)) known as AELib in the proprietary version of the PopCap (SexyApp/Sexy App) Framework.
 //      Category: Deserializing 
 //      File Mask:
 //      ID Bytes:
@@ -15,44 +15,34 @@
 
 //WIP!
 
-local int i <hidden=true> = 0;
-local int i2 <hidden=true> = 0;
+#include "../../LHR/Common.bt"
 
-typedef enum <byte> {
-			True = 1,
-			False = 0,
-} TrueFalseFlag;
-
-struct PopCapPAX {
+struct PopCapAfterFX {
     struct Header {
-        int32   unk;
+        int32   unk; //3, 4 or 5
         Printf("Textures:\n");
         int32   texCnt;
     } HDR;
-    struct FileList {
+    struct FootageDescriptors {
         for (i = 0; i < HDR.texCnt; i++)
         {
-            struct File {
-                int32 strLen;
-                char stringShort[strLen];
-                long id;
-                int32 strLenLongStr;
-                char longStr[strLenLongStr];
-                Printf("%s\n", longStr);
+            struct FootageDescriptor {
+                I32_StringEntry ShortName;
+                long Id;
+                I32_StringEntry FullName;
+                Printf("%s\n", FullName.theString);
                 long width;
                 long height;
-            } FileInfo;
+            } FD;
         }
     } flst<bgcolor = cBlue>;
-        
     struct Compositions {
         int32 unk3;
         if (unk3 != 1)
         {
             break;
         }
-        int32 strLen2;
-        char lyrName[strLen2]; //idk this has a max of 32
+        I32_StringEntry LayerName; //Idk may have a max of 32
         long width;
         long height;
         int32 compCnt;
@@ -61,22 +51,20 @@ struct PopCapPAX {
         {
             struct Composition {
                 int32 unk3;
-                TrueFalseFlag flag;
-                if (flag == True)
+                Byte_Bool flag;
+                if (flag == Byte_True)
                 {
-                    TrueFalseFlag flag2;
+                    Byte_Bool flag2;
                     long   unk4;
-                    int32  strLen3;
-                    char   strShort[strLen3];
-                    int32  strLen4;
-                    char   strTxt[strLen4];
-                    int32  startFrame;
+                    I32_StringEntry ShortName;
+                    I32_StringEntry LongName;
+                    int32  StartFrameOnComp;
                     int32  unk5;
                     int32  unk6;
-                    int32  lyrOffst;
+                    int32  LayerOffsetStart;
                     if (HDR.unk >= 5)
                     {
-                        TrueFalseFlag isAdditive;
+                        Byte_Bool isAdditive;
                     }   
                     /*if (flag2 == True)
                     {
@@ -103,7 +91,7 @@ struct PopCapPAX {
                             double dbl2;
                             int32 unk2;
                             long unklong3;
-                            TrueFalseFlag flag3;
+                            Byte_Bool flag3;
                             int32 loopType;
                             int32 loopFrame;
                             //long l;

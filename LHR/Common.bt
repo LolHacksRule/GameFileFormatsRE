@@ -156,7 +156,7 @@ typedef struct Byte_StringEntry {
 	byte byteSize<hidden=true>;
     if (byteSize == 0)
     {
-        FSkip(1);
+        //FSkip(1);
     }
     else
     {
@@ -246,6 +246,16 @@ typedef struct MinMax_F32 {
     float max;
 };
 
+typedef struct MinMax_I32 {
+	int32 min;
+    int32 max;
+};
+
+typedef struct MinMax_U32 {
+	uint32 min;
+    uint32 max;
+};
+
 typedef struct Vector3_F32 {
 	float X;
     float Y;
@@ -258,11 +268,24 @@ typedef struct Vector3_U32 {
     uint32 Z;
 };
 
+typedef struct Vector3_I32 {
+	int32 X;
+    int32 Y;
+    int32 Z;
+};
+
 typedef struct Vector4_F32 {
 	float X;
     float Y;
     float Z;
     float W;
+};
+
+typedef struct Vector4_I32 {
+	int32 X;
+    int32 Y;
+    int32 Z;
+    int32 W;
 };
 
 typedef struct I32_SizeWithData {

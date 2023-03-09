@@ -1,8 +1,8 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
+//      File: Zuma2XNALevelXMLBin.bt
+//   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
 //  Category: 
@@ -12,13 +12,93 @@
 //------------------------------------------------
 
 #include "../../LHR/Common.bt"
-local uint printRawXML <hidden=true> = 0;
+local uint printRawData <hidden=true> = 0;
 
-typedef struct Zuma2Dot
+typedef struct Zuma2Point
 {
-    int32 x;
-    int32 y;
+    int32 Dots;
+    if (Dots)
+    {
+        struct Dot
+        {
+            int32 X;
+            int32 Y;
+            if (printRawData)
+            {
+                i++;
+                Printf("%i: %i, %i\n", i, X, Y);
+            }
+        } dot[Dots]<optimize=false>;
+    }
 };
+
+typedef struct Zuma2Berserk
+{
+    int32 BeserkTiers;
+    if (BeserkTiers)
+    {
+        struct BerserkTier
+        {
+            int32 HealthLimit;
+            int32 Params;
+            struct BerserkTierParam
+            {
+                Byte_StringEntry p;
+                Byte_StringEntry value;
+                Byte_StringEntry minvalue;
+                Byte_StringEntry maxvalue;
+                Byte_Bool override;
+            } BTierParam[Params]<optimize=false>;
+        } BTier[BeserkTiers]<optimize=false>;
+        /*
+        else if (!BerserkMovements && Type != BT_Skeleton)
+        {
+            FSkip(-4);
+        }*/
+    }
+    int32 BerserkMovements;
+    if (BerserkMovements)
+    {
+        struct BerserkMovement
+        {
+            int32 StartX;
+            int32 EndX;
+            int32 StartY;
+            int32 EndY;
+            int32 X;
+            int32 Y;
+            if (printRawData)
+            {
+                Printf("-----BERSERK POINTS START-----\n");
+            }
+            Zuma2Point Points;
+            if (printRawData)
+            {
+                i = 0;
+                i2 = 0;
+                Printf("-----BERSERK POINTS END-------\n");
+            }
+            int32 HealthLimit;
+        } bm[BerserkMovements]<optimize=false>;
+    }
+};
+
+typedef enum <int32>
+{
+    GT_Normal,
+    GT_Horiz,
+    GT_Vert,
+} Zuma2GunType;
+
+typedef enum <int32>
+{
+    ST_Straight,
+    ST_TargetedLinear,
+    ST_Sine,
+    ST_Homing,
+    ST_Volcano,
+    ST_Any,
+} Zuma2ShotType;
 
 typedef struct Zuma2Curve
 {
@@ -26,65 +106,385 @@ typedef struct Zuma2Curve
     Byte_StringEntry curve;
 };
 
+typedef struct Zuma2Tip
+{
+    int32 Tips;
+    if (Tips)
+    {
+        int32 Tip[Tips];
+        while (printRawData && i2 != Tips)
+        {   
+            i++;
+            Printf("Tip %i: %i\n", i, Tip[i2]);
+            i2++;
+        }
+    }
+};
+
+typedef struct Zuma2SkeletonEmitter
+{
+    int32 SkeleDelay;
+    int32 DelayAfterSkeleEmit;
+    float SkeletonVX;
+    float SkeletonVY;
+    float SkeletonEmitX;
+    float SkeletonEmitY;
+};
+
+typedef struct Zuma2Torch
+{
+    int32 X;
+    int32 Y;
+    int32 W;
+    int32 H;
+};
+
+typedef struct Zuma2SetEffectParam
+{
+    Byte_StringEntry Str;
+    Byte_StringEntry ValueStr;
+    int32 I32Value;
+};
+
+typedef enum <int32>
+{
+    BT_Tiger,
+    BT_Skeleton,
+    BT_Doctor,
+    BT_Squid,
+    BT_Mosquito,
+    BT_StoneHead, //Moai :)
+    BT_Lame,
+    BT_Volcano,
+    BT_DarkFrog,
+} Zuma2BossType;
+
+typedef struct Zuma2BossWall
+{
+    int32 X;
+    int32 Y;
+    int32 Width;
+    int32 Height;
+    int32 Id;
+};
+
+typedef struct Zuma2BossHula
+{
+    int32 BerserkAmt;
+    int32 Amnesty;
+    float ProjVY;
+    int32 SpawnRate;
+    float VX;
+    int32 SpawnY;
+    int32 ProjChance;
+    int32 AttackTime;
+    int32 AttackType;
+    int32 ProjRange;
+};
+
+typedef struct Zuma2Tiki
+{
+    int32 Id;
+    float X;
+    float Y;
+    int32 RailStartX;
+    int32 RailStartY;
+    int32 RailEndX;
+    int32 RailEndY;
+    int32 TravelTime;
+    float VX;
+};
+
+typedef struct Zuma2BossShoot
+{
+    int32 BossRadius;
+    int32 MaxShotBounces;
+    int32 BallShieldDamage;
+    int32 ShieldHP;
+    int32 TeleportMinTime;
+    int32 TeleportMaxTime;
+    int32 BombFreqMin;
+    int32 BombFreqMax;
+    int32 BombDuration;
+    int32 MinSpots;
+    int32 MaxSpots;
+    int32 MinSpotRad;
+    int32 MaxSpotRad;
+    int32 MinSpotFade;
+    int32 MaxSpotFade;
+    int32 SpotFadeDelay;
+    int32 InkTargetMode;
+    int32 EnrageDelay;
+    int32 BombappearDelay;
+    int32 StartX;
+    int32 EndX;
+    int32 StartY;
+    int32 EndY;
+    int32 SetX;
+    int32 SetY;
+    Byte_Bool UseShield;
+    float ShieldRotateSpeed;
+    float ShieldQuadRespawnTime;
+    float ShieldQuadPauseTime;
+    Byte_Bool EnrageShieldRestore;
+    int32 Points;
+    if (Points)
+    {
+        struct ShootPoint
+        {
+            int32 X;
+            int32 Y;
+        } SP[Points]<optimize=false>;
+    }
+    Byte_Bool CanShootBullets;
+    Zuma2ShotType ShotType;
+    int32 VolcanoOffscreenDelay;
+    float mHomingCorrectionAmt;
+    float mMinRetalSpeed;
+    float mMaxRetalSpeed;
+    int32 ShotDelay;
+    int32 RetalShotDelay;
+    Byte_Bool EndHoverOnHit;
+    float FlightSpeed;
+    int32 FlightMinDist;
+    Byte_Bool ColorVampire;
+    Byte_Bool Strafe;
+    int32 IncMaxShotHealthAmt;
+    int32 IncRetalMaxShotHealthAmt;
+    Byte_Bool AvoidColor;
+    int32 ColorVampHealthInc;
+    int32 MinColorChangeTime;
+    int32 MaxColorChangeTime;
+    int32 ColorVampChanceToMatch2ndBall;
+    int32 MovementMode;
+    float MovementAccel;
+    int32 DefaultMovementUpdateDelay;
+    int32 MinHoverTime;
+    int32 MaxHoverTime;
+    int32 MinFireDelay;
+    int32 MaxFireDelay;
+    Byte_Bool EatsBall;
+    int32 FrogStunTime;
+    int32 FrogPoisonTime;
+    int32 FrogHallucinateTime;
+    int32 FrogSlowTimer;
+    float MinBulletSpeed;
+    float MaxBulletSpeed;
+    int32 SubType;
+    int32 MaxBulletsToFire;
+    int32 MaxRetaliationBulletsToFire;
+    Byte_Bool SineShotsTargetPlayer;
+    int32 MinSineShotTime;
+    int32 MaxSineShotTime;
+    Byte_Bool SinusoidalRetaliation;
+    float MinAmp;
+    float MaxAmp;
+    float MinFreq;
+    float MaxFreq;
+    float MinYInc;
+    float MaxYInc;
+    float MinXnc;
+    float MaxXInc;
+    float Speed;
+    float DefaultSpeed;
+    int32 DecMinHover;
+    int32 DecMaxHover;
+    int32 DecMinFire;
+    int32 DecMaxFire;
+};
+
+typedef struct Zuma2BossDDS
+{
+    Byte_StringEntry text;
+    int32 BossParamRanges;
+    struct BossParamRange
+    {
+        float Min;
+        float Max;
+        float RatingMin;
+        float RatingMax;
+    } bpr;
+};
+
+typedef struct Zuma2HintText
+{
+    int32 TextId;
+    int32 Condition;
+    int32 MinDeaths;
+    int32 Delay;
+    int32 MinTime;
+};
+
+typedef struct Zuma2BossSkeleton
+{
+    int32 SpecialWpnHPDec;
+    Byte_Bool SpawnPowerupWhilePoweredUp;
+    int32 ChanceToSpawnPowerup;
+};
+
+typedef struct Zuma2Boss
+{
+    Zuma2BossType Type;
+    Byte_StringEntry SepiaImagePath;
+    int32 Num;
+    Byte_StringEntry WordBubble;
+    /*if (WordBubble.byteSize == 0)
+    {
+        FSkip(-1);
+    }*/
+    float HPDecPerHit;
+    float HPDecPerProxBomb;
+    Byte_Bool AllowCompacting;
+    if (Type == BT_Skeleton)
+    {
+        Zuma2BossSkeleton BossSkeleton;
+    }
+    Byte_Bool DrawRadius;
+    int32 RadiusColorChangeMode;
+    Byte_Bool AllowLevelDDS;
+    int32 ShakeXAmt;
+    int32 ShakeYAmt;
+    int32 HeartXOff;
+    int32 HeartYOff;
+    int32 ImpatientTimer;
+    Byte_Bool ResetWallsOnBossHit;
+    Byte_Bool ResetWallTimerOnTikiHit;
+    int32 WallDownTime;
+    int32 TikiHealthRespawnAmt;
+    int32 BossWalls;
+    if (BossWalls)
+    {
+        Zuma2BossWall BossWall[BossWalls]<optimize=false>;
+    }
+    int32 Tikis;
+    if (Tikis)
+    {
+        Zuma2Tiki Tiki[Tikis]<optimize=false>;
+    }
+    Zuma2BossShoot BossShoot;
+    int32 BossDDSVals;
+    if (BossDDSVals)
+    {
+        Zuma2BossDDS BossDDSVal[BossDDSVals]<optimize=false>;
+    }
+    //int32 BerserkTiers;
+    //if (BerserkTiers)
+    //{
+        Zuma2Berserk Berserk/*[BerserkTiers]<optimize=false>*/;
+    //}
+    if (Type == BT_Skeleton)
+    {
+        int32 SkeletonEmitters;
+        Zuma2SkeletonEmitter SkeletonEmitter[SkeletonEmitters]<optimize=false>;
+    }
+    int32 HintTexts;
+    if (HintTexts)
+    {
+        Zuma2HintText HintText[HintTexts]<optimize=false>;
+    }
+    int32 HulaEntries;
+    if (HulaEntries)
+    {
+        Zuma2BossHula BossHula[HulaEntries]<optimize=false>;
+    }
+    int32 DeathTexts;
+    if (DeathTexts)
+    {
+        int32 DeathTextId[DeathTexts];
+    }
+};
+
 typedef struct Zuma2Tunnel
 {
-    Byte_Bool unk;
-    UByte_StringEntry ImageName;
-    int32 unk2;
-    int32 unk3;
-    Byte_Bool unk4;
-    int32 unk5;
-    Byte_Bool unk6;
+    Byte_StringEntry ImageName;
+    Byte_StringEntry LayerId;
+    Byte_Bool AboveShadows;
+    int32 X;
+    int32 Y;
+    int32 Priority;
+    Byte_Bool NoThumb;
 };
 
 typedef struct Zuma2DDS
 {
-    int32 powerpcts;
-    float powerpct[powerpcts];
-    int32 slowadds;
-    int32 slowadd[slowadds];
-    int32 speedpcts;
-    float speedpct[speedpcts];
-    int32 zumapcts;
-    float zumapct[zumapcts];
+    int32 DDSTiers; //3
+    int32 DDSPowerupPcts;
+    float DDSPowerupPct[DDSPowerupPcts];
+    int32 DDSSlowAdds;
+    int32 DDSSlowAdd[DDSSlowAdds];
+    int32 DDSSpeedPcts;
+    float DDSSpeedPct[DDSSpeedPcts];
+    int32 DDSZumaPointDecPcts;
+    float DDSZumaPointDecPct[DDSZumaPointDecPcts];
+    while (printRawData && i2 != DDSTiers)
+    {   
+        i++;
+        Printf("Tier %i: PowerPct: %f SlowAdd: %i, SpeedPct: %f, ZumaPct: %f\n", i, DDSPowerupPct[i2], DDSSlowAdd[i2], DDSSpeedPct[i2], DDSZumaPointDecPct[i2]);
+        i2++;
+    }
 };
 
 typedef struct Zuma2GauntletDifficulty
 {
-    int32 time;
-    byte unk2;
-    float speed;
-    int32 startdist;
-    int32 zumascore;
-    int32 ballrepeat;
-    int32 powerup;
-    int32 colors;
-    int32 rollback;
-    float dangerratio;
-    int32 maxclumps;
-    int32 maxsingles;
-    int32 rollbackduration;
+    int32 time; //Do we mean DifficultyLevel?
+    Byte_Bool TimeBaseDifficulty;
+    float Speed;
+    int32 StartDistance;
+    int32 ZumaScore;
+    int32 BallRepeat;
+    int32 PowerupChance;
+    int32 NumColors;
+    int32 RollbackPct;
+    float SlowFactor;
+    int32 MaxClumpSize;
+    int32 MaxSingle;
+    int32 RollbackTime;
     int32 HurryDist;
     float HurrySpeed;
 };
 
 typedef struct Zuma2Gauntlet
 {
-    int32 Difficulties;
-    Zuma2GauntletDifficulty Z2_GauntletDifficulties[Difficulties];
-};
-
-typedef struct Zuma2HandheldBalanceEntry
-{
-    float FruitPowerupDuration;
-    float SameColorChance;
-    int32 Adventures;
-    float Adventure[Adventures];
-    int32 Challenges;
-    float Challenge[Challenges];
+    int32 Gauntlets;
+    struct GauntletEntry
+    {
+        int32 Difficulties; //16, usually
+        if (Difficulties)
+        {
+            Zuma2GauntletDifficulty GauntletDifficulty[Difficulties];
+        }
+    } ge[Gauntlets]<optimize=false>;
 };
 
 typedef struct Zuma2HandheldBalance
+{
+    float FruitPowerupAdditionalDuration;
+    float ChanceOfSameColorBallIncrease;
+    if (printRawData)
+    {
+        Printf("FruitPowerupDuration: %f, SameColorChance: %f\n", FruitPowerupAdditionalDuration, ChanceOfSameColorBallIncrease);
+    }
+    int32 Adventures;
+    float AdventureModeSpeedDelta[Adventures];
+    while (printRawData && i2 != Adventures)
+    {   
+        i++;
+        Printf("Adventure %i: PowerPct: %f\n", i, AdventureModeSpeedDelta[i2]);
+        i2++;
+    }
+    i = 0;
+    i2 = 0;
+    int32 Challenges;
+    float ChallengeModeSpeedDelta[Challenges];
+    while (printRawData && i2 != Challenges)
+    {   
+        i++;
+        Printf("Challenges %i: PowerPct: %f\n", i, ChallengeModeSpeedDelta[i2]);
+        i2++;
+    }
+};
+
+/*typedef struct Zuma2HandheldBalance
 {
     Zuma2HandheldBalanceEntry Z2_Tablet;
     //int32 unk;
@@ -92,19 +492,66 @@ typedef struct Zuma2HandheldBalance
     //int32 unk3;
     //byte unk;
     //Zuma2HandheldBalanceEntry Z2_Phone;
-};
+};*/
 
 typedef struct Zuma2ScoreTip
 {
-    int32 MinLevel;
-    int32 text; //From text/text_%s.txt
+    int32 ScoreTips;
+    struct ScoreTipEntry
+    {
+        int32 MinLevel;
+        int32 text; //From text/text_%s.txt
+        /*while (printRawData && i2 != ScoreTips)
+        {   
+            i++;
+            Printf("ScoreTip %i: Text: %i, MinLevel: %i\n", i, text[i2], MinLevel[i2]);
+            i2++;
+        }*/
+    } ste[ScoreTips]<optimize=false>;
 };
 
 typedef struct Zuma2Gun
 {
-    int32 Type;
-    int32 X;
-    int32 Y;
+    Zuma2GunType MoveType;
+    int32 NumFrogPoints; //Not the same = death
+    struct FrogPoint
+    {
+        int32 FrogX;
+        int32 FrogY;
+    } FP[NumFrogPoints]<optimize=false>;
+    int32 MoveSpeed;
+    int32 FrogImages; //Seems to be unused
+    struct FrogImage //For now force byte
+    {
+        Byte_StringEntry Filename;
+        Byte_StringEntry ResId;
+    } FI[FrogImages]<optimize=false>;
+    int32 BarWidth;
+    int32 BarHeight;
+    /*if (MoveType == Normal)
+    {
+        byte unk1[8];
+        //byte unk2[15];
+    }
+    else if (MoveType == Horiz)
+    {
+        int32 Width;
+        int32 unk3;
+    }
+    else if (MoveType == Vert)
+    {
+        int32 unk4[4];
+        int32 height;
+    }*/
+};
+
+typedef struct Zuma2PowerupRegion
+{
+    float Start;
+    float End;
+    int32 Chance;
+    Byte_Bool DebugDraw;
+    int32 CurveNum; //?
 };
 
 typedef struct Zuma2TreasurePoint
@@ -115,21 +562,50 @@ typedef struct Zuma2TreasurePoint
     int32 dist[dists];
 };
 
-typedef struct Zuma2Zone
+typedef struct Zuma2Wall
 {
-    UByte_StringEntry boss;
-    UByte_StringEntry start;
-    int32 num;
-    int32 challengepoints;
-    int32 acechallenge;
-    int32 Difficulty;
-    int32 Cup;
-    int32 BossTaunts;
-    int32 BossTaunt[BossTaunts]; //From text/text_%s.txt
-    UByte_StringEntry fruit;
+    float X;
+    float Y;
+    float Width;
+    float Height;
+    int32 Color;
+    int32 MinRespawnTimer;
+    int32 MaxRespawnTimer;
+    int32 MinLifeTimer;
+    int32 MaxLifeTimer;
+    int32 CurLifeTimer;
+    int32 Strength;
+    int32 OrgStrength;
+    int32 Id;
+    float VX;
+    float VY;
 };
 
-typedef struct Zuma2Default
+typedef struct Zuma2Zone
+{
+    int32 Zones;
+    struct ZoneEntry
+    {
+        Byte_StringEntry BossPrefix;
+        Byte_StringEntry StartLevel;
+        int32 num;
+        int32 ChallengePoints;
+        int32 AceChallengePoints;
+        int32 DifficultyLocId; //From text/text_%s.txt
+        int32 CupNameLocId; //From text/text_%s.txt
+        int32 BossTauntIds;
+        int32 BossTauntId[BossTauntIds]; //From text/text_%s.txt
+        Byte_StringEntry FruitId;
+        /*while (printRawData && i2 != Zones)
+        {   
+            i++;
+            Printf("Zone %i: Boss: %s Start: %s Num: %i, ChallengePoints: %i, AceChallengePoints: %i\n", i, BossPrefix[i2].theString, StartLevel[i2].theString, num[i2], ChallengePoints[i2], AceChallengePoints[i2]);
+            i2++;
+        }*/
+    } ze[Zones]<optimize=false>;
+};
+
+typedef struct Zuma2Defaults
 {
     int32 CannonShots;
     float CannonAngle;
@@ -160,7 +636,7 @@ typedef struct Zuma2Default
     int32 MultBallPoints;
     int32 MultBallLife;
     int32 BossTauntChance;
-    int32 powerspawndelay;
+    int32 PowerupSpawnDelay;
     int32 LazerShots;
     Byte_Bool LazerStacks;
     int32 PowerDelay;
@@ -172,109 +648,173 @@ typedef struct Zuma2Default
     int32 PostZumaTime;
     float PostZumaTimeSpeedInc;
     float PostZumaTimeSlowInc;
+    /*if (printRawData)
+    {
+        Printf("CannonAngle: %i, Cannon: %f\n", CannonAngle, CannonShots);
+    }*/
 };
 
 typedef struct Zuma2Level
 {
-    UByte_StringEntry id;
-    int32 unk;
-    int32 unk2;
-    int32 ChallengePoints;
-    int32 AceChallenge;
-    Byte_Bool OffscreenClearBonus;
-    int32 gauntlet;
-    int32 dispname;
-    int32 unk4;
-    float hurryamt;
-    int32 unk6;
-    Byte_Bool unk7;
-    int32 unk8;
-    int32 unk9;
-    Byte_Bool unk10;
-    Byte_Bool unk11;
-    int32 unk12;
-    Byte_Bool unk13;
-    int32 TreasureFreq;
-    int32 unk15;
-    int32 ParTime;
-    int16 unk16;
-    int16 unk17;
-    int16 unk18;
-    float unk19;
-    int32 unk20;
-    Byte_Bool unk21;
-    Byte_Bool unk22;
-    int32 Effects;
-    UByte_StringEntry Effect[Effects]<optimize=false>;
-    int32 Curves;
-    Zuma2Curve Curve[Curves]<optimize=false>;
-    int32 unk25;
-    int32 unk26;
-    int32 unk27;
-    int32 unk28;
-    int32 unk29;
-    int32 TreasurePoints;
-    Zuma2TreasurePoint TreasurePoint[TreasurePoints]<optimize=false>; 
-    int32 SetEffectParams;
-    UByte_StringEntry Str;
-    UByte_StringEntry Value;
-    uint32 DistAmts;
-    UByte_StringEntry DistAmt;
-    UByte_StringEntry DistAmtStr;
-    uint32 Scales;
-    UByte_StringEntry Scale;
-    UByte_StringEntry ScaleStr;
-    uint32 Scrolls;
-    UByte_StringEntry Scroll;
-    UByte_StringEntry ScrollStr;
-    uint32 Mumus;
-    UByte_StringEntry Mumu;
-    UByte_StringEntry MumuStr;
-    int32 unk30;
-    int32 unk31;
-    Zuma2Tunnel ImageEntry[unk31]<optimize=false>;
-    int32 unk32;
-    Zuma2Gun Gun<optimize=false>;
-    int32 unk33;
-    int32 unk34;
-    int32 unk35[9];
-    Byte_Bool unk36;
-    Byte_Bool unk37;
-    if (unk > 10)
+    int32 Levels;
+    struct LevelEntry
     {
-        int32 unk38_bossval;
-    }
+        Byte_StringEntry Id;
+        int32 Num;
+        int32 Zone;
+        int32 ChallengePoints;
+        int32 ChallengeAcePoints;
+        Byte_Bool OffscreenClearBonus;
+        int32 StartingGauntletLevel;
+        int32 DisplayNameId;
+        int32 EndSequence;
+        float HurryToRolloutAmt;
+        Byte_Bool IronFrog;
+        int32 TorchTimer;
+        int32 BossFreezePowerupTime;
+        int32 FrogShieldPowerupCount;
+        Byte_Bool DrawCurves;
+        Byte_StringEntry ImagePath;
+        Byte_Bool BGFromPSD;
+        Byte_Bool NoBackground;
+        Byte_Bool NoFlip;
+        Byte_Bool SliderEdgeRotate;
+        Byte_Bool SuckMode;    
+        int32 TreasureFreq;
+        int32 TimeToComplete;
+        int32 ParTime;
+        Byte_Bool IsEndless;
+        Byte_Bool LoopAtEnd;
+        int32 MaxInvertMouseTimer;
+        float PotPct;
+        int32 PreviewTextId;
+        Byte_Bool FinalLevel;
+        Byte_StringEntry PopupText;
+        int32 Effects;
+        Byte_StringEntry Effect[Effects]<optimize=false>;
+        int32 Curves;
+        Zuma2Curve Curve[Curves]<optimize=false>;
+        int32 CurveSkullAngleOverrides;
+        int32 CurveSkullAngleOverride[CurveSkullAngleOverrides];
+        int32 TreasurePoints;
+        if (TreasurePoints)
+        {
+            Zuma2TreasurePoint TreasurePoint[TreasurePoints]<optimize=false>; 
+        }
+        int32 SetEffectParams;
+        Zuma2SetEffectParam SetEffectParam[SetEffectParams]<optimize=false>; 
+        int32 Tunnels;
+        if (Tunnels)
+        {
+            Zuma2Tunnel Tunnel[Tunnels]<optimize=false>;
+        }
+        Zuma2Gun Gun<optimize=false>;
+        int32 PowerupRegions;
+        if (PowerupRegions)
+        {
+            Zuma2PowerupRegion PowerupRegion[PowerupRegions]<optimize=false>;
+        }
+        int32 Torches;
+        if (Torches)
+        {
+            Zuma2Torch Torch[Torches]<optimize=false>;
+        }
+        int32 Walls;
+        if (Walls)
+        {
+            Zuma2Wall Wall[Walls]<optimize=false>;
+        }
+        int32 MovingWalls;
+        int32 Bosses;
+        if (Bosses)
+        {
+            Zuma2Boss Boss[Bosses]<optimize=false>;
+        }
+    } le[Levels]<optimize=false>;
+    //Zuma2MovingWall MovingWall[MovingWalls]<optimize=false>;
+    //int32 unk35[9];
 };
-
-typedef enum <uint16>
-{
-    None,
-    Start,
-    End,
-    Element,
-    Instruction,
-    Comment,
-} Zuma2XMLElementType;
 
 struct Zuma2XNALevelXMLBin
 {
-    FSkip(61); //Comment out if raw
-    BigEndian();
-    Zuma2XMLElementType elementType;
     LittleEndian();
-    int32 Dots;
-    Zuma2Dot Dot[Dots];
-    int32 unk;
-    Zuma2DDS DDS;
-    Zuma2HandheldBalance HandheldBalance;
-    int32 Gauntlets;
-    Zuma2Gauntlet Gauntlet[Gauntlets]<optimize=false>;
-    int32 Tips; //?
-    int32 ScoreTips;
-    Zuma2ScoreTip ScoreTip[ScoreTips]<optimize=false>;
-    int32 Zones;
-    Zuma2Zone Zone[Zones]<optimize=false>;
-    Zuma2Default Default<optimize=false>;
-    int32 Levels;
-    Zuma2Level Level[Levels]<optimize=false>;
+    int32 checkForXNBm<hidden=true>;
+    FSkip(-4);
+    if (checkForXNBm == 1833061976)
+    {
+        byte XNBHeader[63]<bgcolor=cRed>;
+    }
+    if (printRawData)
+    {
+        Printf("-----DOTS BEGIN-----\n");
+    }
+    Zuma2Point Dots<bgcolor=cGreen>;
+    if (printRawData)
+    {
+        Printf("-----DOTS END------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----DDS START-----\n");
+    }
+    Zuma2DDS DDS<bgcolor=cYellow>;
+    if (printRawData)
+    {
+        Printf("-----DDS END-------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----HANDHELD BALANCE START-----\n");
+    }
+    Zuma2HandheldBalance HandheldBalance<bgcolor=cPurple>;
+    if (printRawData)
+    {
+        Printf("-----HANDHELD BALANCE END-------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----GAUNTLETS START-----\n");
+    }
+    Zuma2Gauntlet Gauntlets<bgcolor=cBlue>;
+    if (printRawData)
+    {
+        Printf("-----GAUNTLETS END-------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----TIPS START-----\n");
+    }
+    Zuma2Tip Tips<bgcolor=cLtBlue>; //?
+    if (printRawData)
+    {
+        Printf("-----TIPS END-------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----SCORE TIPS START-----\n");
+    }
+    Zuma2ScoreTip ScoreTips<bgcolor=cLtGreen>;
+    if (printRawData)
+    {
+        Printf("-----SCORE TIPS END-------\n");
+        i = 0;
+        i2 = 0;
+        Printf("-----ZONES START-----\n");
+    }
+    Zuma2Zone Zones<bgcolor=cDkBlue>;
+    if (printRawData)
+    {
+        Printf("-----ZONES END-------\n");
+        i = 0;
+        Printf("-----DEFAULTS START-----\n");
+    }
+    Zuma2Defaults Defaults<bgcolor=cAqua>;
+    if (printRawData)
+    {
+        Printf("-----DEFAULTS END-------\n");
+        i = 0;
+        Printf("-----LEVELS START-----\n");
+    }
+    Zuma2Level Levels<bgcolor=cDkPurple>;
+    if (printRawData)
+    {
+        Printf("-----LEVELS END-------\n");
+        i = 0;
+    }
+    Byte_StringEntry BinEnd<bgcolor=cGreen>;
 } levels_xnb;

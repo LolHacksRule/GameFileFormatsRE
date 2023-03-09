@@ -11,14 +11,12 @@
 //      History: 
 //------------------------------------------------
 
-local int i <hidden=true> = 0;
+//local int i <hidden=true> = 0;
 
-typedef enum <byte> {
-			True = 1,
-			False = 0,
-} TrueFalseFlag;
+#include "../../../LHR/Common.bt"
 
 struct Header {
+    LittleEndian();
     byte ppfHdrSize;
     int32   ppfHeader<bgcolor=cGreen>; //Should be PPF
     int32   version<bgcolor=cBlue>;
@@ -31,22 +29,18 @@ struct ParticleDataTable {
     for (i = 0; i < header.ptclFileStrings; i++)
     {
         struct ParticleStringTable {
-            byte    particleSize;
-            char    ptclName[particleSize];
+            UByte_StringEntry ptcl;
             short u[2]; //?
-            TrueFalseFlag u2; //May be byte?
-            byte    refParticleSize;
-            char    refPtclName[refParticleSize];
+            Byte_Bool u2; //May be byte?
+            UByte_StringEntry refPtcl;
         } pDataStrTbl;
     }
     short unk;
     FSkip(4); //?
     struct ParticleLayerTable { //WIP
-            byte    particleLYRSize;
-            char    ptclLYRName[particleLYRSize];
+            UByte_StringEntry particleLayerName;
             FSkip(92); //?
-            byte    particleLYRTypeSize;
-            char    ptclLYRTypeName[particleLYRTypeSize];
+            UByte_StringEntry particleLayerType;
             //I give up for now
     } pLYRDataStrTbl;
 } pDataTbl;
