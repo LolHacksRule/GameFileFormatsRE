@@ -64,7 +64,7 @@ typedef struct SubGroupInfo //Accurate?
         {
             int32 idx;
             int32 ratio;
-            string lang; //Breaks Bej3 1.0.0 RSB, todo fix
+            string lang; //Breaks Bej3 1.0.0 iPhone RSB, todo fix
             if (sizeof lang == 5)
             {
                 FSkip(3);

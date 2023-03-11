@@ -1,0 +1,32 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//#include "../../../LHR/Common.bt"
+
+struct TextureBankEntry
+{
+    LittleEndian();
+    char name[90];
+    int32 unk; //?
+    int32 unk2; //6407 or 6408 and 35734 or 35735
+    int32 unk3; //Numbers past 32k and one entry 5121
+    int32 width;
+    int32 height;
+    Printf("%s Unknown1: %i Unknown2: %i Unknown3: %i Width: %i Height: %i\n", name, unk, unk2, unk3, width, height);
+} TEXTUREBANK_XX_DAT[60]<optimize=false>;
+
+/*struct Texture
+{
+    byte TexSize[TEXTUREBANK_XX_DAT[i].unk];
+    i++;
+} TEXTURE[60]<optimize=false>;*/

@@ -1,0 +1,117 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+typedef enum <int32>
+{
+    Image,
+    Sound,
+    Font,
+    Atlas,
+    AtlasImage,
+} DataType;
+
+typedef struct AtlasImage
+{
+    I16_StringEntry AtlasImageEntryId;
+    I16_StringEntry ResId;
+    int16 unk;
+    byte unk2;
+    int32 x;
+    int32 y;
+    int32 width;
+    int32 height;
+    int32 unk3;
+    int32 cols;
+    int32 unk4;
+    int32 framedelay;
+    int32 unk5[4];
+    I16_StringEntry Id;
+    int32 end;
+};
+
+typedef struct Atlas
+{
+    I16_StringEntry AtlasEntryId;
+    I16_StringEntry ResId;
+    I16_StringEntry Path;
+    byte unk[68];
+    int32 end;
+};
+
+typedef struct Sound
+{
+    I16_StringEntry Id;
+    I16_StringEntry ResId;
+    I16_StringEntry Path;
+    byte dmy;
+    int32 dmy2;
+    double volume;
+    int32 dmy3;
+    int32 end;
+};
+
+typedef struct Font
+{
+    I16_StringEntry Id;
+    I16_StringEntry ResId;
+    I16_StringEntry Path;
+    I32_StringEntry Tag;
+    if (Tag.byteSize == 0)
+    {
+        FSkip(-4);
+    }
+    I32_StringEntry Unk;
+    int16 Unk2;
+    int32 end;
+};
+
+typedef struct Image
+{
+    I16_StringEntry Id;
+    I16_StringEntry ResId;
+    I16_StringEntry Path;
+    byte unk[68];
+    int32 end;
+};
+
+struct PopCap_LegacyiOSFramework_MapDAT
+{
+    LittleEndian();
+    int32 files;
+    struct Entry
+    {
+        DataType type;
+        if (type == 0)
+        {
+            Image ImageEntry;
+        }
+        else if (type == 1)
+        {
+            Sound SoundEntry;
+        }
+        else if (type == 2)
+        {
+            Font FontEntry;
+        }
+        else if (type == 3)
+        {
+            Atlas AtlasEntry;
+        }
+        else if (type == 4)
+        {
+            AtlasImage AtlasImageEntry;
+        }
+    } Entries[files]<optimize=false>;
+} MAP_DAT;

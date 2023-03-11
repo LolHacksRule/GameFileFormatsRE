@@ -1,0 +1,43 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int16>
+{
+    A8R8G8B8 = 1,
+    RGBA4444,
+    A1R5G5B5,
+    RGB565,
+} TextureFormat;
+
+struct PopCap_LegacyiOSFramework_Texture
+{
+    if (ReadShort() == 2677)
+    {
+        int16 Magic;
+        int16 Width;
+        int16 Height;
+        TextureFormat TexFmt;
+        if (ReadByte() == 0x78)
+        {
+            byte CompressedTextureData[FileSize() - FTell()];
+        }
+        else
+        {
+            byte TextureData[FileSize() - FTell()];
+        }
+    }
+    else
+    {
+        byte RawTextureData[FileSize() - FTell()];
+    }
+} TEX;
