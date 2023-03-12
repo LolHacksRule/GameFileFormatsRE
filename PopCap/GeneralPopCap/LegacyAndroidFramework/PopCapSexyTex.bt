@@ -13,6 +13,12 @@
 
 LittleEndian();
 
+typedef enum <int32>
+{
+    RGBA8888 = 2,
+    RGBA4444,
+} TextureFormat;
+
 struct Header {
     char    sexyTexHeader[7]<bgcolor=cGreen>; //Should be SEXYTEX
     char    padding[5]<bgcolor=cRed>; //should be 00
@@ -20,15 +26,15 @@ struct Header {
 
 
 struct TexMetaData {
-    uint    texWidth<bgcolor=cBlue>; //Width
-    uint    texHeight<bgcolor=cLtBlue>;
-    uint    texFmt<bgcolor=cPurple>; //03 = RGBA4444, 02 = RGBA8888
-    uint    unknown2<bgcolor=cRed>;
-    uint    unknown3<bgcolor=cRed>;
-    uint    zLibCompressedTexSize<bgcolor=cRed>;
-    char    morePadding[12]<bgcolor=cRed>;
+    int    texWidth<bgcolor=cBlue>; //Width
+    int    texHeight<bgcolor=cLtBlue>;
+    TextureFormat    texFmt<bgcolor=cPurple>; //03 = RGBA4444, 02 = RGBA8888
+    int    unknown2<bgcolor=cRed>;
+    int    unknown3<bgcolor=cRed>;
+    int    zLibCompressedTexSize<bgcolor=cRed>;
+    byte   morePadding[12]<bgcolor=cRed>;
 } texMetaDataTable;
 
 struct CompTex {
-    ubyte CompTexData[texMetaDataTable.zLibCompressedTexSize]<bgcolor=cGreen>;
+    byte CompTexData[texMetaDataTable.zLibCompressedTexSize]<bgcolor=cGreen>;
 } dataSection;

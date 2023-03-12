@@ -36,7 +36,7 @@ def noepyLoadRGBA(texData, texList):
         texData = rapi.imageDecodeRaw(texData, texWidth, texHeight, "a1b5g5r5")
     elif texFmt == 0x4:
         print("RGB565")
-        texData = rapi.imageDecodeRaw(texData, texWidth, texHeight, "r5g6b5")
+        texData = rapi.imageDecodeRaw(texData, texWidth, texHeight, "b5g6r5")
     texFmt = noesis.NOESISTEX_RGBA32
     texList.append(NoeTexture(rapi.getInputName(), texWidth, texHeight, texData, texFmt))
     return 1
