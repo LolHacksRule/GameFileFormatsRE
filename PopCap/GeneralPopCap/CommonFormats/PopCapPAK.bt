@@ -1,0 +1,115 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: PopCapPAK.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <byte>
+{
+    Continue,
+    End = 128,
+} PakFlag;
+
+#include "../../../LHR/Common.bt"
+
+local uint terminateEntryRead <hidden=true> = 0;
+local uint detectPadding <hidden=true> = -1; //Console pak fix
+local uint detectUncompSize <hidden=true> = -1; //PVZ PS3 fix
+//local string fileNameStr <hidden=true> = "";
+
+struct PopCapPAK
+{
+    LittleEndian();
+    if (ReadInt() == 1295498551 || ReadInt() == 4189070736) //7½7M XOR encrypted
+    {
+        Printf("Encrypted PAK files are unsupported. Please use xor.exe from aluigi and use key 0xF7 to decrypt it.\n");
+        break;
+    }
+    uint32 magic<bgcolor=cPurple>;
+    uint32 version<bgcolor=cYellow>;
+    struct FileEntries
+    {
+        while (terminateEntryRead == 0)
+        {
+            struct FileEntry
+            {
+                PakFlag flag<bgcolor=cDkBlue>;
+                if (flag != End)
+                {
+                    UByte_StringEntry FileName<bgcolor=cGreen>;
+                    uint32 srcSz<bgcolor=cLtBlue>;
+                    if (detectUncompSize == -1) //On PS3, zlib compression is used so here's a simple detection check
+                    {
+                        uint64 checkForTimestamp<hidden=true>;
+                        PakFlag checkForEnd<hidden=true>;
+                        FSkip(-9);
+                        if (checkForEnd != 0 && checkForEnd != -128)
+                        {
+                            detectUncompSize = 1;
+                            detectPadding = 1;
+                            Printf("PS3 console PAK detected. Applying fixes...\n");
+                        }
+                        else
+                        {
+                            detectUncompSize = 0;
+                            //Don't detect pad here to not break PC
+                        }
+                    }
+                    if (detectUncompSize == 1)
+                    {
+                        uint32 uncompSize;
+                    }
+                    FILETIME FileTime<bgcolor=cBlue>;
+                }
+                else
+                {
+                    terminateEntryRead = 1;
+                }
+            } fe;
+        } 
+    } fes;
+    if (sizeof fes > 1)
+    {
+        struct Files
+        {
+            if (detectPadding == -1)
+            {
+                int16 padChk<hidden=true>;
+                FSkip(-2);
+                if (padChk > 0 && padChk != 25939 && padChk != 24929 && padChk != 25635) //Console PAKs have padding that the public packing tool doesn't write, they didn't even change the version byte for them how do we detect this
+                {
+                    Printf("Console PAK detected. Applying padding hacks...\n");
+                    detectPadding = 1;
+                }
+                else
+                {
+                    detectPadding = 0;
+                    Printf("Standard PAK detected.\n");
+                }
+            }
+            while (FPos < EOF)
+            {
+                struct File
+                {
+                    if (detectPadding == 1)
+                    {
+                        uint16 padSz<bgcolor=cRed>;
+                        byte pad[padSz]<bgcolor=cRed>;
+                    }
+                    //fileNameStr = fes.fe[i].FileName.theString;
+                    //Printf("[%i]: %s | Size: %i\n", i, fileNameStr, fes.fe[i].srcSz);
+                    byte filedata[fes.fe[i].srcSz]<bgcolor=cGreen>;
+                    i++;
+                } file;
+                FPos = FTell();
+            }
+        } files;
+    }
+} PAK;
