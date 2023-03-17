@@ -22,13 +22,13 @@ https://github.com/YingFengTingYu/PopStudio
 //Tested on various.
 #include "../../LHR/Common.bt"
 
-local int isLE <hidden=true> = 0;
 local int ver4Rsb <hidden=true> = 0;
 //local int i <hidden=true> = 0;
 //local int i2 <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
+local int maxLangs <hidden=true> = 0;
 
 typedef enum <int32> {
 	ARGB8888,
@@ -58,24 +58,32 @@ typedef struct SubGroupInfo //Accurate?
     //string thePoolName;
     //Skip(128 - sizeof thePoolName); 
     //FSkip(4);
-    for (i2 = 0; i2 < 7; i2++)
+    if (rsb1Hdr.version == 1)
+    {
+        maxLangs = 32;
+    }
+    else
+    {
+        maxLangs = 64;
+    }
+    for (i2 = 0; i2 < maxLangs; i2++)
     {
         struct ChildLang
         {
             int32 idx;
             int32 ratio;
-            string lang; //Breaks Bej3 1.0.0 iPhone RSB, todo fix
-            if (sizeof lang == 5)
+            int64 lang; //Breaks Bej3 1.0.0 iPhone RSB, here's a WIP fix
+            /*if (sizeof lang == 5)
             {
                 FSkip(3);
             }
             else
             {
                 FSkip(7);
-            }
+            }*/
         } childLang;
     }
-    FSkip(912);
+    //FSkip(912);
     int32 childLangNum;
 } subGroupInfo;
 
@@ -359,7 +367,6 @@ struct ResourceStreamBundle
         if (header == "1bsr")
         {
             LittleEndian();
-            isLE = 1;
             Printf("Android/iOS/PS4 Resource Stream Bundle\n");
         }
         int32 version<bgcolor = cYellow>; //4 = PVZ2+/Zuma's Revenge (X360), 3 = Console Ports/BejClassic/Peggle2
