@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int32> {
+	ARGB8888,
+    RGBA4444,
+    RGB565,
+    RGBA5551,
+    DXT5 = 5, //PS4/Xbox 360
+    ETC1_RGB_A8 = 147,
+    RGBA4444_BLOCK = 21 //?
+} PopCapPopTexture_ImageFormat;
+
+typedef enum <int32>
+{
+    AlphaFmt_ETC1_RGB_A = 100
+} PopCapPopTexture_AlphaFormat;
+
+typedef enum <int32> {
+    Resident,
+	GPU_Transfer,
+    Transient
+} PopCap_ResStreamDataType;

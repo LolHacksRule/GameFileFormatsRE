@@ -21,6 +21,7 @@ https://github.com/YingFengTingYu/PopStudio
 
 //Tested on various.
 #include "../../LHR/Common.bt"
+#include "GeneralPopCapIncludes.bt"
 
 local int ver4Rsb <hidden=true> = 0;
 //local int i <hidden=true> = 0;
@@ -29,27 +30,6 @@ local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
 local int maxLangs <hidden=true> = 0;
-
-typedef enum <int32> {
-	ARGB8888,
-    RGBA4444,
-    RGB565,
-    RGBA5551,
-    DXT5 = 5, //PS4/Xbox 360
-    ETC1_RGB_A8 = 147,
-    RGBA4444_BLOCK = 21 //?
-} ImageFormat;
-
-typedef enum <int32>
-{
-    AlphaFmt_ETC1_RGB_A = 100
-} AlphaFormat;
-
-typedef enum <int32> {
-    Resident,
-	GPU_Transfer,
-    Transient
-} ResType;
 
 typedef struct SubGroupInfo //Accurate?
 {
@@ -147,7 +127,7 @@ typedef struct PTXInfo
     int32 width;
     int32 height;
     int32 pitch;
-    ImageFormat textureFormat;
+    PopCap_PopTexture_ImageFormat textureFormat;
     if (rsb1Hdr.ptxInfoTableItemSize == 20) //Helps with DEV1/2 RSBs from PVZ2C
     {
         int32 alphaSize; //Is it alphaSize?
@@ -155,7 +135,7 @@ typedef struct PTXInfo
     if (rsb1Hdr.ptxInfoTableItemSize == 24)
     {
         int32 alphaSize;
-        AlphaFormat alphaFormat;
+        PopCap_PopTexture_AlphaFormat alphaFormat;
     }
 } ptxInfo;
 
