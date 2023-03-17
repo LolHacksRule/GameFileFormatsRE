@@ -72,7 +72,15 @@ typedef struct SubGroupInfo //Accurate?
         {
             int32 idx;
             int32 ratio;
-            int64 lang; //Breaks Bej3 1.0.0 iPhone RSB, here's a WIP fix
+            if (rsb1Hdr.version == 1) //Breaks Bej3 1.0.0 iPhone RSB, here's a WIP fix
+            {
+                int32 unk1<bgcolor=cRed>;
+                int32 ratio2;
+            }
+            else
+            {
+                int64 lang;
+            }
             /*if (sizeof lang == 5)
             {
                 FSkip(3);
@@ -105,10 +113,17 @@ typedef struct ResGroupInfo
     int32 pt1Off;
     int32 pt1ZSize;
     int32 pt1Size;
-    FSkip(20);
+    if (rsb1Hdr.version == 1)
+    {
+        FSkip(12);
+    }
+    else
+    {
+        FSkip(20);
+    }
     int32 texCnt;
     int32 idx;
-} resGroupInfo;
+};
 
 typedef struct AutoPool
 {
@@ -427,7 +442,7 @@ struct ResourceStreamBundle
     {
         for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
         {
-            resGroupInfo ResGroupInfoBlock<bgcolor = cPurple>;
+            ResGroupInfo ResGroupInfoBlock<bgcolor = cPurple>;
         }
     } resginfotbl;
     struct AutoPoolTable
