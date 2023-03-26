@@ -60,4 +60,4 @@ struct Bejeweled3HighscoresDAT
         HighScoreEntry hse[10]<optimize=false>;
     }
     
-} HISCORES_DAT;
+} HIGHSCORES_DAT;

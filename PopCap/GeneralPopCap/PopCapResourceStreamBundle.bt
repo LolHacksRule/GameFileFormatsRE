@@ -368,13 +368,9 @@ struct ResourceStreamBundle
         if (version == 4)
         {
             local int ver4Rsb<hidden=true>  = 1;
-            Printf("Version 4\n");
-        }
-        else
-        {
-            Printf("Version 3\n");
         }
         int32 verMinor;
+        Printf("Version %i.%i\n", version, verMinor);
         int32 cmnDataSize<bgcolor = cPurple>; //Dummy?
         int32 fileIdxSize<bgcolor = cWhite>;
         int32 fileIdxOffset<bgcolor = cWhite>; //70 or 108 for V3

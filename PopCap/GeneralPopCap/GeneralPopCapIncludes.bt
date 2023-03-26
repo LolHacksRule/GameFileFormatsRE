@@ -19,15 +19,15 @@ typedef enum <int32> {
     DXT5 = 5, //PS4/Xbox 360
     ETC1_RGB_A8 = 147,
     RGBA4444_BLOCK = 21 //?
-} PopCapPopTexture_ImageFormat;
+} PopCap_PopTexture_ImageFormat;
 
 typedef enum <int32>
 {
     AlphaFmt_ETC1_RGB_A = 100
-} PopCapPopTexture_AlphaFormat;
+} PopCap_PopTexture_AlphaFormat;
 
 typedef enum <int32> {
     Resident,
 	GPU_Transfer,
     Transient
-} PopCap_ResStreamDataType;
+} PopCap_ResStream_DataType;

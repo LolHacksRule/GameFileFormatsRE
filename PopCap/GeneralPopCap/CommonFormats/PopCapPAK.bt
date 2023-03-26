@@ -83,7 +83,7 @@ struct PopCapPAK
             {
                 int16 padChk<hidden=true>;
                 FSkip(-2);
-                if (padChk > 0 && padChk != 25939 && padChk != 24929 && padChk != 25635) //Console PAKs have padding that the public packing tool doesn't write, they didn't even change the version byte for them how do we detect this
+                if (padChk > 0 && padChk != 20617 && padChk != 25939 && padChk != 24929 && padChk != 25635) //Console PAKs have padding that the public packing tool doesn't write, they didn't even change the version byte for them how do we detect this
                 {
                     Printf("Console PAK detected. Applying padding hacks...\n");
                     detectPadding = 1;

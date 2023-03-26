@@ -74,6 +74,7 @@ typedef struct
     {
         uint32 unk3[5];
         uint32 allTimeBestMovePts;
+        uint32 unk4[17];
     }
 } Bej3GameStats;
 
@@ -97,7 +98,7 @@ struct Bejeweled3ProfileDAT
         Bej3GameStats gameStats;
         if (saveVer == 71)
         {
-            FSeek(0xB8);
+            //FSeek(0xB8);
             Bej3_BadgeLevel badgeLevels[20]; //Beyond 5 is crash
         }
         else
@@ -116,7 +117,7 @@ struct Bejeweled3ProfileDAT
             Byte_Bool IceStormUnlocked;
             Byte_Bool DiamondMineUnlocked;
             Byte_Bool unk4;
-            Byte_Bool unk5;
+            Byte_Bool unk5; //Load related
         }
         uint32 tutorialFlags; //1: Skip on boot
         uint16 tipIdx;
@@ -146,6 +147,61 @@ struct Bejeweled3ProfileDAT
             uint32 offlineGames;
             uint32 onlineGames;
             uint32 dmy[2]; //?
+        }
+        if (saveVer == 71)
+        {
+            uint32 unk8[5];
+            uint16 unk9;
+            float unk10;
+            uint16 unk11;
+            uint32 unk12[4];
+            uint16 unk13;
+            struct ZenParam
+            {
+                struct BreathModulation
+                {
+                    Byte_Bool EnableBreathModulation;
+                    //if (EnableBreathModulation == Byte_True)
+                    {
+                        Byte_Bool EnableBreathModulationVisualIndicator;
+                        float BreathModulationSpeed;
+                    }
+                } breathmodulation;
+                struct AmbientSounds
+                {
+                    Byte_Bool EnableAmbientSounds;
+                    //if (EnableAmbientSounds == Byte_True)
+                    {
+                        I16_StringEntry AmbientSoundsSound;
+                        //float AmbientSoundsVolume;
+                    }
+                } ambientsounds;
+                struct BinarualBeats
+                {
+                    Byte_Bool EnableBinarualBeats;
+                    I16_StringEntry BinarualBeatsPattern;
+                    //float BinarualBeatsVolume;
+                } binarualbeats;
+                struct Mantras
+                {
+                    Byte_Bool EnableMantras;
+                    //if (EnableMantras == Byte_True)
+                    {
+                        I16_StringEntry Mantra;
+                        Byte_Bool EnableSublimal;
+                        //if (EnableSublimal == Byte_True)
+                        {
+                            float MantrasSublimalVisibility;
+                        }
+                        //else
+                        {
+                            float MantrasSpeed;
+                        }
+                    }
+                } mantras;
+            } zprm;
+            int16 countOfUnk;
+            byte finalUnk[countOfUnk];
         }
     }
 } PROFILE_DAT;
