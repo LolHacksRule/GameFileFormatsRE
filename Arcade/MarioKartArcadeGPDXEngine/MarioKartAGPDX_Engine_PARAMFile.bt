@@ -12,20 +12,15 @@
 
 struct Header {
     uint     animFileCnt;
+    uint    strSize;
 } header;
 
 struct DataTable {
-    uint    strSize;
     struct StringData {
-        char    name[strSize]<bgcolor=cPurple>;
-    } animFileStringData;
-    struct LaterStringData {
-        char    name[strSize]<bgcolor=cGreen>;
-    } laterAnimFileStringData[(uint)(header.animFileCnt - 1)];
+        char    name[header.strSize]<bgcolor=cGreen>;
+    } AnimFileStringData[header.animFileCnt]<optimize=false>;
     struct DummyData {
-        float    param<bgcolor=cBlue>;
-    } dummyData[(uint)(header.animFileCnt)];
-    struct FloatValueData {
-        float    param<bgcolor=cYellow>; //idk what value this is  
-    } floatValueData[(uint)(header.animFileCnt)];
+        int32    param<bgcolor=cBlue>;
+    } dummyData[header.animFileCnt]<optimize=false>;
+    uint32 nameCRC32[header.animFileCnt]<bgcolor=cRed>;
 } dataTable;

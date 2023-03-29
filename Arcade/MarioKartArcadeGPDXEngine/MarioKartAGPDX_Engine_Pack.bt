@@ -1,0 +1,76 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://raw.githubusercontent.com/KillzXGaming/Switch-Toolbox/master/File_Format_Library/FileFormats/Archives/MKGPDX_PAC.cs
+//https://avsys.xyz/wiki/PAC_(File_Format)
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    Layout = 1,
+    Image,
+} FileType;
+
+typedef struct Header
+{
+    char magic[4];
+    int32 files;
+    int32 stringTblOff;
+    int32 align;
+    FileType type;
+};
+
+typedef struct FileEntry
+{
+    int32 nameCRC32;
+    int32 nameOff;
+    int32 off;
+    int32 size;
+};
+
+struct Pack
+{
+    Header hdr<bgcolor=cBlue>;
+    FileEntry entry[hdr.files]<optimize=false, bgcolor=cPurple>;
+    struct PackEntries
+    {
+        for (i = 0; i < hdr.files; i++)
+        {
+            struct PackEntry
+            {
+                while (ReadUByte(FTell()) == 0x00 && ReadInt64() != 21759614286561280) //Don't break on ANM and DDS chunks starting with 0x00
+                {
+                    byte pad<hidden=true, bgcolor=cRed>;
+                }
+                //if (i != 0)
+                //{
+                    //FSeek(entry[i].off);
+                //}
+                byte fileData[entry[i].size]<bgcolor=cLtBlue>;
+            } packEntry;
+            //FSkip(8);
+        }
+    } packEntries;
+    if (hdr.type == Image)
+    {
+        while (ReadUByte(FTell()) == 0x00 && ReadInt64() != 21759614286561280) //Don't break on ANM chunks starting with 0x00
+        {
+            byte pad<hidden=true, bgcolor=cRed>;
+        }
+    }
+    struct StringTable
+    {
+        string name;
+    } strt[hdr.files]<optimize=false, bgcolor=cGreen>;
+} PAC_PACK;

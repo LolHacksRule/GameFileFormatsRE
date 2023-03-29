@@ -19,8 +19,7 @@
 /////WIP
 
 struct Header {
-    char    header[3]<bgcolor=cGreen>; //TCD
-    char    unk[1]<bgcolor=cRed>; //20
+    uint    header<bgcolor=cGreen>; //TCD 
     uint    textureCount<bgcolor=cBlue>; //Must be 01+
     uint    packsCount<bgcolor=cPurple>; //Must be 01+
 } header;
@@ -37,15 +36,15 @@ struct TextureControlMetadataTable {
 
 struct FloatData {
         float    param[header.packsCount + header.textureCount]<bgcolor=cBlue>;
-    } floatData[(uint)(header.packsCount + header.textureCount)];
+    } floatData[header.packsCount + header.textureCount]<optimize=false>;
 
 struct TextureControlDataStringTable {
     struct TexturePackData {
         string packName<bgcolor=cPurple>; //idk what value this is
-    } textureControlData[(uint)(header.packsCount)];
+    } textureControlData[header.packsCount]<optimize=false>;
     struct TextureData {
         string textureName<bgcolor=cGreen>;
-    } textureData[(uint)(header.textureCount)];
+    } textureData[header.textureCount]<optimize=false>;
 } textureControlDataStringTable;
 
 //There's no endmark

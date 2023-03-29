@@ -11,6 +11,11 @@
 //      History: Xeen Inc.
 //------------------------------------------------
 
+//Orig Format:
+//https://avsys.xyz/wiki/XECLN_(File_Format)
+
+#include "../../LHR/Common.bt"
+
 struct Header {
     char    header[4]; //LINE
     int     unknown;
@@ -19,12 +24,8 @@ struct Header {
 } header;
 
 struct RoutePointDataTable {
-    float   pointPos[3];
-    float   unknown0;
-    float   unknown1;
-    float   unknown2;
-    float   unknown3;
-    float   unknown4;
-    int     unknown5;
-    int     routeGroupIdx;
-} routePointData[(uint)(header.routePoints)];
+    Vector3_F32   pointPos;
+    float   unk[6];
+    int16   unk6;
+    int16     routeGroupIdx;
+} routePointData[(uint)(header.routePoints)]<optimize=false>;

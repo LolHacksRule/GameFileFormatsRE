@@ -21,11 +21,14 @@ struct ConditionDataTable {
     uint    condSize;
     struct ConditionList {
         char    conditionName[condSize]<bgcolor=cPurple>; //idk what value this is
-    } conditionListData[(uint)(header.paramCount)];
+    } conditionListData[header.paramCount]<optimize=false>;
     //uint unknown;
     struct ConditionDataValues {
-        char    conditionValue[condSize]<bgcolor=cPurple>; //idk what value this is
-    } conditionValueListData[(uint)(header.paramCount)];
+        int32    conditionValue[condSize/4]<bgcolor=cRed>; //idk what value this is
+    } conditionValueListData[header.paramCount]<optimize=false>;
+    struct ConditionDataValues2 {
+        int32    conditionValue[condSize/4]<bgcolor=cRed>; //idk what value this is
+    } conditionValueListData2[header.paramCount]<optimize=false>;
 } conditionData;
 
 //There's no endmark
