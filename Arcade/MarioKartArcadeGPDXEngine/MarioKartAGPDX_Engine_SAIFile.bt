@@ -51,7 +51,10 @@ struct ScriptedAIInfo
     Entry entry[meta.entries]<optimize=false>;
     uint32 entryNameCRC32[meta.entries];
     Entry paramEntry[meta.paramEntries]<optimize=false>;
-    //uint32 paramEntryNameCRC32[meta.paramEntries];
+    if (hdr.magic == VACUUM)
+    {
+        uint32 paramEntryNameCRC32[meta.paramEntries];
+    }
     //char    param1[32]; //idk what value this is
     //There's no endmark
 } SAII;

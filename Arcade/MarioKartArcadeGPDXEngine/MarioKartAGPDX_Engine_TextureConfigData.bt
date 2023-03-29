@@ -10,6 +10,8 @@
 //      History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 //char    header[3]; //TCD
 //char    unk[1]; //20
 //int     unk2; //idk what value this is
@@ -18,13 +20,21 @@
 
 /////WIP
 
-struct Header {
+typedef struct Header {
     uint    header<bgcolor=cGreen>; //TCD 
     uint    textureCount<bgcolor=cBlue>; //Must be 01+
-    uint    packsCount<bgcolor=cPurple>; //Must be 01+
-} header;
+    uint    texPacksCount<bgcolor=cPurple>; //Must be 01+
+    uint    unk;
+};
 
-struct TextureControlMetadataTable {
+typedef struct MetaDataEntry
+{
+    uint32 packIdx;
+    uint32 texNameStrOff; //Past tex pack string offs
+    Vector4_F32 vec4;
+};
+
+/*struct TextureControlMetadataTable {
     struct Metadata {
         int packMetaDataSize<bgcolor=cPurple>; //idk what value this is
     } metaData[(uint)(header.packsCount)];
@@ -50,4 +60,11 @@ struct TextureControlDataStringTable {
 //There's no endmark
 
 //char    unknown[1]<bgcolor=cRed>; //should be 00
-    //uint    paramCount<bgcolor=cLtBlue>; //Amount of parameters
+    //uint    paramCount<bgcolor=cLtBlue>; //Amount of parameters*/
+
+struct TextureConfigData
+{
+    Header hdr;
+    uint32 texStrOff[hdr.texPacksCount];
+    MetaDataEntry metaData[hdr.textureCount];
+} TCD;

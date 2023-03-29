@@ -12,20 +12,65 @@
 //      Developer: Xeen Inc.?
 //------------------------------------------------
 
-struct Header {
-    char    bfnt[4]<bgcolor=cGreen>; //BFNT
-    uint    paramCount<bgcolor=cLtBlue>; //Amount of parameters
-} header;
+//https://www.angelcode.com/products/bmfont/doc/file_format.html (V2) yeah this is pretty much their format, with only the header modified and string table at the EOF with the texture strings, nice original format lol
 
-struct ParamDataTable {
-    uint    paramSize;
-    struct ParamList {
-        char    conditionName[paramSize]<bgcolor=cPurple>; //idk what value this is
-    } conditionListData[(uint)(header.paramCount)];
-    //uint unknown;
-    struct ConditionDataValues {
-        char    conditionValue[paramSize]<bgcolor=cPurple>; //idk what value this is
-    } conditionValueListData[(uint)(header.paramCount)];
-} conditionData;
+typedef struct Info
+{
+    uint32 size;
+    uint32 bold;
+    uint32 italic;
+    uint32 charset;
+    uint32 unicode;
+    uint32 stretchH;
+    uint32 smooth;
+    uint32 aa;
+    uint32 padding[4];
+    uint32 spacing[2];
+    uint32 outline;
+};
+
+typedef struct Common
+{
+    uint32 lineHeight;
+    uint32 base;
+    uint32 scaleW;
+    uint32 pages;
+    uint32 packed;
+    uint32 alphaChnl;
+    uint32 redChnl;
+    uint32 greenChnl;
+    uint32 blueChnl;
+};
+
+typedef struct Page
+{
+    uint32 id;
+    uint32 strTblOff;
+};
+
+typedef struct Char
+{
+    uint32 id;
+    uint32 x;
+    uint32 y;
+    uint32 width;
+    uint32 height;
+    int32 xOff;
+    int32 yOff;
+    int32 xAdv;
+    uint32 page;
+    uint32 chnl;
+};
+
+struct BinFont
+{
+    uint32 magic;
+    Info info;
+    Common common;
+    Page page[common.pages];
+    uint32 chars;
+    Char charEntry[chars];
+    //uint32 unk[12];
+} BFNT;
 
 //There's no endmark
