@@ -1,0 +1,240 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Orig format:
+//https://avsys.xyz/wiki/BIKE_BIN_(File_Format)
+//https://avsys.xyz/wiki/BIKE_MOT_(File_Format)
+//https://raw.githubusercontent.com/KillzXGaming/Switch-Toolbox/master/File_Format_Library/FileFormats/MKAGPDX/MKAGPDX_Model.cs
+//https://raw.githubusercontent.com/KillzXGaming/Switch-Toolbox/master/File_Format_Library/FileFormats/MKAGPDX/LM2_ARCADE_Model.cs
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    MK3 = 1162561858, //BIKE / Mario Kart Arcade GP DX
+    VACUUM = 825642326, //VM61 / Luigi Mansion Arcade
+} GameType;
+
+typedef enum <uint16>
+{
+    Model,
+    Motion,
+} BinType;
+
+typedef struct ModelBinHeader
+{
+    if (head.magic == MK3)
+    {
+        uint32 materials;
+        uint32 headerSize;
+        uint32 textures;
+        uint32 texNameArrayOff;
+        uint32 bones;
+        uint32 boneNameArrayOff;
+        uint32 skeletonOff;
+        uint32 linkNodes;
+        uint32 linkNodesArrayOff;
+        uint32 nodes;
+        uint32 nodesArrayOff;
+        uint32 pad;
+        ///uint32 unk2[10];
+    }
+    else
+    {
+        uint64 materials;
+        uint64 headerSize;
+        uint64 textures;
+        uint64 texNameArrayOff;
+        uint64 bones;
+        uint64 boneNameArrayOff;
+        uint64 skeletonOff;
+        uint64 linkNodes;
+        uint64 linkNodesArrayOff;
+        uint64 nodes;
+        uint64 nodesArrayOff;
+        uint64 pad;
+    }
+    
+};
+
+typedef struct ModelBinMotionHead
+{
+    //float unk[11];
+    Vector3_F32 unk;
+    if (head.magic == MK3)
+    {
+        uint32 models;
+    }
+    else
+    {
+        uint32 unk;
+        Vector3_F32 unk2_vm;
+        uint32 models;
+    }
+    uint32 strTblArrayOff;
+    Vector3_F32 unk2;
+};
+
+
+typedef struct ModelHeader
+{
+    GameType magic;
+    BinType type;
+    uint16 ver;
+    uint32 align;
+    uint32 pad;
+    if (head.type == Model)
+    {
+        ModelBinHeader binhead;
+    }
+    else
+    {
+        ModelBinMotionHead binmothead;
+    }
+};
+
+typedef struct ModelBinMaterial
+{
+    if (head.magic == VACUUM)
+    {
+        uint64 materialNameOff;
+    }
+    uint32 unk[10];
+    Vector4_F32 ambient;
+    Vector4_F32 diffuse;
+    Vector4_F32 specular;
+    Vector4_F32 ambience;
+    float shiny;
+    Vector4_F32 transparency;
+    float transGlossy;
+    float transparencySamples;
+    Vector4_F32 reflectivity;
+    float reflectGlossy;
+    float reflectSample;
+    float indexRefraction;
+    float translucency;
+    float unk2;
+    if (head.magic == VACUUM)
+    {
+        float unk3_vacuum[3];
+    }
+    int16 albTexIdx;
+    int16 specTexIdx;
+    int16 refTexIdx;
+    int16 envTexIdx;
+    int16 normalTexIdx;
+    int16 ambTexIdx;
+    //uint32 unk3[10];
+};
+
+typedef struct ModelBinMotion
+{
+    //Vector3_F32 unk;
+    //uint32 unk2[2];
+    //Vector3_F32 unk3[5];
+};
+
+typedef struct ModelBinMotionStringRef
+{
+    //FSeek(binmothead.strTblArrayOff);
+    if (head.magic == MK3)
+    {
+        uint32 strOff;
+        uint32 animOff;
+    }
+    else
+    {
+        uint64 strOff;
+        uint64 animOff;
+    }
+    //FSeek(strOff);
+    //string modelStr;
+};
+
+/*typedef struct ModelBinNode
+{
+    //FSeek(head.binhead.nodesArrayOff);
+    uint32 nameOff;
+    uint32 nodeOff;
+    //FSeek(nameOff);
+    //string nodeName;
+};
+
+typedef struct ModelBinNodeObject
+{
+    uint32 unk;
+    uint32 triangles;
+    uint32 idx;
+    float unk2[4];
+    uint32 vertexes;
+    uint32 positionBufferOff;
+    uint32 normBufferOff;
+    uint32 colorBufferOff;
+    uint32 UVBufferOff;
+    uint32 unkBufferOff;
+    uint32 unk3[2];
+    uint32 idxBuffOff;
+};*/
+
+typedef struct ModelBinTexName
+{
+    //FSeek(head.binhead.texNameArrayOff);
+    uint32 texNameOff;
+    //FSeek(texNameOff);
+    //string texNameStr;
+};
+
+/*
+typedef struct ModelBinNode
+{
+    uint32 visibilityFlag;
+    Vector3_F32 nodeScale;
+    Vector3_F32 nodeRot;
+    Vector3_F32 nodeTrans;
+    uint32 unk[4];
+    uint32 modelObjArrayOff;
+    uint32 childNodeArrayOff;
+};*/
+
+struct ModelBin
+{
+    LittleEndian();
+    ModelHeader head;
+    if (head.type == Model)
+    {
+        //ModelBinBeader head.binhead;
+        ModelBinMaterial binmaterial[head.binhead.materials]<optimize=false>;
+        if (head.binhead.texNameArrayOff > 0)
+        {
+            FSeek(head.binhead.texNameArrayOff);
+            ModelBinTexName bintexname[head.binhead.textures]<optimize=false>;
+        }
+        FSeek(head.binhead.boneNameArrayOff);
+        ModelBinTexName binbone[head.binhead.bones]<optimize=false>;
+        //uint32 unk[3];
+        FSeek(head.binhead.skeletonOff);
+        uint32 ModelBinSkeletonOff;
+        //FSeek(head.binhead.nodesArrayOff);
+        //ModelBinNode binnode[head.binhead.nodes]<optimize=false>;
+        //uint32 unk2[4];
+        //ModelBinNode binnode[head.binhead.nodes]<optimize=false>;
+        //ModelBinNodeObject obj[head.binhead.nodes]<optimize=false>;
+    }
+    else
+    {
+        //ModelBinMotionHead binmothead;
+        //ModelBinMotion binmot[head.binmothead.models];
+        FSeek(head.binmothead.strTblArrayOff);
+        ModelBinMotionStringRef stringOff[head.binmothead.models]<optimize=false>;
+    }
+} BIN_MOT;
