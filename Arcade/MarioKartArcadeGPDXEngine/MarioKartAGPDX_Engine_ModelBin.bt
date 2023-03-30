@@ -37,15 +37,15 @@ typedef struct ModelBinHeader
     {
         uint32 materials;
         uint32 headerSize;
-        uint32 textures;
-        uint32 texNameArrayOff;
+        uint32 textureMaps;
+        uint32 textureMapsOffset;
         uint32 bones;
-        uint32 boneNameArrayOff;
-        uint32 skeletonOff;
+        uint32 boneNameOffset;
+        uint32 firstNodeOffset;
         uint32 linkNodes;
-        uint32 linkNodesArrayOff;
+        uint32 linkNodesOffset;
         uint32 nodes;
-        uint32 nodesArrayOff;
+        uint32 nodesOffset;
         uint32 pad;
         ///uint32 unk2[10];
     }
@@ -53,18 +53,17 @@ typedef struct ModelBinHeader
     {
         uint64 materials;
         uint64 headerSize;
-        uint64 textures;
-        uint64 texNameArrayOff;
+        uint64 textureMaps;
+        uint64 textureMapsOffset;
         uint64 bones;
-        uint64 boneNameArrayOff;
-        uint64 skeletonOff;
+        uint64 boneNameOffset;
+        uint64 firstNodeOffset;
         uint64 linkNodes;
-        uint64 linkNodesArrayOff;
+        uint64 linkNodesOffset;
         uint64 nodes;
-        uint64 nodesArrayOff;
+        uint64 nodesOffset;
         uint64 pad;
     }
-    
 };
 
 typedef struct ModelBinMotionHead
@@ -81,7 +80,7 @@ typedef struct ModelBinMotionHead
         Vector3_F32 unk2_vm;
         uint32 models;
     }
-    uint32 strTblArrayOff;
+    uint32 strTblOffset;
     Vector3_F32 unk2;
 };
 
@@ -134,6 +133,7 @@ typedef struct ModelBinMaterial
     int16 envTexIdx;
     int16 normalTexIdx;
     int16 ambTexIdx;
+    Printf("%i\n", ambTexIdx);
     //uint32 unk3[10];
 };
 
@@ -146,7 +146,7 @@ typedef struct ModelBinMotion
 
 typedef struct ModelBinMotionStringRef
 {
-    //FSeek(binmothead.strTblArrayOff);
+    //FSeek(binmothead.strTblOffset);
     if (head.magic == MK3)
     {
         uint32 strOff;
@@ -161,15 +161,15 @@ typedef struct ModelBinMotionStringRef
     //string modelStr;
 };
 
-/*typedef struct ModelBinNode
+typedef struct ModelBinNode
 {
-    //FSeek(head.binhead.nodesArrayOff);
+    //FSeek(head.binhead.nodesOffset);
     uint32 nameOff;
     uint32 nodeOff;
     //FSeek(nameOff);
     //string nodeName;
 };
-
+/*
 typedef struct ModelBinNodeObject
 {
     uint32 unk;
@@ -188,8 +188,17 @@ typedef struct ModelBinNodeObject
 
 typedef struct ModelBinTexName
 {
-    //FSeek(head.binhead.texNameArrayOff);
+    //FSeek(head.binhead.textureMapsOffset);
     uint32 texNameOff;
+    //FSeek(texNameOff);
+    //string texNameStr;
+};
+
+typedef struct ModelBinBoneName
+{
+    //FSeek(head.binhead.textureMapsOffset);
+    uint32 texNameOff;
+    uint32 boneOff;
     //FSeek(texNameOff);
     //string texNameStr;
 };
@@ -202,31 +211,32 @@ typedef struct ModelBinNode
     Vector3_F32 nodeRot;
     Vector3_F32 nodeTrans;
     uint32 unk[4];
-    uint32 modelObjArrayOff;
-    uint32 childNodeArrayOff;
+    uint32 modelObjOffset;
+    uint32 childNodeOffset;
 };*/
 
 struct ModelBin
 {
     LittleEndian();
-    ModelHeader head;
+    ModelHeader head<bgcolor=cBlue>;
     if (head.type == Model)
     {
         //ModelBinBeader head.binhead;
-        ModelBinMaterial binmaterial[head.binhead.materials]<optimize=false>;
-        if (head.binhead.texNameArrayOff > 0)
+        ModelBinMaterial binmaterial[head.binhead.materials]<optimize=false, bgcolor=cRed>;
+        float unk[4]; //for now
+        if (head.binhead.textureMapsOffset > 0)
         {
-            FSeek(head.binhead.texNameArrayOff);
-            ModelBinTexName bintexname[head.binhead.textures]<optimize=false>;
+            FSeek(head.binhead.textureMapsOffset);
+            ModelBinTexName bintexname[head.binhead.textureMaps]<optimize=false>;
         }
-        FSeek(head.binhead.boneNameArrayOff);
-        ModelBinTexName binbone[head.binhead.bones]<optimize=false>;
+        FSeek(head.binhead.boneNameOffset);
+        ModelBinBoneName binbone[head.binhead.bones]<optimize=false>;
         //uint32 unk[3];
-        FSeek(head.binhead.skeletonOff);
-        uint32 ModelBinSkeletonOff;
-        //FSeek(head.binhead.nodesArrayOff);
-        //ModelBinNode binnode[head.binhead.nodes]<optimize=false>;
-        //uint32 unk2[4];
+        FSeek(head.binhead.firstNodeOffset);
+        uint32 firstNodeOffset;
+        FSeek(head.binhead.nodesOffset);
+        ModelBinNode binnode[head.binhead.nodes]<optimize=false>;
+        //uint32 unk2[head.binhead.textureMaps];
         //ModelBinNode binnode[head.binhead.nodes]<optimize=false>;
         //ModelBinNodeObject obj[head.binhead.nodes]<optimize=false>;
     }
@@ -234,7 +244,7 @@ struct ModelBin
     {
         //ModelBinMotionHead binmothead;
         //ModelBinMotion binmot[head.binmothead.models];
-        FSeek(head.binmothead.strTblArrayOff);
+        FSeek(head.binmothead.strTblOffset);
         ModelBinMotionStringRef stringOff[head.binmothead.models]<optimize=false>;
     }
 } BIN_MOT;

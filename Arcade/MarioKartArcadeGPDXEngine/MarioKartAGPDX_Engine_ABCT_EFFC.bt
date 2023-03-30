@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: MarioKartAGPDX_Engine_ABCT_EFFC.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Getting data out of a ABCT OR EFFC file.
+//      Category: Data
+//      File Mask: ABCT / EFFC
+//      ID Bytes: 
+//      History: Mario Kart Arcade GP DX (Engine)
+//      Developer: Xeen Inc.?
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct Header
+{
+    uint32  abct<bgcolor=cGreen>; //ABCT
+    uint32  ver; //prob
+    uint32  paramCount<bgcolor=cLtBlue>; //Amount of parameters
+    uint32  pad;
+};
+
+typedef struct Entry
+{
+    Vector4_F32 v4f[4];
+};
+
+struct ABCT_EFFC_File
+{
+    Header hdr;
+    Entry entry[hdr.paramCount];
+} ABCT_EFFC;
+
+//There's no endmark

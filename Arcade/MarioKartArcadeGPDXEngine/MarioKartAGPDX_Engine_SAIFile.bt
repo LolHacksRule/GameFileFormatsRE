@@ -19,11 +19,12 @@ typedef enum <uint32>
 typedef struct Header
 {
     GameType magic;
-    uint32 unk[2]; //ver?
     if (hdr.magic == VACUUM)
     {
         uint32 unk2;
     }
+    uint32 renderWidth;
+    uint32 renderHeight;
 };
 
 typedef struct Meta
@@ -43,6 +44,22 @@ typedef struct Entry
     char entryStr[meta.entrySz];
 };
 
+typedef struct ParamEntry
+{
+    char paramEntryStr[meta.paramEntrySz];
+};
+
+typedef struct Param
+{
+    /*uint32 unk[3];
+    uint32 width;
+    uint32 height;
+    uint32 unk2[2];
+    int32 unk3[6];
+    int16 unk4;*/
+    //byte unk[68];
+};
+
 struct ScriptedAIInfo
 {
     Header hdr;
@@ -50,11 +67,9 @@ struct ScriptedAIInfo
     //FSeek(0x40);
     Entry entry[meta.entries]<optimize=false>;
     uint32 entryNameCRC32[meta.entries];
-    Entry paramEntry[meta.paramEntries]<optimize=false>;
-    if (hdr.magic == VACUUM)
-    {
-        uint32 paramEntryNameCRC32[meta.paramEntries];
-    }
+    ParamEntry paramEntry[meta.paramEntries]<optimize=false>;
+    uint32 paramEntryNameCRC32[meta.paramEntries];
+    //Param prm[meta.totalEntries];
     //char    param1[32]; //idk what value this is
     //There's no endmark
 } SAII;
