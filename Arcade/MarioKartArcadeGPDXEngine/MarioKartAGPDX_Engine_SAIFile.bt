@@ -55,8 +55,10 @@ typedef struct Param
     uint32 width;
     uint32 height;
     uint32 unk2[2];
-    int32 unk3[6];
-    int16 unk4;*/
+    int16 unk3;
+    int32 unk4;
+    int16 unk5;
+    int32 unk6;*/
     //byte unk[68];
 };
 

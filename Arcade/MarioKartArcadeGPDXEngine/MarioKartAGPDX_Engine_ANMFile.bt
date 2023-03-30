@@ -14,7 +14,7 @@
 
 typedef struct Header {
     //If VACUUM, UNCOMMENT THIS
-    //uint64  magic;
+    uint64  magic;
     uint    texIdx;
     uint    unk;
 };
@@ -22,13 +22,20 @@ typedef struct Header {
 typedef struct Meta {
     uint32 unk;
     //If VACUUM, UNCOMMENT THIS
-    //uint32 unk_vacuum;
+    uint32 unk_vacuum;
     uint32 texWidth;
     uint32 texHeight;
-    uint32 unk2[3];
+    uint32 unk2[2];
+    uint32 texStrs;
     uint32 strSz;
-    uint64 dmy;
-    char texNameStr[strSz];
+    uint32 unk3[2];
+    struct StringEntries
+    {
+        struct StringEntry
+        {
+            char texNameStr[strSz];
+        } str[texStrs]<optimize=false>;
+    } strs;
 };
 
 struct AnimFile

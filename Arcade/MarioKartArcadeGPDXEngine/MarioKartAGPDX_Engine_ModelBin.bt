@@ -133,7 +133,7 @@ typedef struct ModelBinMaterial
     int16 envTexIdx;
     int16 normalTexIdx;
     int16 ambTexIdx;
-    Printf("%i\n", ambTexIdx);
+    //Printf("%i\n", ambTexIdx);
     //uint32 unk3[10];
 };
 
@@ -164,8 +164,16 @@ typedef struct ModelBinMotionStringRef
 typedef struct ModelBinNode
 {
     //FSeek(head.binhead.nodesOffset);
-    uint32 nameOff;
-    uint32 nodeOff;
+    if (head.magic == MK3)
+    {
+        uint32 nameOff;
+        uint32 nodeOff;
+    }
+    else
+    {
+        uint64 nameOff;
+        uint64 nodeOff;
+    }
     //FSeek(nameOff);
     //string nodeName;
 };
@@ -197,8 +205,16 @@ typedef struct ModelBinTexName
 typedef struct ModelBinBoneName
 {
     //FSeek(head.binhead.textureMapsOffset);
-    uint32 texNameOff;
-    uint32 boneOff;
+    if (head.magic == MK3)
+    {
+        uint32 texNameOff;
+        uint32 boneOff;
+    }
+    else
+    {
+        uint64 texNameOff;
+        uint64 boneOff;
+    }
     //FSeek(texNameOff);
     //string texNameStr;
 };

@@ -16,7 +16,7 @@ struct Header {
 } header;
 
 struct CharSelPrmDataTable {
-    struct CharSelPrmData {
-        float value<bgcolor=cPurple>; //idk what value this is
-    } charPrmData[268];
+    //struct CharSelPrmData {
+        float value[362]<bgcolor=cPurple>; //idk what value this is
+    //} charPrmData[268];
 } charSelPrmDataTable;

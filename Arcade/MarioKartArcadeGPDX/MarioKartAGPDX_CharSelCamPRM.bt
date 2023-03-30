@@ -17,7 +17,7 @@ struct Header {
 
 struct CharSelPrmDataTable {
     uint    null;
-    struct CharSelPrmData {
-        float value<bgcolor=cPurple>; //idk what value this is
-    } charSelPrmData[9];
+    //struct CharSelPrmData {
+        float value[9]<bgcolor=cPurple>; //idk what value this is
+    //} charSelPrmData[9];
 } charSelPrmDataTable;

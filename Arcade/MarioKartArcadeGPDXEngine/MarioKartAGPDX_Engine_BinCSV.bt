@@ -11,16 +11,60 @@
 //      History: 
 //------------------------------------------------
 
-struct Header {
-    char    excelHeader[12]; //657863656C5F686561646572 (excel_header)
-    char    unk[1]; //MKDX appears to have this set to 02 on some files, primarily 00, might be version idk
-    char    padding[3]; //should be 20
-    int     valueCount; //How many param values are present in the file
-    char    morePadding[4]; //Should be six nulls
-} header;
+#include "../../LHR/Common.bt"
 
-struct DataTable {
-    char    aValue[64]; //Float, or string afaik
-} dataTable[(uint)(header.valueCount)];
+typedef struct Header
+{
+    string    excelHeader; //657863656C5F686561646572 (excel_header), MKDX appears to have the value at the end set to 02 on some files, primarily 00, might be version idk
+    if (sizeof excelHeader == 13)
+    {
+        byte padding_header;
+    }
+    byte    padding[2]; //should be 20
+    int32   valueCount; //How many param values are present in the file
+    if (sizeof excelHeader == 14)
+    {
+        int32 unk;
+        byte padding_header2[20];
+    }
+    char    morePadding[4]; //Should be six nulls
+    
+};
+
+typedef struct DataEntry
+{
+    //local int dataSize = (EOF - sizeof hdr)/(hdr.valueCount/*+hdr.unk*/);
+    /*if (dataSize = 16)
+    {
+        Vector4_F32 Vec4;
+    }
+    else*/
+    //{
+        byte data[dataSize]; //Float, or string afaik
+    //}
+};
+
+struct CSV_Bin
+{
+    Header hdr;
+    local int dataSize = (EOF - sizeof hdr)/(hdr.valueCount/*+hdr.unk*/);
+    if (hdr.valueCount > 1000000)
+    {
+        Printf("Params are absurdly high, assuming unknown data to the EOF.");
+        FSkip(-8);
+        byte unknownData[EOF - (sizeof hdr - 8)];
+    }
+    else
+    {
+        DataEntry dataEntry[hdr.valueCount]<optimize=false>;
+        if (sizeof hdr.excelHeader == 14)
+        {
+            //UNSUPPORTED
+            //local int dataSize2 = (EOF - sizeof hdr)/(hdr.valueCount+hdr.unk);
+            //dataSize = dataSize2;
+            //DataEntry dataEntry2[hdr.unk]<optimize=false>;
+        }
+    }
+} excel_header;
 
 //There's no EOF mark

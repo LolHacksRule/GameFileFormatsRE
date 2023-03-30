@@ -1,0 +1,20 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct PlayerEditParam
+{
+    string    header;
+    float   floatVal[39];
+    int ints[18];
+    float finalFloat;
+} pep_v10;

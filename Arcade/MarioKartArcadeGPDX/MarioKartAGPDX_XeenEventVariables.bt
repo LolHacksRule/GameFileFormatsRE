@@ -1,0 +1,109 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: Mario Kart Arcade Grand Prix DX (xeen) Event Variables *.XEV
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets some data out of the binary.
+//      Category: Deserializing 
+//      File Mask: .XEV
+//      ID Bytes: .XEV
+//      History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint64>
+{
+    ItemBox = 33899328299168841, //ItemBox
+    W_IBox = 132419248794967, //W-IBox
+    BigJump = 22603026850597186, //BIGJUMP
+    Lap = 5259596, //LAP
+    Coin = 1313427267, //COIN
+    LensFlare = 1397638476, //LENS
+    Warp = 1347567959, //WARP 
+    Warp2 = 216095932759, //WARP2
+    Warp3 = 220390900055, //WARP3
+    KiteSwitch, //KITE SW
+    DSS, //DSS
+    ADSS_SW = 24579721275851841, //ADSS SW
+    DSS_SW = 96014536233796, //DSS SW
+    DashArea = 23152554998448452, //DASH AR
+    DriftAreaIn = 1850294596, //DAIn
+    DriftAreaOut = 500184334660, //DAOut
+    Sign = 1313294675, //SIGN
+    Switch = 79454014101331, //SWITCH
+    ScreenVfxArea = 18428117382226771, //ScrnFxA
+    LayerSwitch = 353350795596, //LAYER
+    SteerEffect = 24847117113971795, //STEERFX
+    DrumHead = 75077325771332, //DRUMHD
+    WaterPlane = 31081339053957463, //Wat-Pln
+    ScrollFloor = 23164813220922195, //SCR_FLR
+    HeightLimit = 23724494334746440, //H_LIMIT
+    WaterIn = 473678766423, //WatIn
+    WaterPreOut = 33019924669817175, //WatPrOu
+    WaterOut = 128047193022807, //WatOut
+    PhysObj = 1398360144, //PHYS
+} XeenEventType;
+
+typedef struct Header
+{
+    uint32  xeenEvent; //.XEV
+    int     eventCount; //Highest I've seen was 70
+    uint    unk;
+    uint    unk2;
+};
+
+typedef struct EventVarData {
+    XeenEventType    eventType; //LAP, KITE, DASH, COIN, SIGN, BIGJUMP, SWITCH, DAOut, DAIn, STEERFX, DSS
+    Vector3_F32 off[3];
+    if (eventType == Sign)
+    {
+        int32 unk_sign;
+    }
+    else if (eventType == SteerEffect)
+    {
+        int32 unk_steerEffect[2];
+    }
+    else if (eventType == BigJump)
+    {
+        int32 unk_bigJump;
+    }
+    else if (eventType == Warp || eventType == Warp2 || eventType == Warp3)
+    {
+        int32 unk_warp;
+    }
+    else if (eventType == Switch)
+    {
+        int32 unk_switch[8];
+    }
+    else if (eventType == LayerSwitch)
+    {
+        int32 unk_layer[5];
+    }
+    else if (eventType == ScreenVfxArea)
+    {
+        int32 unk_screenfx_a[4];
+    }
+    else if (eventType == ScrollFloor)
+    {
+        int32 unk_scrollFloor[2];
+        Vector4_F32 endFloat;
+    }
+    else if (eventType == PhysObj)
+    {
+        int32 unk_physObj[2];
+        Vector3_F32 endFloat[2];
+        int32 unk_physObj2[5];
+    }
+    if (eventType != ScrollFloor && eventType != PhysObj)
+    {
+        int32 unk[2];
+    }
+};
+
+struct XeenEventVariables
+{
+    Header hdr;
+    EventVarData eventVarData[hdr.eventCount]<optimize=false>;
+} DOT_XEV;

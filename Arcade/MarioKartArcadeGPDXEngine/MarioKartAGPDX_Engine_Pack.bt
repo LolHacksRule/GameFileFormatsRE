@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+local uint READ_ANIMS <hidden=true> = 0;
+
 //https://raw.githubusercontent.com/KillzXGaming/Switch-Toolbox/master/File_Format_Library/FileFormats/Archives/MKGPDX_PAC.cs
 //https://avsys.xyz/wiki/PAC_(File_Format)
 
@@ -43,6 +45,10 @@ struct Pack
 {
     Header hdr<bgcolor=cBlue>;
     FileEntry entry[hdr.files]<optimize=false, bgcolor=cPurple>;
+    while (ReadUByte(FTell()) == 0x00 && ReadInt64() != 21759614286561280) //Don't break on ANM and DDS chunks starting with 0x00
+    {
+        byte pad<hidden=true, bgcolor=cRed>;
+    }
     struct PackEntries
     {
         for (i = 0; i < hdr.files; i++)
@@ -72,5 +78,6 @@ struct Pack
     struct StringTable
     {
         string name;
+        Printf("%s\n", name);
     } strt[hdr.files]<optimize=false, bgcolor=cGreen>;
 } PAC_PACK;

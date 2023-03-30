@@ -12,7 +12,8 @@
 //------------------------------------------------
 
 struct Header {
-    char    header[16]; //CHAR_SEL_CAM_PRM
+    string    header; //CHAR_SEL_CAM_PRM
+    byte pad[4];
 } header;
 
 struct CharSelPrmDataTable {

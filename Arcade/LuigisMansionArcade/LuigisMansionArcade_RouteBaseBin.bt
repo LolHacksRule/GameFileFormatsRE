@@ -12,25 +12,62 @@
 //      Developer: Xeen Inc.?
 //------------------------------------------------
 
-struct Header {
-    char    rbbHeader[8]<bgcolor=cGreen>;
-    byte    fileDataCnt<bgcolor=cBlue>; //Amount of file references
-    char    null[3];
-} header;
+#include "../../LHR/Common.bt"
 
-struct RouteBinDataValueTable {
-    struct RouteBinStringData {
-        byte    fileStrSize;
-        char    null[3];
-        char    fileString[fileStrSize]<bgcolor=cPurple>; //idk what value this is
-        byte    filePathStrSize;
-        char    null2[3];
-        char    filePathString[filePathStrSize]<bgcolor=cPurple>;
-    } routeBinStringData[(uint)(header.fileDataCnt)];
-    struct RouteBinFloatData {
-        char    null[3];
-        float   value[camStr]<bgcolor=cPurple>; //idk what value this is
-    } routeBinFloatData[(uint)(header.fileDataCnt)];
-} routeBinDataValueTable;
+typedef struct Header
+{
+    char     rbbHeader[8]<bgcolor=cGreen>;
+    int32    fileDataCnt<bgcolor=cBlue>; //Amount of file references
+};
+
+typedef struct RouteBinDataValueTable
+{
+    I32_StringEntry     fileStr<bgcolor=cPurple>;
+    I32_StringEntry      filePathString<bgcolor=cPurple>;
+    Byte_Bool unk;
+    //if (unk == Byte_True)
+    {
+        float valueUnk[2];
+        I32_StringEntry     binfileStr<bgcolor=cPurple>;
+        if (binfileStr.byteSize == 0)
+        {
+            FSkip(-4);
+        }
+        float value[24];
+        int32 unk2[3];
+    }
+};
+
+typedef struct RouteBinDataValueTable2
+{
+    /*uint32 unk;
+    I32_StringEntry     fileStr<bgcolor=cPurple>;
+    float unk4;
+    I32_StringEntry     p2fileStr<bgcolor=cPurple>;
+    if (p2fileStr.byteSize == 0)
+    {
+        FSkip(-4);
+    }
+    float unk5;
+    I32_StringEntry     p3fileStr<bgcolor=cPurple>;
+    if (p3fileStr.byteSize == 0)
+    {
+        FSkip(-4);
+    }
+    float unk6;
+    I32_StringEntry     p4fileStr<bgcolor=cPurple>;
+    if (p4fileStr.byteSize == 0)
+    {
+        FSkip(-4);
+    }
+    float unk7[9];*/
+};
+
+struct RouteBaseBin
+{
+    Header hdr;
+    RouteBinDataValueTable valuetbl[hdr.fileDataCnt]<optimize=false>;
+    RouteBinDataValueTable2 valuetbl2[hdr.fileDataCnt]<optimize=false>;
+} rbb_v0_6;
 
 //There's no endmark
