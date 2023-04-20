@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../Standard/CommonBin.bt"
+
+typedef enum <byte>
+{
+    Raw,
+    Zlib,
+    ZStandard,
+} CompressionType;
+
+typedef struct AssetEntry
+{
+    N_CommonBlockHdr_4Block Hdr;
+    CompressionType ctype;
+    ubyte pad;
+    uint16 alignShift;
+    uint32 binSz;
+    uint32 decBinSz;
+    uint32 dmy;
+    uint64 fOff;
+    uint64 strOff;
+};
+
+struct BezelEngineArchive
+{
+    N_CommonBinHdr Hdr;
+    uint64 files;
+    uint64 subFileOff;
+    uint64 dictionaryOffset;
+    uint64 dmy;
+    uint64 arcNameOff;
+    uint64 fileOffs[files];
+    FSeek(dictionaryOffset);
+    N_Dictionary theDict;
+    AssetEntry Assets[files];
+    //StringPoolWIP theStringPool;
+} BEA;
