@@ -1,0 +1,74 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+typedef enum <uint64>
+{
+    MaterialFile_V8 = 35539665229,
+    MaterialHeader = 309780037965,
+} EKOMagic;
+
+typedef enum <uint32>
+{
+    BGRA8888_PAL = 5, //Wii and PC
+    DXT1,
+} EKOTexFmt;
+
+typedef struct TextureBlock
+{
+    uint32 magic;
+    uint32 blocksize;
+    uint32 texWidth;
+    uint32 texHeight;
+    EKOTexFmt texFmt;
+    FPos = FTell();
+    Printf("Offset: %i | Block Size: %i | Width = %i | Height = %i", FPos, blocksize, texWidth, texHeight);
+    if (texFmt == DXT1)
+    {
+        Printf("| Texture Format: DXT1\n");
+    }
+    else if (texFmt == BGRA8888_PAL)
+    {
+        Printf("| Texture Format: BGRA8888_PAL\n");
+    }
+    else
+    {
+        Printf("| Texture Format: UNKNOWN\n");
+    }
+    
+    byte tex[blocksize-12];
+};
+
+typedef struct MaterialFile
+{
+    EKOMagic magic;
+    uint32 materials;
+    uint32 textures;
+};
+
+typedef struct MaterialBlock
+{
+    EKOMagic magic;
+    uint32 unk[2];
+    uint32 textures;
+    uint32 unk2[15];
+    TextureBlock TEX[textures]<optimize=false>;
+};
+
+struct EKO_MAT
+{
+    LittleEndian();
+    MaterialFile MATF;
+    MaterialBlock MAT_H[MATF.materials]<optimize=false>;
+} MAT;

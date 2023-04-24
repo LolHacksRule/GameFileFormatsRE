@@ -25,7 +25,7 @@ typedef enum <uint32>
 
 struct PopCapCommonGameUsersDAT
 {
-    SaveVersion saveVersion; //1: Peggle/Extreme, 2: Peggle Nights/WOW, 4: Zuma, 14: PVZ 2009 (0.1.1.1014 and 0.9.9.1029), 19: PVZ Console, 197: Zuma's Revenge, they never changed really anything until ZR
+    SaveVersion saveVersion; //1: Peggle/Extreme, 2: Peggle Nights/WOW, 4: Zuma, 14: Insaniquarium/PVZ 2009 (0.1.1.1014 and 0.9.9.1029), 19: PVZ Console, 197: Zuma's Revenge, they never changed really anything until ZR
     if (saveVersion == PlantsVsZombiesConsole)
     {
         uint16 unk; //1

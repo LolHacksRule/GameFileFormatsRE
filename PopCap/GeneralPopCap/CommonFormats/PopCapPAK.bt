@@ -32,6 +32,11 @@ struct PopCapPAK
         Printf("Encrypted PAK files are unsupported. Please use xor.exe from aluigi and use key 0xF7 to decrypt it.\n");
         break;
     }
+    else if (ReadInt() == 3977442575) //XMemCompress
+    {
+        Printf("Xbox 360 XMemCompress compressed PAK files are unsupported. Please decompress the PAK then try again.\n");
+        break;
+    }
     uint32 magic<bgcolor=cPurple>;
     uint32 version<bgcolor=cYellow>;
     struct FileEntries
@@ -111,5 +116,9 @@ struct PopCapPAK
                 FPos = FTell();
             }
         } files;
+    }
+    else
+    {
+        Printf("No content!\n");
     }
 } PAK;
