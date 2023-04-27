@@ -3,7 +3,7 @@
 //
 //      File: PopCapResourceStreamBundle.bt
 //      Authors: LolHacksRule
-//      Version: 1
+//      Version: 17
 //      Purpose: Gets data out of the bundle and groups.
 //      Category: Game Archive
 //      File Mask: rsb1
@@ -17,6 +17,7 @@ https://github.com/TwinKleS-C/PvZTool/blob/main/src/pvztool.c
 https://github.com/Nineteendo/PVZ2tools/blob/master/OBBEdit/README.md
 http://www.watto.org/specs.html?specs=Archive_RSB_1BSR
 https://github.com/YingFengTingYu/PopStudio
+Bejeweled 3 (Japanese) PDBs
 */
 
 //Tested on various.
@@ -29,51 +30,28 @@ local int ver4Rsb <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
-local int maxLangs <hidden=true> = 0;
 
 typedef struct SubGroupInfo //Accurate?
 {
-    //byte subGroupInfoData[subGroupBlockSize];
     char thePoolName[128];
-    //string thePoolName;
-    //Skip(128 - sizeof thePoolName); 
-    //FSkip(4);
-    if (rsb1Hdr.version == 1)
+    struct InfoEntries
     {
-        maxLangs = 32;
-    }
-    else
-    {
-        maxLangs = 64;
-    }
-    for (i2 = 0; i2 < maxLangs; i2++)
-    {
-        struct ChildLang
+        for (i2 = 0; i2 < 64; i2++)
         {
-            int32 idx;
-            int32 ratio;
-            if (rsb1Hdr.version == 1) //Breaks Bej3 1.0.0 iPhone RSB, here's a WIP fix
+            struct InfoEntry
             {
-                int32 unk1<bgcolor=cRed>;
-                int32 ratio2;
-            }
-            else
-            {
-                int64 lang;
-            }
-            /*if (sizeof lang == 5)
-            {
-                FSkip(3);
-            }
-            else
-            {
-                FSkip(7);
-            }*/
-        } childLang;
-    }
-    //FSkip(912);
-    int32 childLangNum;
-} subGroupInfo;
+                uint32 idx<bgcolor = cPurple>;
+                uint32 ratio<bgcolor = cDkBlue>;
+                if (rsb1Hdr.version > 1)
+                {
+                    PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
+                    uint32 unk <bgcolor = cRed>;
+                }
+            } info_entry;
+        }
+    } info_entries;
+    uint32 subgroups;
+};
 
 typedef struct ResGroupInfo
 {
@@ -81,28 +59,24 @@ typedef struct ResGroupInfo
     char thePoolName[128];
     //string thePoolName;
     //FSkip(128 - sizeof thePoolName); 
-    int32 resGroupOffset;
-    int32 resGroupSize;
-    int32 resGroupIdx;
-    int32 flags; //unknown?
-    int32 fileOffsetInResGroup;
-    int32 pt0Off;
-    int32 pt0ZSize;
-    int32 pt0Size;
-    int32 pt0Size2;
-    int32 pt1Off;
-    int32 pt1ZSize;
-    int32 pt1Size;
-    if (rsb1Hdr.version == 1)
+    uint32 resGroupOffset;
+    uint32 resGroupSize;
+    uint32 resGroupIdx;
+    uint32 flags; //unknown?
+    uint32 fileOffsetInResGroup;
+    uint32 pt0Off;
+    uint32 pt0ZSize;
+    uint32 pt0Size;
+    uint32 pt0Size2;
+    uint32 pt1Off;
+    uint32 pt1ZSize;
+    uint32 pt1Size;
+    FSkip(20);
+    if (rsb1Hdr.version > 1)
     {
-        FSkip(12);
+        uint32 texCnt;
+        uint32 idx;
     }
-    else
-    {
-        FSkip(20);
-    }
-    int32 texCnt;
-    int32 idx;
 };
 
 typedef struct AutoPool
@@ -111,42 +85,42 @@ typedef struct AutoPool
     char thePoolName[128];
     //string thePoolName;
     //FSkip(128 - sizeof thePoolName); 
-    int32 resGroupFileOffset;
-    int32 resGroupFileSize;
-    int32 autoPoolNum;
-    int32 commonSize; //3?
-    int32 cFileLocation;
-    int32 cFileMemSize;
-    //int32 dFileLocation;
-    //int32 dFileFileSize;
-    //int32 dFileMemSize;
-} autoPool;
+    uint32 resGroupFileOffset;
+    uint32 resGroupFileSize;
+    uint32 autoPoolNum;
+    uint32 commonSize; //3?
+    uint32 cFileLocation;
+    uint32 cFileMemSize;
+    //uint32 dFileLocation;
+    //uint32 dFileFileSize;
+    //uint32 dFileMemSize;
+};
 
 typedef struct PTXInfo
 {
-    int32 width;
-    int32 height;
-    int32 pitch;
+    uint32 width;
+    uint32 height;
+    uint32 pitch;
     PopCap_PopTexture_ImageFormat textureFormat;
     if (rsb1Hdr.ptxInfoTableItemSize == 20) //Helps with DEV1/2 RSBs from PVZ2C
     {
-        int32 alphaSize; //Is it alphaSize?
+        uint32 alphaSize; //Is it alphaSize?
     }
     if (rsb1Hdr.ptxInfoTableItemSize == 24)
     {
-        int32 alphaSize;
+        uint32 alphaSize;
         PopCap_PopTexture_AlphaFormat alphaFormat;
     }
-} ptxInfo;
+};
 
 typedef struct ResListXMLPtxInfo
 {
     struct Part1
     {
-        int32 unkxml1;
-        int32 languageCount;
-        int32 unkxml2;
-        int32 unkxml3;
+        uint32 unkxml1;
+        uint32 languageCount;
+        uint32 unkxml2;
+        uint32 unkxml3;
         /*if (unkxml3 == 0)
         {
             for (i = 0; i < languageCount - 1; i++)
@@ -154,9 +128,9 @@ typedef struct ResListXMLPtxInfo
                 struct XMLLang
                 {
                     byte langStr[4];
-                    int32 pt3IDOff;
-                    int32 resN;
-                    int32 unk[3];
+                    uint32 pt3IDOff;
+                    uint32 resN;
+                    uint32 unk[3];
                 } xl;
             }
         }
@@ -178,52 +152,52 @@ typedef struct ResListXMLPtxInfo
         uint16 xmlPTXAtlasH;
         uint16 xmlPTXRows;
         uint16 xmlPTXCols;
-        int32 offtoPt3;
+        uint32 offtoPt3;
     } rl_xptxhdrpart2;*/
     FSeek(rsb1Hdr.xmlPart3Off+1); //For now
     struct Part3
     {
         string theFile;
     } pt3;
-} resListXmlPTXInfo<bgcolor=cRed>;
+};
 
 typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting PVZ2's from CDN to work was a doozy
 {
     isCompressedPTXFile = 0;
     isPVZ2CompressedPTXFile = 0;
     char  hdr[4];
-    int32 rsgVerMajor; //Should be same as hdr
-    int32 rsgVerMinor;
-    int32 tSize; //Dummy?
-    int32 dataCmnSize;
-    int32 dataResidentOff;
-    int32 dataResidentFileSize;
-    int32 dataResidentMemSize;
-    int32 dataGPULocation;
-    int32 dataGPUFileSize;
-    int32 dataGPUMemFileSize; //zlib size?
-    int32 dataTransientLocation;
-    int32 dataTransientFileSize;
-    int32 dataTransientMemFileSize;
+    uint32 rsgVerMajor; //Should be same as hdr
+    uint32 rsgVerMinor;
+    uint32 tSize; //Dummy?
+    uint32 dataCmnSize;
+    uint32 dataResidentOff;
+    uint32 dataResidentFileSize;
+    uint32 dataResidentMemSize;
+    uint32 dataGPULocation;
+    uint32 dataGPUFileSize;
+    uint32 dataGPUMemFileSize; //zlib size?
+    uint32 dataTransientLocation;
+    uint32 dataTransientFileSize;
+    uint32 dataTransientMemFileSize;
     /*if (decDataLen[0] <= 0 || decDataLen[1] <= 0)
     {
         Printf("\nResource Group is compressed\n");
-        int32 fileOff;
-        int32 compressedFileDataSize;
-        int32 decFileDataSize;
+        uint32 fileOff;
+        uint32 compressedFileDataSize;
+        uint32 decFileDataSize;
     }
     else
     {
         Printf("\nRawFile\n");
-        int32 fSize;
-        int32 null3[2];
+        uint32 fSize;
+        uint32 null3[2];
     }*/
     FSkip(16);
-    int32 fileIdxLen;
-    int32 fileIdxOffset;
-    int32 texDescCnt;
-    int32 texDescOffset;
-    int32 texDescSize;
+    uint32 fileIdxLen;
+    uint32 fileIdxOffset;
+    uint32 texDescCnt;
+    uint32 texDescOffset;
+    uint32 texDescSize;
     //FSkip(12);
     byte  fileIndex[fileIdxLen];
     if (dataResidentMemSize == 0 || dataGPULocation == 0)
@@ -252,12 +226,12 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
         {
             struct PopTextureFile
             {
-                int32 unk;
-                int32 FSize; //Minus size of PTX HDR?
+                uint32 unk;
+                uint32 FSize; //Minus size of PTX HDR?
                 FSkip(12);
-                //int32 unknown[5];
-                int32 texWidth;
-                int32 texHeight;
+                //uint32 unknown[5];
+                uint32 texWidth;
+                uint32 texHeight;
                 //byte t;
                 FSkip(-sizeof fileIndex);
                 FSkip(-92); //go back to RSGP to jump
@@ -284,8 +258,8 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
             struct ResourceFile //WIP! DOUBLE CHECK
             {
                 FSkip(4);
-                int32 sizeOfContent1;
-                int32 sizeOfContent2;
+                uint32 sizeOfContent1;
+                uint32 sizeOfContent2;
                 FSkip(-sizeof fileIndex);
                 FSkip(-92); //go back to RSGP to jump
                 FSkip(dataResidentOff);
@@ -321,15 +295,15 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
         //struct ResourceFile
         /*
         FSkip(-24);
-        int32 compressed;
+        uint32 compressed;
         if (compressed)
         {
-            int32 offst;
-            int32 decompLen;
+            uint32 offst;
+            uint32 decompLen;
             ImageFormat ImgFmt;
-            int32 dumagain[2];
-            int32 texWidth;
-            int32 texHeight;
+            uint32 dumagain[2];
+            uint32 texWidth;
+            uint32 texHeight;
         }
         FSeek(rsb1Hdr.firstResGroupDataOffst);
         byte pad[dOff];
@@ -347,7 +321,7 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
         Printf("\nResource Stream Group is empty! Skipping...\n");
         FSkip(dataGPUMemFileSize-64);
     }
-} ResourceStreamsGroup;
+};
 
 struct ResourceStreamBundle
 {
@@ -364,53 +338,53 @@ struct ResourceStreamBundle
             LittleEndian();
             Printf("Android/iOS/PS4 Resource Stream Bundle\n");
         }
-        int32 version<bgcolor = cYellow>; //4 = PVZ2+/Zuma's Revenge (X360), 3 = Console Ports/BejClassic/Peggle2
+        uint32 version<bgcolor = cYellow>; //4 = PVZ2, Zuma's Revenge (X360), BookWorm Heroes, 3 = Console Ports/BejClassic/Peggle2, 2: ? (Please contact me if you found a V2 RSB) 1: Bejeweled Classic v1.0.0, A.S.P for iOS
         if (version == 4)
         {
             local int ver4Rsb<hidden=true>  = 1;
         }
-        int32 verMinor;
+        uint32 verMinor;
         Printf("Version %i.%i\n", version, verMinor);
-        int32 cmnDataSize<bgcolor = cPurple>; //Dummy?
-        int32 fileIdxSize<bgcolor = cWhite>;
-        int32 fileIdxOffset<bgcolor = cWhite>; //70 or 108 for V3
+        uint32 cmnDataSize<bgcolor = cPurple>; //Dummy?
+        uint32 fileIdxSize<bgcolor = cWhite>;
+        uint32 fileIdxOffset<bgcolor = cWhite>; //70 or 108 for V3
         FSkip(8);
-        int32 resGroupNameToIDSize<bgcolor = cYellow>;
-        int32 resGroupNameToIDOffset<bgcolor = cYellow>;
-        int32 resGroupFileCnt<bgcolor = cAqua>;
-        int32 resGroupFileNameTableUTF8Offset<bgcolor = cGreen>;
-        int32 resGroupFileNameTableItemSize<bgcolor = cGreen>;
-        int32 resGroupInfoTableEntryCnt<bgcolor = cPurple>;
-        int32 resGroupInfoTableOffset<bgcolor = cPurple>;
-        int32 resGroupInfoTableItemSize<bgcolor = cPurple>;
-        int32 resGroupListSize<bgcolor = cBlack>;
-        int32 resGroupListOffset<bgcolor = cBlack>;
-        int32 AutoPoolTableResGroupEntryCnt<bgcolor = cRed>; //Should be identical to resGroupFileCnt
-        int32 AutoPoolTableOffset<bgcolor = cRed>;
-        int32 AutoPoolTableItemSize<bgcolor = cRed>;
-        int32 ptxInfoTableEntryCnt<bgcolor = cLtRed>;
-        int32 ptxInfoTableOffset<bgcolor = cLtRed>;
-        int32 ptxInfoTableItemSize<bgcolor = cLtRed>;
-        int32 xmlPart1Off;
-        int32 xmlPart2Off;
-        int32 xmlPart3Off;
+        uint32 resGroupNameToIDSize<bgcolor = cYellow>;
+        uint32 resGroupNameToIDOffset<bgcolor = cYellow>;
+        uint32 resGroupFileCnt<bgcolor = cAqua>;
+        uint32 resGroupFileNameTableUTF8Offset<bgcolor = cGreen>;
+        uint32 resGroupFileNameTableItemSize<bgcolor = cGreen>;
+        uint32 resGroupInfoTableEntryCnt<bgcolor = cPurple>;
+        uint32 resGroupInfoTableOffset<bgcolor = cPurple>;
+        uint32 resGroupInfoTableItemSize<bgcolor = cPurple>;
+        uint32 resGroupListSize<bgcolor = cBlack>;
+        uint32 resGroupListOffset<bgcolor = cBlack>;
+        uint32 AutoPoolTableResGroupEntryCnt<bgcolor = cRed>; //Should be identical to resGroupFileCnt
+        uint32 AutoPoolTableOffset<bgcolor = cRed>;
+        uint32 AutoPoolTableItemSize<bgcolor = cRed>;
+        uint32 ptxInfoTableEntryCnt<bgcolor = cLtRed>;
+        uint32 ptxInfoTableOffset<bgcolor = cLtRed>;
+        uint32 ptxInfoTableItemSize<bgcolor = cLtRed>;
+        uint32 xmlPart1Off;
+        uint32 xmlPart2Off;
+        uint32 xmlPart3Off;
         if (ver4Rsb)
         {
-            int32 resourceStreamBundleLen; //?
+            uint32 resourceStreamBundleLen; //?
         }
     } rsb1Hdr;
     //struct StringTable
     //{
         //wchar_t str[9];
     //} rsbStrings;
-    //int32 
+    //uint32 
     byte StringTable[rsb1Hdr.fileIdxSize]<bgcolor = cLtBlue>;
     byte SubGroupList[rsb1Hdr.resGroupNameToIDSize]<bgcolor = cYellow>;
     struct SubGroupInfoTable
     {
         for (i = 0; i < rsb1Hdr.resGroupInfoTableEntryCnt; i++)
         {
-            subGroupInfo SubGroupInfoBlock<bgcolor = cGreen>;
+            SubGroupInfo SubGroupInfoBlock<bgcolor = cGreen>;
         }
     } subg;
     byte ResGroupList[rsb1Hdr.resGroupListSize]<bgcolor = cBlack>;
@@ -425,27 +399,36 @@ struct ResourceStreamBundle
     {
         for (i = 0; i < rsb1Hdr.AutoPoolTableResGroupEntryCnt; i++)
         {
-            autoPool AutoPoolBlock<bgcolor = cRed>;
+            AutoPool AutoPoolBlock<bgcolor = cRed>;
         }
     } autoPoolTbl;
     struct PTXInfoTable
     {
         for (i = 0; i < rsb1Hdr.ptxInfoTableEntryCnt; i++)
         {
-            ptxInfo PTXInfoBlock<bgcolor = cLtRed>;
+            PTXInfo PTXInfoBlock<bgcolor = cLtRed>;
         }
     } ptxInfoTbl;
     if (rsb1Hdr.xmlPart1Off != 0)
     {
         FSeek(rsb1Hdr.xmlPart1Off);
-        resListXmlPTXInfo resListXML;
+        ResListXMLPtxInfo resListXML;
     }
     FSeek(rsb1Hdr.cmnDataSize); //Go to RSG files
-    struct ResourceStreamGroupTable
+    //Hack to detect stupid assetless RSB from newer BejBlitz (why)
+    FPos = FTell();
+    if (FPos < EOF)
     {
-        for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+        struct ResourceStreamGroupTable
         {
-            ResourceStreamsGroup ResourceStreamsGroupFile<bgcolor = cPurple>;
-        }
-    } rsgps;
+            for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
+            {
+                ResourceStreamGroup ResourceStreamGroupFile<bgcolor = cPurple>;
+            }
+        } rsgps;
+    }
+    else
+    {
+        Printf("Bejeweled Blitz RSB detected! Nothing to do...");
+    }
 } popCapResourceStreamBundle;

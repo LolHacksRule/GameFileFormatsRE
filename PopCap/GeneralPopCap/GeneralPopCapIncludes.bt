@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-typedef enum <int32> {
+typedef enum <uint32> {
 	ARGB8888,
     RGBA4444,
     RGB565,
@@ -21,12 +21,22 @@ typedef enum <int32> {
     RGBA4444_BLOCK = 21 //?
 } PopCap_PopTexture_ImageFormat;
 
-typedef enum <int32>
+typedef enum <uint32> {
+    German = 1145390149, //DEDE
+	English = 1162761555, //ENUS
+    Spanish = 1163085139, //ESES
+    French = 1179797074, //FRFR
+    Italian = 1230260564, //ITIT
+    Portuguese = 1347699282, //PTBR
+    Japanese = 1245792848 //JAJP
+} PopCap_ResStream_Lang;
+
+typedef enum <uint32>
 {
     AlphaFmt_ETC1_RGB_A = 100
 } PopCap_PopTexture_AlphaFormat;
 
-typedef enum <int32> {
+typedef enum <uint32> {
     Resident,
 	GPU_Transfer,
     Transient
