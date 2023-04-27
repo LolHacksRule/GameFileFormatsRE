@@ -1,0 +1,21 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct AttackKeyLog_DAT
+{
+    LittleEndian();
+    int32 i32Entries;
+    int32 i32Entry[i32Entries];
+    int32 byteEntries;
+    byte byteEntry[byteEntries];
+} AtkKeyLog_DAT;

@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct BallEntry
+{
+    Vector3_F32 vec3;
+    int32 zero;
+    byte unk[4];
+};
+
+struct ML4_BallInfo
+{
+    int32 entries;
+    BallEntry ballEntry[entries]<optimize=false>;
+} BALLINFO_DAT;

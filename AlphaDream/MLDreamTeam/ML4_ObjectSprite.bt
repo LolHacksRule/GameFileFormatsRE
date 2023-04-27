@@ -1,0 +1,21 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct ObjectSprite
+{
+    byte animations;
+    byte graphicsfmtid;
+    int16 unk;
+    uint32 fSize;
+    uint16 gfxFSize;
+} xOBJ_DAT_UNCOMP;

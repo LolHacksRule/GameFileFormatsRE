@@ -13,8 +13,9 @@
 
 #include "../../LHR/Common.bt"
 
-struct ML3MsgBin
+struct ML4MsgBin
 {
+    LittleEndian();
     struct Hdr
     {
         int16 dummy;
@@ -28,4 +29,4 @@ struct ML3MsgBin
     {
         I32_OffsetWithSize MessageFileMeta;
     } msgMeta[header.messageBinFileCnt];
-} ML3MesBin;
+} xMES_BIN;
