@@ -20,7 +20,7 @@ typedef struct BallEntry
     byte unk[4];
 };
 
-struct ML4_BallInfo
+struct ML4_BallInfo_DAT
 {
     int32 entries;
     BallEntry ballEntry[entries]<optimize=false>;

@@ -11,11 +11,63 @@
 //   History: 
 //------------------------------------------------
 
-struct ObjectSprite
+#include "../../LHR/Common.bt"
+
+local int totalFrames <hidden=true> = 0;
+local int totalParts <hidden=true> = 0;
+
+typedef enum <byte>
+{
+    RGBA8888,
+    RGB8888,
+    RGBA5551,
+} ML4_TexFmt;
+
+typedef struct Animation
+{
+    uint16 frameEntriesOff;
+    uint16 frameEntriesCnt;
+    totalFrames = totalFrames + frameEntriesCnt; //Hack, detect multiple frames
+    uint16 animLen;
+    uint16 animXFormEntryOff;
+};
+
+typedef struct Frame
+{
+    uint16 partEntriesOff;
+    uint16 partEntriesCnt;
+    uint16 animLenOff;
+    uint16 frameXFormEntryPff;
+};
+
+typedef struct Part
+{
+    byte partSizeID;
+    Byte_Bool Flip;
+    uint16 partXFormationsEntry;
+    uint16 unk;
+    uint16 gfxFileOff;
+};
+
+typedef struct Header
 {
     byte animations;
-    byte graphicsfmtid;
-    int16 unk;
+    ML4_TexFmt graphicsfmtid;
+    uint16 unk;
     uint32 fSize;
-    uint16 gfxFSize;
+    uint32 gfxFSize;
+    uint32 framesOff;
+    uint32 partsOff;
+    uint32 possiblyAnimTransOff;
+    uint32 frameTransOff;
+    uint32 partTransOff;
+    byte unk2[64];
+};
+
+struct ObjectSprite
+{
+    LittleEndian();
+    Header ObjSpriteHdr;
+    Animation anim[ObjSpriteHdr.animations]<optimize=false>;
+    Frame frame[totalFrames]<optimize=false>;
 } xOBJ_DAT_UNCOMP;

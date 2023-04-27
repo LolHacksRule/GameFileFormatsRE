@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-struct AttackKeyLog_DAT
+struct ML4_AttackKeyLog_DAT
 {
     LittleEndian();
     int32 i32Entries;
