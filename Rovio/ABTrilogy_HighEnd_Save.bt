@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "../LHR/Common.bt"
 
 //local int i <hidden=true> = 0;
 
@@ -66,6 +66,14 @@ struct HighEndTrilogySave
                 else if (param == "Music_Volume")
                 {
                     float musicVolume;
+                }
+                else if (param == "Sound_Volume")
+                {
+                    float soundVolume;
+                }
+                else if (param == "PSMove_Sensitivity")
+                {
+                    float psMoveSensitivity;
                 }
                 else
                 {

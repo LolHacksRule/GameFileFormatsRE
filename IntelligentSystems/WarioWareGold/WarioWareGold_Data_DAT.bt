@@ -1,0 +1,104 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: WarioWareGold_Data_DAT.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct Header
+{
+    uint32 strTblOff; //20
+    uint32 strTblSz; //- strTblOff
+    uint32 padSzOrParamOff;
+    uint32 commonPrmSz;
+    uint32 unk; //value type? 1: f32, 2: two f32s?, 3: three i32s? 4: i32, prob no
+    byte pad[12]<bgcolor=cRed>;
+};
+
+//ONLY TESTED ON ESHOP DEMO
+
+struct WarioWareGoldData_DAT
+{
+    LittleEndian();
+    Header DATHdr<bgcolor=cPurple>;;
+    struct ParamStringEntries
+    {
+        while (FPos < DATHdr.strTblSz)
+        {
+            struct ParamStringEntry
+            {
+                string stringentry;
+            } fe;
+            FPos = FTell();
+        }
+    } fes<bgcolor=cGreen>;
+    struct PadEntries
+    {
+        while (FPos < DATHdr.padSzOrParamOff)
+        {
+            struct PadEntry
+            {
+                string padentry;
+            } pe;
+            FPos = FTell();
+        }
+    } pes<bgcolor=cRed>;
+    //FSeek(padSzOrParamOff);
+    struct CommonParamEntries
+    {
+        while (FPos < DATHdr.commonPrmSz)
+        {
+            struct CommonParamEntry
+            {
+                if (ReadInt() < 100000 && ReadInt() > -1) //Do this so we don't use both i32 and f32
+                {
+                    uint32 stringRef<bgcolor=cLtBlue>;
+                    FPos = FTell();
+                    FSeek(DATHdr.strTblOff);
+                    FSkip(stringRef);
+                    string refStr<bgcolor=cLtBlue>;
+                    FSeek(FPos);
+                    FSkip(-4);
+                    if (ReadInt() == 0)
+                    {
+                        float f32<bgcolor=cRed>;
+                    }
+                    else
+                    {
+                        FSkip(4);
+                    }
+                }
+                else
+                {
+                    float f32<bgcolor=cRed>;
+                }
+                //uint32 goto;
+            } cpe;
+            FPos = FTell();
+        }
+    } cpes;
+    struct UncommonParamEntries
+    {
+        while (ReadInt() != 6581861) //Check for end terminated string
+        {
+            struct UncommonParamEntry
+            {
+                uint32 u32;
+                uint32 u32_2; //may be padSz
+                //FSkip(-4);
+                //float f32;
+                //uint32 goto;
+            } ucpe;
+            //FPos = FTell();
+        }
+    } ucpes<bgcolor=cRed>;
+    string eof<bgcolor=cGreen>;
+} Data_DAT;

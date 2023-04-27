@@ -21,9 +21,26 @@ typedef enum <int16>
 
 struct PopCap_LegacyiOSFramework_Texture
 {
-    if (ReadShort() == 2677)
+    LittleEndian();
+    if (ReadShort() == 2677) //Peggle and PVZ
     {
         int16 Magic;
+        int16 Width;
+        int16 Height;
+        TextureFormat TexFmt;
+        if (ReadByte() == 0x78)
+        {
+            byte CompressedTextureData[FileSize() - FTell()];
+        }
+        else
+        {
+            byte TextureData[FileSize() - FTell()];
+        }
+    }
+    else if (ReadShort() == 3445) //Bejeweled2
+    {
+        int16 magic;
+        byte unk;
         int16 Width;
         int16 Height;
         TextureFormat TexFmt;

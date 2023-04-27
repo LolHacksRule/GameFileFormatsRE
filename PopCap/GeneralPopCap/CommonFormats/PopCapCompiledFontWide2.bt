@@ -1,0 +1,208 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Also works with DAT files from legacy PVZ and iDevice / Marmalade SDK + Bej 2 Android ports
+
+#include "../../../LHR/Common.bt"
+local uint isUnicode = -1;
+local uint isLegacy = -1;
+
+LittleEndian();
+
+typedef struct
+{
+    wchar_t idx;
+    int16 off;
+} Kerning;
+
+typedef struct
+{
+    wchar_t idx;
+    uint32 rectcoord[2];
+    uint32 rect[2];
+    int32 imgoff[2];
+    uint16 kern[2];
+    uint32 width;
+    uint32 order;
+} FontChar;
+
+typedef struct
+{
+    if (!isLegacy)
+    {
+        I32_StringEntry theLayerName;
+        uint32 requiredTags;
+        if (requiredTags > 0)
+        {
+            I32_StringEntry reqTag[requiredTags]<optimize=false>;
+        }
+        uint32 excludedTags;
+        if (excludedTags > 0)
+        {
+            I32_StringEntry excTag[excludedTags]<optimize=false>;
+        }
+    }
+    else
+    {
+        I16_StringEntry theLayerName;
+        uint16 requiredTags;
+        if (requiredTags > 0)
+        {
+            I16_StringEntry reqTag[requiredTags]<optimize=false>;
+        }
+        uint16 excludedTags;
+        if (excludedTags > 0)
+        {
+            I32_StringEntry excTag[excludedTags]<optimize=false>;
+        }
+    }
+    uint16 kerning;
+    Kerning kerningEntry[kerning]<optimize=false>;
+    //Check these
+    uint16 endKern;
+    uint32 fontChars;
+    //Check these end
+    FontChar fontCharEntry[fontChars]<optimize=false>;
+    Vector4_I32 mult;
+    Vector4_I32 add;
+    I32_StringEntry imgFile;
+    uint32 drawMode;
+    uint32 off[2];
+    uint32 spacing;
+    uint32 pointSz[2];
+    uint32 actPointSz;
+    uint32 ascent[2];
+    uint32 height;
+    uint32 actHeight;
+    uint32 lineSpacingOff;
+    uint32 baseOrder;
+} Layer;
+
+typedef struct
+{
+    I32_StringEntry theLayerName;
+    uint32 requiredTags;
+    I32_StringEntry reqTag[requiredTags]<optimize=false>;
+    uint32 excludedTags;
+    I32_StringEntry excTag[excludedTags]<optimize=false>;
+    uint16 kerning;
+    Kerning kerningEntry[kerning]<optimize=false>;
+    uint16 endKern;
+    uint32 fontChars;
+    FontChar fontCharEntry[fontChars]<optimize=false>;
+    Vector4_I32 mult;
+    Vector4_I32 add;
+    I32_StringEntry imgFile;
+    uint32 drawMode;
+    uint32 off[2];
+    uint32 spacing;
+    uint32 pointSz[2];
+    uint32 actPointSz;
+    uint32 ascent[2];
+    uint32 height;
+    uint32 actHeight;
+    uint32 lineSpacingOff;
+    uint32 baseOrder;
+} Header;
+
+struct CFW2
+{
+    FSkip(2);
+    byte checkForMD5<hidden=true>;
+    FSkip(-3);
+    if (checkForMD5 != 0)
+    {
+        isLegacy = 0;
+        byte MD5[16]; //MD5 of original TXT file, legacy games for iDevices and mostly Android Marmalade SDK ports exclude this and only have the later content
+        if (ReadInt() == 3439307281) //Unicode font
+        {
+            isUnicode = 1;
+            int32 unicodeMagic;
+            int32 unicodeVer;
+        }
+        else
+        {
+            isUnicode = 0;
+        }
+    }
+    else
+    {
+        isLegacy = 1;
+        uint32 legacyMobileCFW2Hdr;
+    }
+    if (!isLegacy)
+    {
+        int32 LayerSetAscent;
+        int32 LayerSetAscentPadding;
+        int32 LayerSetHeight;
+        int32 LayerSetSpacing;
+        Byte_Bool Initialized;
+    }
+    int32 LayerSetPointSize;
+    int32 Chars;
+    if (Chars > 0)
+    {
+        struct CharEntries
+        {
+            for (i = 0; i < Chars; i++)
+            {
+                struct Char
+                {
+                    if (isUnicode && !isLegacy)
+                    {
+                        int16 unk10_unicodeval;
+                        int16 unk11_unicodeval;
+                    }
+                    wchar_t idx;
+                    wchar_t val;
+                } charInts;
+            }
+        } ce;
+    }
+    if (!isLegacy)
+    {
+        int32 Layers;
+    }
+    else
+    {
+        int16 Layers;
+    }
+    //uint16 unk3;
+    struct Layers
+    {
+        for (i = 0; i < Layers; i++)
+        {
+            Layer layerEntry;
+        }
+    } layers;
+    
+    I32_StringEntry srcFileName;
+    I32_StringEntry error;
+    uint32 pointSz;
+    uint32 tags;
+    if (tags > 0)
+    {
+        I32_StringEntry tag[tags]<optimize=false>;
+    }
+    else
+    {
+        FSkip(4);
+    }
+    float scale;
+    Byte_Bool forceWhite;
+    Byte_Bool activateAllLayers;
+    if (isLegacy)
+    {
+        uint32 EOFMagic;
+    }
+} cfw2;

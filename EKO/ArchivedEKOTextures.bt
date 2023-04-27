@@ -1,0 +1,105 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    CommonWii = 5196613,
+    CommonPC = 10283720,
+} RCK_TextureMagic;
+
+typedef struct ArchivedTextureHeader
+{
+    uint64 magic;
+    time_t timestamp;
+    byte dmy;
+    byte unkflag;
+    byte unk2;
+    byte unk3;
+    uint32 sizeofunk;
+    uint32 sizeoftexchunks;
+    uint32 dmy3[3];
+    uint32 textures;
+    uint32 unk4[2];
+    uint64 end;
+};
+
+typedef struct TextureBlock
+{
+    /*FSkip(4);
+    uint32 checkForEKOMagic<hidden=true>;
+    FSkip(-8);*/
+    byte texStartMagic<bgcolor=cPurple>; //08 [All] OR B0 [Wii]?
+    BigEndian();
+    FSkip(2);
+    byte checkForI24;
+    byte anotherCheckForLargeI24;
+    FSkip(-4);
+    //There has to be a better way
+    if ((checkForI24 != 0 || (anotherCheckForLargeI24 != 69 && anotherCheckForLargeI24 != -56 && anotherCheckForLargeI24 != -16 && anotherCheckForLargeI24 != 24 && anotherCheckForLargeI24 != 8 && anotherCheckForLargeI24 != -24 && anotherCheckForLargeI24 != -88 && anotherCheckForLargeI24 != 64 && anotherCheckForLargeI24 != 88 && anotherCheckForLargeI24 != 56 && anotherCheckForLargeI24 != 90 && anotherCheckForLargeI24 != -112)))
+    {
+        LittleEndian();
+        if (ReadInt() != 4096)
+        {
+            BigEndian();
+            //Read I24
+            uint32 fileSize: 24<bgcolor=cDkRed>; //It's ok to modify this but it would prob make it harder to recover
+        }
+        else
+        {
+            BigEndian();
+            uint32 fileSize;
+        }
+        if (ReadByte() == 0x0)
+        {
+            FSkip(-1);
+        }
+    }
+    else
+    {
+        uint16 fileSize<bgcolor=cGreen>; //It's ok to modify this but it would prob make it harder to recover
+        byte dmy<bgcolor=cRed>; //It's ok to modify this but it would prob make it harder to recover
+    }
+    LittleEndian();
+    RCK_TextureMagic ekoMagic<bgcolor=cDkGreen>; //Also ok to modify
+    uint16 width <bgcolor=cLtBlue>;
+    uint16 height <bgcolor=cBlue>;
+    uint16 BPP <bgcolor=cPurple>; //8: Pal8, 18: RGB, 32: RGBA
+    I16_Bool VFlip<bgcolor=cRed>; //No effect when modified
+    byte texData[fileSize]<bgcolor=cGreen>;
+    //while (ReadInt64() != 1048584)
+    {
+        //byte textureData<optimize=false>; //I hate this
+    }
+};
+
+struct EKO_ArchivedTexture
+{
+    LittleEndian();
+    ArchivedTextureHeader hdr;
+    if (hdr.sizeofunk > 0)
+    {
+        byte unkdata[hdr.sizeofunk]<bgcolor=cRed>;
+    }
+    //byte blk[hdr.sizeoftexchunks];
+    //if (hdr.sizeoftexchunks > 0)
+    {
+        //byte tex[hdr.sizeoftexchunks];
+    }
+    //else
+    {
+        Printf("Reading the textures raw (experimental)!\n");
+        TextureBlock texture[hdr.textures]<optimize=false>;
+    }
+} RKET;

@@ -48,7 +48,7 @@ struct CSV_Bin
 {
     Header hdr;
     local int dataSize = (EOF - sizeof hdr)/(hdr.valueCount/*+hdr.unk*/);
-    if (hdr.valueCount > 1000000)
+    if (hdr.valueCount > 263941)
     {
         Printf("Params are absurdly high, assuming unknown data to the EOF.");
         FSkip(-8);
