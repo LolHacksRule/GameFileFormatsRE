@@ -62,6 +62,14 @@ typedef struct Part
     int16 y;
 };
 
+typedef struct ImageInfo
+{
+    int16 unk[2];
+    int16 width;
+    int16 height;
+    byte unk2[36];
+};
+
 typedef struct Header
 {
     byte animations;
@@ -82,15 +90,23 @@ struct ObjectSprite
     LittleEndian();
     Header ObjSpriteHdr;
     Animation anim[ObjSpriteHdr.animations]<optimize=false>;
-    Frame frame[totalFrames]<optimize=false>;
     FPos = FTell();
-    struct Parts
+    if (ObjSpriteHdr.partsOff == 0)
     {
-        while (FPos < ObjSpriteHdr.possiblyAnimXFormationsOff) 
+        ImageInfo unk;
+    }
+    Frame frame[totalFrames]<optimize=false>;
+    if (ObjSpriteHdr.partsOff > 0)
+    {
+        FPos = FTell();
+        struct Parts
         {
-            Part part<optimize=false>;
-            FPos = FTell();
-        }
-    } parts;
-    FrameXForm framexform;
+            while (FPos < ObjSpriteHdr.possiblyAnimXFormationsOff) 
+            {
+                Part part<optimize=false>;
+                FPos = FTell();
+            }
+        } parts;
+        FrameXForm framexform;
+    }
 } xOBJ_DAT_UNCOMP;
