@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <byte>
+{
+    RGBA8888,
+    RGB8888,
+    RGBA5551,
+    RGB565,
+    RGBA4444,
+    LA88,
+    UNKNOWN_88,
+    L8,
+    A8,
+    LA44,
+    L4,
+    A4,
+    ETC1,
+    ETC1A4,
+} ML4_TexFmt;

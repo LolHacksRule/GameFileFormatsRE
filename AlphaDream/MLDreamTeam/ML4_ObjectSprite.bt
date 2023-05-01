@@ -11,17 +11,14 @@
 //   History: 
 //------------------------------------------------
 
+//Format specs:
+//Yoshi's Lighthouse: Dream Team Hacking Documentation
+
+#include "ML4_Common.bt"
 #include "../../LHR/Common.bt"
 
 local int totalFrames <hidden=true> = 0;
 local int totalParts <hidden=true> = 0;
-
-typedef enum <byte>
-{
-    RGBA8888,
-    RGB8888,
-    RGBA5551,
-} ML4_TexFmt;
 
 typedef struct Animation
 {
@@ -32,12 +29,25 @@ typedef struct Animation
     uint16 animXFormEntryOff;
 };
 
+typedef struct AnimationXForm
+{
+    //Vector4_F32
+};
+
+typedef struct FrameXForm //Check
+{
+    Vector2_F32 scale;
+    Vector2_F32 rot;
+    int16 trans[2];
+};
+
 typedef struct Frame
 {
     uint16 partEntriesOff;
     uint16 partEntriesCnt;
+    //totalParts = totalParts + partEntriesCnt; //Hack, detect multiple parts
     uint16 animLenOff;
-    uint16 frameXFormEntryPff;
+    uint16 frameXFormEntryOff;
 };
 
 typedef struct Part
@@ -45,8 +55,11 @@ typedef struct Part
     byte partSizeID;
     Byte_Bool Flip;
     uint16 partXFormationsEntry;
-    uint16 unk;
+    int16 unk;
     uint16 gfxFileOff;
+    local uint16 trueGfxFileOff <hidden=false> = gfxFileOff * 64;
+    int16 x;
+    int16 y;
 };
 
 typedef struct Header
@@ -58,7 +71,7 @@ typedef struct Header
     uint32 gfxFSize;
     uint32 framesOff;
     uint32 partsOff;
-    uint32 possiblyAnimTransOff;
+    uint32 possiblyAnimXFormationsOff;
     uint32 frameTransOff;
     uint32 partTransOff;
     byte unk2[64];
@@ -70,4 +83,14 @@ struct ObjectSprite
     Header ObjSpriteHdr;
     Animation anim[ObjSpriteHdr.animations]<optimize=false>;
     Frame frame[totalFrames]<optimize=false>;
+    FPos = FTell();
+    struct Parts
+    {
+        while (FPos < ObjSpriteHdr.possiblyAnimXFormationsOff) 
+        {
+            Part part<optimize=false>;
+            FPos = FTell();
+        }
+    } parts;
+    FrameXForm framexform;
 } xOBJ_DAT_UNCOMP;

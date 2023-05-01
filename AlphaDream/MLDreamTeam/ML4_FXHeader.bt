@@ -1,0 +1,54 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Yoshi's Lighthouse: Dream Team Hacking Documentation
+
+#include "../../LHR/Common.bt"
+#include "ML4_Common.bt"
+local uint isResMap <hidden=true> = 0;
+
+typedef struct Entry
+{
+    if (ReadInt() > 0 && !isResMap)
+    {
+        uint32 entrySize;
+        uint32 unk; //1 is used in Tex, high numbers beyond in Prim, what are they
+        uint32 dataOff;
+        if (unk < 2) //Tex
+        {
+            uint16 texWidth;
+            uint16 texHeight;
+            ML4_TexFmt texFmt;
+        }
+        else //Prim
+        {
+            uint32 someOff; //Some data end with a bunch of i16s
+            ubyte unki16vals; //Some value * 2 to get someOff + this = entrySize
+        }
+        byte pad[3];
+    }
+    else
+    {
+        isResMap = 1;
+        uint32 off;
+        uint16 size; //or I16s
+        uint16 unk;
+    }
+};
+
+struct ML4_FXHeaderInfo
+{
+    LittleEndian();
+    uint16 entries;
+    Entry entry[entries]<optimize=false>;
+} x_header_DAT;
