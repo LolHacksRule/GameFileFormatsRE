@@ -38,7 +38,7 @@ typedef struct FrameXForm //Check
 {
     Vector2_F32 scale;
     Vector2_F32 rot;
-    int16 trans[2];
+    Vector2_F32 trans;
 };
 
 typedef struct Frame
@@ -67,7 +67,6 @@ typedef struct ImageInfo
     int16 unk[2];
     int16 width;
     int16 height;
-    byte unk2[36];
 };
 
 typedef struct Header
@@ -94,6 +93,7 @@ struct ObjectSprite
     if (ObjSpriteHdr.partsOff == 0)
     {
         ImageInfo unk;
+        FSeek(ObjSpriteHdr.framesOff); //For now, idk what those values are
     }
     Frame frame[totalFrames]<optimize=false>;
     if (ObjSpriteHdr.partsOff > 0)
@@ -107,6 +107,10 @@ struct ObjectSprite
                 FPos = FTell();
             }
         } parts;
+    }
+    FPos = FTell();
+    if (FPos != EOF) //For now, replace with possiblyAnimXFormationsOff or frameTransOff or partTransOff
+    {
         FrameXForm framexform;
     }
 } xOBJ_DAT_UNCOMP;

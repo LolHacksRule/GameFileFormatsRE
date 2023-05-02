@@ -1,8 +1,8 @@
 //------------------------------------------------
-//--- 010 Editor v11.0.1 Binary Template
+//--- 010 Editor v13.0.1 Binary Template
 //
-//      File: Gameloft BSPRITE
-//   Authors: LHR
+//      File: 
+//   Authors: 
 //   Version: 
 //   Purpose: 
 //  Category: 
@@ -11,5 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-short ver;
-int32 flags;
+typedef struct ML5Engine_StringEntry
+{
+    char stringEntry[24];
+};

@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Format specs:
+//https://github.com/hadashisora/MnLDTools/blob/master/MnL4MapReader/Form1.cs
+
+#include "ML4_Common.bt"
+#include "../../LHR/Common.bt"
+
+typedef struct Header
+{
+    FSkip(0x60);
+    uint32 modelOff;
+    uint32 modelSize;
+};
+
+struct FieldMap
+{
+    LittleEndian();
+    Header FieldMapHeader;
+    FSeek(FieldMapHeader.modelOff);
+    byte model[FieldMapHeader.modelSize];
+} MAP_BIN;

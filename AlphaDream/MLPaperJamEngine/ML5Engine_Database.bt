@@ -1,0 +1,191 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+#include "ML5Engine_Common.bt"
+
+//Orig source: https://www.tapatalk.com/groups/lighthouse_of_yoshi/bd-dat-item-equipment-enemy-etc-data-t815.html
+
+//Only tested on Paper Jam!
+
+typedef enum <uint16>
+{
+    IF_HP,
+    IF_BP,
+    IF_Revive,
+    IF_CureStats,
+    IF_HPAndBP,
+    IF_AddHP,
+    IF_AddBP,
+    IF_POW,
+    IF_DEFENSE,
+    IF_SPEED,
+    IF_STACHE,
+    IF_Unknown, //Unused in ML5
+    IF_DamageImmunity,
+} ItemFlag;
+
+typedef enum <uint32>
+{
+    Accessory = 24,
+    Wear = 26,
+    Gloves = 28,
+    Boots = 30,
+    Hammer = 32,
+    PaperMario_Accessory = 42,
+    PaperMario_Wear = 44,
+    PaperMario_Gloves = 46,
+    PaperMario_Boots = 48,
+    PaperMario_Hammer = 50,
+} GearCategory;
+
+typedef struct MultiLocMessages
+{
+    ML5Engine_StringEntry itemNameMsg;
+    ML5Engine_StringEntry itemNamePluralMsg;
+    ML5Engine_StringEntry itemDescMsg;
+    ML5Engine_StringEntry itemFullMsg;
+};
+
+typedef struct ItemEntry
+{
+    MultiLocMessages multiLocs;
+    byte unk[8];
+    ItemFlag flag;
+    uint16 points;
+    byte unk2[4];
+};
+
+typedef struct WearStats
+{
+    uint16 hp;
+    uint16 unk;
+    uint16 pow;
+    uint16 defense;
+    uint16 speed;
+    uint16 stache;
+    uint16 unk2[6];
+};
+
+typedef struct GearEntry
+{
+    MultiLocMessages multiLocs;
+    GearCategory gearCategory;
+    //uint32 tmp;
+    uint32 buyPrice;
+    local uint32 sellPrice = buyPrice/2;
+    if (gearCategory == Wear || gearCategory == PaperMario_Wear || gearCategory == Gloves || gearCategory == PaperMario_Gloves)
+    {
+        WearStats wearStats;
+    }
+    else
+    {
+        uint32 unk2;
+        uint32 jumpPOW;
+        byte unk3[16];
+    }
+};
+
+typedef struct BattleCardEntry
+{
+    MultiLocMessages multiLocs;
+    byte unk[24];
+};
+
+typedef struct EnemyEntry
+{
+    ML5Engine_StringEntry name;
+    byte level;
+    byte unk;
+    uint16 HP;
+    uint16 pow;
+    uint16 defense;
+    uint16 speed;
+    uint16 unk2[2];
+    uint16 unk3[2];
+    uint16 unk4;
+    uint16 exp;
+    uint16 coins;
+    uint16 unk5;
+    ML5Engine_StringEntry itemReward;
+    uint16 itemRarityPct;
+    ML5Engine_StringEntry rareItemReward;
+    uint16 rareItemRarityPct;
+    if (ReadByte() == 45) //This happens on Roy (ML5), temp hack
+    {
+        byte unk6[510];
+    }
+};
+
+typedef struct ItemData
+{
+    FPos = FTell();
+    while (FPos != hdr.unkOff[0])
+    {
+        ItemEntry iEntry;
+        FPos = FTell();
+    }
+};
+
+typedef struct GearData
+{
+    while (FPos != hdr.unkDataOff2[0])
+    {
+        GearEntry gEntry;
+        FPos = FTell();
+    }
+};
+
+typedef struct BattleCardData
+{
+    while (FPos != hdr.unkDataOff3[0])
+    {
+        BattleCardEntry bEntry;
+        FPos = FTell();
+    }
+};
+
+typedef struct EnemyData
+{
+    while (FPos != hdr.unkDataOff4[0])
+    {
+        EnemyEntry eEntry;
+        FPos = FTell();
+    }
+};
+
+struct ML5Engine_Database
+{
+    struct Header
+    {
+        uint32 itemDataOff;
+        uint32 unkOff[2];
+        uint32 gearDataOff;
+        uint32 unkDataOff2[2];
+        uint32 battleCardDataOff;
+        uint32 unkDataOff3[2];
+        uint32 enemyDataOff;
+        uint32 unkDataOff4[4];
+    } hdr;
+    ItemData iData;
+    //byte unkData[88];
+    //byte unkData2[276];
+    FSeek(hdr.gearDataOff);
+    GearData gData;
+    FSeek(hdr.battleCardDataOff);
+    BattleCardData sData;
+    //byte unkData3[hdr.unkDataOff2[1]-hdr.unkDataOff2[0]];
+    //byte unkData3[hdr.unkDataOff2[1]-hdr.unkDataOff2[0]];
+    FSeek(hdr.enemyDataOff);
+    EnemyData eData;
+} DB_DAT;
