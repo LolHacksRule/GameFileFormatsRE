@@ -19,6 +19,7 @@
 
 local int totalFrames <hidden=true> = 0;
 local int totalParts <hidden=true> = 0;
+local int isML3R <hidden=true> = 0;
 
 typedef struct Animation
 {
@@ -27,6 +28,13 @@ typedef struct Animation
     totalFrames = totalFrames + frameEntriesCnt; //Hack, detect multiple frames
     uint16 animLen;
     uint16 animXFormEntryOff;
+    if (isML5)
+    {
+        uint16 unk;
+        uint16 unk2;
+        uint16 unk3;
+        uint16 unk4;
+    }
 };
 
 typedef struct AnimationXForm
@@ -69,6 +77,16 @@ typedef struct ImageInfo
     int16 height;
 };
 
+typedef struct ML5_AnimFloats
+{
+    BigEndian();
+    while (FPos < EOF) 
+    {
+        float floatVal;
+        FPos = FTell();
+    }
+};
+
 typedef struct Header
 {
     byte animations;
@@ -76,13 +94,24 @@ typedef struct Header
     uint16 unk;
     uint32 fSize;
     uint32 gfxFSize;
-    //Dies here on ML5/ML3R/ML1R, todo fix
+    //Dies here on ML3R, todo fix
+    if (fSize < ReadInt()) //kinda
+    {
+        isML3R = 1;
+        uint32 unk;
+        uint32 unk2;
+    }
     uint32 framesOff;
     uint32 partsOff;
     uint32 possiblyAnimXFormationsOff;
     uint32 frameTransOff;
     uint32 partTransOff;
-    byte unk2[64];
+    if (isML3R)
+    {
+        uint32 animFloatsOff;
+        uint32 zero;
+    }
+    byte unk4[64];
 };
 
 struct ObjectSprite
@@ -99,6 +128,7 @@ struct ObjectSprite
     Frame frame[totalFrames]<optimize=false>;
     if (ObjSpriteHdr.partsOff > 0)
     {
+        FSeek(ObjSpriteHdr.partsOff);
         FPos = FTell();
         struct Parts
         {
@@ -112,6 +142,12 @@ struct ObjectSprite
     FPos = FTell();
     if (FPos != EOF) //For now, replace with possiblyAnimXFormationsOff or frameTransOff or partTransOff
     {
+        FSeek(ObjSpriteHdr.frameTransOff);
         FrameXForm framexform;
+    }
+    if (isML5)
+    {
+        FSeek(ObjSpriteHdr.animFloatsOff);
+        ML5_AnimFloats animFloats;
     }
 } xOBJ_DAT_UNCOMP;

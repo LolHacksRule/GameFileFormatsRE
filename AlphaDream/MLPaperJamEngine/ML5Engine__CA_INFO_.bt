@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct ML5Engine_CA_INFO
+{
+    string ObjSpriteName;
+    string RawTexName;
+    if (ReadByte() != 0)
+    {
+        string Unknown;
+    }
+    else
+    {
+        byte null[4];
+    }
+    if (ReadByte() != 0)
+    {
+        string Unknown2;
+    }
+    else
+    {
+        byte null[4];
+    }
+    byte one;
+    byte unk[18];
+} _CA_INFO_;
