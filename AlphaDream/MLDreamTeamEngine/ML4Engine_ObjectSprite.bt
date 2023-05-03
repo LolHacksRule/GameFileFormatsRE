@@ -28,7 +28,7 @@ typedef struct Animation
     totalFrames = totalFrames + frameEntriesCnt; //Hack, detect multiple frames
     uint16 animLen;
     uint16 animXFormEntryOff;
-    if (isML5)
+    if (isML3R)
     {
         uint16 unk;
         uint16 unk2;
@@ -61,8 +61,8 @@ typedef struct Frame
 typedef struct Part
 {
     byte partSizeID;
-    Byte_Bool Flip;
-    uint16 partXFormationsEntry;
+    byte flip;
+    uint16 partXFormationsEntryOff;
     int16 unk;
     uint16 gfxFileOff;
     local uint16 trueGfxFileOff <hidden=false> = gfxFileOff * 64;
@@ -77,12 +77,12 @@ typedef struct ImageInfo
     int16 height;
 };
 
-typedef struct ML5_AnimFloats
+typedef struct ML3R_Unknown
 {
     BigEndian();
     while (FPos < EOF) 
     {
-        float floatVal;
+        byte floatVal;
         FPos = FTell();
     }
 };
@@ -145,9 +145,9 @@ struct ObjectSprite
         FSeek(ObjSpriteHdr.frameTransOff);
         FrameXForm framexform;
     }
-    if (isML5)
+    if (isML3R)
     {
         FSeek(ObjSpriteHdr.animFloatsOff);
-        ML5_AnimFloats animFloats;
+        ML3R_Unknown unknown;
     }
 } xOBJ_DAT_UNCOMP;

@@ -21,7 +21,7 @@ struct ML5Engine_CA_INFO
     }
     else
     {
-        byte null[4];
+        uint32 null;
     }
     if (ReadByte() != 0)
     {
@@ -29,8 +29,9 @@ struct ML5Engine_CA_INFO
     }
     else
     {
-        byte null[4];
+        uint32 null2;
     }
-    byte one;
-    byte unk[18];
+    //ML1DX/ML5
+    /*byte one;
+    byte unk[18];*/
 } _CA_INFO_;
