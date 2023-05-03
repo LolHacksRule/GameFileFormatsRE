@@ -14,7 +14,7 @@
 //Yoshi's Lighthouse: Dream Team Hacking Documentation
 
 #include "../../LHR/Common.bt"
-#include "ML4_Common.bt"
+#include "../MLDreamTeamEngine/ML4Engine_Common.bt"
 local uint isResMap <hidden=true> = 0;
 
 typedef struct Entry

@@ -27,4 +27,4 @@ typedef enum <byte>
     A4,
     ETC1,
     ETC1A4,
-} ML4_TexFmt;
+} ML4Engine_TexFmt;

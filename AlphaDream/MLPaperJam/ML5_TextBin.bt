@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct ML5_TextBin
+{
+    while (FPos != EOF)
+    {
+        struct TextBinEntry
+        {
+            uint16 chars;
+            wstring str;
+        } sbe;
+        FPos = FTell();
+    }
+} sound_or_msg_bin;

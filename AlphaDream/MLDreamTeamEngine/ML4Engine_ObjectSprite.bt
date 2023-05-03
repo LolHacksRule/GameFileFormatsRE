@@ -14,7 +14,7 @@
 //Format specs:
 //Yoshi's Lighthouse: Dream Team Hacking Documentation
 
-#include "ML4_Common.bt"
+#include "ML4Engine_Common.bt"
 #include "../../LHR/Common.bt"
 
 local int totalFrames <hidden=true> = 0;
@@ -72,10 +72,11 @@ typedef struct ImageInfo
 typedef struct Header
 {
     byte animations;
-    ML4_TexFmt graphicsfmtid;
+    ML4Engine_TexFmt graphicsfmtid;
     uint16 unk;
     uint32 fSize;
     uint32 gfxFSize;
+    //Dies here on ML5/ML3R/ML1R, todo fix
     uint32 framesOff;
     uint32 partsOff;
     uint32 possiblyAnimXFormationsOff;
