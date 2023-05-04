@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct ResourceSizeTableBinary
+{
+    if (ReadInt() != 1112822610) //Thunder and beyond
+    {
+        char hdr[6];
+        uint32 ver; //1
+        uint32 nameEntrySize;
+    }
+    else
+    {
+        char hdr[4]; //BOTW/Sports3
+        local uint32 nameEntrySize <hidden=true> = 128; //hack
+        uint16 checkForBE<hidden=true>;
+        FSkip(-2);
+        if (checkForBE == 256)
+        {
+            Printf("BE detected.");
+            BigEndian();
+        }
+    }
+    uint32 crcEntries;
+    uint32 nameEntries;
+    struct CRC32Table
+    {
+        uint32 crc32;
+        uint32 size;
+    } CRC32_TBL[crcEntries];
+    struct NameTable
+    {
+        char name[nameEntrySize];
+        uint32 size;
+    } NAME_TBL[nameEntries]<optimize=false>;
+} RSIZETABLE;
