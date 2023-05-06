@@ -28,11 +28,6 @@ typedef struct GraphicsConfigSection
     byte unk[FieldMapHeader.sec[0].size];
 };
 
-typedef struct Section2
-{
-    byte unk[FieldMapHeader.sec[1].size];
-};
-
 typedef struct Header
 {
     uint32 hdrSz<bgcolor=cBlue>;
@@ -46,7 +41,6 @@ struct FieldMap
     Header FieldMapHeader;
     FSeek(FieldMapHeader.sec[0].off);
     GraphicsConfigSection gfxCFGSection;
-    Section2 unk_sec2;
     //FSeek(FieldMapHeader.modelSec.modelOff);
     //byte model[FieldMapHeader.modelSec.modelSize]<bgcolor=cGreen>;
 } MAP_BIN;
