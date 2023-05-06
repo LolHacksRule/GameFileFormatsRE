@@ -13,20 +13,40 @@
 
 //Format specs:
 //https://github.com/hadashisora/MnLDTools/blob/master/MnL4MapReader/Form1.cs
+//FruityLoops doc in Yoshi Lighthouse Discord
 
 #include "../../LHR/Common.bt"
 
+typedef struct SectionEntry
+{
+    uint32 off;
+    uint32 size;
+};
+
+typedef struct GraphicsConfigSection
+{
+    byte unk[FieldMapHeader.sec[0].size];
+};
+
+typedef struct Section2
+{
+    byte unk[FieldMapHeader.sec[1].size];
+};
+
 typedef struct Header
 {
-    FSkip(0x60);
-    uint32 modelOff;
-    uint32 modelSize;
+    uint32 hdrSz<bgcolor=cBlue>;
+    uint32 unk<bgcolor=cRed>;
+    SectionEntry sec[12]<bgcolor=cGreen>;
 };
 
 struct FieldMap
 {
     LittleEndian();
     Header FieldMapHeader;
-    FSeek(FieldMapHeader.modelOff);
-    byte model[FieldMapHeader.modelSize];
+    FSeek(FieldMapHeader.sec[0].off);
+    GraphicsConfigSection gfxCFGSection;
+    Section2 unk_sec2;
+    //FSeek(FieldMapHeader.modelSec.modelOff);
+    //byte model[FieldMapHeader.modelSec.modelSize]<bgcolor=cGreen>;
 } MAP_BIN;
