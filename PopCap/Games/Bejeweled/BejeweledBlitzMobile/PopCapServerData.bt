@@ -10,18 +10,9 @@
 //  ID Bytes: 
 //   History: 
 //------------------------------------------------
-
-#include "../../../LHR/Common.bt"
-
-struct BejeweledBlitzReplay
+struct PopCapServerData
 {
-    LittleEndian();
     uint32 magic;
-    uint32 verMajor;
-    uint32 verMinor;
-    U32_Bool mBoostsEnabled;
-    uint32 mUpdateCnt;
-    uint32 dReplaySize;
-    uint32 cReplaySize;
-    byte cReplay[cReplaySize];
-} RPL;
+    uint32 ver;
+    uint32 unk;
+} PCSD;

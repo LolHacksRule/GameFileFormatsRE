@@ -13,7 +13,7 @@
 
 local uint isBej3 = 0;
 
-#include "../../../LHR/Common.bt"
+#include "../../../../LHR/Common.bt"
 
 typedef struct HighScoreEntry
 {

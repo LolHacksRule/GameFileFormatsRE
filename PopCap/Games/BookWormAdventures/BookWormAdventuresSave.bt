@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "../../../LHR/Common.bt"
 
 //local int i <hidden=true> = 0;
 local int i2 <hidden=true> = 0;

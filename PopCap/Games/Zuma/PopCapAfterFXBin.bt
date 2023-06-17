@@ -15,7 +15,7 @@
 
 //WIP!
 
-#include "../../LHR/Common.bt"
+#include "../../../LHR/Common.bt"
 
 struct PopCapAfterFX {
     struct Header {

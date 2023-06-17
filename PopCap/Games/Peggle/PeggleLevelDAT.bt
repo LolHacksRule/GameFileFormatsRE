@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "../../../LHR/Common.bt"
 
 //Credit to https://github.com/IntelOrca/PeggleEdit and http://forum.zonehacks.com/threads/35-Peggle-Level-File-Format for cracking most of the level format, this has been ported to aid with studying level data 
 //ONLY TESTED ON PEGO

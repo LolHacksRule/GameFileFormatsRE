@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+struct BejeweledBlitzReplay
+{
+    LittleEndian();
+    uint32 magic;
+    uint32 verMajor;
+    uint32 verMinor;
+    U32_Bool mBoostsEnabled;
+    uint32 mUpdateCnt;
+    uint32 dReplaySize;
+    uint32 cReplaySize;
+    byte cReplay[cReplaySize];
+} RPL;
