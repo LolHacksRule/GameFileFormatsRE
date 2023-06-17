@@ -241,6 +241,11 @@ typedef struct Vector2_F32 {
     float Y;
 };
 
+typedef struct Vector2_U32 {
+	uint32 X;
+    uint32 Y;
+};
+
 typedef struct MinMax_F32 {
 	float min;
     float max;

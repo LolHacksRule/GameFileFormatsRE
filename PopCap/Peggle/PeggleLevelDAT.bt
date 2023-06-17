@@ -1,0 +1,276 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+//Credit to https://github.com/IntelOrca/PeggleEdit and http://forum.zonehacks.com/threads/35-Peggle-Level-File-Format for cracking most of the level format, this has been ported to aid with studying level data 
+//ONLY TESTED ON PEGO
+
+typedef enum <uint32>
+{
+    PegoJun82013 = 53,
+} LevelVersion;
+
+typedef enum <uint32>
+{
+    ET_Line = 2,
+    ET_Poly,
+    ET_Peg = 5,
+    ET_Brick,
+    ET_Material = 8,
+} EntryType;
+
+typedef enum <byte>
+{
+    AV_Left,
+    AV_Middle,
+    AV_Right,
+} AlignVariable;
+
+typedef enum <byte>
+{
+    BT_NormalCurved,
+    BT_OuterCurved,
+    BT_OuterCurved90,
+    BT_InnerCurved,
+    BT_InnerCurved90,
+    BT_Straight,
+} BrickType;
+
+typedef enum <byte>
+{
+    PT_None,
+    PT_Normal, //Blue
+    PT_Goal, //Red
+    PT_Score, //Purple
+    PT_Powerup, //Green
+    PT_Generic, //Green
+} PegType;
+
+typedef enum <byte>
+{
+    PV_EnableVariable = 2,
+    PV_EnableCrumble = 8,
+    PV_EnableVariableAndCrumble = 10,
+} PegVariable;
+
+typedef struct PegInfoStruct
+{
+    PegType type;
+    if (type < 19) //19 is bumper
+    {
+        PegVariable pegVariable;
+        byte unk4;
+        if (unk4 == 1)
+        {
+            
+        }
+    }
+};
+
+typedef struct PegStruct
+{
+    PegInfoStruct pegInfo;
+    Vector2_F32 PegDimensions<optimize=false>;
+    float pegRadius;
+};
+
+typedef struct ImageStruct
+{
+    if (hdr.flags[1] >= 4 && hdr.flags[1] != 8 && hdr.flags[1] < 24 && hdr.flags[1] != 16)
+    {
+        U16_StringEntry imageName;
+    }
+    if (hdr.flags[1] >= 8)
+    {
+        float imageCenterDX; //idk what calls this
+    }
+    if (hdr.flags[1] >= 24 && hdr.flags[1] != 8 && hdr.flags[1] != 0 && hdr.flags[1] != 16)
+    {
+        float imageCenterDY; //idk what calls this
+    }
+};
+
+typedef struct BrickStruct
+{
+    ImageStruct img;
+    /*if (hdr.flags[1] == 8)
+    {
+        //U16_StringEntry ImageName;
+        //uint16 unk9;
+        //byte unk[8];
+    }
+    if (hdr.flags[1] == 24)
+    {
+        float unk2[2]; //idk what calls this
+        //U16_StringEntry ImageName;
+        //uint16 unk9;
+        //byte unk[8];
+    }*/
+    PegInfoStruct pegInfo;
+    byte ver; //8 for PegoEditor or is it 1
+    //byte unk;
+    //float scale; //idk what calls this
+    Vector2_F32 BrickDimensions<optimize=false>;
+    
+    uint16 unk;
+    /*uint32 unk2[2];
+    Vector2_F32 BrickDimensions2[3]<optimize=false>;
+    uint16 unk4; //Anchor related*/
+    BrickType brickType;
+    if (hdr.flags[1] >= 8 && hdr.flags[1] != 16 && hdr.flags[1] != 24)
+    {
+        byte subdivisions;
+    }
+    if (hdr.flags[0] == -60)
+    {
+        float brickAdvLeftAngle;
+        float brickAdvRightAngle[2];
+    }
+    float brickThickness;
+    if (hdr.flags[1] != 24 && brickType != BT_Straight)
+    {
+        float brickRadius;
+    }
+    float brickRotation;
+    byte unk5[4];
+    //uint16 unk;
+    //byte unk2;
+    //float unk5;
+    //float unk6;
+    //float unk7;
+    //Vector2_F32 unk8[unk7];
+};
+
+typedef struct MaterialStruct
+{
+    //If unk3 = 1, drawsort true, 10 draw float true
+    if (hdr.flags[1] > 1 && hdr.flags[0] == -31 || hdr.flags[0] == -63)
+    {
+        float rollY;
+    }
+    if (hdr.flags[1] > 1 && hdr.flags[0] != -32)
+    {
+        float bouncy;
+    }
+    float solidColor;
+    if (hdr.flags[1] == 3)
+    {
+        float outlineColor;
+    }
+    ImageStruct img<optimize=false>;
+    U16_StringEntry imgID<optimize=false>;
+    //byte sound;
+    if (hdr.flags[0] == -31 || hdr.flags[1] == 3)
+    {
+        float mtrl2_maxBounceVel;
+    }
+    uint32 ver; //change to byte if wrong
+    byte movementType;
+    //uint32 width;
+    //uint32 height;
+    Vector2_F32 XY;
+    uint16 movementTime;
+    uint16 unk;
+    uint16 radius;
+    float phase;
+    Vector2_F32 movementXY;
+    byte flag; //8 = has score
+    Vector2_U32 holeXY;
+    if (flag == 8)
+    {
+        uint32 score;
+    }
+    //uint32 width;
+    //uint32 height;
+};
+
+typedef struct LineStruct
+{
+    byte unk;
+    Vector2_F32 LineDimensions[2]<optimize=false>;
+};
+
+typedef struct PolyStruct
+{
+    if (hdr.flags[0] != -96 && hdr.flags[0] != -86)
+    {
+        U16_StringEntry imageName;
+    }
+    if (hdr.flags[0] != -86)
+    {
+        uint16 unk;
+    }
+    if (unk == 2097)
+    {
+        float scale; //how do we know
+    }
+    Vector2_F32 pd;
+    uint32 p2s;
+    Vector2_F32 pd2[p2s]<optimize=false>;
+};
+
+typedef struct LevelEntry
+{
+    struct Header
+    {
+        uint32 unk; //If not 1, invalid save game ver, if 0, crash
+        EntryType eType;
+        byte flags[2];
+    } hdr;
+    struct GenericData
+    {
+        byte unk2; //if not 0 has ids
+        byte unk3; //If not 0 has subids
+        if (unk2 > 0)
+        {
+            U16_StringEntry ID;
+            if (ID.byteSize == 0)
+            {
+                FSkip(-2); //temp hack
+            }
+            if (unk3 > 0)
+            {
+                uint32 subID;
+            }
+        }
+    } gd;
+    if (hdr.eType == ET_Peg)
+    {
+        PegStruct pegEntry<optimize=false>;
+    }
+    else if (hdr.eType == ET_Line)
+    {
+        LineStruct lineEntry<optimize=false>;
+    }
+    else if (hdr.eType == ET_Brick)
+    {
+        BrickStruct brickEntry<optimize=false>;
+    }
+    else if (hdr.eType == ET_Poly)
+    {
+        PolyStruct polyEntry<optimize=false>;
+    }
+    else if (hdr.eType == ET_Material)
+    {
+        MaterialStruct materialEntry<optimize=false>;
+    }
+};
+
+struct PeggleLevelDAT
+{
+    LevelVersion version;
+    byte unk;
+    uint32 levelEntries;
+    LevelEntry levelEntry[levelEntries]<optimize=false>;
+} DAT;
