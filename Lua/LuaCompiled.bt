@@ -19,11 +19,16 @@
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
+local uint DEBUG_PRINT <hidden=true> = 1;
+local uint isSubFunc <hidden=true> = 0;
+local uint isLocal <hidden=true> = 0;
+
 typedef enum <byte>
 {
-    PLV_Bool = 1,
+    PLV_Null,
+    PLV_Bool,
     PLV_Decimal = 3,
-    PLV_I32,
+    PLV_Number,
     PLV_String,
 } PopCap_Custom_LuaVarType;
 
@@ -32,11 +37,12 @@ typedef enum <byte>
     LV_Bool = 1,
     LV_Decimal = 3,
     LV_String,
-    LV_I32,
+    LV_Number,
 } LuaVarType;
 
 typedef enum <uint32>
 {
+    LOP_SETGLOBAL = 0x07,
     LOP_LOADK = 0x41,
     LOP_RETURN = 0x801B,
 } LuaOpCode;
@@ -67,6 +73,10 @@ typedef struct LuaString
     {
         char lstring[stringSize];
     }
+    if (DEBUG_PRINT == 1)
+    {
+        Printf("%s\n", lstring);
+    }
 };
 
 typedef struct LuaVar
@@ -74,23 +84,35 @@ typedef struct LuaVar
     if (hdr.ver == PopCap_Custom_Lua5)
     {
         PopCap_Custom_LuaVarType luaVarType;
-        if (luaVarType == PLV_I32)
+        if (luaVarType == PLV_Number)
         {
             uint32 luaI32;
         }
         else if (luaVarType == PLV_String)
         {
+            /*if (isLocal == 1)
+            {
+                FSkip(-1);
+            }*/
             LuaString luaStr;
         }
         else if (luaVarType == PLV_Decimal)
         {
-            if (hdr.integralFlag != 0)
+            if (hdr.integralFlag > 0)
             {
-                double luaDbl;
+                double luaDec;
+                if (DEBUG_PRINT == 1)
+                {
+                    Printf("%lf\n", luaDec);
+                }
             }
             else
             {
-                float luaFlt;
+                float luaDec;
+                if (DEBUG_PRINT == 1)
+                {
+                    Printf("%f\n", luaDec);
+                }
             }
         }
         else if (luaVarType == PLV_Bool)
@@ -101,9 +123,9 @@ typedef struct LuaVar
     else
     {
         LuaVarType luaVarType;
-        if (luaVarType == LV_I32)
+        if (luaVarType == LV_Number)
         {
-            uint32 luaI32;
+            uint32 luaI32; //Will change later
         }
         else if (luaVarType == LV_String)
         {
@@ -111,13 +133,21 @@ typedef struct LuaVar
         }
         else if (luaVarType == LV_Decimal)
         {
-            if (hdr.integralFlag != 0)
+            if (hdr.integralFlag != 0 || hdr.ver == 'Q') //Breaks float currently
             {
-                double luaDbl;
+                double luaDec;
+                if (DEBUG_PRINT == 1)
+                {
+                    Printf("%f\n", luaDec);
+                }
             }
             else
             {
-                float luaFlt;
+                float luaDec;
+                if (DEBUG_PRINT == 1)
+                {
+                    Printf("%f\n", luaDec);
+                }
             }
         }
         else if (luaVarType == LV_Bool)
@@ -129,6 +159,31 @@ typedef struct LuaVar
 
 typedef struct LuaFunction
 {
+    if (isSubFunc == 1)
+    {
+        uint32 unk;
+        if (unk == 2)
+        {
+            FSkip(4);
+        }
+        if (unk == 199)
+        {
+            FSkip(-4);
+            struct Code2
+            {
+                uint32 codesz2;
+                if (hdr.ver == PopCap_Custom_Lua5)
+                {
+                    PopCap_Custom_LuaOpCode plop2[codesz2];
+                }
+                else
+                {
+                    LuaOpCode lop2[codesz2];
+                }
+            } code2<optimize=false>;
+            break;
+        }
+    }
     uint32 linedef;
     if (hdr.ver > 'P')
     {
@@ -148,7 +203,8 @@ typedef struct LuaFunction
         uint32 locals;
         struct LocalEntry
         {
-            if (hdr.ver > 'P')
+            isLocal = 1;
+            if (hdr.ver > 'P' && hdr.ver != 'V')
             {
                 LuaVar lv;
             }
@@ -160,27 +216,36 @@ typedef struct LuaFunction
             }
         } le[locals]<optimize=false>;
     } locals;
+    isLocal = 0;
     struct UpValues
     {
-        uint32 UpVVars;
+        uint32 upVVars;
+        LuaString upVString[upVVars]<optimize=false>;
     } upvalue;
-    if (hdr.ver < 'P' || hdr.ver == 'V')
+    if (hdr.ver <= 'P' || hdr.ver == 'V')
     {
         struct Constants
         {
             uint32 constants;
             LuaVar lcv[constants]<optimize=false>;
         } constants;
+        /*
         struct SubFunctions
         {
             uint32 subfunctions;
-            /*struct SubFunction
+            struct SubFunction
             {
                 LuaString srcName;
-            } subfunction[subfunctions]<optimize=false>;*/
-        } subfunctions;
-        //FSeek(0x4dd);
-        //FSeek(0x7F7E);
+            } subfunction[subfunctions]<optimize=false>;
+        } subfunctions;*/
+        if (ReadByte() != 0)
+        {
+            break; //There has to be a better way
+        }
+        else
+        {
+            uint32 zeroSubFuncs;
+        }
     }
     struct Code
     {
@@ -194,6 +259,7 @@ typedef struct LuaFunction
             LuaOpCode lop[codesz];
         }
     } code<optimize=false>;
+    //isSubFunc = 0;
 };
 
 struct LuaCompiled
@@ -207,6 +273,11 @@ struct LuaCompiled
     FSkip(4);
     byte verChk<hidden=true>;
     FSkip(-5);
+    if (verChk == 'P') //52 / 5.2
+    {
+        Printf("Lua 5.0 files are WIP!\n");
+        //break;
+    }
     if (verChk == 'R') //52 / 5.2
     {
         Printf("Please use Luac.bt instead.\n");
@@ -221,7 +292,12 @@ struct LuaCompiled
     {
         uint32 magic; // x1BLua
         LuaVersion ver; //P, Q and V (PopLua)
-        if (ver > 'P')
+        //check for ChunkSpy 5.1 Lua bcz sure broken rn
+        /*FSkip(1);
+        byte csChk<hidden=true>;
+        FSkip(-2);
+        */
+        if (ver > 'P' /*&& csChk != 0x04*/)
         {
             byte format; //0: Official, 1: Modified (like PopLua)
         }
@@ -238,15 +314,32 @@ struct LuaCompiled
         byte size_t_sz;
         byte instruction_sz;
         byte lua_number_sz;
-        byte integralFlag;
-        if (ver < 'Q' || ver == 'V')
+        if (ver >= 'P' /*&& csChk != 0x04*/)
+        {
+            byte integralFlag;
+        }
+        if (ver < 'Q' || ver == 'V' /*&& (ver > 'P' && csChk != 0x04)*/)
         {
             byte asz;
             byte bsz;
             byte csz;
-            double testNum; //PI
+            //double testNum; //PI
+        }
+        /*if (ver > 'P' && csChk != 0x04)
+        {
+            byte integralFlag;
+        }*/
+        if (ReadInt64() == 4719198358794865078 || ReadInt64() == 4719198358651011072)
+        {
+            double testNum;
         }
     } hdr;
     LuaString srcName;
     LuaFunction lf;
+    if (hdr.ver < 'P' || hdr.ver == 'V')
+    {
+        uint32 subfunctions;
+        isSubFunc = 1;
+        LuaFunction lsf[subfunctions]<optimize=false>;
+    }
 } LUAC;
