@@ -1,0 +1,252 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//http://domoticx.com/lua-bytecode-ontcijferen-luac/
+//https://www.twblogs.net/a/5b8c24e42b7177188330c536/?lang=zh-cn
+//http://files.catwell.info/misc/mirror/lua-5.2-bytecode-vm-dirk-laurie/lua52vm.html
+//https://github.com/viruscamp/luadec/blob/master/ChunkSpy/
+//https://web.archive.org/web/20201126175122/http://luaforge.net/projects/chunkspy/
+
+//ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
+
+typedef enum <byte>
+{
+    PLV_Bool = 1,
+    PLV_Decimal = 3,
+    PLV_I32,
+    PLV_String,
+} PopCap_Custom_LuaVarType;
+
+typedef enum <byte>
+{
+    LV_Bool = 1,
+    LV_Decimal = 3,
+    LV_String,
+    LV_I32,
+} LuaVarType;
+
+typedef enum <uint32>
+{
+    LOP_LOADK = 0x41,
+    LOP_RETURN = 0x801B,
+} LuaOpCode;
+
+typedef enum <uint32>
+{
+    PLOP_RETURN = 0x801D,
+} PopCap_Custom_LuaOpCode;
+
+typedef enum <byte>
+{
+    LuaVersion_40 = 0x40,
+    LuaVersion_50 = 0x50,
+    LuaVersion_51,
+    LuaVersion_52,
+    LuaVersion_53,
+    PopCap_Custom_Lua5 = 0x56,
+} LuaVersion;
+
+typedef struct LuaString
+{
+    uint32 stringSize;
+    if (hdr.endian == 2)
+    {
+        wchar_t lstring[stringSize];
+    }
+    else
+    {
+        char lstring[stringSize];
+    }
+};
+
+typedef struct LuaVar
+{
+    if (hdr.ver == PopCap_Custom_Lua5)
+    {
+        PopCap_Custom_LuaVarType luaVarType;
+        if (luaVarType == PLV_I32)
+        {
+            uint32 luaI32;
+        }
+        else if (luaVarType == PLV_String)
+        {
+            LuaString luaStr;
+        }
+        else if (luaVarType == PLV_Decimal)
+        {
+            if (hdr.integralFlag != 0)
+            {
+                double luaDbl;
+            }
+            else
+            {
+                float luaFlt;
+            }
+        }
+        else if (luaVarType == PLV_Bool)
+        {
+            byte luaBool;
+        }
+    }
+    else
+    {
+        LuaVarType luaVarType;
+        if (luaVarType == LV_I32)
+        {
+            uint32 luaI32;
+        }
+        else if (luaVarType == LV_String)
+        {
+            LuaString luaStr;
+        }
+        else if (luaVarType == LV_Decimal)
+        {
+            if (hdr.integralFlag != 0)
+            {
+                double luaDbl;
+            }
+            else
+            {
+                float luaFlt;
+            }
+        }
+        else if (luaVarType == LV_Bool)
+        {
+            byte luaBool;
+        }
+    }
+};
+
+typedef struct LuaFunction
+{
+    uint32 linedef;
+    if (hdr.ver > 'P')
+    {
+        uint32 endline;
+    }
+    byte nupvs;
+    byte numparams;
+    byte vararg;
+    byte maxStackSz;
+    struct Lines
+    {
+        uint32 lines;
+        uint32 line[lines];
+    } lines;
+    struct Locals
+    {
+        uint32 locals;
+        struct LocalEntry
+        {
+            if (hdr.ver > 'P')
+            {
+                LuaVar lv;
+            }
+            else
+            {
+                LuaString locString;
+                uint32 startPc;
+                uint32 endPc;
+            }
+        } le[locals]<optimize=false>;
+    } locals;
+    struct UpValues
+    {
+        uint32 UpVVars;
+    } upvalue;
+    if (hdr.ver < 'P' || hdr.ver == 'V')
+    {
+        struct Constants
+        {
+            uint32 constants;
+            LuaVar lcv[constants]<optimize=false>;
+        } constants;
+        struct SubFunctions
+        {
+            uint32 subfunctions;
+            /*struct SubFunction
+            {
+                LuaString srcName;
+            } subfunction[subfunctions]<optimize=false>;*/
+        } subfunctions;
+        //FSeek(0x4dd);
+        //FSeek(0x7F7E);
+    }
+    struct Code
+    {
+        uint32 codesz;
+        if (hdr.ver == PopCap_Custom_Lua5)
+        {
+            PopCap_Custom_LuaOpCode plop[codesz];
+        }
+        else
+        {
+            LuaOpCode lop[codesz];
+        }
+    } code<optimize=false>;
+};
+
+struct LuaCompiled
+{
+    uint32 BZLACheck<hidden=true>;
+    FSkip(-4);
+    if (BZLACheck == 1095522882) //NW Bezel Luac
+    {
+        FSkip(16);
+    }
+    FSkip(4);
+    byte verChk<hidden=true>;
+    FSkip(-5);
+    if (verChk == 'R') //52 / 5.2
+    {
+        Printf("Please use Luac.bt instead.\n");
+        break;
+    }
+    if (verChk == 'V') //PopCap/SAF PopLua
+    {
+        Printf("PopCap LUC files are WIP!\n");
+        //break;
+    }
+    struct Header
+    {
+        uint32 magic; // x1BLua
+        LuaVersion ver; //P, Q and V (PopLua)
+        if (ver > 'P')
+        {
+            byte format; //0: Official, 1: Modified (like PopLua)
+        }
+        byte endian; //0: Big, 1: Little (For PopLua, always LE, 2 uses unicode [Wrapper])
+        if (endian == 0 && ver != PopCap_Custom_Lua5)
+        {
+            BigEndian();
+        }
+        if (endian == 1)
+        {
+            LittleEndian();
+        }
+        byte intSz;
+        byte size_t_sz;
+        byte instruction_sz;
+        byte lua_number_sz;
+        byte integralFlag;
+        if (ver < 'Q' || ver == 'V')
+        {
+            byte asz;
+            byte bsz;
+            byte csz;
+            double testNum; //PI
+        }
+    } hdr;
+    LuaString srcName;
+    LuaFunction lf;
+} LUAC;
