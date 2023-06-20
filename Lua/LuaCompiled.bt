@@ -21,9 +21,10 @@
 
 #include "../LHR/Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 1;
-local uint isSubFunc <hidden=true> = 0;
-local uint isLocal <hidden=true> = 0;
+local string luaBoolStr <hidden=true> = "";
+local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
+local uint isSubFunc <hidden=true> = 0; //TEMP HACKS
+local uint isLocal <hidden=true> = 0; //TEMP HACKS
 
 typedef enum <byte>
 {
@@ -56,6 +57,7 @@ typedef enum <uint32>
     PLOP_GETGLOBAL = 0x000005,
     PLOP_NEWTABLE = 0x00000A,
     PLOP_DEFGLOBAL = 0x000027,
+    PLOP_CLOSURE = 0x000030,
     PLOP_RETURN = 0x00801D,
 } PopCap_Custom_LuaOpCode;
 
@@ -94,6 +96,10 @@ typedef struct LuaVar
         if (luaVarType == PLV_Number)
         {
             uint32 luaI32;
+            if (DEBUG_PRINT == 1)
+            {
+                Printf("%i\n", luaI32);
+            }
         }
         else if (luaVarType == PLV_String)
         {
@@ -105,7 +111,7 @@ typedef struct LuaVar
         }
         else if (luaVarType == PLV_Decimal)
         {
-            if (hdr.lua_number_sz == 8)
+            if (hdr.lua_number_sz == 6)
             {
                 double luaDec;
                 if (DEBUG_PRINT == 1)
@@ -125,6 +131,18 @@ typedef struct LuaVar
         else if (luaVarType == PLV_Bool)
         {
             byte luaBool;
+            if (DEBUG_PRINT == 1)
+            {
+                if (luaBool == 0x01)
+                {
+                    luaBoolStr = "true";
+                }
+                else
+                {
+                    luaBoolStr = "false";
+                }
+                Printf("%s\n", luaBoolStr);
+            }
         }
     }
     else
@@ -133,6 +151,10 @@ typedef struct LuaVar
         if (luaVarType == LV_Number)
         {
             uint32 luaI32; //Will change later
+            if (DEBUG_PRINT == 1)
+            {
+                Printf("%i\n", luaI32);
+            }
         }
         else if (luaVarType == LV_String)
         {
@@ -160,6 +182,18 @@ typedef struct LuaVar
         else if (luaVarType == LV_Bool)
         {
             byte luaBool;
+            if (DEBUG_PRINT == 1)
+            {
+                if (luaBool == 0x01)
+                {
+                    luaBoolStr = "true";
+                }
+                else
+                {
+                    luaBoolStr = "false";
+                }
+                Printf("%s\n", luaBoolStr);
+            }
         }
     }
 };
@@ -208,33 +242,42 @@ typedef struct LuaFunction
     struct Locals
     {
         uint32 locals;
-        struct LocalEntry
+        if (locals > 0)
         {
-            isLocal = 1;
-            if (hdr.ver > 'P' && hdr.ver != 'V')
+            struct LocalEntry
             {
-                LuaVar lv;
-            }
-            else
-            {
-                LuaString locString;
-                uint32 startPc;
-                uint32 endPc;
-            }
-        } le[locals]<optimize=false>;
+                isLocal = 1;
+                if (hdr.ver > 'P' && hdr.ver != 'V')
+                {
+                    LuaVar lv;
+                }
+                else
+                {
+                    LuaString locString;
+                    uint32 startPc;
+                    uint32 endPc;
+                }
+            } le[locals]<optimize=false>;
+        }
     } locals;
     isLocal = 0;
     struct UpValues
     {
         uint32 upVVars;
-        LuaString upVString[upVVars]<optimize=false>;
+        if (upVVars > 0)
+        {
+            LuaString upVString[upVVars]<optimize=false>;
+        }
     } upvalue;
     if (hdr.ver <= 'P' || hdr.ver == 'V')
     {
         struct Constants
         {
             uint32 constants;
-            LuaVar lcv[constants]<optimize=false>;
+            if (constants > 0)
+            {
+                LuaVar lcv[constants]<optimize=false>;
+            }
         } constants;
         /*
         struct SubFunctions
@@ -336,7 +379,7 @@ struct LuaCompiled
         {
             byte integralFlag;
         }*/
-        if (ReadInt64() == 4719198358794865078 || ReadInt64() == 4719198358651011072)
+        if (ReadInt64() == 4719198358794865078 || ReadInt64() == 4719198358651011072) // do this so 5.0 and 5.1 don't break
         {
             double testNum;
         }
@@ -350,18 +393,25 @@ struct LuaCompiled
         LuaFunction lsf[subfunctions]<optimize=false>;
         while (FPos < EOF) //Just detect as many
         {
-            struct Code3
+            if (ReadInt() == 0)
             {
-                uint32 codesz3;
-                if (hdr.ver == PopCap_Custom_Lua5)
+                LuaFunction lsf2<optimize=false>; //hack prob will break
+            }
+            else
+            {
+                struct Code3
                 {
-                    PopCap_Custom_LuaOpCode plop2[codesz3];
-                }
-                else
-                {
-                    LuaOpCode lop2[codesz3];
-                }
-            } code3<optimize=false>;
+                    uint32 codesz3;
+                    if (hdr.ver == PopCap_Custom_Lua5)
+                    {
+                        PopCap_Custom_LuaOpCode plop2[codesz3];
+                    }
+                    else
+                    {
+                        LuaOpCode lop2[codesz3];
+                    }
+                } code3<optimize=false>;
+            }
             FPos = FTell(); //Check for end
         }
     }
