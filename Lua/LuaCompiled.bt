@@ -19,6 +19,8 @@
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
+#include "../LHR/Common.bt"
+
 local uint DEBUG_PRINT <hidden=true> = 1;
 local uint isSubFunc <hidden=true> = 0;
 local uint isLocal <hidden=true> = 0;
@@ -42,14 +44,19 @@ typedef enum <byte>
 
 typedef enum <uint32>
 {
-    LOP_SETGLOBAL = 0x07,
-    LOP_LOADK = 0x41,
-    LOP_RETURN = 0x801B,
+    LOP_MOVE = 0x000000,
+    LOP_LOADK,
+    LOP_LOADBOOL,
+    LOP_SETGLOBAL = 0x000007,
+    LOP_RETURN = 0x0000801B,
 } LuaOpCode;
 
 typedef enum <uint32>
 {
-    PLOP_RETURN = 0x801D,
+    PLOP_GETGLOBAL = 0x000005,
+    PLOP_NEWTABLE = 0x00000A,
+    PLOP_DEFGLOBAL = 0x000027,
+    PLOP_RETURN = 0x00801D,
 } PopCap_Custom_LuaOpCode;
 
 typedef enum <byte>
@@ -98,7 +105,7 @@ typedef struct LuaVar
         }
         else if (luaVarType == PLV_Decimal)
         {
-            if (hdr.integralFlag > 0)
+            if (hdr.lua_number_sz == 8)
             {
                 double luaDec;
                 if (DEBUG_PRINT == 1)
@@ -133,7 +140,7 @@ typedef struct LuaVar
         }
         else if (luaVarType == LV_Decimal)
         {
-            if (hdr.integralFlag != 0 || hdr.ver == 'Q') //Breaks float currently
+            if (hdr.lua_number_sz == 8)
             {
                 double luaDec;
                 if (DEBUG_PRINT == 1)
@@ -336,10 +343,26 @@ struct LuaCompiled
     } hdr;
     LuaString srcName;
     LuaFunction lf;
-    if (hdr.ver < 'P' || hdr.ver == 'V')
+    if (hdr.ver < 'P' || hdr.ver == 'V') //todo: Move this
     {
         uint32 subfunctions;
         isSubFunc = 1;
         LuaFunction lsf[subfunctions]<optimize=false>;
+        while (FPos < EOF) //Just detect as many
+        {
+            struct Code3
+            {
+                uint32 codesz3;
+                if (hdr.ver == PopCap_Custom_Lua5)
+                {
+                    PopCap_Custom_LuaOpCode plop2[codesz3];
+                }
+                else
+                {
+                    LuaOpCode lop2[codesz3];
+                }
+            } code3<optimize=false>;
+            FPos = FTell(); //Check for end
+        }
     }
 } LUAC;
