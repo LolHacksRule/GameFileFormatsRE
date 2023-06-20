@@ -19,8 +19,6 @@
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
-#include "../LHR/Common.bt"
-
 local string luaBoolStr <hidden=true> = "";
 local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
 local uint isSubFunc <hidden=true> = 0; //TEMP HACKS
