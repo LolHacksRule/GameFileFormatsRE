@@ -1,13 +1,13 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
-//   Version: 
-//   Purpose: 
-//  Category: 
-// File Mask: 
-//  ID Bytes: 
+//      File: LuaCompiled.bt
+//   Authors: LolHacksRule
+//   Version: 1.2
+//   Purpose: Reading compiled Lua files
+//  Category: Reverse Engineering
+// File Mask: Lua*
+//  ID Bytes: 1B 4C 75
 //   History: 
 //------------------------------------------------
 
@@ -17,6 +17,7 @@
 //https://github.com/viruscamp/luadec/blob/master/ChunkSpy/
 //https://web.archive.org/web/20201126175122/http://luaforge.net/projects/chunkspy/
 //https://gist.github.com/seanjensengrey/e198380afc64f0eb17a47512b48f040f
+//Original Luac.bt
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
@@ -24,7 +25,8 @@
 
 local string luaBoolStr <hidden=true> = "";
 local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
-local uint isSubFunc <hidden=true> = 0; //TEMP HACKS
+
+struct LuaProto;
 
 typedef enum <byte>
 {
@@ -74,6 +76,53 @@ typedef enum <byte>
     LuaVersion_53,
     PopCap_Custom_Lua5 = 0x56,
 } LuaVersion;
+
+typedef struct LuaCompiledHeader
+{
+    uint32 magic; // x1BLua
+    LuaVersion ver; //P, Q and V (PopLua)
+    //check for ChunkSpy 5.1 Lua bcz sure broken rn
+    /*FSkip(1);
+    byte csChk<hidden=true>;
+    FSkip(-2);
+    */
+    if (ver > 'P' /*&& csChk != 0x04*/)
+    {
+        byte format; //0: Official, 1: Modified (like PopLua)
+    }
+    byte endian; //0: Big, 1: Little (For PopLua, always LE, 2 uses unicode [Wrapper])
+    if (endian == 0 && ver != PopCap_Custom_Lua5)
+    {
+        BigEndian();
+    }
+    if (endian == 1)
+    {
+        LittleEndian();
+    }
+    byte intSz;
+    byte size_t_sz;
+    byte instruction_sz;
+    byte lua_number_sz;
+    if (ver >= 'P' /*&& csChk != 0x04*/)
+    {
+        byte integralFlag;
+    }
+    if (ver < 'Q' || ver == 'V' /*&& (ver > 'P' && csChk != 0x04)*/)
+    {
+        byte asz;
+        byte bsz;
+        byte csz;
+        //double testNum; //PI
+    }
+    /*if (ver > 'P' && csChk != 0x04)
+    {
+        byte integralFlag;
+    }*/
+    if (ReadInt64() == 4719198358794865078 || ReadInt64() == 4719198358651011072) // do this so 5.0 and 5.1 don't break
+    {
+        double testNum;
+    }
+};
 
 typedef struct LuaString
 {
@@ -208,7 +257,7 @@ typedef struct LuaVar
     }
 };
 
-typedef struct Lines
+typedef struct LuaLines
 {
     uint32 lines;
     if (lines > 0)
@@ -217,20 +266,20 @@ typedef struct Lines
     }
 };
 
-typedef struct Code
+typedef struct LuaByteCode
 {
-    uint32 codesz;
+    uint32 bytecodesz;
     if (hdr.ver == PopCap_Custom_Lua5)
     {
-        PopCap_Custom_LuaOpCode plop[codesz];
+        PopCap_Custom_LuaOpCode plop[bytecodesz];
     }
     else
     {
-        LuaOpCode lop[codesz];
+        LuaOpCode lop[bytecodesz];
     }
 };
 
-typedef struct Constants
+typedef struct LuaConstants
 {
     uint32 constants;
     if (constants > 0)
@@ -239,7 +288,7 @@ typedef struct Constants
     }
 };
 
-typedef struct Locals
+typedef struct LuaLocals
 {
     uint32 locals;
     if (locals > 0)
@@ -260,7 +309,7 @@ typedef struct Locals
     }
 };
 
-typedef struct UpValues
+typedef struct LuaUpValues
 {
     uint32 upVVars;
     if (upVVars > 0)
@@ -269,14 +318,19 @@ typedef struct UpValues
     }
 };
 
-typedef struct LuaSubFunction //there has to be a better way
+typedef struct (string level) {
+    uint32 sizep <format=hex>;
+    local uint32 sz = sizep;
+    local uint32 i = 0;
+    local string s_level;
+    while (sz-- > 0) {
+        SPrintf(s_level, "%s_%d", level, i++);
+        LuaProto proto(s_level);
+    };
+} LuaProtos<optimize=false>;
+
+typedef struct LuaProtoHeader
 {
-    /*if (isNested > 0)
-    {
-        //FSkip(8);
-        //isNested--;
-    }*/ //there has to be a better way
-    LuaString srcName<bgcolor=cGreen>;
     uint32 linedef;
     if (hdr.ver > 'P')
     {
@@ -286,94 +340,39 @@ typedef struct LuaSubFunction //there has to be a better way
     byte numparams;
     byte vararg;
     byte maxStackSz;
+};
+
+typedef struct(string level) {
+    local string level_ = level;
+    LuaString srcName<bgcolor=cGreen>;
+    LuaProtoHeader lph;
     if (hdr.ver < LuaVersion_51 || hdr.ver == PopCap_Custom_Lua5)
     {
-        Lines Lines50;
-        Locals Locals50;
-        UpValues UpValues50;
-        Constants Constants50;
-        uint32 funcstmp; //break
-        if (funcstmp > 0)
-        {
-            //isNested = funcstmp;
-            Printf("NESTED FUNCTIONS ARE UNSUPPORTED.\n");
-        }
-        else
-        {
-            Code Code50<bgcolor=cRed>;
-        }
+        LuaLines Lines50;
+        LuaLocals Locals50;
+        LuaUpValues UpValues50;
+        LuaConstants Constants50;
+        LuaProtos Protos50(level_)<bgcolor=cLtBlue>;
+        LuaByteCode ByteCode50<bgcolor=cRed>;
     }
     else
     {
-        Code Code51<bgcolor=cRed>;
-        Constants Constants51;
-        uint32 funcstmp; //break
-        if (funcstmp > 0)
-        {
-            //isNested += funcstmp;
-            Printf("NESTED FUNCTIONS ARE UNSUPPORTED.\n");
-        }
-        else
-        {
-            Lines Lines51;
-            Locals Locals51;
-            UpValues UpValues51;
-        }
+        LuaByteCode ByteCode51<bgcolor=cRed>;
+        LuaConstants Constants51;
+        LuaProtos Protos51(level_)<bgcolor=cLtBlue>;
+        LuaLines Lines51;
+        LuaLocals Locals51;
+        LuaUpValues UpValues51;
     }
-};
+} LuaProto <read=LuaProtoRead>;
 
-typedef struct LuaSubFunctions //Todo don't use this
-{
-    uint32 functionsSz;
-    if (functionsSz > 0)
-    {
-        LuaSubFunction lsf[functionsSz]<optimize=false>;
-    }
-};
+string LuaProtoRead(LuaProto& proto) { //Borrowed from Luac.bt, ONLY here so subfunctions don't break
+    return "function level " + proto.level_;
+}
 
-typedef struct LuaFunction
-{
-    LuaString srcName<bgcolor=cGreen>;
-    uint32 linedef;
-    if (hdr.ver > 'P')
-    {
-        uint32 endline;
-    }
-    byte nupvs;
-    byte numparams;
-    byte vararg;
-    byte maxStackSz;
-    if (hdr.ver < LuaVersion_51 || hdr.ver == PopCap_Custom_Lua5) //todo
-    {
-        Lines Lines50;
-        Locals Locals50;
-        UpValues UpValues50;
-        Constants Constants50;
-        LuaSubFunctions Functions50;
-        //FSeek(0x243);
-        Code Code50<bgcolor=cRed>;
-    }
-    else
-    {
-        Code Code51<bgcolor=cRed>;
-        Constants Constants51;
-        LuaSubFunctions Functions51;
-        Lines Lines51;
-        Locals Locals51;
-        UpValues UpValues51;
-    }
-    //isSubFunc = 0;
-};
 
 struct LuaCompiled
 {
-    uint32 BZLACheck<hidden=true>;
-    FSkip(-4);
-    if (BZLACheck == 1095522882) //NW Bezel Luac
-    {
-        FSkip(16);
-    }
-    FSkip(4);
     byte verChk<hidden=true>;
     FSkip(-5);
     if (verChk == 'P') //52 / 5.2
@@ -391,52 +390,6 @@ struct LuaCompiled
         Printf("PopCap LUC files are WIP!\n");
         //break;
     }
-    struct Header
-    {
-        uint32 magic; // x1BLua
-        LuaVersion ver; //P, Q and V (PopLua)
-        //check for ChunkSpy 5.1 Lua bcz sure broken rn
-        /*FSkip(1);
-        byte csChk<hidden=true>;
-        FSkip(-2);
-        */
-        if (ver > 'P' /*&& csChk != 0x04*/)
-        {
-            byte format; //0: Official, 1: Modified (like PopLua)
-        }
-        byte endian; //0: Big, 1: Little (For PopLua, always LE, 2 uses unicode [Wrapper])
-        if (endian == 0 && ver != PopCap_Custom_Lua5)
-        {
-            BigEndian();
-        }
-        if (endian == 1)
-        {
-            LittleEndian();
-        }
-        byte intSz;
-        byte size_t_sz;
-        byte instruction_sz;
-        byte lua_number_sz;
-        if (ver >= 'P' /*&& csChk != 0x04*/)
-        {
-            byte integralFlag;
-        }
-        if (ver < 'Q' || ver == 'V' /*&& (ver > 'P' && csChk != 0x04)*/)
-        {
-            byte asz;
-            byte bsz;
-            byte csz;
-            //double testNum; //PI
-        }
-        /*if (ver > 'P' && csChk != 0x04)
-        {
-            byte integralFlag;
-        }*/
-        if (ReadInt64() == 4719198358794865078 || ReadInt64() == 4719198358651011072) // do this so 5.0 and 5.1 don't break
-        {
-            double testNum;
-        }
-    } hdr<bgcolor=cBlue>;
-    LuaFunction lf<bgcolor=cPurple>;
-    FPos = FTell();
+    LuaCompiledHeader hdr<bgcolor=cBlue>;
+    LuaProto proto("0")<bgcolor=cPurple>;
 } LUAC;
