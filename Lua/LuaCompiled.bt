@@ -376,7 +376,7 @@ struct LuaCompiled
     FSkip(4);
     byte verChk<hidden=true>;
     FSkip(-5);
-    if (verChk == 'P') //52 / 5.2
+    if (verChk == 'P') //50 / 5.0
     {
         Printf("Lua 5.0 files are WIP!\n");
         //break;
@@ -386,7 +386,7 @@ struct LuaCompiled
         Printf("Please use Luac.bt instead.\n");
         break;
     }
-    if (verChk == 'V') //PopCap/SAF PopLua
+    if (verChk == 'V') //PopCap/SAF PopLua 5.0
     {
         Printf("PopCap LUC files are WIP!\n");
         //break;
