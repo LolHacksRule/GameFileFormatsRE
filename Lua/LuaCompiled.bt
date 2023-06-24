@@ -19,6 +19,8 @@
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
+#include "../LHR/Common.bt"
+
 local string luaBoolStr <hidden=true> = "";
 local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
 local uint isSubFunc <hidden=true> = 0; //TEMP HACKS
@@ -43,7 +45,7 @@ typedef enum <byte>
 
 typedef enum <uint32>
 {
-    LOP_MOVE = 0x000000,
+    LOP_MOVE,
     LOP_LOADK,
     LOP_LOADBOOL,
     LOP_SETGLOBAL = 0x000007,
@@ -52,7 +54,10 @@ typedef enum <uint32>
 
 typedef enum <uint32>
 {
+    PLOP_LOADBOOL = 0x000002,
+    PLOP_LOADNIL,
     PLOP_GETGLOBAL = 0x000005,
+    PLOP_SETGLOBAL = 0x000007,
     PLOP_NEWTABLE = 0x00000A,
     PLOP_DEFGLOBAL = 0x000027,
     PLOP_CLOSURE = 0x000030,
@@ -80,7 +85,7 @@ typedef struct LuaString
     {
         char lstring[stringSize];
     }
-    if (DEBUG_PRINT == 1)
+    if (DEBUG_PRINT == 1 && stringSize > 0)
     {
         Printf("%s\n", lstring);
     }
@@ -135,7 +140,7 @@ typedef struct LuaVar
                 {
                     luaBoolStr = "true";
                 }
-                else
+                else if (luaBool == 0x01)
                 {
                     luaBoolStr = "false";
                 }
@@ -201,11 +206,11 @@ typedef struct LuaFunction
     if (isSubFunc == 1)
     {
         uint32 unk;
-        if (unk == 2)
+        if (unk == 1 || unk == 2) //Temp hacks
         {
             FSkip(4);
         }
-        if (unk == 199)
+        else if (unk >= 199) //Temp hacks
         {
             FSkip(-4);
             struct Code2
@@ -306,7 +311,7 @@ typedef struct LuaFunction
         {
             LuaOpCode lop[codesz];
         }
-    } code<optimize=false>;
+    } code<bgcolor=cRed, optimize=false>;
     //isSubFunc = 0;
 };
 
@@ -381,14 +386,15 @@ struct LuaCompiled
         {
             double testNum;
         }
-    } hdr;
-    LuaString srcName;
-    LuaFunction lf;
-    if (hdr.ver < 'P' || hdr.ver == 'V') //todo: Move this
+    } hdr<bgcolor=cBlue>;
+    LuaString srcName<bgcolor=cGreen>;
+    LuaFunction lf<bgcolor=cPurple>;
+    FPos = FTell();
+    if (hdr.ver < 'P' || hdr.ver == 'V' && FPos < EOF) //todo: Move this
     {
-        uint32 subfunctions;
+        uint32 subfunctions<bgcolor=cLtPurple>;
         isSubFunc = 1;
-        LuaFunction lsf[subfunctions]<optimize=false>;
+        LuaFunction lsf[subfunctions]<bgcolor=cLtPurple, optimize=false>;
         while (FPos < EOF) //Just detect as many
         {
             if (ReadInt() == 0)
@@ -408,7 +414,7 @@ struct LuaCompiled
                     {
                         LuaOpCode lop2[codesz3];
                     }
-                } code3<optimize=false>;
+                } code3<bgcolor=cRed, optimize=false>;
             }
             FPos = FTell(); //Check for end
         }
