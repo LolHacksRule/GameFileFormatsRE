@@ -16,6 +16,7 @@
 //http://files.catwell.info/misc/mirror/lua-5.2-bytecode-vm-dirk-laurie/lua52vm.html
 //https://github.com/viruscamp/luadec/blob/master/ChunkSpy/
 //https://web.archive.org/web/20201126175122/http://luaforge.net/projects/chunkspy/
+//https://gist.github.com/seanjensengrey/e198380afc64f0eb17a47512b48f040f
 
 //ONLY SUPPORTS NAMELY 5.0-5.1 NOT 5.2, MAY SUPPORT 4.0
 
@@ -24,7 +25,6 @@
 local string luaBoolStr <hidden=true> = "";
 local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
 local uint isSubFunc <hidden=true> = 0; //TEMP HACKS
-local uint isLocal <hidden=true> = 0; //TEMP HACKS
 
 typedef enum <byte>
 {
@@ -38,6 +38,7 @@ typedef enum <byte>
 typedef enum <byte>
 {
     LV_Bool = 1,
+    LV_Int = 2,
     LV_Decimal = 3,
     LV_String,
     LV_Number,
@@ -76,18 +77,28 @@ typedef enum <byte>
 
 typedef struct LuaString
 {
-    uint32 stringSize;
-    if (hdr.endian == 2)
+    if (hdr.size_t_sz == 8)
     {
-        wchar_t lstring[stringSize];
+        uint64 stringSize;
     }
     else
     {
-        char lstring[stringSize];
+        uint32 stringSize;
     }
-    if (DEBUG_PRINT == 1 && stringSize > 0)
+    if (stringSize > 0)
     {
-        Printf("%s\n", lstring);
+        if (hdr.endian == 2)
+        {
+            wchar_t lstring[stringSize];
+        }
+        else
+        {
+            char lstring[stringSize];
+        }
+        if (DEBUG_PRINT == 1 && stringSize > 0)
+        {
+            Printf("%s\n", lstring);
+        }
     }
 };
 
@@ -106,10 +117,6 @@ typedef struct LuaVar
         }
         else if (luaVarType == PLV_String)
         {
-            /*if (isLocal == 1)
-            {
-                FSkip(-1);
-            }*/
             LuaString luaStr;
         }
         else if (luaVarType == PLV_Decimal)
@@ -165,7 +172,7 @@ typedef struct LuaVar
         }
         else if (luaVarType == LV_Decimal)
         {
-            if (hdr.lua_number_sz == 8)
+            if (hdr.lua_number_sz > 4)
             {
                 double luaDec;
                 if (DEBUG_PRINT == 1)
@@ -201,33 +208,75 @@ typedef struct LuaVar
     }
 };
 
-typedef struct LuaFunction
+typedef struct Lines
 {
-    if (isSubFunc == 1)
+    uint32 lines;
+    if (lines > 0)
     {
-        uint32 unk;
-        if (unk == 1 || unk == 2) //Temp hacks
-        {
-            FSkip(4);
-        }
-        else if (unk >= 199) //Temp hacks
-        {
-            FSkip(-4);
-            struct Code2
-            {
-                uint32 codesz2;
-                if (hdr.ver == PopCap_Custom_Lua5)
-                {
-                    PopCap_Custom_LuaOpCode plop2[codesz2];
-                }
-                else
-                {
-                    LuaOpCode lop2[codesz2];
-                }
-            } code2<optimize=false>;
-            break;
-        }
+        uint32 line[lines];
     }
+};
+
+typedef struct Code
+{
+    uint32 codesz;
+    if (hdr.ver == PopCap_Custom_Lua5)
+    {
+        PopCap_Custom_LuaOpCode plop[codesz];
+    }
+    else
+    {
+        LuaOpCode lop[codesz];
+    }
+};
+
+typedef struct Constants
+{
+    uint32 constants;
+    if (constants > 0)
+    {
+        LuaVar lcv[constants]<optimize=false>;
+    }
+};
+
+typedef struct Locals
+{
+    uint32 locals;
+    if (locals > 0)
+    {
+        struct LocalEntry
+        {
+            /*if (hdr.ver > 'P' && hdr.ver != 'V')
+            {
+                LuaVar lv;
+            }
+            else*/
+            {
+                LuaString locString;
+                uint32 startPc;
+                uint32 endPc;
+            }
+        } le[locals]<optimize=false>;
+    }
+};
+
+typedef struct UpValues
+{
+    uint32 upVVars;
+    if (upVVars > 0)
+    {
+        LuaString upVString[upVVars]<optimize=false>;
+    }
+};
+
+typedef struct LuaSubFunction //there has to be a better way
+{
+    /*if (isNested > 0)
+    {
+        //FSkip(8);
+        //isNested--;
+    }*/ //there has to be a better way
+    LuaString srcName<bgcolor=cGreen>;
     uint32 linedef;
     if (hdr.ver > 'P')
     {
@@ -237,81 +286,82 @@ typedef struct LuaFunction
     byte numparams;
     byte vararg;
     byte maxStackSz;
-    struct Lines
+    if (hdr.ver < LuaVersion_51 || hdr.ver == PopCap_Custom_Lua5)
     {
-        uint32 lines;
-        uint32 line[lines];
-    } lines;
-    struct Locals
-    {
-        uint32 locals;
-        if (locals > 0)
+        Lines Lines50;
+        Locals Locals50;
+        UpValues UpValues50;
+        Constants Constants50;
+        uint32 funcstmp; //break
+        if (funcstmp > 0)
         {
-            struct LocalEntry
-            {
-                isLocal = 1;
-                if (hdr.ver > 'P' && hdr.ver != 'V')
-                {
-                    LuaVar lv;
-                }
-                else
-                {
-                    LuaString locString;
-                    uint32 startPc;
-                    uint32 endPc;
-                }
-            } le[locals]<optimize=false>;
-        }
-    } locals;
-    isLocal = 0;
-    struct UpValues
-    {
-        uint32 upVVars;
-        if (upVVars > 0)
-        {
-            LuaString upVString[upVVars]<optimize=false>;
-        }
-    } upvalue;
-    if (hdr.ver <= 'P' || hdr.ver == 'V')
-    {
-        struct Constants
-        {
-            uint32 constants;
-            if (constants > 0)
-            {
-                LuaVar lcv[constants]<optimize=false>;
-            }
-        } constants;
-        /*
-        struct SubFunctions
-        {
-            uint32 subfunctions;
-            struct SubFunction
-            {
-                LuaString srcName;
-            } subfunction[subfunctions]<optimize=false>;
-        } subfunctions;*/
-        if (ReadByte() != 0)
-        {
-            break; //There has to be a better way
+            //isNested = funcstmp;
+            Printf("NESTED FUNCTIONS ARE UNSUPPORTED.\n");
         }
         else
         {
-            uint32 zeroSubFuncs;
+            Code Code50<bgcolor=cRed>;
         }
     }
-    struct Code
+    else
     {
-        uint32 codesz;
-        if (hdr.ver == PopCap_Custom_Lua5)
+        Code Code51<bgcolor=cRed>;
+        Constants Constants51;
+        uint32 funcstmp; //break
+        if (funcstmp > 0)
         {
-            PopCap_Custom_LuaOpCode plop[codesz];
+            //isNested += funcstmp;
+            Printf("NESTED FUNCTIONS ARE UNSUPPORTED.\n");
         }
         else
         {
-            LuaOpCode lop[codesz];
+            Lines Lines51;
+            Locals Locals51;
+            UpValues UpValues51;
         }
-    } code<bgcolor=cRed, optimize=false>;
+    }
+};
+
+typedef struct LuaSubFunctions //Todo don't use this
+{
+    uint32 functionsSz;
+    if (functionsSz > 0)
+    {
+        LuaSubFunction lsf[functionsSz]<optimize=false>;
+    }
+};
+
+typedef struct LuaFunction
+{
+    LuaString srcName<bgcolor=cGreen>;
+    uint32 linedef;
+    if (hdr.ver > 'P')
+    {
+        uint32 endline;
+    }
+    byte nupvs;
+    byte numparams;
+    byte vararg;
+    byte maxStackSz;
+    if (hdr.ver < LuaVersion_51 || hdr.ver == PopCap_Custom_Lua5) //todo
+    {
+        Lines Lines50;
+        Locals Locals50;
+        UpValues UpValues50;
+        Constants Constants50;
+        LuaSubFunctions Functions50;
+        //FSeek(0x243);
+        Code Code50<bgcolor=cRed>;
+    }
+    else
+    {
+        Code Code51<bgcolor=cRed>;
+        Constants Constants51;
+        LuaSubFunctions Functions51;
+        Lines Lines51;
+        Locals Locals51;
+        UpValues UpValues51;
+    }
     //isSubFunc = 0;
 };
 
@@ -387,36 +437,6 @@ struct LuaCompiled
             double testNum;
         }
     } hdr<bgcolor=cBlue>;
-    LuaString srcName<bgcolor=cGreen>;
     LuaFunction lf<bgcolor=cPurple>;
     FPos = FTell();
-    if (hdr.ver < 'P' || hdr.ver == 'V' && FPos < EOF) //todo: Move this
-    {
-        uint32 subfunctions<bgcolor=cLtPurple>;
-        isSubFunc = 1;
-        LuaFunction lsf[subfunctions]<bgcolor=cLtPurple, optimize=false>;
-        while (FPos < EOF) //Just detect as many
-        {
-            if (ReadInt() == 0)
-            {
-                LuaFunction lsf2<optimize=false>; //hack prob will break
-            }
-            else
-            {
-                struct Code3
-                {
-                    uint32 codesz3;
-                    if (hdr.ver == PopCap_Custom_Lua5)
-                    {
-                        PopCap_Custom_LuaOpCode plop2[codesz3];
-                    }
-                    else
-                    {
-                        LuaOpCode lop2[codesz3];
-                    }
-                } code3<bgcolor=cRed, optimize=false>;
-            }
-            FPos = FTell(); //Check for end
-        }
-    }
 } LUAC;
