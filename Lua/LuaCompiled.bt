@@ -373,6 +373,7 @@ string LuaProtoRead(LuaProto& proto) { //Borrowed from Luac.bt, ONLY here so sub
 
 struct LuaCompiled
 {
+    FSkip(4);
     byte verChk<hidden=true>;
     FSkip(-5);
     if (verChk == 'P') //52 / 5.2
