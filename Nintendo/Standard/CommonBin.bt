@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "../../../LHR/Common.bt"
 
 typedef struct N_BinVersion {
 	byte       micro;
