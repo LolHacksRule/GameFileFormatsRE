@@ -1,0 +1,186 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "MK8Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct GhostData
+{
+    BigEndian();
+    struct BaseHeader
+    {
+        uint32 hdrsize;
+        uint32 ver;
+        uint32 fSize;
+        MK8_CreationDate cDate;
+        Printf("%i/%i/%i | WeekDay %i | %i:%i:%i\n", cDate.year, cDate.month, cDate.day, cDate.weekday, cDate.hour, cDate.minute, cDate.second);
+        uint32 CRC32;
+        if (DEBUG_PRINT)
+        {
+            Printf("CRC32: %x\n", CRC32);
+        }
+        struct RaceInfo
+        {
+            struct DriverData
+            {
+                if (DEBUG_PRINT)
+                {
+                    Printf("Driver Info:\n");
+                }
+                for (i = 0; i < 12; i++)
+                {
+                    struct RaceKartInfo
+                    {
+                        MK8_BodyID vehBodyID;
+                        MK8_TireID vehTiresID;
+                        MK8_GliderID vehGliderID;
+                        MK8_CharacterID charID;
+                        MK8_CharacterVariant charVariant;
+                        MK8_MiiWeightClass miiWeight;
+                        uint16 pad;
+                        MK8_CPUFlag CPUFlag;
+                        MK8_TeamFlag TeamFlag;
+                        if (DEBUG_PRINT)
+                        {
+                            Printf("[Player %i]: Body: %s | Tires: %s | Glider: %s | Character: %s | Character Variant: %s | Mii Weight: %s | CPU Flag: %s | Team Flag: %s \n", i, EnumToString(vehBodyID), EnumToString(vehTiresID), EnumToString(vehGliderID), EnumToString(charID), EnumToString(charVariant), EnumToString(miiWeight), EnumToString(CPUFlag), EnumToString(TeamFlag));
+                        }
+                    } rki;
+                }
+            } dd;
+            struct RaceSettings
+            {
+                MK8_TrackID trackId;
+                U32_Bool isOnline;
+                MK8_GameMode gameMode;
+                uint32 unk[2];
+                MK8_CC cc;
+                Byte_Bool isMirror;
+                Byte_Bool isTeam;
+                byte unk2;
+                byte unk3;
+                byte unk4[16];
+                uint32 drivers;
+                //byte unk[148];
+                if (DEBUG_PRINT)
+                {
+                    Printf("Race Settings:\nTrack ID: %s | Online Mode: %s | Game Mode: %s | CC: %s | Mirror: %s | Team: %s | Drivers: %i \n", EnumToString(trackId), EnumToString(isOnline), EnumToString(gameMode), EnumToString(cc), EnumToString(isMirror), EnumToString(isTeam), drivers);
+                }
+            } rs;
+        } ri;
+        byte unk[152];
+        struct MiiInfo
+        {
+            byte MiiData[92];
+            uint16 unk;
+            uint16 CRC16;
+        } mi;
+        struct Location
+        {
+            MK8_CountryID CountryID;
+            byte subRegionID;
+            uint16 unk;
+            MK8_CountryID CountryID2;
+            byte subRegionID2;
+        } loc;
+        byte unk2[90];
+        wchar_t name[10];
+        byte dmy[24];
+        struct TimeAndLapSplits
+        {
+            uint16 min;
+            byte sec;
+            byte pad;
+            uint16 ms;
+            byte unk[6];
+        } TALS[5];
+        struct BestTime
+        {
+            uint16 min;
+            byte sec;
+            byte pad;
+            uint16 ms;
+            byte unk[6];
+        } BT;
+        struct TimeAndLapSplits_2
+        {
+            uint16 min;
+            byte sec;
+            byte pad;
+            uint16 ms;
+            byte unk[6];
+        } TALS_2[2];
+        struct LapSplitPlaceholders
+        {
+            struct TimeAndLapSplits_3
+            {
+                uint16 min;
+                byte sec;
+                byte pad;
+                uint16 ms;
+                byte unk[6];
+            } TALS_3[4];
+        } lsp;
+        byte unk3[64];
+        /*struct RaceKartInfo_out
+        {
+            uint32 unk[4];
+            byte unk2[2];
+            uint16 pad;
+            uint32 unk3[2];
+        } rki_o;*/
+        /*byte unk[256];
+        byte unk2[5*12];
+        byte unk3[2];
+        byte unk4[1];
+        byte unk5[1];
+        uint16 unk6;
+        byte pad[6];
+        uint32 unk7[2];
+        byte unk8[1];
+        byte unk9[127];*/
+    } b_hdr;
+    struct ReplayData
+    {
+        struct ReplayHeader
+        {
+            uint32 replayCRC32;
+            uint32 firstBlockOff;
+            //uint32 replayDataSz;
+            uint32 unk[2];
+            uint32 subsections;
+            uint32 unk2;
+            uint32 secOffListOff;
+            uint32 unk3;
+            uint32 compOffListOff;
+            uint32 unkOffListOff;
+            uint32 subsections2;
+            byte unk4[28];
+            byte unk5[12];
+            uint32 replayInfoSz;
+            uint32 decReplayDataSz;
+            uint32 sections;
+            uint32 unk6;
+            uint32 unk7;
+            uint32 compBlocks;
+            byte pad[20];
+            byte unk8[12];
+        } r_hdr;
+        /*struct OffsetList
+        {
+            uint32 sections[r_hdr.sections];
+            uint32 compBlocks[r_hdr.compBlocks];
+        } ol[3]<optimize=false>;*/
+        byte replayData[r_hdr.replayInfoSz-140];
+    } rd;
+} DAT;
