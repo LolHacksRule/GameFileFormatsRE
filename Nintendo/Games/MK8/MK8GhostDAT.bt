@@ -150,6 +150,10 @@ struct GhostData
         struct ReplayHeader
         {
             uint32 replayCRC32;
+            if (DEBUG_PRINT)
+            {
+                Printf("Replay Data CRC32: %x\n", replayCRC32);
+            }
             uint32 firstBlockOff;
             //uint32 replayDataSz;
             uint32 unk[2];

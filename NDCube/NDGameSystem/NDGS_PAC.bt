@@ -1,0 +1,113 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+//https://www.vg-resource.com/thread-29836.html BIN extractor script
+//https://github.com/KillzXGaming/MPLibrary/blob/master/MPLibrary/WiiU/PAC.cs
+
+local uint DEBUG_PRINT <hidden=true> = 1;
+
+struct NDCube_WiiUPackFile
+{
+    BigEndian();
+    struct Header
+    {
+        int32 magic;
+        int32 hlen;
+        int32 zero;
+        int32 fileDataOff;
+        int32 packSz;
+        int32 langs;
+        int32 totalFiles;
+        int32 totalLocResources;
+    } hdr;
+    int32 files;
+    int32 zero2[4];
+    int32 langStart;
+    int32 fileDataStart;
+    int32 stringTableOff;
+    int32 fileDataOff2;
+    FSeek(langStart);
+    struct FileMeta
+    {
+        struct FileLangs
+        {
+            if (DEBUG_PRINT)
+            {
+                Printf("Languages:\n");
+            }
+            for (i = 0; i < hdr.langs; i++)
+            {
+                struct FileLangEntry
+                {
+                    int32 langNameStart<bgcolor=cLtBlue>;
+                    FPos = FTell();
+                    FSeek(langNameStart);
+                    string langName<bgcolor=cLtBlue>;
+                    FSeek(FPos);
+                    int32 langNameHash;
+                    int32 files;
+                    int32 entryOff;
+                    if (DEBUG_PRINT)
+                    {
+                        Printf("%s | Name Hash: 0x%x | Offset: 0x%x\n", langName, langNameHash, entryOff);
+                    }
+                } fle;
+            }
+        } fl;
+        FSeek(fileDataStart);
+        if (hdr.totalFiles > 0)
+        {
+            if (DEBUG_PRINT)
+            {
+                Printf("Files:\n");
+            }
+            struct FileEntries
+            {
+                for (i = 0; i < hdr.totalFiles; i++)
+                {
+                    struct FileEntry
+                    {
+                        int32 fileNameStart<bgcolor=cGreen>;
+                        FPos = FTell();
+                        FSeek(fileNameStart);
+                        string fileName<bgcolor=cGreen>;
+                        FSeek(FPos);
+                        int32 fileNameHash<bgcolor=cRed>;
+                        int32 extOff<bgcolor=cBlue>;
+                        FPos = FTell();
+                        FSeek(extOff);
+                        string ext<bgcolor=cBlue>;
+                        FSeek(FPos);
+                        int32 extHash;
+                        int32 fileOff;
+                        int32 size;
+                        int32 zSize[2];
+                        int32 zero[2];
+                        U32_Bool isCompressed;
+                        int32 zero2;
+                        if (DEBUG_PRINT)
+                        {
+                            Printf("%s | Compressed Size: %i | Decompressed Size: %i | Name Hash: 0x%x | Extension Hash: 0x%x | File Offset: 0x%x \n", fileName, zSize[0], size, fileNameHash, extHash, fileOff);
+                        }
+                        FPos = FTell();
+                        FSeek(fileOff);
+                        byte cfileData[zSize[0]];
+                        FSeek(FPos);
+                    } fe;
+                }
+            } fes;
+        }
+    } fe;
+} PAC;
