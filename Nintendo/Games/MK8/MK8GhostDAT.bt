@@ -13,6 +13,9 @@
 
 #include "MK8Common.bt"
 
+//https://mk8.tockdom.com/wiki/Ghost_Data_(File_Format)
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/MK8-Replay-Files
+
 local uint DEBUG_PRINT <hidden=true> = 0;
 
 struct GhostData
