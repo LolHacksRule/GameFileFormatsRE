@@ -27,10 +27,10 @@ struct GhostData
         uint32 ver;
         uint32 fSize;
         MK8_CreationDate cDate;
-        Printf("%i/%i/%i | WeekDay %i | %i:%i:%i\n", cDate.year, cDate.month, cDate.day, cDate.weekday, cDate.hour, cDate.minute, cDate.second);
         uint32 CRC32;
         if (DEBUG_PRINT)
         {
+            Printf("%i/%i/%i | WeekDay %i | %i:%i:%i\n", cDate.year, cDate.month, cDate.day, cDate.weekday, cDate.hour, cDate.minute, cDate.second);
             Printf("CRC32: %x\n", CRC32);
         }
         struct RaceInfo
@@ -99,41 +99,33 @@ struct GhostData
         byte unk2[90];
         wchar_t name[10];
         byte dmy[24];
-        struct TimeAndLapSplits
+        struct TimeAndLapSplitEntries
         {
-            uint16 min;
-            byte sec;
-            byte pad;
-            uint16 ms;
-            byte unk[6];
-        } TALS[5];
-        struct BestTime
-        {
-            uint16 min;
-            byte sec;
-            byte pad;
-            uint16 ms;
-            byte unk[6];
-        } BT;
-        struct TimeAndLapSplits_2
-        {
-            uint16 min;
-            byte sec;
-            byte pad;
-            uint16 ms;
-            byte unk[6];
-        } TALS_2[2];
-        struct LapSplitPlaceholders
-        {
-            struct TimeAndLapSplits_3
+            if (DEBUG_PRINT)
             {
-                uint16 min;
-                byte sec;
-                byte pad;
-                uint16 ms;
-                byte unk[6];
-            } TALS_3[4];
-        } lsp;
+                Printf("Lap Splits:\n");
+            }
+            MK8_TimeAndLapSplits lap1;
+            MK8_TimeAndLapSplits lap2;
+            MK8_TimeAndLapSplits lap3;
+            MK8_TimeAndLapSplits lap4;
+            MK8_TimeAndLapSplits lap5;
+            MK8_TimeAndLapSplits finishingtime;
+            MK8_TimeAndLapSplits lap6;
+            MK8_TimeAndLapSplits lap7;
+            MK8_TimeAndLapSplits placeholders[4];
+            if (DEBUG_PRINT)
+            {
+                Printf("Lap 1: %i.%i.%i\n", lap1.min, lap1.sec, lap1.ms);
+                Printf("Lap 2: %i.%i.%i\n", lap2.min, lap2.sec, lap2.ms);
+                Printf("Lap 3: %i.%i.%i\n", lap3.min, lap3.sec, lap3.ms);
+                Printf("Lap 4: %i.%i.%i\n", lap4.min, lap4.sec, lap4.ms);
+                Printf("Lap 5: %i.%i.%i\n", lap5.min, lap5.sec, lap5.ms);
+                Printf("Finish: %i.%i.%i\n", finishingtime.min, finishingtime.sec, finishingtime.ms);
+                Printf("Lap 6: %i.%i.%i\n", lap6.min, lap6.sec, lap6.ms);
+                Printf("Lap 7: %i.%i.%i\n", lap7.min, lap7.sec, lap7.ms);
+            }
+        } tals;
         byte unk3[64];
         /*struct RaceKartInfo_out
         {

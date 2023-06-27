@@ -1,0 +1,118 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/open-ead/sead
+
+#include "../../Standard/CommonBin.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct SeadHashedArchive
+{
+    struct ArchiveBlockHeader
+    {
+        FSkip(6);
+        U16_EndianEnum endianCheck<hidden=true>;
+        FSkip(-8);
+        if (endianCheck == U16_Big)
+        {
+            BigEndian();
+        }
+        char SARCMagic[4]<bgcolor=cAqua>;
+        uint16 hdrSz<bgcolor=cDkBlue>;
+        if (endianCheck == U16_Big) //Bad
+        {
+            LittleEndian();
+        }
+        U16_EndianEnum endian<bgcolor=cDkGreen>;
+        if (endianCheck == U16_Big) //Bad
+        {
+            BigEndian();
+        }
+        uint32 fsize<bgcolor=cLtGreen>;
+        uint32 dblkoff<bgcolor=cBlack>;
+        uint16 ver<bgcolor=cGreen>;
+        uint16 reserved<bgcolor=cRed>;
+    } ARC_HDR;
+    struct FileAccessTable
+    {
+        struct FileAccessTableHeader
+        {
+            char SFATMagic[4]<bgcolor=cPurple>;
+            uint16 hdrSz<bgcolor=cBlue>;
+            uint16 files<bgcolor=cGreen>;
+            uint32 hashKey<bgcolor=cRed>;
+            if (DEBUG_PRINT)
+            {
+                Printf("Data Offset: %i\nFiles: %i\n", ARC_HDR.dblkoff, files);
+            }
+        } FAT_HDR;
+        struct FileAccessTableEntries
+        {
+            struct FileAccessTableEntry
+            {
+                uint32 hash<bgcolor=cRed>;
+                uint32 n_off<bgcolor=cGreen>;
+                uint32 dStartOff<bgcolor=cBlue>;
+                uint32 dEndOff<bgcolor=cLtBlue>;
+            } FAT_e[FAT_HDR.files];
+        } FAT_es;
+    } FAT;
+    struct FileNumberTable
+    {
+        struct FileNumberTableHeader
+        {
+            char FNTMagic[4];
+            uint16 hdrSz;
+            uint16 reserved;
+        } FNT_HDR<bgcolor=cLtBlue>;
+        struct FileNumberTableEntries
+        {
+            struct FileNumberTableStringEntries
+            {
+                struct FileNumberTableStringEntry
+                {
+                    string name;
+                    while (ReadByte() == 0)
+                    {
+                        byte pad<bgcolor=cRed, hidden=true>; //hack
+                    }
+                } FNT_se[FAT.FAT_HDR.files]<optimize=false, bgcolor=cPurple>;
+            } FNT_ses;
+            FSeek(ARC_HDR.dblkoff+FAT.FAT_es.FAT_e[i].dStartOff);
+            struct FileNumberTableFileEntries
+            {
+                for (i = 0; i < FAT.FAT_HDR.files; i++)
+                {
+                    FSeek(ARC_HDR.dblkoff+FAT.FAT_es.FAT_e[i].dStartOff);
+                    struct FileNumberTableFileEntry
+                    {
+                        byte file[FAT.FAT_es.FAT_e[i].dEndOff-FAT.FAT_es.FAT_e[i].dStartOff]<bgcolor=cGreen>;
+                        FPos = FTell(); //Check for end
+                        if (DEBUG_PRINT)
+                        {
+                            Printf("%s | %i bytes\n", FNT_ses.FNT_se[i].name,FAT.FAT_es.FAT_e[i].dEndOff-FAT.FAT_es.FAT_e[i].dStartOff);
+                        }
+                        if (FPos < EOF) //May be hacky but works
+                        {
+                            while (ReadByte() == 0)
+                            {
+                                byte pad<bgcolor=cRed, hidden=true>; //hack
+                            }
+                        }
+                    } FNT_fe;
+                }
+            } FNT_fes;
+        } FNT_es;
+    } FNT;
+} SARC;

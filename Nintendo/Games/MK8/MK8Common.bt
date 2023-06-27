@@ -100,3 +100,12 @@ typedef enum <byte>
 {
     CountryID_USA = 49,
 } MK8_CountryID;
+
+typedef struct MK8_TimeAndLapSplits
+{
+    uint16 min;
+    byte sec;
+    byte pad;
+    uint16 ms;
+    byte unk[6];
+};
