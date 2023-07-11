@@ -1,0 +1,62 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+struct PopCap3DMesh
+{
+    LittleEndian();
+    uint32 magic;
+    uint32 ver;
+    uint16 objects;
+    struct Objects
+    {
+        for (i = 0; i < objects; i++)
+        {
+            struct Object
+            {
+                U16_StringEntry name;
+                uint16 setsCount;
+                struct Sets
+                {
+                    for (i2 = 0; i2 < setsCount; i2++)
+                    {
+                        struct Set
+                        {
+                            if (ver > 1)
+                            {
+                                byte flag;
+                            }
+                            U16_StringEntry setName;
+                            uint16 propsCount;
+                            struct Props
+                            {
+                                struct Prop
+                                {
+                                    U16_StringEntry propName;
+                                    U16_StringEntry propValue;
+                                } prop[propsCount]<optimize=false>;
+                            } props;
+                            uint16 type;
+                            uint32 FVF;
+                            uint16 vtxBufs;
+                            byte dbuf[36*vtxBufs];
+                            uint16 idxBufs;
+                            uint16 idxBuf[3*idxBufs];
+                        } set;
+                    }
+                } sets;
+            } obj;
+        }
+    } objs;
+} P3D;
