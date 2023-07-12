@@ -1,0 +1,169 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: PopCapRenderEffect.bt
+//      Authors: LolHacksRule
+//      Version: 1
+//      Purpose: Gets data out of the binary.
+//      Category: Deserializing 
+//      File Mask: xcfp/pcfx
+//      ID Bytes: 70646678
+//      History: 
+//------------------------------------------------
+
+local uint DEBUG_PRINT <hidden=true> = 1;
+
+typedef struct RenderEffectBlock
+{
+    uint32 count;
+    uint32 off;
+    uint32 size;
+};
+
+typedef struct RenderEffectString
+{
+    int32 numChars;
+    int32 format;
+    int32 off;
+    //Save pos
+    FPos = FTell();
+    //Go to strTbl
+    FSeek(hdr.stringDataOff+off);
+    char strEntry[numChars]<bgcolor=cGreen, optimize=false>;
+    if (DEBUG_PRINT)
+    {
+        Printf("%s\n", strEntry);
+    }
+    //Go back to saved pos
+    FSeek(FPos);
+};
+
+typedef struct RenderEffectShader
+{
+    int32 formatStringIdx;
+    int32 dataStringIdx;
+    int32 entryStringIdx;
+};
+
+typedef struct RenderEffectSetting
+{
+    int32 category;
+    int32 type;
+    int32 settingAnnotationsNum;
+    int32 beginVal;
+};
+
+typedef struct RenderEffectPass
+{
+    int32 renderEffectPassNameStrIdx;
+    int32 renderEffectPassAnnotationsNum;
+    int32 renderEffectPassAnnotationsStartIdx;
+    int32 renderEffectPassSettingsNum;
+    int32 renderEffectPassSettingsStartIdx;
+    int32 renderEffectPassVtxShader;
+    int32 renderEffectPassPixelShader;
+    if (renderEffectPassSettingsNum > 0)
+    {
+        struct RenderEffectSettings
+        {
+            for (i = 0; i < renderEffectPassSettingsNum; i++)
+            {
+                RenderEffectSetting res;
+            }
+        } settings;
+    }
+};
+
+typedef struct RenderEffectTechnique
+{
+    int32 nameStringIdx;
+    int32 techniqueNum;
+    int32 renderEffectPassesNum;
+    int32 renderEffectPassStartIdx;
+    int32 annotationsNum;
+    int32 annotationsStartIdx;
+    if (renderEffectPassesNum > 0)
+    {
+        struct RenderEffectPasses
+        {
+            for (i = 0; i < renderEffectPassesNum; i++)
+            {
+                RenderEffectPass rep<bgcolor=cBlack, optimize=false>;
+            }
+        } reps;
+    }
+    /*FPos = FTell();
+    RenderEffectShader VertexShader;
+    RenderEffectShader PixelShader;*/
+};
+
+#include "../../../LHR/Common.bt"
+
+struct PopCapRenderEffect
+{
+    struct Header
+    {
+        char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/PC/XBOX 360) or fxcp (PS4/iOS/Android/HTML5)
+        if (popFXHeader != "xfcp")
+        {
+            BigEndian();
+            Printf("Big Endian\n");
+        }
+        else
+        {
+            LittleEndian();
+            Printf("Little Endian\n");
+        }
+        uint32 version<bgcolor=cGreen>; //? Seems only 1 is known
+        struct RenderEffectBlocks
+        {
+            RenderEffectBlock TechniqueReadDataBlock<bgcolor=cBlue>;
+            RenderEffectBlock AnnotationDataBlock<bgcolor=cLtRed>;
+            RenderEffectBlock StringsDataBlock<bgcolor=cLtGreen>;
+            RenderEffectBlock ValuesDataBlock<bgcolor=cPurple>;
+            RenderEffectBlock RenderEffectPassesDataBlock<bgcolor=cBlack>;
+            RenderEffectBlock SettingsDataBlock<bgcolor=cLtPurple>;
+            RenderEffectBlock ShadersDataBlock<bgcolor=cDkRed>;
+            if (TechniqueReadDataBlock.off > 96) //PopCap didn't bother changing the version, here's a hack to detect it
+            {
+                RenderEffectBlock UnknownDataBlock<bgcolor=cRed>;
+            }
+        } rebs;
+        uint32 stringDataOff<bgcolor=cGreen>;
+    } hdr;
+    FSeek(hdr.rebs.TechniqueReadDataBlock.off);
+    struct RenderEffectTechniques
+    {
+        for (i = 0; i < hdr.rebs.TechniqueReadDataBlock.count; i++)
+        {
+            RenderEffectTechnique ret<bgcolor=cBlue>;
+        }
+    } rets;
+    //USE THIS IF BROKEN
+    /*FSeek(hdr.rebs.TechniqueReadDataBlock.off);
+    byte TechniqueReadData[hdr.rebs.TechniqueReadDataBlock.size];*/
+    if (hdr.rebs.TechniqueReadDataBlock.off > 96) //Peggle 2 PS4
+    {
+        FSeek(hdr.rebs.UnknownDataBlock.off);
+        byte UnknownData[hdr.rebs.UnknownDataBlock.size*hdr.rebs.UnknownDataBlock.count]<bgcolor=cRed>;
+    }
+    FSeek(hdr.rebs.AnnotationDataBlock.off);
+    byte AnnotationData[hdr.rebs.AnnotationDataBlock.size*hdr.rebs.AnnotationDataBlock.count]<bgcolor=cLtRed>;
+    FSeek(hdr.rebs.StringsDataBlock.off);
+    struct RenderEffectStrings
+    {
+        for (i = 0; i < hdr.rebs.StringsDataBlock.count; i++)
+        {
+            RenderEffectString rndrfxstr<bgcolor=cLtGreen>;
+        }
+    } rndrfxstrs;
+    //RenderEffectString rstr[hdr.rebs.StringsDataBlock.count]<bgcolor=cGreen, optimize=false>;
+    FSeek(hdr.rebs.ValuesDataBlock.off);
+    byte ValuesData[hdr.rebs.ValuesDataBlock.size*hdr.rebs.ValuesDataBlock.count]<bgcolor=cPurple>;
+    FSeek(hdr.rebs.RenderEffectPassesDataBlock.off);
+    RenderEffectPass rndrfxpasses[hdr.rebs.RenderEffectPassesDataBlock.count]<bgcolor=cBlack, optimize=false>;
+    FSeek(hdr.rebs.SettingsDataBlock.off);
+    byte SettingsData[hdr.rebs.SettingsDataBlock.size*hdr.rebs.SettingsDataBlock.count];
+    FSeek(hdr.rebs.ShadersDataBlock.off);
+    RenderEffectShader ShadersData[hdr.rebs.ShadersDataBlock.count]<bgcolor=cDkRed>;
+} PCFX;
