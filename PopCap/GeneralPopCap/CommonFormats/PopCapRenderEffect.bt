@@ -11,7 +11,7 @@
 //      History: 
 //------------------------------------------------
 
-local uint DEBUG_PRINT <hidden=true> = 1;
+local uint DEBUG_PRINT <hidden=true> = 0;
 
 typedef struct RenderEffectBlock
 {
