@@ -11,6 +11,8 @@
 //      History: 
 //------------------------------------------------
 
+#include "../../../LHR/Common.bt"
+
 local uint DEBUG_PRINT <hidden=true> = 0;
 
 typedef struct RenderEffectBlock
@@ -37,6 +39,20 @@ typedef struct RenderEffectString
     //Go back to saved pos
     FSeek(FPos);
 };
+
+typedef struct RenderEffectAnnotation
+{
+    int32 unk;
+    int32 unk2;
+};
+
+typedef struct RenderEffectValue
+{
+    int32 unk;
+    int32 unk2;
+    Vector3_F32 unkv3f;
+};
+
 
 typedef struct RenderEffectShader
 {
@@ -97,7 +113,7 @@ typedef struct RenderEffectTechnique
     RenderEffectShader PixelShader;*/
 };
 
-#include "../../../LHR/Common.bt"
+//Works near perfectly on any game that's not PS4/Peggle 2
 
 struct PopCapRenderEffect
 {
@@ -128,42 +144,82 @@ struct PopCapRenderEffect
             {
                 RenderEffectBlock UnknownDataBlock<bgcolor=cRed>;
             }
-        } rebs;
+        } rndrfxblocks;
         uint32 stringDataOff<bgcolor=cGreen>;
     } hdr;
-    FSeek(hdr.rebs.TechniqueReadDataBlock.off);
+    FSeek(hdr.rndrfxblocks.TechniqueReadDataBlock.off);
     struct RenderEffectTechniques
     {
-        for (i = 0; i < hdr.rebs.TechniqueReadDataBlock.count; i++)
+        for (i = 0; i < hdr.rndrfxblocks.TechniqueReadDataBlock.count; i++)
         {
-            RenderEffectTechnique ret<bgcolor=cBlue>;
+            RenderEffectTechnique rndrfxtechnique<bgcolor=cBlue>;
         }
-    } rets;
+    } rndrfxtechniques;
     //USE THIS IF BROKEN
-    /*FSeek(hdr.rebs.TechniqueReadDataBlock.off);
-    byte TechniqueReadData[hdr.rebs.TechniqueReadDataBlock.size];*/
-    if (hdr.rebs.TechniqueReadDataBlock.off > 96) //Peggle 2 PS4
+    /*FSeek(hdr.rndrfxblocks.TechniqueReadDataBlock.off);
+    byte TechniqueReadData[hdr.rndrfxblocks.TechniqueReadDataBlock.size];*/
+    if (hdr.rndrfxblocks.TechniqueReadDataBlock.off > 96) //Peggle 2 PS4
     {
-        FSeek(hdr.rebs.UnknownDataBlock.off);
-        byte UnknownData[hdr.rebs.UnknownDataBlock.size*hdr.rebs.UnknownDataBlock.count]<bgcolor=cRed>;
+        FSeek(hdr.rndrfxblocks.UnknownDataBlock.off);
+        byte UnknownData[hdr.rndrfxblocks.UnknownDataBlock.size*hdr.rndrfxblocks.UnknownDataBlock.count]<bgcolor=cRed>;
     }
-    FSeek(hdr.rebs.AnnotationDataBlock.off);
-    byte AnnotationData[hdr.rebs.AnnotationDataBlock.size*hdr.rebs.AnnotationDataBlock.count]<bgcolor=cLtRed>;
-    FSeek(hdr.rebs.StringsDataBlock.off);
+    if (hdr.rndrfxblocks.AnnotationDataBlock.count > 0)
+    {
+        FSeek(hdr.rndrfxblocks.AnnotationDataBlock.off);
+        struct RenderEffectAnnotations
+        {
+            for (i = 0; i < hdr.rndrfxblocks.AnnotationDataBlock.count; i++)
+            {
+                RenderEffectAnnotation rndrfxannotation<bgcolor=cLtRed>;
+            }
+        } rndrfxannotations;
+    }
+    FSeek(hdr.rndrfxblocks.StringsDataBlock.off);
     struct RenderEffectStrings
     {
-        for (i = 0; i < hdr.rebs.StringsDataBlock.count; i++)
+        for (i = 0; i < hdr.rndrfxblocks.StringsDataBlock.count; i++)
         {
             RenderEffectString rndrfxstr<bgcolor=cLtGreen>;
         }
     } rndrfxstrs;
-    //RenderEffectString rstr[hdr.rebs.StringsDataBlock.count]<bgcolor=cGreen, optimize=false>;
-    FSeek(hdr.rebs.ValuesDataBlock.off);
-    byte ValuesData[hdr.rebs.ValuesDataBlock.size*hdr.rebs.ValuesDataBlock.count]<bgcolor=cPurple>;
-    FSeek(hdr.rebs.RenderEffectPassesDataBlock.off);
-    RenderEffectPass rndrfxpasses[hdr.rebs.RenderEffectPassesDataBlock.count]<bgcolor=cBlack, optimize=false>;
-    FSeek(hdr.rebs.SettingsDataBlock.off);
-    byte SettingsData[hdr.rebs.SettingsDataBlock.size*hdr.rebs.SettingsDataBlock.count];
-    FSeek(hdr.rebs.ShadersDataBlock.off);
-    RenderEffectShader ShadersData[hdr.rebs.ShadersDataBlock.count]<bgcolor=cDkRed>;
+    //RenderEffectString rstr[hdr.rndrfxblocks.StringsDataBlock.count]<bgcolor=cGreen, optimize=false>;
+    if (hdr.rndrfxblocks.ValuesDataBlock.count > 0)
+    {
+        FSeek(hdr.rndrfxblocks.ValuesDataBlock.off);
+        struct RenderEffectValues
+        {
+            for (i = 0; i < hdr.rndrfxblocks.ValuesDataBlock.count; i++)
+            {
+                RenderEffectValue rndrfxvalue<bgcolor=cPurple>;
+                /*struct RenderEffectValue
+                {
+                    byte ValuesData[hdr.rndrfxblocks.ValuesDataBlock.size*hdr.rndrfxblocks.ValuesDataBlock.count]<bgcolor=cPurple>;
+                } rndrfxvalue;*/
+            }
+        } rndrfxvalues;
+    }
+    FSeek(hdr.rndrfxblocks.RenderEffectPassesDataBlock.off);
+    struct RenderEffectPassPointers
+    {
+        for (i = 0; i < hdr.rndrfxblocks.RenderEffectPassesDataBlock.count; i++)
+        {
+            RenderEffectPass RenderEffectPassPointer<bgcolor=cBlack, optimize=false>;
+        }
+    } rndrfxpassptrs;
+    if (hdr.rndrfxblocks.SettingsDataBlock.count > 0)
+    {
+        FSeek(hdr.rndrfxblocks.SettingsDataBlock.off);
+        byte SettingsData[hdr.rndrfxblocks.SettingsDataBlock.size*hdr.rndrfxblocks.SettingsDataBlock.count];
+    }
+    FSeek(hdr.rndrfxblocks.ShadersDataBlock.off);
+    if (hdr.rndrfxblocks.ShadersDataBlock.count > 0)
+    {
+        struct RenderEffectShaders
+        {
+            for (i = 0; i < hdr.rndrfxblocks.ShadersDataBlock.count; i++)
+            {
+                RenderEffectShader ShadersData<bgcolor=cDkRed>;
+            }
+        } rndrfxshaders;
+    }
 } PCFX;
