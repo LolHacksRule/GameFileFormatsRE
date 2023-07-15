@@ -42,7 +42,7 @@ typedef struct RenderEffectString
 
 typedef struct RenderEffectAnnotation
 {
-    int32 unk;
+    int32 unk; //index?
     int32 unk2;
 };
 
@@ -50,7 +50,10 @@ typedef struct RenderEffectValue
 {
     int32 unk;
     int32 unk2;
-    Vector3_F32 unkv3f;
+    int32 unk3;
+    int32 unk4;
+    int32 unk5;
+    //Vector3_F32 unkv3f;
 };
 
 
@@ -98,7 +101,7 @@ typedef struct RenderEffectTechnique
     int32 renderEffectPassStartIdx;
     int32 annotationsNum;
     int32 annotationsStartIdx;
-    if (renderEffectPassesNum > 0)
+    if (renderEffectPassesNum > 0) //Do we exclude this
     {
         struct RenderEffectPasses
         {
@@ -113,13 +116,13 @@ typedef struct RenderEffectTechnique
     RenderEffectShader PixelShader;*/
 };
 
-//Works near perfectly on any game that's not PS4/Peggle 2
+//Works near perfectly on any game that's not PS4/Peggle 2/PVZ2
 
 struct PopCapRenderEffect
 {
     struct Header
     {
-        char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/PC/XBOX 360) or fxcp (PS4/iOS/Android/HTML5)
+        char    popFXHeader[4]<bgcolor=cGreen>; //Should be pcfx (PS3/XBOX 360) or fxcp (PS4/iOS/Android/HTML5)
         if (popFXHeader != "xfcp")
         {
             BigEndian();
@@ -158,11 +161,14 @@ struct PopCapRenderEffect
     //USE THIS IF BROKEN
     /*FSeek(hdr.rndrfxblocks.TechniqueReadDataBlock.off);
     byte TechniqueReadData[hdr.rndrfxblocks.TechniqueReadDataBlock.size];*/
-    if (hdr.rndrfxblocks.TechniqueReadDataBlock.off > 96) //Peggle 2 PS4
+    FSeek(hdr.rndrfxblocks.RenderEffectPassesDataBlock.off);
+    struct RenderEffectPassPointers
     {
-        FSeek(hdr.rndrfxblocks.UnknownDataBlock.off);
-        byte UnknownData[hdr.rndrfxblocks.UnknownDataBlock.size*hdr.rndrfxblocks.UnknownDataBlock.count]<bgcolor=cRed>;
-    }
+        for (i = 0; i < hdr.rndrfxblocks.RenderEffectPassesDataBlock.count; i++)
+        {
+            RenderEffectPass RenderEffectPassPointer<bgcolor=cBlack, optimize=false>;
+        }
+    } rndrfxpassptrs;
     if (hdr.rndrfxblocks.AnnotationDataBlock.count > 0)
     {
         FSeek(hdr.rndrfxblocks.AnnotationDataBlock.off);
@@ -198,14 +204,6 @@ struct PopCapRenderEffect
             }
         } rndrfxvalues;
     }
-    FSeek(hdr.rndrfxblocks.RenderEffectPassesDataBlock.off);
-    struct RenderEffectPassPointers
-    {
-        for (i = 0; i < hdr.rndrfxblocks.RenderEffectPassesDataBlock.count; i++)
-        {
-            RenderEffectPass RenderEffectPassPointer<bgcolor=cBlack, optimize=false>;
-        }
-    } rndrfxpassptrs;
     if (hdr.rndrfxblocks.SettingsDataBlock.count > 0)
     {
         FSeek(hdr.rndrfxblocks.SettingsDataBlock.off);
@@ -221,5 +219,10 @@ struct PopCapRenderEffect
                 RenderEffectShader ShadersData<bgcolor=cDkRed>;
             }
         } rndrfxshaders;
+    }
+    if (hdr.rndrfxblocks.TechniqueReadDataBlock.off > 96) //Peggle 2 PS4
+    {
+        FSeek(hdr.rndrfxblocks.UnknownDataBlock.off);
+        byte UnknownData[hdr.rndrfxblocks.UnknownDataBlock.size*hdr.rndrfxblocks.UnknownDataBlock.count]<bgcolor=cRed>;
     }
 } PCFX;

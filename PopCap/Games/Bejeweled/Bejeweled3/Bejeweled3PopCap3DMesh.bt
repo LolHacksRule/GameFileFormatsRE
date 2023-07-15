@@ -11,9 +11,9 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../../LHR/Common.bt"
+#include "../../../../LHR/Common.bt"
 
-struct PopCap3DMesh
+struct Bejeweled3PopCap3DMesh
 {
     LittleEndian();
     uint32 magic;
@@ -50,7 +50,14 @@ struct PopCap3DMesh
                             uint16 type;
                             uint32 FVF;
                             uint16 vtxBufs;
-                            byte dbuf[36*vtxBufs];
+                            struct VertexBuffers
+                            {
+                                for (i3 = 0; i3 < vtxBufs*3; i3++)
+                                {
+                                    Vector3_F32 VertexBuffer;
+                                }
+                            } vtxb;
+                            //byte dbuf[36*vtxBufs];
                             uint16 idxBufs;
                             uint16 idxBuf[3*idxBufs];
                         } set;

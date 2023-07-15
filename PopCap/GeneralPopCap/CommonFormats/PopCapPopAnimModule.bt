@@ -11,22 +11,194 @@
 //      History: 
 //------------------------------------------------
 
-local int i <hidden=true> = 0;
-local int i2 <hidden=true> = 0;
-
-typedef enum <byte> {
-	True = 1,
-    False = 0,
-} TrueFalseFlag;
+#include "../../../LHR/Common.bt"
 
 typedef enum <ubyte> {
-	HasRemoves = 1,
-	HasAdds = 2,
-    HasMoves = 4,
-    HasFrameName = 8,
-    HasStop = 16,
-    HasCommands = 32,
+	PAFrameFlag_HasRemoves = 1,
+	PAFrameFlag_HasAdds,
+    PAFrameFlag_HasMoves = 4,
+    PAFrameFlag_HasFrameName = 8,
+    PAFrameFlag_HasStop = 16,
+    PAFrameFlag_HasCommands = 32,
 } PopAnimFrameFlag;
+
+typedef enum <ubyte> {
+	PAMoveFlag_HasSrcRect,
+    PAMoveFlag_HasRotate,
+    PAMoveFlag_HasColor,
+    PAMoveFlag_HasMtx,
+    PAMoveFlag_HasLongCoords,
+    PAMoveFlag_HasAnimFrameNum,
+} PopAnimMoveFlag;
+
+typedef struct SpriteDefinition
+{
+    if (HDR.version >= 4)
+    {
+        U16_StringEntry imageName;
+        int32 animRate;
+        local int32 animRateDiv = animRate / 0x10000;
+    }
+    short numOfFrames;
+    if (HDR.version >= 5)
+    {
+        short workAreaStart;
+        short workAreaDuration;
+    }
+    struct AnimFrames
+    {
+        for (i2 = 0; i2 < numOfFrames; i2++)
+        {
+            struct AnimFrame
+            {
+                byte flags;
+                if (flags & PAFrameFlag_HasRemoves)
+                {
+                    byte removestmp;
+                    if (removestmp == 0xFF)
+                    {
+                        short removes;
+                    }
+                    else
+                    {
+                        local byte removes = removestmp;
+                    }
+                    for (i3 = 0; i3 < removes; i3++)
+                    {
+                        short objectIdTmp;
+                        if (objectIdTmp >= 0x7FF)
+                        {
+                            int32 objectId;
+                        }
+                        else
+                        {
+                            local byte objectId = objectIdTmp;
+                        }
+                    }
+                }
+                if (flags & PAFrameFlag_HasAdds)
+                {
+                    byte addstmp;
+                    if (addstmp == 0xFF)
+                    {
+                        short adds;
+                    }
+                    else
+                    {
+                        local byte adds = addstmp;
+                    }
+                    struct ObjectPositions
+                    {
+                        for (i3 = 0; i3 < adds; i3++)
+                        {
+                            struct ObjectPosition
+                            {
+                                uint16 objNumAndType;
+                                if (objNumAndType == 0x7ff)
+                                {
+                                    uint32 objNum;
+                                }
+                                byte resourceNum;
+                                if (objNumAndType & 0x2000)
+                                {
+                                    uint32 preloadFrames;
+                                }
+                                if (objNumAndType & 0x1000)
+                                {
+                                    U16_StringEntry objName;
+                                }
+                                if (objNumAndType & 0x800)
+                                {
+                                    uint32 timeScale;
+                                }
+                                //int32 TransformMtx[4];
+                            } objp;
+                        }
+                    } objps;
+                }
+                if (flags & PAFrameFlag_HasMoves)
+                {
+                    byte movestmp;
+                    if (movestmp == 0xFF)
+                    {
+                        short moves;
+                    }
+                    else
+                    {
+                        local byte moves = movestmp;
+                    }
+                    struct MObjectPositions
+                    {
+                        for (i3 = 0; i3 < moves; i3++)
+                        {
+                            struct MoveObjPos
+                            {
+                                uint16 flagsAndObjNum;
+                                if (flagsAndObjNum == 0x3ff)
+                                {
+                                    int32 objNum;
+                                }
+                                if (flagsAndObjNum & PAMoveFlag_HasMtx)
+                                {
+                                    int32 MoveTransform[4];
+                                }
+                                else if (flagsAndObjNum & PAMoveFlag_HasRotate)
+                                {
+                                    short rot;
+                                }
+                                if (flagsAndObjNum & PAMoveFlag_HasLongCoords)
+                                {
+                                    int32 unk;
+                                    int32 transY;
+                                }
+                                else
+                                {
+                                    short transX;
+                                    short transY;
+                                }
+                                if (flagsAndObjNum & PAMoveFlag_HasSrcRect)
+                                {
+                                    short srcXY[2];
+                                    short srcWH[2];
+                                }
+                                if (flagsAndObjNum & PAMoveFlag_HasColor)
+                                {
+                                    byte r;
+                                    byte g;
+                                    byte b;
+                                    byte a;
+                                }
+                                if (flagsAndObjNum & PAMoveFlag_HasAnimFrameNum)
+                                {
+                                    short afn;
+                                }
+                            } mobjpos;
+                        }
+                    } mobjposs;
+                }
+                if (flags & PAFrameFlag_HasFrameName)
+                {
+                    U16_StringEntry frameName;
+                }
+                if (flags & PAFrameFlag_HasCommands)
+                {
+                    byte commands;
+                    struct Commands
+                    {
+                        for (i3 = 0; i3 < commands; i3++)
+                        {
+                            struct Command
+                            {
+                                U16_StringEntry cmd;
+                                U16_StringEntry prm;
+                            } command;
+                        }
+                    } cmds;
+                }
+            } af;
+        }
+    } afs;
+};
 
 struct PopCapPAM {
     struct Header {
@@ -49,17 +221,20 @@ struct PopCapPAM {
     struct AnimInfo {
         byte animRate;
         short animRectX; //Divide by 20
+        local int32 animRectXDiv = animRectX / 20;
         short animRectY; //Divide by 20
+        local int32 animRectYDiv = animRectY / 20;
         short animRectWidth; //Divide by 20
+        local int32 animRectWidthDiv = animRectWidth / 20;
         short animRectHeight; //Divide by 20
+        local int32 animRectHeightDiv = animRectHeight / 20;
         short numImages;
         
         for (i = 0; i < numImages; i++)
         {
             struct Image {
                 
-                short strLen;
-                char stringShort[strLen];
+                U16_StringEntry imageName;
                 //long id;
                 if (HDR.version >= 4)
                 {
@@ -68,16 +243,18 @@ struct PopCapPAM {
                 }
                 if (HDR.version == 1)
                 {
-                    short unk[3];
+                    short TransformXYZ[3];
                 }
                 else
                 {
-                    long  TransformA;
-                    long  TransformB;
-                    long  TransformC;
-                    long  TransformD;
-                    short TransformX;
-                    short TransformY;
+                    long  TransformABCD[4];
+                    short  TransformXY[2];
+                    local int32 TransformAMult = TransformABCD[0] / (65536 * 20);
+                    local int32 TransformBMult = TransformABCD[1] / (65536 * 20);
+                    local int32 TransformCMult = TransformABCD[2] / (65536 * 20);
+                    local int32 TransformDMult = TransformABCD[3] / (65536 * 20);
+                    local short TransformXDiv = TransformXY[0] / 20;
+                    local short TransformYDiv = TransformXY[1] / 20;
                 }
             } ImageInfo;
         }
@@ -86,27 +263,13 @@ struct PopCapPAM {
         {
             for (i = 0; i < numSprites; i++)
             {
-                struct SpriteDefinition
-                {
-                    if (HDR.version >= 4)
-                    {
-                        short strLen;
-                        char stringShort[strLen];
-                        int32 animRate;
-                    }
-                    short numOfFrames;
-                    if (HDR.version >= 5)
-                    {
-                        short workAreaStart;
-                        short workAreaDuration;
-                    }
-                    for (i2 = 0; i2 < numOfFrames; i2++)
-                    {
-                        PopAnimFrameFlag flag;
-                    }
-                } spriteDef;
+                SpriteDefinition spriteDef;
             }
         } SpriteInfo;
-        TrueFalseFlag hasMainSpriteDefinition;
+        Byte_Bool hasMainSpriteDefinition;
+        if (hasMainSpriteDefinition == Byte_True)
+        {
+            SpriteDefinition mainSpriteDef;
+        }
     } animInfo<bgcolor = cBlue>;
 } PAM;

@@ -1,0 +1,205 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+typedef struct HyperSpaceAnimKey
+{
+    Vector3_F32 hPos;
+    Vector3_F32 hRot;
+    Vector3_F32 hScale;
+};
+
+struct Bejeweled3PopCap3DMeshAnimation //Really should be called Bej and not PopCap
+{
+    uint32 ver<bgcolor=cPurple>;
+    uint32 framesCount<bgcolor=cBlue>;
+    uint32 lightsCount<bgcolor=cLtBlue>;
+    uint32 hiddenObjCount<bgcolor=cBlack>;
+    struct HiddenObjects
+    {
+        if (DEBUG_PRINT)
+        {
+            Printf("Hidden Objects:\n");
+        }
+        for (i = 0; i < hiddenObjCount; i++)
+        {
+            struct HiddenObject
+            {
+                uint32 trackId;
+                uint32 hideFrameNum;
+            } hiddenObj;
+            if (DEBUG_PRINT)
+            {
+                Printf("[%i]: Track Id: %i | Hide Frame: %i\n", i, hiddenObj[i].trackId, hiddenObj[i].hideFrameNum);
+            }
+        }
+    } hiddenObjs<bgcolor=cBlack>;
+    struct Frames
+    {
+        if (DEBUG_PRINT)
+        {
+            Printf("Frames:\n");
+        }
+        for (i = 0; i < framesCount; i++)
+        {
+            struct Frame
+            {
+                HyperSpaceAnimKey hsCamAnimKeys<bgcolor=cLtPurple>;
+                HyperSpaceAnimKey hsBoardAnimKeys<bgcolor=cWhite>;
+                Vector3_F32 deltaScale<bgcolor=cAqua>;
+                Vector3_F32 rotDeltaScale<bgcolor=cDkAqua>;
+                if (DEBUG_PRINT)
+                {
+                    Printf("Frame %i:\nCamera Animation Keys: Pos: %f,%f,%f Rot: %f,%f,%f Scale: %f,%f,%f\nBoard Animation Keys: Pos: %f,%f,%f Rot: %f,%f,%f Scale: %f,%f,%f\nDelta Scale: %f,%f,%f\nRotation Delta Scale: %f,%f,%f \n", i, hsCamAnimKeys.hPos.X, hsCamAnimKeys.hPos.Y, hsCamAnimKeys.hPos.Z, hsCamAnimKeys.hRot.X, hsCamAnimKeys.hRot.Y, hsCamAnimKeys.hRot.Z, hsCamAnimKeys.hScale.X, hsCamAnimKeys.hScale.Y, hsCamAnimKeys.hScale.Z, hsBoardAnimKeys.hPos.X, hsBoardAnimKeys.hPos.Y, hsBoardAnimKeys.hPos.Z, hsBoardAnimKeys.hRot.X, hsBoardAnimKeys.hRot.Y, hsBoardAnimKeys.hRot.Z, hsBoardAnimKeys.hScale.X, hsBoardAnimKeys.hScale.Y, hsBoardAnimKeys.hScale.Z, deltaScale.X, deltaScale.Y, deltaScale.Z, rotDeltaScale.X, rotDeltaScale.Y, rotDeltaScale.Z);
+                }
+                struct Rows
+                {
+                    for (i2 = 0; i2 < 8; i2++) //8 Rows
+                    {
+                        struct Row
+                        {
+                            if (DEBUG_PRINT)
+                            {
+                                Printf("Row %i:\n", i2);
+                            }
+                            for (i3 = 0; i3 < 8; i3++) //8 Columns 
+                            {
+                                struct Column
+                                {
+                                    if (DEBUG_PRINT)
+                                    {
+                                        Printf("\tColumn %i:\n", i3);
+                                    }
+                                    if (i == 0)
+                                    {
+                                        HyperSpaceAnimKey gemsIdxFrameAnimKey<bgcolor=cGreen>;
+                                        if (DEBUG_PRINT)
+                                        {
+                                            Printf("Index Animation Keys: Pos: %f,%f,%f Rot: %f,%f,%f Scale: %f,%f,%f\n", gemsIdxFrameAnimKey.hPos.X, gemsIdxFrameAnimKey.hPos.Y, gemsIdxFrameAnimKey.hPos.Z, gemsIdxFrameAnimKey.hRot.X, gemsIdxFrameAnimKey.hRot.Y, gemsIdxFrameAnimKey.hRot.Z, gemsIdxFrameAnimKey.hScale.X, gemsIdxFrameAnimKey.hScale.Y, gemsIdxFrameAnimKey.hScale.Z);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        uint16 flags;
+                                        //I don't like this
+                                        if (flags & 1)
+                                        {
+                                            byte gemsRotX;
+                                        }
+                                        else if (flags & 1024)
+                                        {
+                                            int16 gemsRotX;
+                                        }
+                                        if (flags & 2)
+                                        {
+                                            byte gemsRotY;
+                                        }
+                                        else if (flags & 2048)
+                                        {
+                                            int16 gemsRotY;
+                                        }
+                                        if (flags & 4)
+                                        {
+                                            byte gemsRotZ;
+                                        }
+                                        else if (flags & 4096)
+                                        {
+                                            int16 gemsRotZ;
+                                        }
+                                        if (flags & 8)
+                                        {
+                                            byte gemsPosX;
+                                        }
+                                        else if (flags & 16)
+                                        {
+                                            float gemsPosX;
+                                        }
+                                        if (flags & 32)
+                                        {
+                                            byte gemsPosY;
+                                        }
+                                        else if (flags & 64)
+                                        {
+                                            float gemsPosY;
+                                        }
+                                        if (flags & 128)
+                                        {
+                                            byte gemsPosZ;
+                                        }
+                                        else if (flags & 256)
+                                        {
+                                            float gemsPosZ;
+                                        }
+                                        if (flags & 512)
+                                        {
+                                            Vector3_F32 gemsScale;
+                                        }
+                                        if (DEBUG_PRINT)
+                                        {
+                                            if (flags & 1 || flags & 1024)
+                                            {
+                                                Printf("\t\tGems X Rotation %i:\n", gemsRotX);
+                                            }
+                                            if (flags & 2 || flags & 2048)
+                                            {
+                                                Printf("\t\tGems Y Rotation %i:\n", gemsRotY);
+                                            }
+                                            if (flags & 4 || flags & 4096)
+                                            {
+                                                Printf("\t\tGems Z Rotation %i:\n", gemsRotZ);
+                                            }
+                                            if (flags & 8 || flags & 16)
+                                            {
+                                                Printf("\t\tGems X Position %f:\n", gemsPosX);
+                                            }
+                                            if (flags & 32 || flags & 64)
+                                            {
+                                                Printf("\t\tGems Y Position %f:\n", gemsPosY);
+                                            }
+                                            if (flags & 128 || flags & 256)
+                                            {
+                                                Printf("\t\tGems Z Position %f:\n", gemsPosZ);
+                                            }
+                                            if (flags & 512)
+                                            {
+                                                Printf("\t\tGems Scale %f,%f,%f:\n", gemsScale.X, gemsScale.Y, gemsScale.Z);
+                                            }
+                                        }
+                                    }
+                                } column<bgcolor=cRed>;
+                            }
+                        } row;
+                    }
+                } rows;
+                struct Lights
+                {
+                    if (DEBUG_PRINT)
+                    {
+                        Printf("Lights:\n");
+                    }
+                    for (i2 = 0; i2 < lightsCount; i2++)
+                    {
+                        Vector3_F32 Light<bgcolor=cLtBlue>;
+                        if (DEBUG_PRINT)
+                        {
+                            Printf("[%i]: %f,%f,%f\n", i2, Light.X, Light.Y, Light.Z);
+                        }
+                    };
+                } lights;
+            } frame;
+        }
+    } frames;
+} P3DANIM;
