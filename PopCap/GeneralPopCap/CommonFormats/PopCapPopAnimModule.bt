@@ -11,6 +11,17 @@
 //      History: 
 //------------------------------------------------
 
+//PAM VERSIONS:
+/*
+0: Haven't seen?
+1: BookWorm Adventures Vol 1 / Vol 2 / FF / MK / ActiveX
+2: BookWorm Adventures Vol 1 / Vol 2 / FF / MK / ActiveX
+3: BookWorm Adventures Vol 2 / AP / FF / MK / ActiveX, Bejeweled Twist
+4: Bejeweled Blitz (v1.1.0-v1.3.2), Bejeweled Classic, Zuma's Revenge! (PC/Console/iOS), Bejeweled 3 (PC/Console), Bejeweled Live (PC)
+5: Bejeweled Blitz (v1.3.1-v1.3.2), Bejeweled Classic, BookWorm Heroes, Zuma's Revenge! (PC/Console/iOS), Bejeweled 3 (PC/Console), Bejeweled Live (PC), Peggle 2
+6: Plants Vs. Zombies 2
+*/
+
 #include "../../../LHR/Common.bt"
 
 typedef enum <ushort> {
@@ -33,11 +44,17 @@ typedef enum <ushort> {
 
 typedef struct SpriteDefinition
 {
+    //WIP Solution for v6, uncomment and comment below
     if (HDR.version >= 4)
     {
         U16_StringEntry imageName;
-        uint32 animRate;
-        local uint32 animRateDiv = animRate / 0x10000;
+        if (HDR.version > 5)
+        {
+            uint16 unk; //string end, has to be
+            //Printf("%i\n", unk);
+        }
+        ulong animRate;
+        local float animRateDiv = animRate / 0x10000;
     }
     ushort numOfFrames;
     if (HDR.version >= 5)
@@ -45,6 +62,20 @@ typedef struct SpriteDefinition
         ushort workAreaStart;
         ushort workAreaDuration;
     }
+    //Solution for all other vers
+    /*if (HDR.version >= 4)
+    {
+        U16_StringEntry imageName;
+        uint32 animRate;
+        local float animRateDiv = animRate / 0x10000;
+    }
+    ushort numOfFrames;
+    if (HDR.version >= 5)
+    {
+        ushort workAreaStart;
+        ushort workAreaDuration;
+    }*/
+    //End
     struct AnimFrames
     {
         for (i2 = 0; i2 < numOfFrames; i2++)
@@ -64,7 +95,7 @@ typedef struct SpriteDefinition
                         ushort objectId;
                         if (objectId >= 0x7FF)
                         {
-                            uint32 objectId;
+                            ulong objectId;
                         }
                     }
                 }
@@ -84,7 +115,7 @@ typedef struct SpriteDefinition
                                 uint16 objNumAndType;
                                 if (objNumAndType == 0x7ff)
                                 {
-                                    uint32 objNum;
+                                    ulong objNum;
                                 }
                                 ubyte resourceNum;
                                 if (objNumAndType & 0x2000)
@@ -97,10 +128,10 @@ typedef struct SpriteDefinition
                                 }
                                 if (objNumAndType & 0x800)
                                 {
-                                    uint32 timeScale;
-                                    local uint32 timeScaleDiv = timeScale / 0x10000;
+                                    long timeScale;
+                                    local float timeScaleDiv = timeScale / 0x10000;
                                 }
-                                //uint32 TransformMtx[4];
+                                //ulong TransformMtx[4];
                             } obj;
                         }
                     } objs;
@@ -125,43 +156,43 @@ typedef struct SpriteDefinition
                                 uint16 flagsAndObjNum;
                                 if (flagsAndObjNum == 0x3ff)
                                 {
-                                    uint32 objNum;
+                                    ulong objNum;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasMtx)
                                 {
-                                    uint32 MoveTransform[4];
-                                    local uint32 MoveTransformADiv = MoveTransform[0] / 65536;
-                                    local uint32 MoveTransformBDiv = MoveTransform[1] / 65536;
-                                    local uint32 MoveTransformCDiv = MoveTransform[2] / 65536;
-                                    local uint32 MoveTransformDDiv = MoveTransform[3] / 65536;
+                                    ulong MoveTransform[4];
+                                    local float MoveTransformADiv = MoveTransform[0] / 65536;
+                                    local float MoveTransformBDiv = MoveTransform[1] / 65536;
+                                    local float MoveTransformCDiv = MoveTransform[2] / 65536;
+                                    local float MoveTransformDDiv = MoveTransform[3] / 65536;
                                 }
                                 else if (flagsAndObjNum & PAMoveFlag_HasRotate)
                                 {
                                     ushort rot;
-                                    local uint32 rotDiv = rot / 1000;
+                                    local ulong rotDiv = rot / 1000;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasLongCoords)
                                 {
-                                    uint32 transX; //Div 20
-                                    uint32 transY;
+                                    long transX; //Div 20
+                                    long transY;
                                 }
                                 else
                                 {
-                                    ushort transX;
-                                    ushort transY;
+                                    short transX;
+                                    short transY;
                                 }
-                                local uint32 LongCoordTransformADiv = transX / 20;
-                                local uint32 LongCoordTransformBDiv = transY / 20;
+                                local float LongCoordTransformADiv = transX / 20;
+                                local float LongCoordTransformBDiv = transY / 20;
                                 if (flagsAndObjNum & PAMoveFlag_HasSrcRect)
                                 {
                                     ushort srcRectX;
                                     ushort srcRectY;
                                     ushort srcRectWidth;
                                     ushort srcRectHeight;
-                                    local uint32 srcRectXDiv = srcRectX / 20;
-                                    local uint32 srcRectYDiv = srcRectY / 20;
-                                    local uint32 srcRectWidthDiv = srcRectWidth / 20;
-                                    local uint32 srcRectHeightDiv = srcRectHeight / 20;
+                                    local float srcRectXDiv = srcRectX / 20;
+                                    local float srcRectYDiv = srcRectY / 20;
+                                    local float srcRectWidthDiv = srcRectWidth / 20;
+                                    local float srcRectHeightDiv = srcRectHeight / 20;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasColor)
                                 {
@@ -204,8 +235,8 @@ typedef struct SpriteDefinition
 
 typedef struct PopCapPopAnimModuleHeader
 {
-    uint32   magic;
-    uint32   version;
+    ulong   magic;
+    ulong   version;
 };
 
 struct PopCapPopAnimModule
@@ -219,7 +250,7 @@ struct PopCapPopAnimModule
     if (HDR.version == 6)
     {
         Printf("PopAnim version 6 is not yet supported.");
-        break;
+        //break;
     }
     if (HDR.version > 6)
     {
@@ -230,13 +261,13 @@ struct PopCapPopAnimModule
     {
         ubyte animRate;
         ushort animRectX; //Divide by 20
-        local uint32 animRectXDiv = animRectX / 20;
+        local ushort animRectXDiv = animRectX / 20;
         ushort animRectY; //Divide by 20
-        local uint32 animRectYDiv = animRectY / 20;
+        local ushort animRectYDiv = animRectY / 20;
         ushort animRectWidth; //Divide by 20
-        local uint32 animRectWidthDiv = animRectWidth / 20;
+        local ushort animRectWidthDiv = animRectWidth / 20;
         ushort animRectHeight; //Divide by 20
-        local uint32 animRectHeightDiv = animRectHeight / 20;
+        local ushort animRectHeightDiv = animRectHeight / 20;
         ushort numImages;
         struct Images
         {
@@ -245,7 +276,7 @@ struct PopCapPopAnimModule
                 struct Image 
                 {    
                     U16_StringEntry imageName;
-                    //long id;
+                    //ulong id;
                     if (HDR.version >= 4)
                     {
                         ushort origWidth;
@@ -258,13 +289,13 @@ struct PopCapPopAnimModule
                     else
                     {
                         long  TransformABCD[4];
-                        ushort  TransformXY[2];
-                        local uint32 TransformAMult = TransformABCD[0] / (65536 * 20);
-                        local uint32 TransformBMult = TransformABCD[1] / (65536 * 20);
-                        local uint32 TransformCMult = TransformABCD[2] / (65536 * 20);
-                        local uint32 TransformDMult = TransformABCD[3] / (65536 * 20);
-                        local ushort TransformXDiv = TransformXY[0] / 20;
-                        local ushort TransformYDiv = TransformXY[1] / 20;
+                        local float TransformAMult = TransformABCD[0] / (65536 * 20);
+                        local float TransformBMult = TransformABCD[1] / (65536 * 20);
+                        local float TransformCMult = TransformABCD[2] / (65536 * 20);
+                        local float TransformDMult = TransformABCD[3] / (65536 * 20);
+                        short  TransformXY[2];
+                        local float TransformXDiv = TransformXY[0] / 20;
+                        local float TransformYDiv = TransformXY[1] / 20;
                     }
                 } ImageInfo;
             }
