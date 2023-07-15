@@ -13,7 +13,7 @@
 
 #include "../../../LHR/Common.bt"
 
-typedef enum <ubyte> {
+typedef enum <ushort> {
 	PAFrameFlag_HasRemoves = 1,
 	PAFrameFlag_HasAdds,
     PAFrameFlag_HasMoves = 4,
@@ -22,13 +22,13 @@ typedef enum <ubyte> {
     PAFrameFlag_HasCommands = 32,
 } PopAnimFrameFlag;
 
-typedef enum <ubyte> {
-	PAMoveFlag_HasSrcRect,
-    PAMoveFlag_HasRotate,
-    PAMoveFlag_HasColor,
-    PAMoveFlag_HasMtx,
-    PAMoveFlag_HasLongCoords,
-    PAMoveFlag_HasAnimFrameNum,
+typedef enum <ushort> {
+	PAMoveFlag_HasSrcRect = 0x8000,
+    PAMoveFlag_HasRotate = 0x4000,
+    PAMoveFlag_HasColor = 0x2000,
+    PAMoveFlag_HasMtx = 0x1000,
+    PAMoveFlag_HasLongCoords = 0x800,
+    PAMoveFlag_HasAnimFrameNum = 0x400,
 } PopAnimMoveFlag;
 
 typedef struct SpriteDefinition
@@ -36,14 +36,14 @@ typedef struct SpriteDefinition
     if (HDR.version >= 4)
     {
         U16_StringEntry imageName;
-        int32 animRate;
-        local int32 animRateDiv = animRate / 0x10000;
+        uint32 animRate;
+        local uint32 animRateDiv = animRate / 0x10000;
     }
-    short numOfFrames;
+    ushort numOfFrames;
     if (HDR.version >= 5)
     {
-        short workAreaStart;
-        short workAreaDuration;
+        ushort workAreaStart;
+        ushort workAreaDuration;
     }
     struct AnimFrames
     {
@@ -51,57 +51,45 @@ typedef struct SpriteDefinition
         {
             struct AnimFrame
             {
-                byte flags;
+                ubyte flags;
                 if (flags & PAFrameFlag_HasRemoves)
                 {
-                    byte removestmp;
-                    if (removestmp == 0xFF)
+                    ubyte removes;
+                    if (removes == 0xFF)
                     {
-                        short removes;
-                    }
-                    else
-                    {
-                        local byte removes = removestmp;
+                        ushort removes;
                     }
                     for (i3 = 0; i3 < removes; i3++)
                     {
-                        short objectIdTmp;
-                        if (objectIdTmp >= 0x7FF)
+                        ushort objectId;
+                        if (objectId >= 0x7FF)
                         {
-                            int32 objectId;
-                        }
-                        else
-                        {
-                            local byte objectId = objectIdTmp;
+                            uint32 objectId;
                         }
                     }
                 }
                 if (flags & PAFrameFlag_HasAdds)
                 {
-                    byte addstmp;
-                    if (addstmp == 0xFF)
+                    ubyte adds;
+                    if (adds == 0xFF)
                     {
-                        short adds;
+                        ushort adds;
                     }
-                    else
-                    {
-                        local byte adds = addstmp;
-                    }
-                    struct ObjectPositions
+                    struct Objects
                     {
                         for (i3 = 0; i3 < adds; i3++)
                         {
-                            struct ObjectPosition
+                            struct Object
                             {
                                 uint16 objNumAndType;
                                 if (objNumAndType == 0x7ff)
                                 {
                                     uint32 objNum;
                                 }
-                                byte resourceNum;
+                                ubyte resourceNum;
                                 if (objNumAndType & 0x2000)
                                 {
-                                    uint32 preloadFrames;
+                                    uint16 preloadFrames;
                                 }
                                 if (objNumAndType & 0x1000)
                                 {
@@ -110,71 +98,85 @@ typedef struct SpriteDefinition
                                 if (objNumAndType & 0x800)
                                 {
                                     uint32 timeScale;
+                                    local uint32 timeScaleDiv = timeScale / 0x10000;
                                 }
-                                //int32 TransformMtx[4];
-                            } objp;
+                                //uint32 TransformMtx[4];
+                            } obj;
                         }
-                    } objps;
+                    } objs;
                 }
                 if (flags & PAFrameFlag_HasMoves)
                 {
-                    byte movestmp;
+                    ubyte movestmp;
                     if (movestmp == 0xFF)
                     {
-                        short moves;
+                        ushort moves;
                     }
                     else
                     {
-                        local byte moves = movestmp;
+                        local ubyte moves = movestmp;
                     }
-                    struct MObjectPositions
+                    struct MoveObjects
                     {
                         for (i3 = 0; i3 < moves; i3++)
                         {
-                            struct MoveObjPos
+                            struct MoveObject
                             {
                                 uint16 flagsAndObjNum;
                                 if (flagsAndObjNum == 0x3ff)
                                 {
-                                    int32 objNum;
+                                    uint32 objNum;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasMtx)
                                 {
-                                    int32 MoveTransform[4];
+                                    uint32 MoveTransform[4];
+                                    local uint32 MoveTransformADiv = MoveTransform[0] / 65536;
+                                    local uint32 MoveTransformBDiv = MoveTransform[1] / 65536;
+                                    local uint32 MoveTransformCDiv = MoveTransform[2] / 65536;
+                                    local uint32 MoveTransformDDiv = MoveTransform[3] / 65536;
                                 }
                                 else if (flagsAndObjNum & PAMoveFlag_HasRotate)
                                 {
-                                    short rot;
+                                    ushort rot;
+                                    local uint32 rotDiv = rot / 1000;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasLongCoords)
                                 {
-                                    int32 unk;
-                                    int32 transY;
+                                    uint32 transX; //Div 20
+                                    uint32 transY;
                                 }
                                 else
                                 {
-                                    short transX;
-                                    short transY;
+                                    ushort transX;
+                                    ushort transY;
                                 }
+                                local uint32 LongCoordTransformADiv = transX / 20;
+                                local uint32 LongCoordTransformBDiv = transY / 20;
                                 if (flagsAndObjNum & PAMoveFlag_HasSrcRect)
                                 {
-                                    short srcXY[2];
-                                    short srcWH[2];
+                                    ushort srcRectX;
+                                    ushort srcRectY;
+                                    ushort srcRectWidth;
+                                    ushort srcRectHeight;
+                                    local uint32 srcRectXDiv = srcRectX / 20;
+                                    local uint32 srcRectYDiv = srcRectY / 20;
+                                    local uint32 srcRectWidthDiv = srcRectWidth / 20;
+                                    local uint32 srcRectHeightDiv = srcRectHeight / 20;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasColor)
                                 {
-                                    byte r;
-                                    byte g;
-                                    byte b;
-                                    byte a;
+                                    ubyte r;
+                                    ubyte g;
+                                    ubyte b;
+                                    ubyte a;
                                 }
                                 if (flagsAndObjNum & PAMoveFlag_HasAnimFrameNum)
                                 {
-                                    short afn;
+                                    ushort afn;
                                 }
-                            } mobjpos;
+                            } mobjp;
                         }
-                    } mobjposs;
+                    } mobjs;
                 }
                 if (flags & PAFrameFlag_HasFrameName)
                 {
@@ -182,7 +184,7 @@ typedef struct SpriteDefinition
                 }
                 if (flags & PAFrameFlag_HasCommands)
                 {
-                    byte commands;
+                    ubyte commands;
                     struct Commands
                     {
                         for (i3 = 0; i3 < commands; i3++)
@@ -200,65 +202,74 @@ typedef struct SpriteDefinition
     } afs;
 };
 
-struct PopCapPAM {
-    struct Header {
-        int32   magic;
-        int32   version;
-    } HDR;
+typedef struct PopCapPopAnimModuleHeader
+{
+    uint32   magic;
+    uint32   version;
+};
 
+struct PopCapPopAnimModule
+{
+    PopCapPopAnimModuleHeader HDR<bgcolor=cPurple>;
     if (HDR.magic != -1158669996)
     {
         Printf("Incorrect header.");
         break;
     }
-
-    if (HDR.version > 5)
+    if (HDR.version == 6)
     {
-        Printf("PopAnim not supported.");
+        Printf("PopAnim version 6 is not yet supported.");
         break;
     }
-    
-    struct AnimInfo {
-        byte animRate;
-        short animRectX; //Divide by 20
-        local int32 animRectXDiv = animRectX / 20;
-        short animRectY; //Divide by 20
-        local int32 animRectYDiv = animRectY / 20;
-        short animRectWidth; //Divide by 20
-        local int32 animRectWidthDiv = animRectWidth / 20;
-        short animRectHeight; //Divide by 20
-        local int32 animRectHeightDiv = animRectHeight / 20;
-        short numImages;
-        
-        for (i = 0; i < numImages; i++)
+    if (HDR.version > 6)
+    {
+        Printf("Unknown PopAnim version!");
+        break;
+    }
+    struct AnimInfo
+    {
+        ubyte animRate;
+        ushort animRectX; //Divide by 20
+        local uint32 animRectXDiv = animRectX / 20;
+        ushort animRectY; //Divide by 20
+        local uint32 animRectYDiv = animRectY / 20;
+        ushort animRectWidth; //Divide by 20
+        local uint32 animRectWidthDiv = animRectWidth / 20;
+        ushort animRectHeight; //Divide by 20
+        local uint32 animRectHeightDiv = animRectHeight / 20;
+        ushort numImages;
+        struct Images
         {
-            struct Image {
-                
-                U16_StringEntry imageName;
-                //long id;
-                if (HDR.version >= 4)
-                {
-                    short origWidth;
-                    short origHeight;
-                }
-                if (HDR.version == 1)
-                {
-                    short TransformXYZ[3];
-                }
-                else
-                {
-                    long  TransformABCD[4];
-                    short  TransformXY[2];
-                    local int32 TransformAMult = TransformABCD[0] / (65536 * 20);
-                    local int32 TransformBMult = TransformABCD[1] / (65536 * 20);
-                    local int32 TransformCMult = TransformABCD[2] / (65536 * 20);
-                    local int32 TransformDMult = TransformABCD[3] / (65536 * 20);
-                    local short TransformXDiv = TransformXY[0] / 20;
-                    local short TransformYDiv = TransformXY[1] / 20;
-                }
-            } ImageInfo;
-        }
-        short numSprites;
+            for (i = 0; i < numImages; i++)
+            {
+                struct Image 
+                {    
+                    U16_StringEntry imageName;
+                    //long id;
+                    if (HDR.version >= 4)
+                    {
+                        ushort origWidth;
+                        ushort origHeight;
+                    }
+                    if (HDR.version == 1)
+                    {
+                        ushort TransformXYZ[3];
+                    }
+                    else
+                    {
+                        long  TransformABCD[4];
+                        ushort  TransformXY[2];
+                        local uint32 TransformAMult = TransformABCD[0] / (65536 * 20);
+                        local uint32 TransformBMult = TransformABCD[1] / (65536 * 20);
+                        local uint32 TransformCMult = TransformABCD[2] / (65536 * 20);
+                        local uint32 TransformDMult = TransformABCD[3] / (65536 * 20);
+                        local ushort TransformXDiv = TransformXY[0] / 20;
+                        local ushort TransformYDiv = TransformXY[1] / 20;
+                    }
+                } ImageInfo;
+            }
+        } ImageInfos;
+        ushort numSprites;
         struct SpriteDefinitions
         {
             for (i = 0; i < numSprites; i++)
@@ -266,8 +277,11 @@ struct PopCapPAM {
                 SpriteDefinition spriteDef;
             }
         } SpriteInfo;
-        Byte_Bool hasMainSpriteDefinition;
-        if (hasMainSpriteDefinition == Byte_True)
+        if (HDR.version > 3)
+        {
+            Byte_Bool hasMainSpriteDefinition;
+        }
+        if (HDR.version <= 3 || hasMainSpriteDefinition)
         {
             SpriteDefinition mainSpriteDef;
         }
