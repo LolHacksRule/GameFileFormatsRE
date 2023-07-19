@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+typedef struct FileMetaEntry
+{
+    string fileNameStr;
+    FSkip(-1);
+    int32 dmy;
+    int32 offset;
+};
+
+typedef struct FileEntry
+{
+    if (ReadByte() == 0)
+    {
+        FSkip(1);
+    }
+    else if (ReadByte() == 1)
+    {
+        byte one;
+        int32 refPNG1;
+        byte flag;
+        if (flag == 1)
+        {
+            //byte oneAgain;
+            int32 refPNG2;
+            //FSkip(10);
+            //if (ReadInt() == 1196314761)
+            //{
+                //FSkip(-4);
+            //}
+            if (ReadByte() == 1)
+            { 
+                byte flag2;
+                if (flag2 == 1)
+                {
+                    int32 unk;
+                }
+            }
+        }
+    }
+    int32 fileSize;
+    byte file[fileSize];
+};
+
+struct GameloftArchiveBin
+{
+    LittleEndian();
+    int32 files;
+    FileMetaEntry filemeta[files]<optimize=false>;
+    FileEntry fileentry[files]<optimize=false>;
+} BINARYDATA;
