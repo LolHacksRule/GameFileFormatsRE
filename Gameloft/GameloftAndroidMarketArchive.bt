@@ -51,30 +51,25 @@ struct GameloftAndroidMarketArchive
                         {
                             struct File
                             {
-                                //uint32 unk[3];
-                                if (AMZVersion == 3)
+                                Printf("%s\\", path.theString);
+                                if (AMZVersion >= 2)
                                 {
                                     uint64 off;
-                                    uint32 sz;
-                                    //uint32 zero;
-                                    uint64 splitSz;
-                                    uint64 splitSzI64;
-                                    uint32 zero;
-                                    uint32 CRC32;
                                 }
                                 else
                                 {
                                     uint32 off;
-                                    uint32 sz;
-                                    uint32 dmy;
-                                    uint32 CRC32;
                                 }
-                                //uint32 unk2[2];
-                                /*uint64 off; 
-                                uint64 sz;
-                                uint64 dmy;
-                                uint64 CRC32;*/
+                                uint32 sz;
+                                if (AMZVersion == 3)
+                                {
+                                    uint64 splitSz;
+                                    uint64 splitSzI64;
+                                }
+                                uint32 zero;
+                                uint32 CRC32;
                                 I16_StringEntry name;
+                                Printf("%s\n", name.theString);
                                 if (name.byteSize == 0)
                                 {
                                     FSkip(-2);
@@ -90,7 +85,6 @@ struct GameloftAndroidMarketArchive
                                 {
                                     FSkip(-2);
                                 }
-                                //uint16 unk;
                             } fileentry;
                         }
                     } fileentries;
