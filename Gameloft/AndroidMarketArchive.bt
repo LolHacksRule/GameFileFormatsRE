@@ -1,0 +1,102 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+local uint AMZVersion <hidden=true> = 0;
+
+struct GameloftAndroidMarketArchive
+{
+    BigEndian();
+    uint32 infoSz;
+    struct Entries
+    {
+        while (FPos < infoSz)
+        {
+            struct Entry
+            {
+                if (ReadInt() == 816741)
+                {
+                    I16_StringEntry ver;
+                    if (ver.theString == "version: 103")
+                    {
+                        AMZVersion = 3;
+                    }
+                    else if (ver.theString == "version: 102")
+                    {
+                        AMZVersion = 2;
+                    }
+                    else if (ver.theString == "version: 101")
+                    {
+                        AMZVersion = 1;
+                    }
+                    uint32 align;
+                }
+                I16_StringEntry path;
+                uint32 files;
+                if (files)
+                {
+                    struct Files
+                    {
+                        for (i = 0; i < files; i++)
+                        {
+                            struct File
+                            {
+                                //uint32 unk[3];
+                                if (AMZVersion == 3)
+                                {
+                                    uint64 off;
+                                    uint32 sz;
+                                    //uint32 zero;
+                                    uint64 splitSz;
+                                    uint64 splitSzI64;
+                                    uint32 zero;
+                                    uint32 CRC32;
+                                }
+                                else
+                                {
+                                    uint32 off;
+                                    uint32 sz;
+                                    uint32 dmy;
+                                    uint32 CRC32;
+                                }
+                                //uint32 unk2[2];
+                                /*uint64 off; 
+                                uint64 sz;
+                                uint64 dmy;
+                                uint64 CRC32;*/
+                                I16_StringEntry name;
+                                if (name.byteSize == 0)
+                                {
+                                    FSkip(-2);
+                                }
+                                uint32 cSize;
+                                if (cSize == 0) //For v1
+                                {
+                                    uint32 combinedSize;
+                                    uint32 zsz;
+                                }
+                                I16_StringEntry name2;
+                                if (name2.byteSize == 0)
+                                {
+                                    FSkip(-2);
+                                }
+                                //uint16 unk;
+                            } fileentry;
+                        }
+                    } fileentries;
+                }
+            } entry;
+            FPos = FTell();
+        }
+    } entries;
+} AMZ;
