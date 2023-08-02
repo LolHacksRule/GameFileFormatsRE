@@ -1,6 +1,6 @@
 # Order & Chaos Online (*.amz)
 # script for QuickBMS http://quickbms.aluigi.org
-# Mod by LolHacksRule to support unversioned variant and version 103 ZSTD
+# Mod by LolHacksRule to support unversioned variant and version 102/103 ZSTD
 # WIP!
 
 math AUTO_UNZIP = 1
@@ -21,13 +21,10 @@ for
     savepos CURR_OFF
     get CHECK_FOR_V long
     goto CURR_OFF
-    Print %CHECK_FOR_V%
+    #Print %CHECK_FOR_V%
     if CHECK_FOR_V == 816741 #Check for "**vers", if so it's the versioned header variant
-        get NAMESZ short
-        getdstring NAME NAMESZ  # "version: 101"
-        if NAME == "version: 103"
-            set VERSION long = 103
-        endif
+        get VERNAMESZ short
+        getdstring VERSIONSTRING VERNAMESZ  # "version: 101"
         get ALIGN long
     endif
 
@@ -35,9 +32,17 @@ for
     getdstring PATH PATHSZ
     get FILES long
     for i = 0 < FILES
-        get OFFSET long
+        if VERSIONSTRING == "version: 102" || VERSIONSTRING == "version: 103"
+            get OFFSET longlong
+        else
+            get OFFSET long
+        endif
         math OFFSET + BASE_OFF
         get SIZE long
+        if VERSIONSTRING == "version: 103"
+            get SPLITSIZE longlong
+            get SPLITSIZE2 longlong
+        endif
         get ZERO long
         get SOME_CRC long
         get NAMESZ short
@@ -61,7 +66,7 @@ for
             else
                 set NAME fullbasename NAME  # remove the .zip/.zstd
             endif
-            if VERSION == 103
+            if VERSIONSTRING == "version: 102" || VERSIONSTRING == "version: 103"
                 callfunction MINI_ZS_ONE_FILE
             else
                 callfunction MINI_ZIP_ONE_FILE
@@ -78,7 +83,7 @@ next
 
 startfunction MINI_ZS_ONE_FILE
     comtype zstd
-    clog NAME 0 ZSIZE SIZE
+    clog NAME OFFSET ZSIZE SIZE
 endfunction
 
 startfunction MINI_ZIP_ONE_FILE
