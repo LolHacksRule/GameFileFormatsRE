@@ -1,0 +1,130 @@
+# Order & Chaos Online (*.amz)
+# script for QuickBMS http://quickbms.aluigi.org
+# Mod by LolHacksRule to support unversioned variant and version 103 ZSTD
+# WIP!
+
+math AUTO_UNZIP = 1
+
+endian big
+get INFO_SIZE long
+if INFO_SIZE == 1347093252
+    Print ZIP!
+cleanexit
+endif
+savepos BASE_OFF
+math BASE_OFF + INFO_SIZE
+for
+    savepos TMP
+    if TMP == BASE_OFF
+        break
+    endif
+    savepos CURR_OFF
+    get CHECK_FOR_V long
+    goto CURR_OFF
+    Print %CHECK_FOR_V%
+    if CHECK_FOR_V == 816741 #Check for "**vers", if so it's the versioned header variant
+        get NAMESZ short
+        getdstring NAME NAMESZ  # "version: 101"
+        if NAME == "version: 103"
+            set VERSION long = 103
+        endif
+        get ALIGN long
+    endif
+
+    get PATHSZ short
+    getdstring PATH PATHSZ
+    get FILES long
+    for i = 0 < FILES
+        get OFFSET long
+        math OFFSET + BASE_OFF
+        get SIZE long
+        get ZERO long
+        get SOME_CRC long
+        get NAMESZ short
+        getdstring NAME NAMESZ
+        get ZSIZE long
+        if ZSIZE == 0
+            get DUMMY long
+            get ZSIZE long
+        endif
+        get NAMESZ short
+        getdstring NAME NAMESZ
+
+        math IS_SPLIT = 0
+
+        string NAME p "%s/%s" PATH NAME
+        if AUTO_UNZIP != 0
+            if NAME & ".split_"
+                math IS_SPLIT = 1
+                string NAME >> ".split_"
+                append
+            else
+                set NAME fullbasename NAME  # remove the .zip/.zstd
+            endif
+            if VERSION == 103
+                callfunction MINI_ZS_ONE_FILE
+            else
+                callfunction MINI_ZIP_ONE_FILE
+            endif
+        else
+            log NAME OFFSET ZSIZE
+        endif
+
+        if IS_SPLIT != 0
+            append
+        endif
+    next i
+next
+
+startfunction MINI_ZS_ONE_FILE
+    comtype zstd
+    clog NAME 0 ZSIZE SIZE
+endfunction
+
+startfunction MINI_ZIP_ONE_FILE
+    endian save CURRENT_ENDIAN
+    endian little
+    savepos BCK_OFF
+    goto OFFSET
+    math OFFSET2 = OFFSET
+
+    idstring "PK"
+    get sign short
+    if sign == 0x0403       # Local file header
+        get ver             short
+        get flag            short
+        get method          short
+        get modtime         short
+        get moddate         short
+        get zip_crc         long
+        get comp_size       long
+        get uncomp_size     long
+        get name_len        short
+        get extra_len       short
+        getdstring name2    name_len    # ignore the name
+        getdstring extra    extra_len
+        savepos offset
+
+        if comp_size == 0
+        if uncomp_size == 0
+            xmath comp_size "ZSIZE - (offset - OFFSET2)"
+            math uncomp_size = SIZE
+        endif
+        endif
+
+        if method == 0
+            Log name offset comp_size   # was uncomp_size before AES
+        else
+            if method == 8
+                ComType deflate
+            else
+                print "unsupported compression method %method%"
+                cleanexit
+            endif
+            CLog name offset comp_size uncomp_size
+        endif
+    endif
+
+    goto BCK_OFF
+    endian restore CURRENT_ENDIAN
+endfunction
