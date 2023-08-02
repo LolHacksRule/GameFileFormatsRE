@@ -42,5 +42,6 @@ struct FieldMap
     FSeek(FieldMapHeader.sec[0].off);
     GraphicsConfigSection gfxCFGSection;
     //FSeek(FieldMapHeader.modelSec.modelOff);
-    //byte model[FieldMapHeader.modelSec.modelSize]<bgcolor=cGreen>;
+    FSeek(FieldMapHeader.sec[11].off);
+    byte model[FieldMapHeader.sec[11].size]<bgcolor=cGreen>;
 } MAP_BIN;

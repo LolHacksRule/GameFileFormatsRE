@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+typedef struct FileEntry
+{
+    I32_StringEntry fileNameStr;
+    int32 fileSize;
+    byte file[fileSize];
+};
+
+struct GameloftGenericBin
+{
+    int32 ver;
+    while (FPos < EOF)
+    {
+        FileEntry file<optimize=false>;
+        FPos = FTell();
+    }
+} BINARYDATA;
