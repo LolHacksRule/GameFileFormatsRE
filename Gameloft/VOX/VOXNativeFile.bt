@@ -1,0 +1,182 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    Header = 1316515670,
+    VoxAudioFormat = 1953326657,
+    VoxAudioSegments = 1835492691,
+    VoxAudioRules = 1701606738,
+    VoxAudioPlaylists = 1953721424,
+    VoxAudioStates = 1952543827,
+    VoxAudioTransitions = 1853059668,
+    VoxAudioGroups = 1936749127,
+    AudioGroupPlaylistElements = 1701868103,
+    VoxAudioData = 1635017028,
+    VoxMSADPCMExtension = 1700885325,
+} VoxBlockType;
+
+typedef enum <uint16>
+{
+    PCM = 1,
+    MSADPCM,
+    MusePack = 2048,
+} VoxAudioCodec;
+
+typedef struct VoxBlockBinForm
+{
+    VoxBlockType magic;
+    uint32 dSz;
+};
+
+typedef struct HeaderBlock
+{
+    char ver[8];
+    uint32 fSz;
+    uint32 rawAudioOff;
+};
+
+typedef struct AudioFormatBlock
+{
+    VoxAudioCodec audioCodec;
+    uint16 channels;
+    uint32 sampleRate;
+    uint16 align;
+    int16 bits;
+};
+
+typedef struct AudioSegmentsBlock
+{
+    uint32 subSongs;
+    struct SubSong
+    {
+        uint32 streamOff;
+        uint32 streamSz;
+        uint32 samples;
+        uint32 unk[3];
+    } subSong[subSongs];
+};
+
+typedef struct AudioStatesBlock
+{
+    uint32 entries;
+    struct StateEntry
+    {
+        char name[12];
+        uint32 unk2[5];
+    } entry[entries];
+};
+
+typedef struct AudioPlaylistElementsBlock
+{
+    uint32 entries;
+    struct PlaylistElementEntry
+    {
+        byte unk[32];
+    } entry[entries];
+};
+
+typedef struct AudioGroupsBlock
+{
+    uint32 entries;
+    struct GroupEntry
+    {
+        byte unk[24];
+    } entry[entries];
+};
+
+typedef struct AudioTransitionsBlock
+{
+    uint32 entries;
+    struct TransitionEntry
+    {
+        byte unk[16];
+    } entry[entries];
+};
+
+typedef struct AudioRulesBlock
+{
+    uint32 entries;
+    struct RuleEntry
+    {
+        byte unk[36];
+    } entry[entries];
+};
+
+typedef struct AudioPlaylistsBlock
+{
+    uint32 entries;
+    struct PlaylistEntry
+    {
+        byte unk[8];
+    } entry[entries];
+};
+
+
+typedef struct Block
+{
+    VoxBlockType magic;
+    uint32 dSz;
+    if (magic == Header)
+    {
+        HeaderBlock Header;
+    }
+    else if (magic == VoxAudioFormat)
+    {
+        AudioFormatBlock AudioFormat;
+    }
+    else if (magic == VoxAudioSegments)
+    {
+        AudioSegmentsBlock AudioSegments;
+    }
+    else if (magic == VoxAudioStates)
+    {
+        AudioStatesBlock AudioStates;
+    }
+    else if (magic == AudioGroupPlaylistElements)
+    {
+        AudioPlaylistElementsBlock AudioPlaylistElements;
+    }
+    else if (magic == VoxAudioGroups)
+    {
+        AudioGroupsBlock AudioGroups;
+    }
+    else if (magic == VoxAudioTransitions)
+    {
+        AudioTransitionsBlock AudioTransitions;
+    }
+    else if (magic == VoxAudioRules)
+    {
+        AudioRulesBlock AudioRules;
+    }
+    else if (magic == VoxAudioPlaylists)
+    {
+        AudioPlaylistsBlock AudioPlaylists;
+    }
+    else
+    {
+        byte unknownData[dSz];
+    }
+};
+
+struct VoxNativeFile
+{
+    LittleEndian();
+    while (FPos != EOF)
+    {
+        Block block;
+        FPos = FTell();
+    }
+} VXN;
