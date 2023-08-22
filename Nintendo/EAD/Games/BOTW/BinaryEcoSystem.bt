@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+typedef struct Row
+{
+    uint16 unk;
+    uint16 xlen;
+};
+
+struct BinaryECOSystem
+{
+    struct Header
+    {
+        uint32 magic;
+        uint32 rows;
+        uint32 divisor;
+        uint32 pad;
+    } hdr;
+    uint32 offsets[hdr.rows];
+    FPos = FTell();
+    struct Rows
+    {
+        while (FPos != EOF)
+        {
+            Row row;
+            FPos = FTell();
+        }
+    } rows;
+} BECO;

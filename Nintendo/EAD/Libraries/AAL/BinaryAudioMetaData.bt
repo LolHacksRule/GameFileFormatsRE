@@ -1,0 +1,105 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//#include "../../LHR/Common.bt"
+
+typedef enum <byte> {
+	Wave,
+    PrefetchStream,
+} AudioType;
+
+typedef struct StreamInformation
+{
+    int32 streamChannels;
+    float streamInfluence;
+};
+
+typedef struct AMTAHeader
+{
+    N_AAL_CommonBinHeader CBHdr;
+    LittleEndian();
+    uint32 fSize;
+    uint32 dataOff;
+    uint32 markerOff;
+    if (CBHdr.ver > 2)
+    {
+        uint32 extOff;
+    }
+    uint32 strTblOff;
+};
+
+typedef struct AMTA_Data
+{
+    //N_CommonBlockHdr_4Block AMTAHdr;
+    AudioType theAudioType;
+    byte channels;
+    byte streamInfos;
+    byte flag;
+    float volume;
+    uint32 sampleRate;
+    uint32 loopStart;
+    uint32 loopEnd;
+    float loadness;
+    StreamInformation theStreamInfosData[8];
+    float peak;
+};
+
+typedef struct AMTA_MARKData
+{
+    char MARKMagic[4];
+    uint32 secSz;
+    uint32 entries;
+    if (entries != 0)
+    {
+        struct MarkEntries
+        {
+            for (i2 = 0; i2 < entries; i2++)
+            {
+                struct MarkEntry
+                {
+                    uint32 idx;
+                    uint32 nameOff;
+                    uint32 value;
+                    uint32 dmy;
+                } ME;
+            }
+        } MES;
+    }
+};
+
+typedef struct AMTA_EXTData
+{
+    char EXTMagic[4];
+    uint32 secSz;
+    uint32 entries;
+    if (entries != 0)
+    {
+        struct ExtEntries
+        {
+            for (i2 = 0; i2 < entries; i2++)
+            {
+                struct ExtEntry
+                {
+                    uint32 nameOff;
+                    uint32 unk;
+                } EE;
+            }
+        } EES;
+     }
+} ;
+
+typedef struct BinaryAudioMetaData
+{
+    AMTAHeader Hdr;
+    byte AMTAData[Hdr.fSize-28];
+};

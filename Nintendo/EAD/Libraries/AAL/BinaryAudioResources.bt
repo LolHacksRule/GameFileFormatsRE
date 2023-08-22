@@ -1,0 +1,143 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//#include "../Standard/CommonBin.bt"
+#include "AALCommon.bt"
+//#include "BinaryWave.bt"
+#include "BinaryAudioMetaData.bt"
+
+//local uint i <hidden=true> = 0;
+
+typedef struct BARSHeader
+{
+    char   blockType[4];
+    uint32 fSize;
+    U16_EndianEnum endian;
+    uint16 ver;
+    int32 assets;
+};
+
+typedef struct {
+	uint32 metaOff;
+    uint32 assetOff;
+} OffsetSet;
+
+/*typedef struct AudioMetaData
+{
+    AMTAHeader AMTAHdr;
+    byte AMTAData[AMTAHdr.fSize-28];
+    //FSkip(-24);
+    /*struct DataBlk
+    {
+        N_CommonBlockHdr_4Block AMTAHdr;
+        AudioType theAudioType;
+        byte channels;
+        byte streamInfos;
+        byte flag;
+        float volume;
+        uint32 sampleRate;
+        uint32 loopStart;
+        uint32 loopEnd;
+        float loadness;
+        StreamInformation theStreamInfosData[8];
+        float peak;
+    } Data_Blk;
+    struct MARKData
+    {
+        char MARKMagic[4];
+        uint32 secSz;
+        uint32 entries;
+        if (entries != 0)
+        {
+            struct MarkEntries
+            {
+                for (i2 = 0; i2 < entries; i2++)
+                {
+                    struct MarkEntry
+                    {
+                        uint32 idx;
+                        uint32 nameOff;
+                        uint32 value;
+                        uint32 dmy;
+                    } ME;
+                }
+            } MES;
+        }
+    } Mark;
+    if (Hdr.ver > 2)
+    {
+        struct EXTData
+        {
+            char EXTMagic[4];
+            uint32 secSz;
+            uint32 entries;
+            if (entries != 0)
+            {
+                struct ExtEntries
+                {
+                    for (i2 = 0; i2 < entries; i2++)
+                    {
+                        struct ExtEntry
+                        {
+                            uint32 nameOff;
+                            uint32 unk;
+                        } EE;
+                    }
+                } EES;
+            }
+        } EXT;
+    }
+    struct StringPool
+    {
+        char STRGMagic[4];
+        uint32 secSz;
+        byte StrPoolData[secSz];
+        //string Str;
+        //FSkip(3);
+        //uint32 dOff;
+    } Data;
+};*/
+
+struct BinaryAudioResources
+{
+    BARSHeader theHdr;
+    uint32 assetNameCRC[theHdr.assets];
+    OffsetSet offsetSet[theHdr.assets];
+    uint32 checkForMINFs<hidden=true>;
+    FSkip(-4);
+    if (checkForMINFs != 1096043841)
+    {
+        struct MusicInfoMeta
+        {
+            uint32 MINFCRCs;
+            uint32 MINFNameCRC[MINFCRCs];
+        } minf_m;
+    }
+    FSeek(offsetSet.metaOff);
+    struct AudioMetaEntries
+    {
+        for (i = 0; i < theHdr.assets; i++)
+        {
+            BinaryAudioMetaData AudioMetaDataEntry;
+        }
+    } ame;
+    FSeek(offsetSet.assetOff);
+    struct AudioFiles
+    {
+        for (i = 0; i < theHdr.assets; i++)
+        {
+            //byte AudioFile[
+        }
+    };
+    //BinaryWave AudioFile;
+} BARS;

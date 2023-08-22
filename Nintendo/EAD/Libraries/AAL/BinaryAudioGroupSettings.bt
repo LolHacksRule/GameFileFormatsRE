@@ -1,0 +1,202 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/BAGST-File-Format
+
+#include "AALCommon.bt"
+
+typedef struct CommonBlockHdr
+{
+    char   blockType[4];
+	uint32 blockHdrSize;
+    if (blockHdrSize == 0)
+    {
+        Printf("Data ended abruptly");
+        break;
+    }
+} commonBlockHdr;
+
+typedef struct
+{
+    uint32 nodeSize;
+    uint32 groupIndex;
+    uint32 childrenNum;
+    for (i = 0; i < childrenNum; i++)
+    {
+        struct ChildNode
+        {
+            uint32 nodeSize;
+            uint32 groupIndex;
+            uint32 childrenNum;
+        } child;
+    }
+} TreeNode;
+
+typedef struct {
+    commonBlockHdr TreeBlockHDR;
+    //uint32 offToDefGroup;
+    //TreeNode RootNode;
+    byte block[TreeBlockHDR.blockHdrSize];
+} TREEBlock;
+
+typedef struct
+{
+    float vol;
+    float pitch;
+    float lfe;
+    float lpf;
+    uint32 biquadFilterType;
+    float biquadFilterTypeF32;
+    uint32 angleIdx;
+    float spread;
+    float deviceVol;
+    float unk[5];
+    float busVol[4];
+} DefaultSoundParam;
+
+typedef enum <uint32>
+{
+    PrioEarlier = 1,
+    PrioLater,
+    Earlier,
+    Later,
+} ActiveSoundLimiterType;
+
+typedef struct
+{
+    uint32 unk[2];
+} ActiveSoundLimiterSettings;
+
+typedef struct
+{
+    uint32 unk[5];
+} RequestSoundLimiterSettings;
+
+typedef struct
+{
+    float unk;
+} RequestIntervalLimiterSettings;
+
+typedef struct
+{
+    ActiveSoundLimiterType activeLimiterType;
+    ActiveSoundLimiterSettings ActiveSoundLimiterSettingsEntry;
+    uint32 requestSoundLimiterType;
+    RequestSoundLimiterSettings RequestSoundLimiterSettingsEntry;
+    uint32 requestIntervalLimiterType;
+    RequestIntervalLimiterSettings RequestIntervalLimiterSettingsEntry;
+} GroupLimiterParam;
+
+typedef struct
+{
+    uint32 unk[3];
+} GroupDuckerSettings;
+
+typedef struct
+{
+    uint32 strTblOff;
+    uint32 unk[4];
+} DuckingTargetSettings;
+
+typedef struct
+{
+    GroupDuckerSettings GroupDuckerSettingsEntry;
+    float volumeFloor;
+    uint32 unk;
+    uint32 targets;
+    DuckingTargetSettings DuckingTargetSettingsEntry;
+} DuckingParam;
+
+typedef struct
+{
+    uint32 nameOff;
+    uint32 unk[3];
+    DefaultSoundParam DefaultSoundParamEntry;
+    GroupLimiterParam DefaultGroupLimiterParamEntry;
+    uint32 unk2;
+    DuckingParam DuckingParamEntry;
+} GroupParam;
+
+typedef struct {
+    commonBlockHdr GroupBlockHDR;
+    /*uint32 groups;
+    uint32 groupOffset[groups];
+    struct GroupParamEntries
+    {
+        for (i = 0; i < groups; i++)
+        {
+            GroupParam GroupParamEntry;
+        }
+    } gpe;*/
+    byte block[GroupBlockHDR.blockHdrSize];
+} GRPBlock;
+
+typedef struct {
+    commonBlockHdr MANDBlockHDR; //Audio ducker config?
+    byte BYMLData[MANDBlockHDR.blockHdrSize];
+} MANDBlock;
+
+typedef struct {
+    commonBlockHdr PauseSettingsBlockHDR;
+    byte BYMLData[PauseSettingsBlockHDR.blockHdrSize];
+} PASEBlock;
+
+typedef struct {
+    commonBlockHdr GCCDBlockHDR;
+    byte BYMLData[GCCDBlockHDR.blockHdrSize];
+} GCCDBlock;
+
+typedef struct {
+    commonBlockHdr STRGBlockHDR;
+    struct StringTableEntries
+    {
+        while (FPos != EOF) //For now
+        {
+            struct StringTableEntry
+            {
+                string stringEntry;
+                Printf("%s\n", stringEntry);
+            } ste;
+            FPos = FTell();
+        }
+    } stes;
+    //byte block[STRGBlockHDR.blockHdrSize];
+} STRGBlock;
+
+typedef struct {
+    N_EAD_AAL_CommonBinHeader binhdr;
+    uint32 fSize;
+    uint32 treeOff;
+    uint32 grpOff;
+    if (binhdr.ver == 9) //Thunder/Sports3
+    {
+        uint32 mandOff;
+        uint32 paseOff;
+        uint32 gccdOff;
+    }
+    uint32 strgOff;
+} AGSTHdr;
+
+struct BinaryAudioGroupSettings
+{
+    AGSTHdr hdr;
+    TREEBlock TreeBlock;
+    GRPBlock GroupBlock;
+    if (hdr.binhdr.ver == 9) //Thunder/Sports3
+    {
+        MANDBlock MandBlock;
+        PASEBlock PaseBlock;
+        GCCDBlock GccdBlock;
+    }
+    STRGBlock StringBlock<optimize=false>;
+} BAGST;

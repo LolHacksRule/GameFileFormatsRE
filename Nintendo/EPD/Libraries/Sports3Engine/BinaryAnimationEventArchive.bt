@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+
+struct AnimEventArchive
+{
+    uint64 hdr;
+    uint32 fsize;
+    byte file[fsize-12];
+    /*uint32 verprob;
+    uint32 BFSIStart;
+    uint32 unk; //0?
+    uint32 unk2; //2 BFSI blocks?
+    uint32 offOfAnimEventStr;
+    uint32 strPoolStartProb;
+    uint32 unk3;
+    byte AnimEventStr[128];
+    uint32 BFSIHdr;
+    uint32 bsize;
+    byte b[bsize];*/
+} BAEV;

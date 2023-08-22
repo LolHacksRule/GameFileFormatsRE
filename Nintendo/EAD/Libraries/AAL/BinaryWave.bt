@@ -1,0 +1,44 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct BWAVHeader
+{
+    char magic[4];
+    U16_EndianEnum endian;
+    uint16 ver;
+    uint32 CRC32;
+    I16_Bool isPreFetch;
+    uint16 channels;
+};
+
+typedef struct ChannelInfo
+{
+    uint16 unk;
+    uint16 channelPan;
+    uint32 sampleRate;
+    uint32 samples;
+    uint32 samplesPreFetch;
+    int16 coeff[16];
+    uint32 startOff;
+    uint32 startOffPreFetch;
+    I32_Bool ChannelLoop;
+    uint32 loopEndSample;
+    uint32 loopStartSample;
+    uint16 unk2[4];
+};
+
+struct BinaryWave
+{
+    BWAVHeader BWAVHdr;
+    ChannelInfo ChannelInfoData;
+} BWAV;

@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "JSystem_Common.bt"
+
+struct JSystem_BinaryMessageColorTable
+{
+    JSystem_BlockHeader binBlockHdr;
+    JSystem_Chunk CLT1Chunk;
+    struct ColorTable
+    {
+        uint16 colors;
+        JSystem_ColorFormat format;
+        if (format == JSystem_ColorFormat_RGBA8) //The only one afaik
+        {
+            RGBA_UByte color[colors]<optimize=false>;
+        }
+    } ColorTableStruct;
+    byte pad[CLT1Chunk.chunkSz - sizeof ColorTableStruct - 8];
+} BMC;

@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "AALCommon.bt"
+
+typedef enum <uint32> {
+	Logarithmic,
+    Linear,
+} CurveType;
+
+struct BinaryAudioUnitDistanceCurve
+{
+    N_AAL_CommonBinHeader theHdr;
+    CurveType curveType;
+    float start;
+    float end;
+    float hold;
+    float unit;
+    float decay;
+    float cullStart;
+} BAUDC;

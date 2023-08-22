@@ -1,0 +1,76 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    JSystem_SubSystemVersion_MessageColor = 1296515916,
+    JSystem_SubSystemVersion_MessageGroup = 1296388935,
+} JSystem_SubSystemVersion;
+
+typedef enum <uint32>
+{
+    JSystem_FileType_BinaryMessageColorV1 = 1651335985,
+    JSystem_FileType_BinaryMessageGroupV1 = 1651337009,
+} JSystem_FileType;
+
+typedef enum <uint32>
+{
+    JSystem_ChunkType_ColorTableV1 = 1129075761,
+    JSystem_ChunkType_InfoV1 = 1229866545,
+    JSystem_ChunkType_DataV1 = 1145132081,
+    JSystem_ChunkType_MessageIDs = 1296647217,
+} JSystem_ChunkType;
+
+typedef enum <ubyte>
+{
+    JSystem_CharacterSet_Latin1_Legacy, 
+    JSystem_CharacterSet_Latin1,
+    JSystem_CharacterSet_UTF16,
+    JSystem_CharacterSet_ShiftJIS,
+    JSystem_CharacterSet_UTF8,
+} JSystem_CharacterSet;
+
+typedef struct JSystem_Chunk
+{
+    JSystem_ChunkType chunkType;
+    uint32 chunkSz;
+};
+
+typedef enum <uint16>
+{
+    JSystem_ColorFormat_RGBA8 = 0,
+} JSystem_ColorFormat;
+
+typedef struct JSystem_BlockHeader
+{
+    BigEndian();
+    JSystem_SubSystemVersion subSystem;
+    JSystem_FileType fileType;
+    uint32 blockSz;
+    uint32 chunks;
+    if (subSystem == JSystem_SubSystemVersion_MessageGroup && fileType == JSystem_FileType_BinaryMessageGroupV1)
+    {
+        JSystem_CharacterSet characterSet;
+        byte padding1;
+        uint16 padding2;
+        uint32 rsrv[2];
+        uint32 uwrk;
+    }
+    else
+    {
+        char subVersionStr[16];
+        //byte padding[12];
+    }
+};

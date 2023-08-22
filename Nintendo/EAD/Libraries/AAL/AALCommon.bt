@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+//#include "../Standard/CommonBin.bt"
+
+typedef struct N_EAD_AAL_CommonBinHeader {
+	char   blockType[4];
+    U16_EndianEnum endian;
+    if (endian == U16_Big)
+    {
+        BigEndian();
+    }
+    uint16 ver;
+};

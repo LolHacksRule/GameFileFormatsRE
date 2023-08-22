@@ -1,0 +1,363 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Sports3 Online Demo
+//0x00000a20 = ParamDefTBL
+//0x00000fa0 = ResAssetPrmTbl
+//0x00073048 = NameTbl
+
+#include "../../../../LHR/Common.bt"
+
+typedef struct Header
+{
+    char   XLINK[4];
+    uint32 fSize;
+    uint32 ver;
+    uint32 resParams;
+    uint32 resAssetParams;
+    uint32 resTiggerOverwriteParams;
+    if (ver > 30)
+    {
+        uint64 triggerOverwriteParamsTblOff;
+        uint64 localPropertyNameRefTblOff;
+    }
+    else
+    {
+        uint32 triggerOverwriteParamsTblOff;
+        uint32 localPropertyNameRefTblOff;
+    }
+    uint32 localPropertyNameRefTables;
+    uint32 localPropertyEnumNameRefTables;
+    uint32 directValueTables;
+    uint32 randomTables;
+    uint32 curveTables;
+    uint32 curvePointTables;
+    if (ver > 30)
+    {
+        uint64 exRegionOff;
+        uint64 users;
+        uint64 condTblOff;
+        uint64 nameTblOff;
+    }
+    else
+    {
+        uint32 exRegionOff;
+        uint32 users;
+        uint32 condTblOff;
+        uint32 nameTblOff;
+    }
+};
+
+typedef enum <uint32>
+{
+    PT_Int,
+    PT_Float32,
+    PT_Bool,
+    PT_Enum,
+    PT_String,
+    PT_Byte
+} ParamType;
+
+typedef enum <uint32>
+{
+    PRT_Enum,
+    PRT_I32,
+    PRT_Float32
+} PropertyType;
+
+typedef enum <uint32>
+{
+    CT_Switch,
+    CT_Random,
+    CT_Random2,
+    CT_Blend,
+    CT_Sequence,
+    CT_Mono
+} ContainerType;
+
+typedef enum <uint32>
+{
+    CPT_Equal,
+    CPT_GreaterThan,
+    CPT_GreaterThanOrEqual,
+    CPT_LessThan,
+    CPT_NotEqual,
+} CompareType;
+
+typedef struct UserDataTbl
+{
+    uint32 CRC32[theHdr.users];
+    if (theHdr.ver > 30)
+    {
+        uint64 exRegionOff[theHdr.users];
+    }
+    else
+    {
+        uint32 exRegionOff[theHdr.users];
+    }
+};
+
+typedef struct ParamDef
+{
+    if (theHdr.ver > 30)
+    {
+        uint64 strOff;
+    }
+    else
+    {
+        uint32 strOff;
+    }
+    ParamType type;
+    if (type == PT_Float32)
+    {
+        float defValue;
+    }
+    else if (type == PT_String)
+    {
+        if (theHdr.ver > 30)
+        {
+            uint64 offInStrTbl;
+        }
+        else
+        {
+            uint32 offInStrTbl;
+        }
+    }
+    else
+    {
+        if (theHdr.ver > 30)
+        {
+            uint64 defValue;
+        }
+        else
+        {
+            uint32 defValue;
+        }
+    }
+};
+
+typedef struct ParamDefineTbl
+{   if (theHdr.ver > 30)
+    {
+        uint64 dataSectionSize;
+    }
+    else
+    {
+        uint32 dataSectionSize;
+    }
+    if (theHdr.ver > 30)
+    {
+        FSkip(-8);
+        byte theTbl[dataSectionSize];
+    }
+    else
+    //It works for v30 but it's kinda borked
+    {
+        uint32 userParams;
+        uint32 assetParams;
+        uint32 triggerParams;
+        uint32 unk;
+        struct Params
+        {
+            struct UserParams
+            {
+                for (i = 0; i < userParams; i++)
+                {
+                    ParamDef UserParam;
+                }
+            } UserPrms;
+            struct AssetParams
+            {
+                for (i = 0; i < assetParams; i++)
+                {
+                    ParamDef AssetParam;
+                }
+            } AssetPrms;
+            struct TriggerParams
+            {
+                for (i = 0; i < triggerParams; i++)
+                {
+                    ParamDef TriggerParam;
+                }
+            } TriggerPrms;
+        } prms;
+        //FSkip(1);
+        struct Strings
+        {
+            for (i = 0; i < /*userParams+assetParams*/ 50; i++)
+            {
+                struct StringEntry
+                {
+                    string theStr;
+                } strE;
+            }
+        } strs;
+    }
+};
+
+typedef struct ResOrTrigAssetParamRef
+{
+    byte refType;
+    byte value[3];
+};
+
+typedef struct ResAssetParamTableEntry
+{
+    uint64 assetmask;
+    if (assetmask & 1)
+    {
+        ResOrTrigAssetParamRef ref1;
+    }
+    if (assetmask & 2)
+    {
+        ResOrTrigAssetParamRef ref2;
+    }
+    if (assetmask & 4)
+    {
+        ResOrTrigAssetParamRef ref3;
+    }
+};
+
+typedef struct TrigOverwriteParamTableEntry
+{
+    uint32 trigmask;
+    if (trigmask & 1)
+    {
+        ResOrTrigAssetParamRef ref1;
+    }
+    if (trigmask & 2)
+    {
+        ResOrTrigAssetParamRef ref2;
+    }
+    if (trigmask & 4)
+    {
+        ResOrTrigAssetParamRef ref3;
+    }
+};
+
+struct BinaryXLink2
+{
+    Header theHdr;
+    UserDataTbl UserData;
+    ParamDefineTbl ParamDefine;
+    if (theHdr.ver < 30)
+    {
+        struct ResAssetParamTbls
+        {
+            for (i = 0; i < theHdr.resAssetParams; i++)
+            {
+                ResAssetParamTableEntry ResAssetParamTbl;
+            }
+        } rapts;
+        FSeek(theHdr.triggerOverwriteParamsTblOff);
+        struct TrigOverwriteParamTbls
+        {
+            for (i = 0; i < theHdr.resTiggerOverwriteParams; i++)
+            {
+                TrigOverwriteParamTableEntry TrigOverwriteParamTbl;
+            }
+        } topts;
+    }
+    FSeek(theHdr.localPropertyNameRefTblOff);
+    struct LocalPropertyNameRefTbl
+    {
+        if (theHdr.ver > 30)
+        {
+            uint64 nameTblOff;
+        }
+        else
+        {
+            uint32 nameTblOff;
+        }
+    } lpnrt[theHdr.localPropertyNameRefTables]<optimize=false>;
+    struct LocalPropertyEnumRefTbl
+    {
+        if (theHdr.ver > 30)
+        {
+            uint64 enumTblOff;
+        }
+        else
+        {
+            uint32 enumTblOff;
+        }
+    } lpert[theHdr.localPropertyEnumNameRefTables]<optimize=false>;
+    struct DirectValueTbl
+    {
+        uint32 directVal;
+    } dvt[theHdr.directValueTables];
+    struct RandomTbl
+    {
+        MinMax_F32 randEntry;
+    } rt[theHdr.randomTables];
+    if (theHdr.ver < 30)
+    {
+        struct CurveTbl
+        {
+            uint16 curvePointStartOff;
+            uint16 points;
+            uint16 curveType;
+            U16_Bool isPropGlobal;
+            uint32 propNameOff;
+            uint32 propIdx;
+            uint16 localPropNameIdx;
+            uint16 pad;
+        } ct[theHdr.curveTables];
+        struct CurvePointTbl
+        {
+            MinMax_F32 cptEntry;
+        } cpt[theHdr.curvePointTables];
+        //TODO: Exregion
+        /*struct ExRegion
+        {
+            
+        } er;*/
+        FSeek(theHdr.condTblOff);
+        struct ConditionTbl
+        {
+            while (FPos < theHdr.nameTblOff)
+            {
+                struct ConditionEntry
+                {
+                    ContainerType parentContainerType;
+                    if (parentContainerType == CT_Random || parentContainerType == CT_Random2)
+                    {
+                        float weight;
+                    }
+                    else
+                    {
+                        PropertyType propertyType;
+                        CompareType compareType;
+                        uint32 valueOff;
+                        uint16 localPropertyEnumNameIdx;
+                        Byte_Bool isSolved;
+                        Byte_Bool isGlobal;
+                    }
+                } ce;
+                FPos = FTell();
+            }
+        } cnt;
+    }
+    FSeek(theHdr.nameTblOff);
+    struct NameTable
+    {
+        while (FPos < EOF) //Read as many
+        {
+            struct NameTableString
+            {
+                string theString;
+                //Printf("%s\n", theString);
+                FPos = FTell();
+            } ntstr;
+        }
+    } name_table;
+} BXLNK;

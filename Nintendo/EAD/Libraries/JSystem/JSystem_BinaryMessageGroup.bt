@@ -1,0 +1,93 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "JSystem_Common.bt"
+
+typedef struct JSystem_MessageGroupInfoTable
+{
+    JSystem_Chunk INF1Chunk;
+    struct MessageGroupInfoTable
+    {
+        uint16 messages;
+        uint16 messageLength;
+        uint16 messageGroupID;
+        byte messageColorIdx;
+        byte rsrv;
+        struct MessageEntries
+        {
+            for (i = 0; i < messages; i++)
+            {
+                struct MessageEntry
+                {
+                    uint32 msgOff;
+                    if (messageLength > 4)
+                    {
+                        byte msgEntry[messageLength-4]<optimize=false>;
+                    }
+                } messageEntry;
+            }
+        } messageEntries;
+        byte pad[INF1Chunk.chunkSz - sizeof messageEntries - 16];
+    } MessageGroupInfoTableStruct;
+};
+
+typedef struct JSystem_MessageGroupData
+{
+    JSystem_Chunk DAT1Chunk;
+    FPos = FTell();
+    struct MessageGroupStringEntries
+    {
+        for (i = 0; i < INF1.MessageGroupInfoTableStruct.messages; i++)
+        {
+            struct MessageGroupStringEntry
+            {
+                FSeek(FPos);
+                FSkip(INF1.MessageGroupInfoTableStruct.messageEntries.messageEntry[i].msgOff);
+                if (JSystem_CharacterSet_UTF16)
+                {
+                    wstring msgEntry<optimize=false>;
+                }
+                else
+                {
+                    string msgEntry<optimize=false>;
+                }
+            } messageGroupStringEntry;
+        }
+    } messageGroupStringEntries;
+    byte pad[DAT1Chunk.chunkSz - sizeof messageGroupStringEntries - 8];
+};
+
+typedef struct JSystem_MessageGroupMessageIDs
+{
+    JSystem_Chunk MID1Chunk;
+    struct JSystem_MessageGroupMessageIDsStruct
+    {
+        uint16 messages;
+        byte msgFmt;
+        byte info;
+        byte pad[4];
+        uint32 messageID[messages];
+    } MID1_STRUCT;
+    byte pad[MID1Chunk.chunkSz - sizeof MID1_STRUCT - 8];
+};
+
+struct JSystem_BinaryMessageGroup
+{
+    JSystem_BlockHeader binBlockHdr;
+    JSystem_MessageGroupInfoTable INF1;
+    JSystem_MessageGroupData DAT1;
+    if (binBlockHdr.chunks > 2)
+    {
+        JSystem_MessageGroupMessageIDs MID1;
+    }
+} BMG;

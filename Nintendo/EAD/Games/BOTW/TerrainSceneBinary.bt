@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct TerrainSceneBinary
+{
+    char magic[4];
+    uint32 ver;
+    uint32 verMinor;
+    uint32 fileBaseTblOff;
+    float worldScale;
+    float terrainMeshMaxHeight;
+    uint32 mtrlInfoArrayLen;
+    uint32 areaArrayLen;
+    uint64 pad;
+    float tileSz;
+    uint32 unk;
+} TSCB;

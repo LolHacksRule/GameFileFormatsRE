@@ -1,0 +1,47 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "AALCommon.bt"
+
+typedef enum <uint32> {
+	RollOff,
+    Custom,
+    UnitDist,
+} CurveType;
+
+typedef struct CurveDesc
+{
+    uint32 nameOff;
+    CurveType type;
+};
+
+struct BinaryAudioAttenuation
+{
+    N_AAL_CommonBinHeader theHdr;
+    uint32 strTblOff;
+    //float cullFadeStart;
+    //float cullFade;
+    //uint32 unk;
+    CurveDesc theCurve[7];
+    struct Strings
+    {
+        for (i = 0; i < 7; i++)
+        {
+            struct String
+            {
+                string entry;
+            } str;
+        }
+    } strings;
+    byte end;
+} BAATN;

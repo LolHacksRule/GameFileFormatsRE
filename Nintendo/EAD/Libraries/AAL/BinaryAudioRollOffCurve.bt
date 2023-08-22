@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int32>
+{
+    None,
+    Inverse,
+    Exponential,
+    Segment,
+} CurveType;
+
+#include "AALCommon.bt"
+
+struct BinaryAudioRollOffCurve
+{
+    N_AAL_CommonBinHeader theHdr;
+    CurveType curveType;
+    float rocStart;
+    float rocnd;
+    float hold;
+    float unit;
+    float decay;
+    float culling;
+} BAROC;

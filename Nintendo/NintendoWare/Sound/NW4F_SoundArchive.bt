@@ -1,0 +1,20 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+struct NW4F_SoundArchive
+{
+    NW_CommonBinHdr BFSARHdr;
+    NW2011_SubChunk STRG;
+} BFSAR;

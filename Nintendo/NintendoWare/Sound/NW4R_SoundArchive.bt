@@ -1,0 +1,306 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+typedef struct SoundDataEntry
+{
+    uint32 nameIdx;
+    uint32 fcIdx;
+    uint32 playerID;
+    NW_DataReference sound3DParamRef;
+    byte volume;
+    byte playerPriority;
+    NW_SoundType soundType;
+    byte remoteFilter;
+    NW_DataReference soundInfoRef;
+    uint32 userParam[2];
+    NW_PanMode panMode;
+    NW_PanCurve panCurve;
+    byte actorPlayerID;
+    byte rsrv;
+    if (soundType == NW_SoundType_Sequence)
+    {
+        struct SequenceSubsection
+        {
+            uint32 labelEntry;
+            uint32 soundBankIdx;
+            uint32 allocTrack;
+            byte channelPriority;
+            byte releasePriorityFixFlag;
+            byte pad[2];
+            uint32 rsrv;
+        } RSEQ_SUBSECTION;
+    }
+    else if (soundType == NW_SoundType_Stream)
+    {
+        struct StreamSubsection
+        {
+            uint32 startPos;
+            uint16 allocChannels;
+            uint16 allocTrackFlag;
+            uint32 rsrv;
+        } RSTM_SUBSECTION;
+    }
+    else if (soundType == NW_SoundType_Wave)
+    {
+        struct WaveSubsection
+        {
+            uint32 soundDataNode;
+            uint32 allocTrack;
+            byte channelPriority;
+            byte releasePriorityFixFlag;
+            byte pad[2];
+            uint32 rsrv;
+        } RSWD_SUBSECTION;
+    }
+    struct Sound3DParams
+    {
+        uint32 flags;
+        byte decayCurve;
+        byte decayRatio;
+        byte dopplerFactor;
+        byte pad;
+        uint32 rsrv;
+    } S3D_PARAMS;
+};
+
+typedef struct SoundBankEntry
+{
+    uint32 nameIdx;
+    uint32 fcIdx;
+    uint32 bankIdx;
+};
+
+typedef struct PlayerInfoEntry
+{
+    uint32 nameIdx;
+    byte playableSounds;
+    byte pad;
+    uint16 pad2;
+    uint32 heapSz;
+    uint32 rsrv;
+};
+
+typedef struct CollectionPositionEntry
+{
+    uint32 groupIdx;
+    uint32 idxInGroup;
+};
+
+typedef struct CollectionPositionTable
+{
+    uint32 entries;
+    if (entries > 0)
+    {
+        NW_DataReference cpeRefs[entries];
+        CollectionPositionEntry cpe[entries]<optimize=false>;
+    }
+};
+
+typedef struct CollectionEntry
+{
+    uint32 headlen;
+    uint32 audioDataLen;
+    int32 entryNum;
+    NW_DataReference externalFileNameRef;
+    NW_DataReference collectionPosTableRef;
+    if (externalFileNameRef.value != 0)
+    {
+        string externalFileName;
+    }
+    FSeek(FPos+collectionPosTableRef.value);
+    CollectionPositionTable CPT<optimize=false>;
+};
+
+typedef struct GroupItemInfoEntry
+{
+    uint32 groupIdx;
+    uint32 fOff;
+    uint32 fSz;
+    uint32 audioDataOff;
+    uint32 audioDataSz;
+    uint32 rsrv;
+};
+
+typedef struct GroupItemReferenceTable
+{
+    uint32 entries;
+    if (entries > 0)
+    {
+        NW_DataReference giiRefs[entries];
+        GroupItemInfoEntry gii[entries]<optimize=false>;
+    }
+};
+
+typedef struct GroupEntry
+{
+    uint32 nameIdx;
+    uint32 entryNum;
+    NW_DataReference externalFilePathRef;
+    uint32 audioChunkOff;
+    uint32 audioChunkSz;
+    uint32 waveOrDSPOff;
+    uint32 waveOrDSPSz;
+    NW_DataReference groupItemRefTableRef;
+    GroupItemReferenceTable girt;
+};
+
+typedef struct SoundCountTable
+{
+    uint16 seqSnds;
+    uint16 seqTracks;
+    uint16 streamSnds;
+    uint16 streamChnls;
+    uint16 waveSnds;
+    uint16 waveChnls;
+    uint16 pad;
+    uint32 rsrv;
+};
+
+typedef struct TreeNode
+{
+    uint16 flags;
+    uint16 unkBitFlag;
+    uint32 leftIdx;
+    uint32 rightIdx;
+    uint32 strIdx;
+    uint32 idx;
+};
+
+typedef struct Tree
+{
+    uint32 rootIdx;
+    uint32 treeNodes;
+    TreeNode t[treeNodes];
+};
+
+typedef struct SymbolTable
+{
+    NW_SubChunk SYMBChunk;
+    FPos = FTell();
+    if (BRSARHdr.ver > 7)
+    {
+        uint32 fNameTblOff;
+        uint32 soundTreeOff;
+        uint32 playerTreeOff;
+        uint32 groupTreeOff;
+        uint32 bankTreeOff;
+    }
+    struct FileNameTable
+    {
+        uint32 fileNameEntries;
+        uint32 fileNameEntryOff[fileNameEntries];
+        struct FileNameEntries
+        {
+            for (i = 0; i < fileNameEntries; i++)
+            {
+                struct FileNameEntry
+                {
+                    FSeek(FPos+fileNameEntryOff[i]);
+                    string FName;
+                } FNE;
+            }
+        } FNEs;
+    } FNT;
+    if (BRSARHdr.ver > 7) //BBA
+    {
+        Tree SoundTree;
+        Tree PlayerTree;
+        Tree GroupTree;
+        Tree BankTree;
+    }
+};
+
+typedef struct INFOTable
+{
+    NW_SubChunk INFOChunk;
+    FPos = FTell();
+    if (BRSARHdr.ver > 7)
+    {
+        struct DataReferences
+        {
+            NW_DataReference SoundDataTableRef;
+            NW_DataReference SoundBankTableRef;
+            NW_DataReference PlayerInfoTableRef;
+            NW_DataReference CollectionTableRef;
+            NW_DataReference GroupTableRef;
+            NW_DataReference SoundCountTableRef;
+        } INFO_REFs;
+        struct SoundDataTable
+        {
+            uint32 entries;
+            NW_DataReference sdeRefs[entries];
+            SoundDataEntry sde[entries]<optimize=false>;
+        } SDT;
+        struct SoundBankTable
+        {
+            uint32 entries;
+            NW_DataReference sbeRefs[entries];
+            SoundBankEntry sbe[entries]<optimize=false>;
+        } SBT;
+        struct PlayerInfoTable
+        {
+            uint32 entries;
+            NW_DataReference pieRefs[entries];
+            PlayerInfoEntry pie[entries]<optimize=false>;
+        } PIT;
+        struct CollectionTable
+        {
+            uint32 entries;
+            NW_DataReference ceRefs[entries];
+            CollectionEntry ce[entries]<optimize=false>;
+        } CT;
+        struct GroupTable
+        {
+            uint32 entries;
+            NW_DataReference geRefs[entries];
+            GroupEntry ge[entries]<optimize=false>;
+        } GT;
+        SoundCountTable SCT;
+    }
+    else
+    {
+        uint32 entries;
+            SoundDataEntry sde[entries]<optimize=false>;
+        Printf("BRSAR V7 INFO is UNSUPPORTED!\n");
+    }
+    //uint32 entries;
+    //uint32
+    //NW_DataReference sndDataEntryRef[entries];
+};
+
+typedef struct FileTable
+{
+    NW_SubChunk FILEChunk;
+    byte pad[24];
+    for (i = 0; i < SYMB.FNT.fileNameEntries; i++)
+    {
+        //byte audioChunk[
+    }
+} FILE;
+
+//Perfectly reads MKW and BBA minus file chunks and V7 info atm
+
+struct NW4R_SoundArchive
+{
+    struct SoundArchiveStruct
+    {
+        NW_CommonBinHdr BRSARHdr;
+        SymbolTable SYMB;
+        FSeek(BRSARHdr.block[1].off);
+        INFOTable INFO;
+        FSeek(BRSARHdr.block[2].off);
+        FileTable FT;
+    } BRSAR_STRUCT;
+} BRSAR;

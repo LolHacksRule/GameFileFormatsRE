@@ -1,0 +1,104 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+typedef struct DataTable
+{
+    FPos = FTell();
+    NW_SubChunk DATAChunk;
+    uint32 waveInfoDataEntries;
+    NW_DataReference waveInfoDataEntriesRef[waveInfoDataEntries];
+    struct WaveInfoDataTable
+    {
+        NW_DataReference waveSoundInfoDataRef;
+        NW_DataReference trackTableRef;
+        NW_DataReference noteTable;
+    } WIDT;
+    struct WaveSoundInformationData
+    {
+        float pitch;
+        ubyte pan;
+        ubyte surroundPan;
+        ubyte fxSend[3];
+        byte mainSend;
+        byte pad[2];
+        NW_DataReference graphEnvTableRef;
+        NW_DataReference randomizerTableRef;
+        uint32 rsrv;
+    } WSID;
+    struct TrackTable
+    {
+        uint32 trackInfos;
+        NW_DataReference trackInfoRef[trackInfos];
+        struct TrackInfoEntry
+        {
+            NW_DataReference noteEventTableRef;
+        } TIE[trackInfos]<optimize=false>;
+        struct NoteEventTable
+        {
+            uint32 noteEvents;
+            NW_DataReference noteEventRef[noteEvents];
+            struct NodeEvent
+            {
+                float pos;
+                float len;
+                uint32 idx;
+                uint32 rsrv;
+            } NE[noteEvents]<optimize=false>;
+        } NET[trackInfos]<optimize=false>;
+    } TT;
+    struct NoteTable
+    {
+        uint32 noteInfoEntries;
+        NW_DataReference nodeIntroEntryRef[noteInfoEntries];
+        struct NodeInfoEntry
+        {
+            int32 waveIdx;
+            byte atk;
+            byte infoDelay;
+            byte sustain;
+            byte release;
+            byte hold;
+            byte pad[3];
+            byte originalKey;
+            byte vol;
+            float infoPan;
+            byte infoSurroundPan;
+            byte infoPitch;
+            NW_DataReference LFOTableRef;
+            NW_DataReference graphEnvTableRef;
+            NW_DataReference randomizerTableRef;
+            uint32 rsrv;
+        } NIE[noteInfoEntries]<optimize=false>;
+    } NT;
+};
+
+typedef struct WaveTable
+{
+    NW_SubChunk DATAChunk;
+    FPos = FTell();
+    uint32 waveInfoOffsets;
+    uint32 waveInfoOffset[waveInfoOffsets];
+};
+
+struct NW4R_WaveSound
+{
+    struct WaveSoundStruct
+    {
+        NW_CommonBinHdr RWSDHdr;
+        DataTable DATA;
+        FSeek(FPos+DATA.DATAChunk.blockSize);
+        WaveTable WAVE;
+    } RWSD_STRUCT;
+} RWSD;

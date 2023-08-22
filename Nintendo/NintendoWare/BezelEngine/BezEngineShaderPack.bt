@@ -1,0 +1,122 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: BZEngEntity.bt
+//   Authors: LHR
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+/*typedef struct RelocTable
+    {
+        char RLTHdr[4];
+        int32 memAddress;
+        int32 sections;
+        int32 pad;
+        if (sections >= 1)
+        {
+            struct Section
+            {
+                int64 memAddress;
+                int32 fOff;
+                int32 fSize;
+                int32 idxfirst;
+                int32 relocs;
+            } section[sections];
+            struct Reclocations
+            {
+                int32 fOff;
+                int16 chunks;
+                byte relocwords;
+                byte nonrelocwords;
+            } reloc[section.relocs];
+        }
+        else
+        {
+            byte d[52];
+        }
+        //int64 dmy;
+    };*/
+
+typedef struct StringPoolWIP
+    {
+        //FSkip(-4);
+        char STRTblHdr[4];
+        int32 null;
+        int64 bSize;
+        //int32 pad;
+        int64 StrCnt;
+        for (i = 0; i < StrCnt; i++ )
+        {
+            struct String
+            {
+                int16 bSize;
+                char theString[bSize];
+                //byte nullb[2]; //todo figure out how to check
+                //            |
+                //            |
+                //          \   /
+                //           \ / :)
+                for( i = 0; i < 99; i++ )
+                {
+                    struct PaddingChecker
+                    {
+                        byte dmy;
+                        if (dmy == 0x00)
+                        {
+                            //FSkip(1);
+                            //break;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    } padChk<hidden = true>;
+                    if (padChk.dmy != 0x00)
+                    {
+                        FSkip(-1);
+                        break;
+                    }
+                }
+            } strings;
+        }
+        Printf("Padding has been skipped.\n");
+        //int32 nullb2; todo figure out how to check
+        //FSeek(hdr.RLTOffst); //RLT IS UNNECESSARY
+        //byte d[1];
+    };
+
+typedef struct CafeShader
+{
+    N_NX_CommonBinHdr BFSHAHdr<bgcolor = cRed>;
+    byte BFSHA[BFSHAHdr.fileSize-32]<bgcolor = cRed>;
+};
+
+struct ShaderPack
+{
+    N_NX_CommonBinHdr theHdr<bgcolor = cBlue>;
+    struct Content
+    {
+        int64 shaderChunkOffst<bgcolor = cYellow>;
+        int64 shaderArchives;
+        int64 shaderOff[shaderArchives];
+        struct Shaders
+        {
+            for (i = 0; i < shaderArchives; i++)
+            {
+                FSeek(0);
+                FSkip(shaderOff[i]);
+                CafeShader theBFSHA;
+            }
+        } shdrs;
+        
+        StringPoolWIP theStr;
+        N_NX_RelocationTable theRlt;
+    } content<comment="Bezel Shader Pack Content">;
+} bnbshpk<comment="Binary NintendoWare Bezel Engine Shader Pack Content">;

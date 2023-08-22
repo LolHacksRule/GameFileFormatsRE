@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i<hidden=true> = 0;
+
+typedef struct Header
+{
+    char   ASB[4];
+    uint64 ver;
+    uint32 commands;
+    uint32 unk[5];
+    uint32 strTblOff;
+    uint32 unkOff; //?b before StrTbl, mostly 4
+    uint32 unk2[17];
+    float unkFloat;
+    uint32 unk3[3];
+};
+
+typedef struct Command
+{
+    GUID CommandGUID;
+    uint32 unk;
+    uint16 prmOff[2];
+    uint32 dmy2;
+    float unkFloatCmd;
+    uint64 unk;
+    uint32 unk;
+};
+
+struct AnimationSequenceBinary
+{
+    Header theHdr;
+    struct Commands
+    {
+        for (i = 0; i < theHdr.commands; i++)
+        {
+            Command theCmd;
+        }
+    } cmds;
+    //GUID CommandGUID;
+    FSeek(theHdr.strTblOff);
+    string fileName;
+} ASB;

@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+typedef struct
+{
+    uint32 stringSize;
+    string theString;
+} StringEntry;
+
+struct BinaryPreLoad
+{
+    uint32 unk[2];
+    struct Files
+    {
+        for (i = 0; i < 3181; i++)
+        {
+            struct File
+            {
+                uint32 unk;
+                uint32 unk2; //Mem alloc?
+                StringEntry fullName;
+                Printf("%s\n", fullName.theString);
+                I32_Bool HasEnum; //if 1, has extension entries
+                if (HasEnum == I32_True)
+                {
+                    StringEntry nameWithoutEnum;
+                    StringEntry enumName;
+                }
+            } f;
+            
+        }
+    } fs;
+} bpreload;

@@ -1,0 +1,48 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+struct ShaderBinaryArchive
+{
+    char magic[4];
+    if (magic == "SHAB")
+    {
+        BigEndian();
+    }
+    uint32 ver;
+    uint32 dSz;
+    uint32 bom;
+    U32_StringEntry name;
+    uint32 srcArrayOff;
+    uint32 programs;
+    struct ShaderProgram
+    {
+        uint32 secSz;
+        uint32 nLen;
+        int32 vtxIdx;
+        int32 fragIdx;
+        int32 geomIdx;
+        if (ver > 12)
+        {
+            int32 unkIdx;
+        }
+        string name;
+        uint32 secPos;
+        uint32 secSz2;
+        uint32 secs;
+        uint32 secSz3;
+        uint32 nLen2;
+        uint32 vLen;
+    } SP[programs]<optimize=false>;
+} SHAB;

@@ -1,0 +1,147 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../CommonBin.bt"
+
+typedef enum <uint16>
+{
+    NW_BlockTypeID_WaveIDTable = 256,
+    NW_BlockTypeID_InsRefTable = 257,
+    NW_BlockTypeID_Instrument = 22784,
+    NW_BlockTypeID_KeyRegion,
+} NW_BlockTypeID;
+
+typedef enum <uint16>
+{
+    NW2011_BlockTypeID_Information = 22528,
+    NW2011_BlockTypeID_StringTable = 8192,
+    NW2011_BlockTypeID_InfoTable,
+    NW2011_BlockTypeID_FileTable,
+} NW2011_BlockTypeID;
+
+typedef enum <byte>
+{
+    NW_ReferenceType_Address,
+    NW_ReferenceType_Offset,
+} NW_ReferenceType;
+
+typedef enum <byte>
+{
+    NW_SoundType_Sequence = 1,
+    NW_SoundType_Stream,
+    NW_SoundType_Wave,
+} NW_SoundType;
+
+typedef enum <byte>
+{
+    NW_PanMode_Dual,
+    NW_PanMode_Balance,
+} NW_PanMode;
+
+typedef enum <byte>
+{
+    NW_PanCurve_Sqrt,
+    NW_PanCurve_Sqrt0DB,
+    NW_PanCurve_Sqrt0DBClamp,
+    NW_PanCurve_SinCOS,
+    NW_PanCurve_SinCOS0DB,
+    NW_PanCurve_SinCOS0DBClamp,
+    NW_PanCurve_LinearCOS,
+    NW_PanCurve_LinearCOS0DB,
+    NW_PanCurve_LinearCOS0DBClamp,
+} NW_PanCurve;
+
+typedef struct NW_BlockDefinition
+{
+    uint32 off;
+    uint32 size;
+};
+
+typedef struct NW2011_BlockDefinition
+{
+    NW2011_BlockTypeID typeID;
+    uint16 pad;
+    uint32 off;
+    uint32 size;
+};
+
+typedef struct NW_DataReference
+{
+    NW_ReferenceType referenceType;
+    byte dataType;
+    uint16 rsrv;
+    uint32 value;
+};
+
+typedef struct NW2011_DataReference
+{
+    byte referenceType;
+    byte dataType;
+    uint16 rsrv;
+    uint32 value;
+};
+
+typedef struct NW2011_BlockDefinitionWithoutSize
+{
+    NW_BlockTypeID typeID;
+    uint16 pad;
+    uint32 off;
+};
+
+typedef struct NW_SubChunk
+{
+    char       signature[4];
+    uint32     blockSize;
+};
+
+typedef struct NW2011_SubChunk
+{
+    char       signature[4];
+    uint32     offsetToNextBlock;
+    uint32     blockSize;
+    uint32     reserved;
+};
+
+typedef struct NW_CommonBinHdr
+{
+    char             signature[4];
+    U16_EndianEnum   byteOrderMark;
+    if (signature == "RSAR" || signature == "RWSD")
+    {
+        BigEndian();
+        uint16 ver;
+        uint32 fileSize;
+    }
+    uint16           headerSize;
+    if (signature != "RSAR" && signature != "RWSD")
+    {
+        N_BinVersion     version;
+        Printf("Version: %i.%i.%i\n", version.major, version.minor, version.micro);
+        uint32           fileSize;
+        uint32           blocks;
+        NW2011_BlockDefinition block[blocks]<optimize=false>;
+        if (signature != "FBNK" && signature != "RWSD")
+        {
+            byte pad[8];
+        }
+    }
+    else
+    {
+        uint16 blocks;
+        NW_BlockDefinition block[blocks]<optimize=false>;
+        if (signature != "RWSD")
+        {
+            byte pad[24];
+        }
+    }
+};
