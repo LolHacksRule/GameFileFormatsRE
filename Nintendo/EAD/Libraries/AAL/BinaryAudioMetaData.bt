@@ -26,7 +26,7 @@ typedef struct StreamInformation
 
 typedef struct AMTAHeader
 {
-    N_AAL_CommonBinHeader CBHdr;
+    N_EAD_AAL_CommonBinHeader CBHdr;
     LittleEndian();
     uint32 fSize;
     uint32 dataOff;

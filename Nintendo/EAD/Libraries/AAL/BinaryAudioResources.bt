@@ -18,15 +18,6 @@
 
 //local uint i <hidden=true> = 0;
 
-typedef struct BARSHeader
-{
-    char   blockType[4];
-    uint32 fSize;
-    U16_EndianEnum endian;
-    uint16 ver;
-    int32 assets;
-};
-
 typedef struct {
 	uint32 metaOff;
     uint32 assetOff;
@@ -110,34 +101,42 @@ typedef struct {
 
 struct BinaryAudioResources
 {
-    BARSHeader theHdr;
-    uint32 assetNameCRC[theHdr.assets];
-    OffsetSet offsetSet[theHdr.assets];
-    uint32 checkForMINFs<hidden=true>;
-    FSkip(-4);
-    if (checkForMINFs != 1096043841)
+    N_EAD_AAL_CommonBinHeader theHdr;
+    if (theHdr.ver == 32)
     {
-        struct MusicInfoMeta
-        {
-            uint32 MINFCRCs;
-            uint32 MINFNameCRC[MINFCRCs];
-        } minf_m;
+        Printf("MK8 (Wii U) param.bin should use ../../Games/MK8/MK8BARS.bt");
     }
-    FSeek(offsetSet.metaOff);
-    struct AudioMetaEntries
+    else
     {
-        for (i = 0; i < theHdr.assets; i++)
+        uint32 assets;
+        uint32 assetNameCRC[assets];
+        OffsetSet offsetSet[assets];
+        uint32 checkForMINFs<hidden=true>;
+        FSkip(-4);
+        if (checkForMINFs != 1096043841)
         {
-            BinaryAudioMetaData AudioMetaDataEntry;
+            struct MusicInfoMeta
+            {
+                uint32 MINFCRCs;
+                uint32 MINFNameCRC[MINFCRCs];
+            } minf_m;
         }
-    } ame;
-    FSeek(offsetSet.assetOff);
-    struct AudioFiles
-    {
-        for (i = 0; i < theHdr.assets; i++)
+        FSeek(offsetSet.metaOff);
+        struct AudioMetaEntries
         {
-            //byte AudioFile[
-        }
-    };
+            for (i = 0; i < assets; i++)
+            {
+                BinaryAudioMetaData AudioMetaDataEntry;
+            }
+        } ame;
+        FSeek(offsetSet.assetOff);
+        struct AudioFiles
+        {
+            for (i = 0; i < assets; i++)
+            {
+                //byte AudioFile[
+            }
+        };
+    }
     //BinaryWave AudioFile;
 } BARS;

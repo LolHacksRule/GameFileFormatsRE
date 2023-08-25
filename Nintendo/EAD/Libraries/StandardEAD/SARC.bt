@@ -15,10 +15,11 @@
 
 #include "../../../../LHR/Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+local uint DEBUG_PRINT <hidden=true> = 1;
 
 struct SeadHashedArchive
 {
+    LittleEndian();
     struct ArchiveBlockHeader
     {
         FSkip(6);
@@ -30,15 +31,7 @@ struct SeadHashedArchive
         }
         char SARCMagic[4]<bgcolor=cAqua>;
         uint16 hdrSz<bgcolor=cDkBlue>;
-        if (endianCheck == U16_Big) //Bad
-        {
-            LittleEndian();
-        }
         U16_EndianEnum endian<bgcolor=cDkGreen>;
-        if (endianCheck == U16_Big) //Bad
-        {
-            BigEndian();
-        }
         uint32 fsize<bgcolor=cLtGreen>;
         uint32 dblkoff<bgcolor=cBlack>;
         uint16 ver<bgcolor=cGreen>;
