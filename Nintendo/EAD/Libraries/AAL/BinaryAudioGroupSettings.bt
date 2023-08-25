@@ -26,7 +26,14 @@ typedef struct CommonBlockHdr
     }
 } commonBlockHdr;
 
-typedef struct
+/*typedef struct TreeNode
+{
+    uint32 nodeSize;
+    uint32 groupIndex;
+    uint32 childrenNum;
+};*/
+
+typedef struct RootTreeNode
 {
     uint32 nodeSize;
     uint32 groupIndex;
@@ -38,15 +45,42 @@ typedef struct
             uint32 nodeSize;
             uint32 groupIndex;
             uint32 childrenNum;
+            if (childrenNum)
+            {
+                struct NestedChildNode //TODO: REWORK
+                {
+                    uint32 nodeSize;
+                    uint32 groupIndex;
+                    uint32 childrenNum;
+                    if (childrenNum)
+                    {
+                        struct NestedChildNode2
+                        {
+                            uint32 nodeSize;
+                            uint32 groupIndex;
+                            uint32 childrenNum;
+                            if (childrenNum)
+                            {
+                                struct NestedChildNode3
+                                {
+                                    uint32 nodeSize;
+                                    uint32 groupIndex;
+                                    uint32 childrenNum;
+                                } nchild3[childrenNum]<optimize=false>;
+                            }
+                        } nchild2[childrenNum]<optimize=false>;
+                    }
+                } nchild[childrenNum]<optimize=false>;
+            }
         } child;
     }
-} TreeNode;
+};
 
 typedef struct {
     commonBlockHdr TreeBlockHDR;
-    //uint32 offToDefGroup;
-    //TreeNode RootNode;
-    byte block[TreeBlockHDR.blockHdrSize];
+    uint32 offToDefGroup;
+    RootTreeNode RootNode;
+    //byte block[TreeBlockHDR.blockHdrSize];
 } TREEBlock;
 
 typedef struct
@@ -56,7 +90,7 @@ typedef struct
     float lfe;
     float lpf;
     uint32 biquadFilterType;
-    float biquadFilterTypeF32;
+    float biquadFilterVal;
     uint32 angleIdx;
     float spread;
     float deviceVol;
@@ -114,7 +148,10 @@ typedef struct
     float volumeFloor;
     uint32 unk;
     uint32 targets;
-    DuckingTargetSettings DuckingTargetSettingsEntry;
+    if (targets)
+    {
+        DuckingTargetSettings DuckingTargetSettingsEntry[targets];
+    }
 } DuckingParam;
 
 typedef struct
@@ -129,16 +166,23 @@ typedef struct
 
 typedef struct {
     commonBlockHdr GroupBlockHDR;
-    /*uint32 groups;
-    uint32 groupOffset[groups];
-    struct GroupParamEntries
+    if (hdr.binhdr.ver < 9)
     {
-        for (i = 0; i < groups; i++)
+        uint32 groups;
+        uint32 groupOffset[groups];
+        struct GroupParamEntries
         {
-            GroupParam GroupParamEntry;
-        }
-    } gpe;*/
-    byte block[GroupBlockHDR.blockHdrSize];
+            for (i = 0; i < groups; i++)
+            {
+                GroupParam GroupParamEntry;
+            }
+        } gpe;
+        //byte block[GroupBlockHDR.blockHdrSize];
+    }
+    else
+    {
+        byte block[GroupBlockHDR.blockHdrSize];
+    }
 } GRPBlock;
 
 typedef struct {

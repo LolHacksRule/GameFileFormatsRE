@@ -559,7 +559,7 @@ typedef struct InfoTable
 //Perfectly reads:
 //MK8 (Wii U Kiosk) + MP10 Kiosk / 2.2.0
 //SMO (Base) / 2.4.0
-//WarioWare Get it Together (Final and Kiosk) / 2.5.0 Sound.bfsar
+//NSMBUDX Kiosk / WarioWare Get it Together (Final and Kiosk) / 2.5.0 Sound.bfsar
 
 struct NW4F_SoundArchive
 {

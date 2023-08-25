@@ -15,6 +15,7 @@
 //#include "../Standard/CommonBin.bt"
 
 typedef struct N_EAD_AAL_CommonBinHeader {
+    LittleEndian();
 	char   blockType[4];
     U16_EndianEnum endian;
     if (endian == U16_Big)

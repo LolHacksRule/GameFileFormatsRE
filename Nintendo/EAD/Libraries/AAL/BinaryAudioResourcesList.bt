@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "AALCommon.bt"
+
+struct BinaryAudioResourcesList
+{
+    N_EAD_AAL_CommonBinHeader binhdr;
+    uint32 strTblOff;
+    uint32 entries;
+    struct NameEntry
+    {
+        I32_StringEntry strEntry;
+        string fileName;
+    } ne[entries]<optimize=false>;
+} BLAL;
