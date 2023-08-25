@@ -37,91 +37,10 @@ typedef struct TreeNode
     }
 };
 
-typedef struct RootTreeNode
-{
-    /*uint32 nodeSize;
-    uint32 groupIndex;
-    uint32 childrenNum;
-    for (i = 0; i < childrenNum; i++) //Suffering begins, fun
-    {
-        struct ChildNode
-        {
-            uint32 nodeSize;
-            uint32 groupIndex;
-            uint32 childrenNum;
-            if (childrenNum)
-            {
-                struct NestedChildNode //TODO: REWORK
-                {
-                    uint32 nodeSize;
-                    uint32 groupIndex;
-                    uint32 childrenNum;
-                    if (childrenNum)
-                    {
-                        struct NestedChildNode2
-                        {
-                            uint32 nodeSize;
-                            uint32 groupIndex;
-                            uint32 childrenNum;
-                            if (childrenNum)
-                            {
-                                struct NestedChildNode3
-                                {
-                                    uint32 nodeSize;
-                                    uint32 groupIndex;
-                                    uint32 childrenNum;
-                                } nchild3[childrenNum]<optimize=false>;
-                            }
-                        } nchild2[childrenNum]<optimize=false>;
-                    }
-                } nchild[childrenNum]<optimize=false>;
-            }
-        } child;
-    }*/
-    //Better code but still pretty finicky
-    /*
-    TreeNode RootTreeNodeEntry;
-    if (RootTreeNodeEntry.childrenNum) //Suffering begins, fun
-    {
-        struct ChildrenNodes
-        {
-            for (i = 0; i < RootTreeNodeEntry.childrenNum; i++) 
-            {
-                struct ChildNode
-                {
-                    TreeNode childNode;
-                    if (childNode.childrenNum)
-                    {
-                        for (i2 = 0; i2 < childNode.childrenNum; i2++) 
-                        {
-                            TreeNode childNode2;
-                            if (childNode.childrenNum)
-                            {
-                                for (i3 = 0; i3 < childNode2.childrenNum; i3++) 
-                                {
-                                    TreeNode childNode3;
-                                    if (childNode.childrenNum)
-                                    {
-                                        for (i4 = 0; i4 < childNode3.childrenNum; i4++) 
-                                        {
-                                            TreeNode childNode4;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } cn;
-            }
-        } cns;
-    }*/
-};
-
 typedef struct {
     commonBlockHdr TreeBlockHDR;
     uint32 offToDefGroup;
     TreeNode RootNode;
-    //RootTreeNode RootNode;
     //byte block[TreeBlockHDR.blockHdrSize];
 } TREEBlock;
 
