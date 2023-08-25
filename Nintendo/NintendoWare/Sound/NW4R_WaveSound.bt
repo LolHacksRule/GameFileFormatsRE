@@ -16,7 +16,7 @@
 typedef struct DataTable
 {
     FPos = FTell();
-    NW_SubChunk DATAChunk;
+    NW_SubChunk DATA;
     uint32 waveInfoDataEntries;
     NW_DataReference waveInfoDataEntriesRef[waveInfoDataEntries];
     struct WaveInfoDataTable
@@ -86,10 +86,12 @@ typedef struct DataTable
 
 typedef struct WaveTable
 {
-    NW_SubChunk DATAChunk;
-    FPos = FTell();
+    NW_SubChunk WAVE;
+    /*FPos = FTell();
     uint32 waveInfoOffsets;
-    uint32 waveInfoOffset[waveInfoOffsets];
+    uint32 waveInfoOffset[waveInfoOffsets];*/
+    Printf("WAVE Chunk is currently UNSUPPORTED!\n");
+    byte unknownData[WAVE.blockSize-8];
 };
 
 struct NW4R_WaveSound
@@ -97,8 +99,8 @@ struct NW4R_WaveSound
     struct WaveSoundStruct
     {
         NW_CommonBinHdr RWSDHdr;
-        DataTable DATA;
-        FSeek(FPos+DATA.DATAChunk.blockSize);
-        WaveTable WAVE;
+        DataTable DATAChunk;
+        FSeek(FPos+DATAChunk.DATA.blockSize);
+        WaveTable WAVEChunk;
     } RWSD_STRUCT;
 } RWSD;

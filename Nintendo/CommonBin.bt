@@ -19,6 +19,12 @@ typedef struct N_BinVersion {
     uint16     major;
 };
 
+typedef struct N_BinVersion_Big {
+    uint16     major;
+    byte       minor;
+	byte       micro;
+};
+
 /*typedef enum <uint32>
 	NX_ChunkType_StringTable = 1381258079,
 } NX_ChunkType;*/

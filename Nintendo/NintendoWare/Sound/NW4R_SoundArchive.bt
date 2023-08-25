@@ -161,6 +161,7 @@ typedef struct SoundCountTable
     uint16 seqSnds;
     uint16 seqTracks;
     uint16 streamSnds;
+    uint16 streamTracks;
     uint16 streamChnls;
     uint16 waveSnds;
     uint16 waveChnls;
@@ -272,23 +273,13 @@ typedef struct INFOTable
     else
     {
         uint32 entries;
-            SoundDataEntry sde[entries]<optimize=false>;
+        SoundDataEntry sde[entries]<optimize=false>;
         Printf("BRSAR V7 INFO is UNSUPPORTED!\n");
     }
     //uint32 entries;
     //uint32
     //NW_DataReference sndDataEntryRef[entries];
 };
-
-typedef struct FileTable
-{
-    NW_SubChunk FILEChunk;
-    byte pad[24];
-    for (i = 0; i < SYMB.FNT.fileNameEntries; i++)
-    {
-        //byte audioChunk[
-    }
-} FILE;
 
 //Perfectly reads MKW and BBA minus file chunks and V7 info atm
 
@@ -301,6 +292,6 @@ struct NW4R_SoundArchive
         FSeek(BRSARHdr.block[1].off);
         INFOTable INFO;
         FSeek(BRSARHdr.block[2].off);
-        FileTable FT;
+        NW_FileDataTable FILE;
     } BRSAR_STRUCT;
 } BRSAR;

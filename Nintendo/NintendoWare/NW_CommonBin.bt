@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+local string stringTblIdxToTempString <hidden=true> = "";
+
 #include "../../CommonBin.bt"
 
 typedef enum <uint16>
@@ -23,10 +25,40 @@ typedef enum <uint16>
 
 typedef enum <uint16>
 {
+    NW2011_BlockTypeID_WaveArchiveTable = 256,
+    NW2011_BlockTypeID_TrackInfoTable,
+    NW2011_BlockTypeID_FileBlockEntry = 7936,
+    NW2011_BlockTypeID_StringEntry,
+    NW2011_BlockTypeID_StringBlock = 8192,
+    NW2011_BlockTypeID_InfoBlock,
+    NW2011_BlockTypeID_FileBlock,
+    NW2011_BlockTypeID_SoundInfoReferenceTable = 8448,
+    NW2011_BlockTypeID_BankInfoReferenceTable,
+    NW2011_BlockTypeID_PlayerInfoReferenceTable,
+    NW2011_BlockTypeID_WaveArchiveInfoReferenceTable,
+    NW2011_BlockTypeID_SoundGroupInfoReferenceTable,
+    NW2011_BlockTypeID_GroupInfoReferenceTable,
+    NW2011_BlockTypeID_FileInfoReferenceTable,
+    NW2011_BlockTypeID_SoundInfo = 8704,
+    NW2011_BlockTypeID_StreamSoundInfo,
+    NW2011_BlockTypeID_WaveSoundInfo,
+    NW2011_BlockTypeID_SequenceSoundInfo,
+    NW2011_BlockTypeID_SoundGroupInfo = 8708,
+    NW2011_BlockTypeID_WaveArchiveTableRef,
+    NW2011_BlockTypeID_WaveArchiveInfo = 2207,
+    NW2011_BlockTypeID_BankInfo = 8710,
+    NW2011_BlockTypeID_SoundArchivePlayerInfoRef,
+    NW2011_BlockTypeID_GroupInfo,
+    NW2011_BlockTypeID_PlayerInfo,
+    NW2011_BlockTypeID_FileInfo,
+    NW2011_BlockTypeID_SoundArchivePlayerInfo = 8715,
+    NW2011_BlockTypeID_InternalFileInfo,
+    NW2011_BlockTypeID_ExternalFileInfo,
+    NW2011_BlockTypeID_TrackInfo,
+    NW2011_BlockTypeID_TrackChannelInfo = 8719,
+    NW2011_BlockTypeID_StringTable = 9216,
+    NW2011_BlockTypeID_SearchTree,
     NW2011_BlockTypeID_Information = 22528,
-    NW2011_BlockTypeID_StringTable = 8192,
-    NW2011_BlockTypeID_InfoTable,
-    NW2011_BlockTypeID_FileTable,
 } NW2011_BlockTypeID;
 
 typedef enum <byte>
@@ -44,9 +76,45 @@ typedef enum <byte>
 
 typedef enum <byte>
 {
+    NW2011_AttenuationCurve_Linear = 1,
+    NW2011_AttenuationCurve_Logarithmic,
+} NW2011_AttenuationCurve;
+
+typedef enum <byte>
+{
+    NW2011_FileType_Sound = 1,
+    NW2011_FileType_SoundGroup,
+    NW2011_FileType_Bank,
+    NW2011_FileType_Player,
+    NW2011_FileType_WaveArchive,
+    NW2011_FileType_Group,
+} NW2011_FileType;
+
+typedef struct NW2011_ItemID_BE
+{
+    NW2011_FileType fileType;
+    int32 fidx: 24;
+    FSkip(-1);
+};
+
+typedef struct NW2011_ItemID
+{
+    int32 fidx: 24;
+    FSkip(-1);
+    NW2011_FileType fileType;
+};
+
+typedef enum <byte>
+{
     NW_PanMode_Dual,
     NW_PanMode_Balance,
 } NW_PanMode;
+
+typedef enum <uint16>
+{
+    NW2011_PanMode_Dual,
+    NW2011_PanMode_Balance,
+} NW2011_PanMode;
 
 typedef enum <byte>
 {
@@ -60,6 +128,19 @@ typedef enum <byte>
     NW_PanCurve_LinearCOS0DB,
     NW_PanCurve_LinearCOS0DBClamp,
 } NW_PanCurve;
+
+typedef enum <uint16>
+{
+    NW2011_PanCurve_Sqrt,
+    NW2011_PanCurve_Sqrt0DB,
+    NW2011_PanCurve_Sqrt0DBClamp,
+    NW2011_PanCurve_SinCOS,
+    NW2011_PanCurve_SinCOS0DB,
+    NW2011_PanCurve_SinCOS0DBClamp,
+    NW2011_PanCurve_LinearCOS,
+    NW2011_PanCurve_LinearCOS0DB,
+    NW2011_PanCurve_LinearCOS0DBClamp,
+} NW2011_PanCurve;
 
 typedef struct NW_BlockDefinition
 {
@@ -83,19 +164,11 @@ typedef struct NW_DataReference
     uint32 value;
 };
 
-typedef struct NW2011_DataReference
-{
-    byte referenceType;
-    byte dataType;
-    uint16 rsrv;
-    uint32 value;
-};
-
 typedef struct NW2011_BlockDefinitionWithoutSize
 {
-    NW_BlockTypeID typeID;
+    NW2011_BlockTypeID typeID;
     uint16 pad;
-    uint32 off;
+    int32 off;
 };
 
 typedef struct NW_SubChunk
@@ -112,23 +185,49 @@ typedef struct NW2011_SubChunk
     uint32     reserved;
 };
 
+typedef struct NW_FileDataTable
+{
+    NW_SubChunk FILE;
+    byte pad[24];
+    byte EmbeddedFileData[FILE.blockSize-32];
+};
+
 typedef struct NW_CommonBinHdr
 {
     char             signature[4];
+    LittleEndian(); //Do this so the BOM in the header output is correct
     U16_EndianEnum   byteOrderMark;
-    if (signature == "RSAR" || signature == "RWSD")
+    if (byteOrderMark == U16_Big)
     {
         BigEndian();
+    }
+    if (signature == "RSAR" || signature == "RWSD" || signature == "RBNK" || signature == "RSEQ") 
+    {
         uint16 ver;
         uint32 fileSize;
     }
     uint16           headerSize;
-    if (signature != "RSAR" && signature != "RWSD")
+    if (signature != "RSAR" && signature != "RWSD" && signature != "RBNK" && signature != "RSEQ")
     {
-        N_BinVersion     version;
+        if (byteOrderMark == U16_Big)
+        {
+            N_BinVersion_Big version;
+        }
+        else
+        {
+            N_BinVersion version;
+        }
         Printf("Version: %i.%i.%i\n", version.major, version.minor, version.micro);
         uint32           fileSize;
-        uint32           blocks;
+        if (byteOrderMark == U16_Big) //Fix Wii U
+        {
+            uint16 blocks;
+            uint16 pad2;
+        }
+        else
+        {
+            uint32           blocks;
+        }
         NW2011_BlockDefinition block[blocks]<optimize=false>;
         if (signature != "FBNK" && signature != "RWSD")
         {
@@ -138,8 +237,11 @@ typedef struct NW_CommonBinHdr
     else
     {
         uint16 blocks;
-        NW_BlockDefinition block[blocks]<optimize=false>;
-        if (signature != "RWSD")
+        if (headerSize > 16)
+        {
+            NW_BlockDefinition block[blocks]<optimize=false>;
+        }
+        if (signature != "RWSD" && signature != "RBNK" && signature != "RSEQ")
         {
             byte pad[24];
         }
