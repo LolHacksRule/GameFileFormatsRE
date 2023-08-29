@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint texSize <hidden=true> = 0; //TODO
+
+struct DotMatrixFont
+{
+    uint16 textures;
+    //Guess, idk how this works, if anything is undefined, please write a PR
+    FSkip(4);
+    uint16 texSzChk;
+    FSkip(-6);
+    if (texSzChk == 4)
+    {
+        texSize = 4;
+    }
+    if (texSzChk == 8)
+    {
+        texSize = 16;
+    }
+    else if (texSzChk == 16)
+    {
+        texSize = 64;
+    }
+    else if (texSzChk == 20)
+    {
+        texSize = 60;
+    }
+    else if (texSzChk == 32)
+    {
+        texSize = 256;
+    }
+    struct TextureEntry
+    {
+        byte unk[4];
+        uint16 width;
+        uint16 height;
+        byte texData[texSize];
+    } tx[textures]<optimize=false>;
+} DFT;

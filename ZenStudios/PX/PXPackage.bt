@@ -11,14 +11,14 @@
 //	 History: 
 //------------------------------------------------
 
-#include "../../LHR/Common.bt"
+#include "PXCommon.bt"
 
 typedef enum <uint32>
 {
     PXFlagU32_Raw = 0,
     PXFlagU32_UseCompression = 2,
     PXFlagU32_UseCompression_Legacy,
-} PXFlag_U32;
+} PXPackageFlag_U32;
 
 typedef enum <ubyte>
 {
@@ -26,17 +26,16 @@ typedef enum <ubyte>
     PXFlagByte_UseCompression = 2,
     PXFlagByte_UseCompression_Legacy,
     PXFlagByte_UseCompression_2014,
-} PXFlag_UByte;
+} PXPackageFlag_UByte;
 
 typedef enum <uint32>
 {
-	PinballXPackageVariantType_Simple = 1,
-    PinballXPackageVariantType_Hashed,
-    PinballXPackageVariantType_XORed, //PFX3 (PC) / Zen Pinball mobile newer
-} PinballXPackageVariantType;
+	PXPackageVariantType_Simple = 1,
+    PXPackageVariantType_Hashed,
+    PXPackageVariantType_XORed, //PFX3 (PC) / Zen Pinball mobile newer
+} PXPackageVariantType;
 
-
-struct ZenStudios_PinballXPackage
+struct PXPackage
 {
 	LittleEndian();
     uint32 checkForJenkinsHashHdr<hidden=true>;
@@ -50,9 +49,8 @@ struct ZenStudios_PinballXPackage
             char hashedStr[strSz];
         } jh;
     }
-	uint32 PXBinaryHdr;
-	uint32 PXBinDataType;
-	PinballXPackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
+	PXBinaryHeader PXBinaryHdr;
+	PXPackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
 	if (PXPDataType <= 2)
 	{
 		uint32 files;
@@ -101,12 +99,12 @@ struct ZenStudios_PinballXPackage
 				if (PXPDataType == 0)
 				{
 					uint32 cSz;
-					PXFlag_U32 flags;
+					PXPackageFlag_U32 flags;
 					Byte_StringEntry fileName;
 				}
 				else
 				{
-					PXFlag_UByte flags;
+					PXPackageFlag_UByte flags;
 					Byte_StringEntry fileName;
 					//Printf("%s\n", fileName.theString);
 					//Printf("%s\n", fileName.theString);
