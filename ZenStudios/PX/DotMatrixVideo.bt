@@ -16,7 +16,7 @@ typedef struct FrameInfo
     uint16 width;
     uint16 height;
     {
-        byte texture[1024]; //I2 encoded no pal/pal 0
+        byte texture[1024]; //I2 encoded no pal/pal 0 or some kind of 8 bit pal?
     }
 };
 
