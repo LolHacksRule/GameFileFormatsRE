@@ -16,22 +16,30 @@
 struct PXTexture
 {
     LittleEndian();
-    PXBinaryHeader PXBinaryHdr;
-    PX_TextureFormat textureFormat;
-    uint32 width;
-    uint32 height;
+    PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
+    PX_TextureFormat textureFormat<bgcolor=cPurple>;
+    uint32 width<bgcolor=cGreen>;
+    uint32 height<bgcolor=cGreen>;
     if (PXBinaryHdr.PXBinDataType == 12 || PXBinaryHdr.PXBinDataType == 16)
     {
-        uint32 mips;
-        if (texFmt >= 224)
+        uint32 mips<bgcolor=cPurple>;
+        if (textureFormat >= 224 && textureFormat != 320 && textureFormat != 328)
         {
-            uint32 texSz;
+            uint32 texSz<bgcolor=cBlue>;
             if (textureFormat >= 224 && textureFormat < 352)
             {
-                uint32 unk;
+                uint32 align<bgcolor=cRed>; //Same as WUT from Fusion soo I'm gonna assume
             }
-            byte tex[texSz];
+            //On WiiU, the off is read at 0x20, NX is at 0x1c
+            byte tex[texSz]<bgcolor=cLtBlue>;
+        }
+        else
+        {
+            byte tex[FileSize() - FTell()]<bgcolor=cRed>; //Idk
         }
     }
-    //On WiiU, the off is read at 0x20, NX is at 0x1c
+    else
+    {
+        byte tex[FileSize() - FTell()]<bgcolor=cRed>; //Idk
+    }
 } PXT;

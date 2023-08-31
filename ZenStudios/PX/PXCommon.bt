@@ -18,6 +18,7 @@ typedef enum <uint32>
     PXDataType_None,
     PXDataType_Package = 5,
     PXDataType_Texture = 16,
+    PXDataType_CubeMapTexture = 18,
     PXDataType_Model = 32,
     PXDataType_Animation = 64,
 } PX_BinaryDataType;
@@ -29,14 +30,17 @@ typedef enum <uint32>
     PX_RGBA8888_2, //X360 but may be CTR too
     PX_RGB888_2,
     PX_DXT1 = 64,
+    PX_DXT2, //No finicky tiling! Yay :)
+    PX_DXT3,
     PX_DXT4 = 68,
     PX_XBOX360_SWIZZLED_DXT1 = 80,
     PX_XBOX360_SWIZZLED_DXT4 = 84,
-    PX_PSP2_SWIZZLED_ATI1L_UNK = 100,
+    //100 is ?
     PX_PVRTC4_LEGACY = 128, //2008 RollerCoaster
     PX_PVRTC4 = 130,
     PX_PVRTC4A,
     PX_ETC2_RGB = 138, //Is this ETC1 or ETC2?
+    PX_ETC1A4 = 141, //Is this ETC1 or ETC2?
     PX_CTR_SWIZZLED_RGB888 = 144,
     PX_CTR_SWIZZLED_RGBA8888,
     PX_CTR_SWIZZLED_ETC1,
@@ -44,14 +48,17 @@ typedef enum <uint32>
     PX_PSP2_SWIZZLED_RGBA8888 = 192,
     PX_WIIU_SWIZZLED_RGBA8888 = 224,
     PX_WIIU_SWIZZLED_RGBA8888_2,
-    PX_WIIU_SWIZZLED_UNK = 240,
-    PX_WIIU_SWIZZLED_UNK_2 = 244,
+    PX_WIIU_SWIZZLED_BC1 = 240,
+    PX_WIIU_SWIZZLED_BC3 = 244,
+    PX_DXT1_2 = 320,
+    PX_BC5S = 328, //CONFIRM
     PX_NX_SWIZZLED_RGBA8888_SRGB = 352,
     PX_NX_SWIZZLED_RGBA8888,
     PX_NX_SWIZZLED_DXT1 = 368,
     PX_NX_SWIZZLED_DXT3,
     PX_NX_SWIZZLED_DXT5,
     PX_NX_SWIZZLED_UNK = 373,
+    PX_NX_SWIZZLED_BC5S = 376,
 } PX_TextureFormat;
 
 typedef struct PXBinaryHeader
