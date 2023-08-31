@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: TinyCoLTA.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+struct TinyCoLTA
+{
+    LittleEndian();
+    char hdr[3]<bgcolor=cBlue>;
+    byte ver; //I've only seen one and only looked at Win8 TQFS
+    uint16 totalFrames<bgcolor=cGreen>; //Frames in total from AnimationConfig
+    uint16 unk<bgcolor=cRed>; //Usually 0xBFFF
+    int32 unk2[2]<bgcolor=cRed>;
+    int16 totalAnims<bgcolor=cGreen>;
+    int16 unk3<bgcolor=cRed>;
+    struct AnimationEntries
+    {
+        struct AnimationEntry
+        {
+            Byte_StringEntry entry<bgcolor=cGreen>;
+            byte unk<bgcolor=cBlue>; //Always 24
+            byte unk2<bgcolor=cLtBlue>; //May be related to 0xC?
+            uint16 unk3[2]<bgcolor=cLtRed>; //Usually increasing
+            uint16 unk4<bgcolor=cRed>; //Always consistent in file
+            float f32[8]<bgcolor=cPurple>; //idk what these are
+        } anim[totalAnims]<optimize=false>;
+    } anim_entries;
+    byte unk4[FileSize() - FTell()]<bgcolor=cRed>; //Idk
+} LTA;
