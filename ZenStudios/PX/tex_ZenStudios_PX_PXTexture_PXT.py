@@ -259,8 +259,8 @@ def noepyLoadRGBA(texData, texList):
         print("NX Swizzled DXT5\nCannot deswizzle currently!")
         texFmt = noesis.NOESISTEX_DXT5
     elif texFmt == 0x0178:
-        texData = rapi.imageDecodeDXT(texData, texWidth, texHeight, noesis.FOURCC_ATI2, 0.0, 2)
         print("NX Swizzled BC5S\nCannot decode currently!")
+        texData = rapi.imageDecodeDXT(texData, texWidth, texHeight, noesis.FOURCC_ATI2, 0.0, 2)
         texFmt = noesis.NOESISTEX_RGBA32
         #return 1
     else:
