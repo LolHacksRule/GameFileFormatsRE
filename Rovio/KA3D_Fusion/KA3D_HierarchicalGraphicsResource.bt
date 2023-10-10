@@ -1,0 +1,377 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//ONLY TESTED ON KA3D CD ROM AND BOUNCE N-GAGE
+//
+
+#include "../../LHR/Common.bt"
+
+typedef enum <int16>
+{
+    PrimitiveType_Tri = 3,
+} PrimitiveType;
+
+typedef enum <int16>
+{
+    PlatformType_N3D = 4,
+} PlatformType;
+
+typedef enum <byte>
+{
+    FogType_None,
+    FogType_Linear,
+} FogType;
+
+typedef enum <int32>
+{
+    TextureType_Standard,
+    TextureType_Cube,
+} TextureType;
+
+typedef struct Float3Array16
+{
+    if (keys > 2)
+    {
+        Vector3_F32 minv3f;
+        Vector3_F32 maxv3f;
+        struct
+        {
+            for (i = 0; i < keys; i++)
+            {
+                for (i2 = 0; i2 < 3; i2++)
+                {
+                    uint16 unk;
+                }
+            }
+        } UnknownData;
+    }
+    else
+    {
+        Vector3_F32 v3f[keys];
+    }
+};
+
+typedef struct Float4Array16
+{
+    if (keys > 2)
+    {
+        Vector4_F32 minv4f;
+        Vector4_F32 maxv4f;
+        struct
+        {
+            for (i = 0; i < keys; i++)
+            {
+                for (i2 = 0; i2 < 4; i2++)
+                {
+                    uint16 unk;
+                }
+            }
+        } UnknownData;
+    }
+    else
+    {
+        Vector4_F32 v4f[keys];
+    }
+};
+
+typedef struct Node
+{
+    I16_StringEntry name;
+    //Vector3_F32 v3f[4];
+    /*for (i = 0; i < 3; i++)
+    {
+        for (i2 = 0; i2 < 4; i2++)
+        {
+            float f32;
+        }
+    }*/
+    float f32_3x4[12];
+    int32 flags;
+    if (ver > 190)
+    {
+        int32 id;
+    }
+    int32 prntIdx;
+};
+
+typedef struct KeyFrameSequence
+{
+    int32 keys;
+    if (ver < 192)
+    {
+        I16_StringEntry name;
+        float scale;
+        Vector4_F32 bias;
+    }
+    else
+    {
+        int32 dim;
+        if (dim == 4)
+        {
+            Float4Array16 f4ary16;
+        }
+        else
+        {
+            Float4Array16 f3ary16;
+        }
+    }
+};
+
+typedef struct Float3Animation
+{
+    int32 keys;
+    Float4Array16 f4ary16<optimize=false>;
+};
+
+struct
+{
+    BigEndian();
+    char magic[4];
+    short ver;
+    if (ver > 190)
+    {
+        int32 exportVer;
+    }
+    short dataFlags;
+    if (ver >= 180)
+    {
+        PlatformType platformType;
+    }
+    FogType fogType;
+    float start;
+    float end;
+    RGB_F32 color;
+    int32 chk0;
+    int32 textures;
+    if (textures)
+    {
+        struct
+        {
+            I16_StringEntry name;
+            if (ver >= 160)
+            {
+                TextureType type;
+            }
+        } TextureEntry[textures]<optimize=false>;
+    }
+    int32 materials;
+    if (materials)
+    {
+        struct
+        {
+            I16_StringEntry name;
+            I16_StringEntry shaderName;
+            if (ver > 150)
+            {
+                int32 flags;
+            }
+            byte params;
+            struct
+            {
+                I16_StringEntry paramName;
+                short index;
+            } TextureParam[params]<optimize=false>;
+            byte vec4s;
+            struct
+            {
+                I16_StringEntry vec4Name;
+                Vector4_F32 vec4;
+            } Vector4Param[vec4s]<optimize=false>;
+            byte f32s;
+            struct
+            {
+                I16_StringEntry floatName;
+                float f32;
+            } FloatParam[f32s]<optimize=false>;
+        } MaterialEntry[materials]<optimize=false>;
+    }
+    int32 chk1;
+    int32 primitives;
+    if (primitives)
+    {
+        Printf("Primitives are NOT YET SUPPORTED!\n");
+        //FSeek(5979); //Comment when Primitives works perfectly
+        /*struct
+        {
+            if (ver < 190)
+            {
+                uint16 vertices;
+                uint16 indexes;
+            }
+            else
+            {
+                uint32 vertices;
+                uint32 indexes;
+            }
+            byte vtxFmtCnt;
+            struct
+            {
+                I16_StringEntry fmtName;
+                I16_StringEntry fmtName2;
+            } VertexFormat[vtxFmtCnt]<optimize=false>;
+            short mtrlIdx;
+            if (ver > 150)
+            {
+                PrimitiveType primType;
+            }
+            if (ver >= 190)
+            {
+                Vector4_F32 posScaleBias;
+                Vector4_F32 uvScaleBias;
+            }
+            for (i = 0; i < 12; i++)
+            {
+                if (ver < 190)
+                {
+                    float dummy;
+                    Vector4_F32 dummy2;
+                }
+            }
+            if (indexes > 0)
+            {
+                byte idxData[indexes*2];
+            }
+            //FSkip(-3);
+            //ubyte usedBones;
+            //byte usedBone[usedBones];
+        } PrimitiveEntry[primitives]<optimize=false>;*/
+    }
+    int32 chk2;
+    int32 meshes;
+    if (meshes)
+    {
+        struct
+        {
+            Node MeshNode;
+            int32 meshPrims;
+            int32 index[meshPrims];
+            int32 meshBones;
+            if (meshBones)
+            {
+                struct 
+                {
+                    int32 idx;
+                    float f32_3x4[12];
+                } MeshBone[meshBones];
+            }
+        } MeshEntry[meshes]<optimize=false>;
+    }
+    int32 chk3;
+    int32 cameras;
+    if (cameras)
+    {
+        struct
+        {
+            Node CameraNode;
+            float front;
+            float back;
+            float in;
+        } CameraEntry[cameras]<optimize=false>;
+    }
+    int32 chk4;
+    int32 lights;
+    if (lights)
+    {
+        struct
+        {
+            Node LightNode;
+            Vector3_F32 v3f;
+            float in[2];
+            float v[4];
+            byte lightType;
+        } LightEntry[lights]<optimize=false>;
+    }
+    int32 chk5;
+    int32 dummies;
+    if (dummies)
+    {
+        struct
+        {
+            Node DummyNode;
+            Vector3_F32 minBox;
+            Vector3_F32 maxBox;
+        } DummyEntry[dummies]<optimize=false>;
+    }
+    int32 chk6;
+    int32 lineShapes;
+    if (lineShapes)
+    {
+        struct
+        {
+            Node LineShapeNode;
+            int32 lines;
+            int32 paths;
+            struct
+            {
+                Vector3_F32 start;
+                Vector3_F32 end;
+            } line[lines];
+            struct
+            {
+                int32 begin;
+                int32 end;
+            } path[paths];
+        } LineShapeEntry[lineShapes];
+    }
+    int32 chk7;
+    int32 otherNodes;
+    if (otherNodes)
+    {
+        Node OtherNode[otherNodes]<optimize=false>;
+    }
+    int32 chk8;
+    int32 xFormAnimations;
+    if (xFormAnimations)
+    {
+        Printf("Transform animations are NOT YET SUPPORTED!\n");
+        //FSeek(6299625); //uncomment when ready
+        /*struct
+        {
+            I16_StringEntry name;
+            byte posKeyRate;
+            byte rotKeyRate;
+            byte sclKeyRate;
+            byte endBehaviour;
+            if (ver >= 192)
+            {
+                Byte_Bool optimized;
+                if (optimized)
+                {
+                    Float3Animation posFANM;
+                    KeyFrameSequence rotKFS;
+                    Float3Animation sclFANM;
+                    if (ver >= 193)
+                    {
+                        float endTime;
+                    }
+                }
+                else
+                {
+                    KeyFrameSequence posKFS;
+                    KeyFrameSequence rotKFS;
+                    KeyFrameSequence sclKFS;
+                }
+            }
+        } XFormAnimation[xFormAnimations]<optimize=false>;*/
+    }
+    int32 check9;
+    struct
+    {
+        int32 userPropertySets;
+        struct
+        {
+            I16_StringEntry key;
+            I16_StringEntry value;
+        } UserPropertySet[userPropertySets]<optimize=false>;
+    } UserPropertySets;
+} HierarchicalGraphicsResource;

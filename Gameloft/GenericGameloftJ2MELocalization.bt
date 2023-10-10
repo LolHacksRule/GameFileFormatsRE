@@ -17,7 +17,7 @@ local int i <hidden=true> = 0;
 
 //manual flags: Please change this if the file has a byte before the string count and/or splits strings with nulls
 
-local int hasFileNum <hidden=true> = 1;
+local int hasFileNum <hidden=true> = 0;
 
 local int splitsByZeroes <hidden=true> = 0;
 

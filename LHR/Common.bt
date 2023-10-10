@@ -22,6 +22,11 @@ local int FSize<hidden = true> = FileSize();
 
 local int EOF<hidden = true> = FPos + FSize;
 
+int LHR_Align(int value, int alignment)
+{
+    return ((value + (alignment - 1)) & (~(alignment - 1))) - value;
+}
+
 typedef enum <uint16> {
 	U16_Little = 0xFEFF,
     U16_Big = 0xFFFE,
@@ -293,6 +298,34 @@ typedef struct Vector4_I32 {
     int32 Y;
     int32 Z;
     int32 W;
+};
+
+typedef struct RGBA_UByte {
+    ubyte R;
+    ubyte G;
+    ubyte B;
+    ubyte A;
+    //Printf("#%02x%02x%02x%02x\n", R, G, B, A);
+};
+
+typedef struct RGBA_Byte {
+    byte R;
+    byte G;
+    byte B;
+    byte A;
+};
+
+typedef struct RGB_F32 {
+    float R;
+    float G;
+    float B;
+};
+
+typedef struct RGBA_F32 {
+    float R;
+    float G;
+    float B;
+    float A;
 };
 
 typedef struct I32_SizeWithData {

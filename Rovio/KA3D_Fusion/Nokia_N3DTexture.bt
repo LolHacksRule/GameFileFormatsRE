@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    uint16 version; //0x0104 = Bounce (private)
+    uint16 width;
+    uint16 height;
+    uint16 format; //15: RGBA4444 (at least in 0x104), 7: RGB565
+    uint16 palSz;
+    uint16 pal[palSz];
+    uint16 flags;
+    uint16 userFlags;
+    byte texture;
+} NTX;
