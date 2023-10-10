@@ -26,13 +26,15 @@ typedef enum <ubyte>
     PXFlagByte_UseCompression = 2,
     PXFlagByte_UseCompression_Legacy,
     PXFlagByte_UseCompression_2014,
+    PXFlagByte_UseCompression_ZP1_PS3 = 131, //Idk
 } PXPackageFlag_UByte;
 
 typedef enum <uint32>
 {
-	PXPackageVariantType_Simple = 1,
+    PXPackageVariantType_Simple_Legacy, //PXFX1 X360
+	PXPackageVariantType_Simple,
     PXPackageVariantType_Hashed,
-    PXPackageVariantType_XORed, //PFX3 (PC) / Zen Pinball mobile newer
+    PXPackageVariantType_XOR, //PFX3 (PC) / Zen Pinball mobile newer
 } PXPackageVariantType;
 
 struct PXPackage
@@ -66,15 +68,18 @@ struct PXPackage
 	{
 		Printf("PXP XOR variant is WIP!");
 		uint64 PXPSz;
-        byte dmy[32];
-		uint32 sz;
-        uint32 xSz[2];
-        uint32 xorSz;
-        uint32 XORMetaTableCryptKey;
-        uint32 XORMetaTableCRC32;
-        //byte dmy2[36];
-        //uint32 files;
-        byte XORMeta[sz];
+        byte dmy[32]; //MD5?
+		uint32 XORMetaSz;
+        struct TableOfContentsXOR
+        {
+            uint32 sz;
+            uint32 xSz[2];
+            uint32 XORMetaTableCryptKey;
+            uint32 XORMetaTableCRC32;
+            //byte dmy2[36];
+            //uint32 files;
+        } TOC_XOR;
+        byte XORMeta[XORMetaSz];
 		FSeek(0);
 		byte PXP[PXPSz];
 		break;
@@ -82,9 +87,9 @@ struct PXPackage
 	if (PXPDataType == 2) //ZP1 PS3, ZP2 patch wiiu/ps4 and PFX3 Win10 because Zen, haven't tested others
 	{
         //why, if these mismatch game dies
-		uint16 unk[2]; //the other is 3d90
-		uint16 unk2[2]; //the other is ccf8
-		uint16 unk3[2]; //the other is 3990
+		uint16 unk[2]; //the other is 3d90, on small files 0x02 is 0xEA
+		uint16 unk2[2]; //the other is ccf8, on small files 0x02 is 0x48
+		uint16 unk3[2]; //the other is 3990, on small files 0x02 is 0x17
 		uint32 unk4; //Some other CRC?
         uint32 metaTableCRC32;
 	}
@@ -146,35 +151,37 @@ struct PXPackage
 				/*byte type;
 				FSkip(3);
 				uint32 unk;*/
-			} mentry;
+			} MetaEntryStruct;
 		}
-	} fmd;
+	} FileMetaDataStruct;
     /*
 	struct FileEntries
 	{
 		for (i = 0; i < files; i++)
 		{
+            FSeek(fmd.mentry[i].dataOff);
 			struct FileEntry
-			{   /*
+			{   
 				//byte data[fmd.mentry[i].cSz];
 				if (fmd.mentry[i].flags == 0)
 				{
 					byte data[fmd.mentry[i].uncDSz];
 				}
-				else if (PXBinDataVer == 0)
+				else if (PXPDataType == 0)
 				{
 					byte data[fmd.mentry[i].cSz];
 				}
 				else
 				{
 					byte chunkType;
-					if (PXBinDataVer == 0)
+					if (PXPDataType == 0)
 					{
 						uint16 chunkSz;
 					}
 					else
 					{
-						byte chunkSz[3];
+						uint32 chunkSz : 24;
+                        FSkip(-1);
 					}
 					if (chunkType < 2 && chunkType != 0)
 					{
@@ -182,25 +189,28 @@ struct PXPackage
 					}
 					else if (chunkType == 4 || chunkType == 14)
 					{
-						byte chunkCSz[3];
+						uint32 chunkCSz : 24;
+                        FSkip(-1);
 					}
 					else
 					{
 						Printf("Error!");	 
 					}
-				}*/
-                /*if (PXPDataType == 2)
+				}
+                FSkip(-7);
+                //if (PXPDataType == 2)
                 {
                     if (fmd.mentry[i].flags > 0)
                     {
-                        byte file[fmd.mentry[i].cSz];
+                        byte file[fmd.mentry[i].cSz]<optimize=false>;
                     }
                     else
                     {
-                        byte file[fmd.mentry[i].uncDSz];
+                        byte file[fmd.mentry[i].uncDSz]<optimize=false>;
                     }
                 }
 			} fen;
 		}
-	} fens;*/
+	} fens;
+    */
 } PXP;

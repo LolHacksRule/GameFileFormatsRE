@@ -15,6 +15,15 @@ typedef struct FrameInfo
 {
     uint16 width;
     uint16 height;
+    if (height == 48) //X360
+    {
+        byte texture[384];
+    }
+    else if (height != 32) //How does this get detected
+    {
+        byte texture[60];
+    }
+    else
     {
         byte texture[1024]; //I2 encoded no pal/pal 0 or some kind of 8 bit pal?
     }

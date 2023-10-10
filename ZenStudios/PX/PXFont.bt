@@ -13,10 +13,10 @@
 
 typedef enum <uint16>
 {
-    UNKNOWN_1 = 0, //Smth for mobile, PC, PS3 and vita
-    PXFont_CTR_ETC1SPLITALPHA,
-    PXFont_RGBA8888, //Android
-    PXFont_WiiU_DXT5 = 5,
+    PX_FontTexFmt_X360_BC5 = 0, //Smth for mobile, PC, PS3 and vita
+    PX_FontTexFmt_CTR_ETC1SPLITALPHA,
+    PX_FontTexFmt_RGBA8888, //Android
+    PX_FontTexFmt_WiiU_DXT5 = 5,
 } PX_FontTexFmt;
 
 struct ZenStudios_PinballXFont

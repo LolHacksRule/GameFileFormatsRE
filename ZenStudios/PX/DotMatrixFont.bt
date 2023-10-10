@@ -15,7 +15,7 @@ local uint texSize <hidden=true> = 0; //TODO
 
 struct DotMatrixFont
 {
-    uint16 textures;
+    uint16 fontCharacters;
     //Guess, idk how this works, if anything is undefined, please write a PR
     FSkip(4);
     uint16 texSzChk;
@@ -46,5 +46,5 @@ struct DotMatrixFont
         uint16 width;
         uint16 height;
         byte texData[texSize];
-    } tx[textures]<optimize=false>;
+    } tx[fontCharacters]<optimize=false>;
 } DFT;
