@@ -15,8 +15,9 @@
 
 //Viewing of data files from Rovio's proprietary version of the KA3D Engine (Fusion).
 
-//local uint i<hidden = true> = 0;
-//local uint i2<hidden = true> = 0;
+//local uint i <hidden = true> = 0;
+//local uint i2 <hidden = true> = 0;
+local uint DEBUG_PRINT <hidden = true> = 0;
 
 //MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS AND ANGRY BIRDS 1.2.2!
 local uint forceHeaderlessText <hidden = true> = 0;
@@ -263,20 +264,32 @@ typedef struct
             SHORT ver;
         }
         I16_StringEntry txtrFNameStr;
-        DWORD unk;
-        SHORT maxTextures;
-        for (i = 0; i < maxTextures; i++)
+        SHORT leading;
+        SHORT tracking;
+        SHORT fontChars;
+        struct
         {
-            //I16_StringEntry theTexNameStr;
-            struct TParam2 //As of a new format, this changed I think
+            for (i = 0; i < fontChars; i++)
             {
-                SHORT xOff;
-                SHORT yOff;
-                SHORT width;
-                SHORT height;
-                SHORT unk2[2];
-            } prm2;
-        }
+                //I16_StringEntry theTexNameStr;
+                struct //As of a new format, this changed I think
+                {
+                    /*
+                    SHORT xOff;
+                    SHORT yOff;
+                    SHORT width;
+                    SHORT height;
+                    SHORT unk2[2];
+                    */
+                    SHORT characterShort;
+                    SHORT x;
+                    SHORT y;
+                    SHORT width;
+                    SHORT height;
+                    SHORT vpivot;
+                } FontChar;
+            }
+        } FontChars;
     } FontBlockBinary;
 } FONTBlock;
 
@@ -316,19 +329,19 @@ struct KA3DBinary
         FSkip(-4);    
         if (tmpChk == CompoSprite)
         {
-            cmpBlock CompoSpriteBlock;
+            cmpBlock CompoSpriteBlock<bgcolor=cRed>;
         }
         if (tmpChk == Text)
         {
-            TEXTBlock TextBlock;
+            TEXTBlock TextBlock<bgcolor=cGreen>;
         }
         if (tmpChk == Sprite)
         {
-            SPRTBlock SpriteBlock;
+            SPRTBlock SpriteBlock<bgcolor=cBlue>;
         }
         if (tmpChk == Font)
         {
-            FONTBlock FontBlock;
+            FONTBlock FontBlock<bgcolor=cPurple>;
         }
     }
 } KA3D_DAT<bgcolor=cYellow>;

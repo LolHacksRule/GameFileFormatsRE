@@ -11,15 +11,69 @@
 //   History: 
 //------------------------------------------------
 
+typedef enum <int16>
+{
+    N3DTextureFormat_R8G8B8 = 1,
+    N3DTextureFormat_B8G8R8,
+    N3DTextureFormat_A8R8G8B8,
+    N3DTextureFormat_X8R8G8B8,
+    N3DTextureFormat_X8B8G8R8,
+    N3DTextureFormat_A8B8G8R8,
+    N3DTextureFormat_R5G6B5,
+    N3DTextureFormat_R5G5B5,
+    N3DTextureFormat_R6G6B6,
+    N3DTextureFormat_P4,
+    N3DTextureFormat_P8,
+    N3DTextureFormat_L8,
+    N3DTextureFormat_A1R5G5B5,
+    N3DTextureFormat_X4R4G4B4,
+    N3DTextureFormat_A4R4G4B4,
+    N3DTextureFormat_A4B4G4R4,
+    N3DTextureFormat_R4G4B4A4,
+    N3DTextureFormat_A1B5G5R5,
+    N3DTextureFormat_R5G5B5A1,
+    N3DTextureFormat_R3G3B2,
+    N3DTextureFormat_R3G2B3,
+    N3DTextureFormat_A8,
+    N3DTextureFormat_A8R3G3B2,
+    N3DTextureFormat_A8R3G2B3,
+    N3DTextureFormat_R16F = 28,
+    N3DTextureFormat_G16R16F,
+    N3DTextureFormat_A16B16G16R16F,
+    N3DTextureFormat_R32F,
+    N3DTextureFormat_G32R32F,
+    N3DTextureFormat_A32B32G32R32F,
+    N3DTextureFormat_D32,
+    N3DTextureFormat_D24,
+    N3DTextureFormat_D16,
+    N3DTextureFormat_D24S8
+} N3DTextureFormat;
+
 struct
 {
-    uint16 version; //0x0104 = Bounce (private)
-    uint16 width;
-    uint16 height;
-    uint16 format; //15: RGBA4444 (at least in 0x104), 7: RGB565
-    uint16 palSz;
-    uint16 pal[palSz];
-    uint16 flags;
-    uint16 userFlags;
+    LittleEndian();
+    int16 version; //0x0104 = Bounce (private)
+    int16 width;
+    int16 height;
+    N3DTextureFormat format; //15: RGBA4444, 7: RGB565, 8: R5G5B5
+    int16 palSz;
+    if (format >= N3DTextureFormat_A16B16G16R16F && format != 31 && format != 33 && format != 28 && format != 37)
+    {
+        int32 pal[palSz*2];
+    }
+    else if (format == 31)
+    {
+        int16 pal[palSz*2];
+    }
+    else if (format == 33)
+    {
+        int32 pal[palSz*4];
+    }
+    else
+    {
+        int16 pal[palSz];
+    }
+    int16 flags;
+    int16 userFlags;
     byte texture;
 } NTX;

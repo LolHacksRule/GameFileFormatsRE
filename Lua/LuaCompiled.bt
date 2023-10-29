@@ -24,7 +24,7 @@
 #include "../LHR/Common.bt"
 
 local string luaBoolStr <hidden=true> = "";
-local uint DEBUG_PRINT <hidden=true> = 0; //Use this to print debug info
+local uint DEBUG_PRINT <hidden=true> = 1; //Use this to print debug info
 
 struct LuaProto;
 
@@ -189,14 +189,14 @@ typedef struct LuaVar
         }
         else if (luaVarType == PLV_Bool)
         {
-            byte luaBool;
+            Byte_Bool luaBool;
             if (DEBUG_PRINT == 1)
             {
                 if (luaBool == 0x01)
                 {
                     luaBoolStr = "true";
                 }
-                else if (luaBool == 0x01)
+                else
                 {
                     luaBoolStr = "false";
                 }
@@ -240,7 +240,7 @@ typedef struct LuaVar
         }
         else if (luaVarType == LV_Bool)
         {
-            byte luaBool;
+            Byte_Bool luaBool;
             if (DEBUG_PRINT == 1)
             {
                 if (luaBool == 0x01)

@@ -1,0 +1,93 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Don't expect much rn, this is just ported for datamining purposes
+//Sources used:
+//https://github.com/SamboyCoding/Cpp2IL
+//https://github.com/sapphire-al2o3/UnityGlobalMetadataLoader
+
+#include "../LHR/Common.bt"
+
+typedef struct IL2CPP_ENTRY
+{
+    int32 off;
+    int32 entries;
+};
+
+struct
+{
+    LittleEndian();
+    struct
+    {
+        uint32 magic;
+        int32 ver;
+        IL2CPP_ENTRY strLit;
+        IL2CPP_ENTRY strLitData;
+        IL2CPP_ENTRY stringsTable;
+        IL2CPP_ENTRY eventDefsData;
+        IL2CPP_ENTRY propertiesData;
+        IL2CPP_ENTRY methodsData;
+        IL2CPP_ENTRY prmDefaultValuesData;
+        IL2CPP_ENTRY fldDefaultValueData;
+        IL2CPP_ENTRY fldAndPrmDefaultValueData;
+        IL2CPP_ENTRY fldMarshalledSizesData;
+        IL2CPP_ENTRY params;
+        IL2CPP_ENTRY fields;
+        IL2CPP_ENTRY genericParams;
+        IL2CPP_ENTRY genericParamConstraints;
+        IL2CPP_ENTRY genericContainers;
+        IL2CPP_ENTRY nestedTypes;
+        IL2CPP_ENTRY interfaces;
+        IL2CPP_ENTRY vTableMethods;
+        IL2CPP_ENTRY interfaceOffsets;
+        IL2CPP_ENTRY typeDefs;
+        if (ver < 24) //?
+        {
+            IL2CPP_ENTRY regContextDef;
+        }
+        IL2CPP_ENTRY images;
+        IL2CPP_ENTRY assemblies;
+        if (ver < 27)
+        {
+            IL2CPP_ENTRY metaDataUsageLists;
+            IL2CPP_ENTRY metaDataUsagePairs;
+        }
+        IL2CPP_ENTRY fieldRefs;
+        IL2CPP_ENTRY refAssems;
+        if (ver < 29)
+        {
+            IL2CPP_ENTRY attrInfo;
+            IL2CPP_ENTRY attrTypes;
+        }
+        if (ver >= 29)
+        {
+            IL2CPP_ENTRY attrData;
+            IL2CPP_ENTRY attrDataRange;
+        }
+        IL2CPP_ENTRY unresVCallPrmTypes;
+        IL2CPP_ENTRY unresVCallPrmRanges;
+        IL2CPP_ENTRY winRuntimeTypeNames;
+        if (ver >= 29)
+        {
+            IL2CPP_ENTRY winRuntimeStrings;
+        }
+        IL2CPP_ENTRY exportTypeDefs;
+    } Header;
+    //TODO REPLACE WHEN PROPER STRUCT CAN BE MADE
+    /*FPos = FTell();
+    byte StringLiterals[Header.strLitData.off-FPos];
+    FPos = FTell();
+    byte StringLiteralData[Header.stringsTable.off-FPos];
+    FPos = FTell();
+    byte StringTable[Header.eventDefsData.off-FPos];*/
+} GLOBAL_METADATA_DAT;
