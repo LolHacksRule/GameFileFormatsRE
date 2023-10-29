@@ -527,7 +527,7 @@ struct
             //AssemblyReference AssemblyReferenceStruct;
         //}
     //} AssemblyReferences;
-    uint32 AssemblyReferences[Header.refAssems.size/4];
+    uint32 AssemblyReferences[Header.refAssems.size/4]<bgcolor=cDkGreen>;
     /*if (Header.ver < 29) //TODO
     {
         struct
@@ -543,7 +543,7 @@ struct
     else
     {
     */
-    byte AttributeData[Header.attrData.size]<bgcolor=cDkGreen>;
+    byte AttributeData[Header.attrData.size];
     struct
     {
         /*while (FPos != Header.attrDataRange.off)
