@@ -11,8 +11,8 @@
 //   History: 
 //------------------------------------------------
 
-//Don't expect much rn, this is just ported for datamining purposes
-//Sources used:
+//Don't expect much rn, this is just ported for datamining purposes, only tested on V29
+//Sources used (huge thanks):
 //https://github.com/SamboyCoding/Cpp2IL
 //https://github.com/sapphire-al2o3/UnityGlobalMetadataLoader
 
@@ -21,7 +21,212 @@
 typedef struct IL2CPP_ENTRY
 {
     int32 off;
-    int32 entries;
+    int32 size;
+};
+
+typedef struct StringLiteral
+{
+    uint32 len;
+    int32 dIdx;
+};
+
+typedef struct StringLiteralData
+{
+    int32 unk;
+};
+
+typedef struct StringTableEntry
+{
+    string strTblString;
+};
+
+typedef struct EventDefinition
+{
+    int32 nameIdx;
+    int32 typeIdx;
+    int32 add;
+    int32 remove;
+    int32 raise;
+    if (Header.ver <= 24)
+    {
+        uint32 customAttributeIdx;
+    }
+    uint32 token;
+};
+
+typedef struct PropertyDefinition
+{
+    int32 nameIdx;
+    int32 get;
+    int32 set;
+    uint32 attributes;
+    if (Header.ver <= 24)
+    {
+        uint32 customAttributeIdx;
+    }
+    uint32 token;
+};
+
+typedef struct MethodDefinition
+{
+    int32 nameIdx;
+    int32 declrTypeIdx;
+    int32 retnTypeIdx;
+    int32 prmStart;
+    if (Header.ver <= 24)
+    {
+        uint32 customAttributeIdx;
+    }
+    int32 genericContainerIdx;
+    /*
+    uint32 methodIdx;
+    uint32 invokerIdx;
+    uint32 delegateWrapperIdx;
+    uint32 regContextStartIdx;
+    uint32 regContextEntries;
+    */
+    uint32 token;
+    uint16 flags;
+    uint16 iflags;
+    uint16 slot;
+    uint16 paramEntries;
+};
+
+typedef struct ParameterDefaultValue
+{
+    int32 prmIdx;
+    int32 typIdx;
+    int32 dtaIdx;
+};
+
+typedef struct FieldDefaultValue
+{
+    int32 fldIdx;
+    int32 typIdx;
+    int32 dtaIdx;
+};
+
+typedef struct ParameterDefinition
+{
+    int32 nameIdx;
+    uint32 token;
+    int32 typIdx;
+};
+
+typedef struct FieldDefinition
+{
+    int32 nameIdx;
+    int32 typIdx;
+    if (Header.ver <= 24) //?
+    {
+        int32 customAttributeIdx;
+    }
+    uint32 token;
+};
+
+typedef struct GenericParameter
+{
+    int32 ownrIdx;
+    int32 nameIdx;
+    int16 cnstrntsStart;
+    int16 cnstrntsEntries;
+    uint16 num;
+    uint16 flags;
+};
+
+typedef struct GenericContainer
+{
+    int32 ownrIdx;
+    int32 typeArgs;
+    I32_Bool isMethod;
+    int32 genericParamStart;
+};
+
+typedef struct InterfaceOffsetPair
+{
+    int32 typeIdx;
+    int32 offset;
+};
+
+typedef struct TypeDefinition
+{
+    int32 nameIdx;
+    int32 nsIndex;
+    if (Header.ver < 24) //?
+    {
+        int32 customAttributeIdx;
+    }
+    if (Header.ver < 27)
+    {
+        int32 brefTypIdx;
+    }
+    int32 bvalTypIdx;
+    int32 declTypIdx;
+    int32 prntTypIdx;
+    int32 elmtTypIdx;
+    if (Header.ver < 27)
+    {
+        int32 regContextStartIdx;
+        int32 regContextEntries;
+    }
+    int32 genericCntnrIdx;
+    uint32 flags;
+    int32 firstFieldIdx;
+    int32 firstMethodIdx;
+    int32 firstEventID;
+    int32 firstPropertyID;
+    int32 nestedTypesStart;
+    int32 interfacesStart;
+    int32 vTableStart;
+    int32 interfaceOffsetPairsStart;
+    uint16 methods;
+    uint16 properties;
+    uint16 fields;
+    uint16 events;
+    uint16 nestedTypes;
+    uint16 vTables;
+    uint16 interfaces;
+    uint16 interfaceOffsetPairs;
+    uint32 bitfield;
+    uint32 token;
+};
+
+typedef struct ImageDefinition
+{
+    int32 nameIdx;
+    int32 asemIdx;
+    int32 firstTypIdx;
+    uint32 types;
+    int32 exportedTypeStart;
+    uint32 exportedTypes;
+    int32 entryPtIdx;
+    uint32 token;
+    if (Header.ver > 24) //?
+    {
+        int32 customAttributeStart;
+        int32 customAttributes;
+    }
+};
+
+typedef struct AssemblyDefinition
+{
+    int32 imgIdx;
+    if (Header.ver > 25) //?
+    {
+        uint32 token;
+    }
+    if (Header.ver < 24)
+    {
+        int32 customAttributeIdx;
+    }
+    int32 refAsemStart;
+    int32 refAsemEntries;
+};
+
+typedef struct FieldReference
+{
+    int32 typIdx;
+    int32 fldIdx;
 };
 
 struct
@@ -35,8 +240,8 @@ struct
         IL2CPP_ENTRY strLitData;
         IL2CPP_ENTRY stringsTable;
         IL2CPP_ENTRY eventDefsData;
-        IL2CPP_ENTRY propertiesData;
-        IL2CPP_ENTRY methodsData;
+        IL2CPP_ENTRY propertyDefsData;
+        IL2CPP_ENTRY methodsDefinitionsData;
         IL2CPP_ENTRY prmDefaultValuesData;
         IL2CPP_ENTRY fldDefaultValueData;
         IL2CPP_ENTRY fldAndPrmDefaultValueData;
@@ -49,7 +254,7 @@ struct
         IL2CPP_ENTRY nestedTypes;
         IL2CPP_ENTRY interfaces;
         IL2CPP_ENTRY vTableMethods;
-        IL2CPP_ENTRY interfaceOffsets;
+        IL2CPP_ENTRY interfaceOffsetPairs;
         IL2CPP_ENTRY typeDefs;
         if (ver < 24) //?
         {
@@ -83,11 +288,192 @@ struct
         }
         IL2CPP_ENTRY exportTypeDefs;
     } Header;
+    FPos = FTell();
+    struct
+    {
+        /*while (FPos != Header.strLitData.off)
+        {
+            StringLiteral StringLiteralStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.strLit.size/8; i++)
+        {
+            StringLiteral StringLiteralStruct;
+        }
+    } StringLiteralsStruct;
+    FPos = FTell();
+    struct
+    {
+        while (FPos != Header.stringsTable.off)
+        {
+            StringLiteralData StringLiteralDataEntryStruct;
+            FPos = FTell();
+        }
+    } StringLiteralDataStruct;
+    struct
+    {
+        while (FPos != Header.eventDefsData.off)
+        {
+            StringTableEntry StringTableEntryStruct;
+            //string theStr;
+            FPos = FTell();
+        }
+    } StringTable;
+    struct
+    {
+        while (FPos != Header.propertyDefsData.off)
+        {
+            EventDefinition EventDefinitionStruct;
+            FPos = FTell();
+        }
+    } EventDefinitions;
+    struct
+    {
+        while (FPos != Header.methodsDefinitionsData.off)
+        {
+            PropertyDefinition PropertyDefinitionStruct;
+            FPos = FTell();
+        }
+    } PropertyDefinitions;
+    struct
+    {
+        while (FPos != Header.prmDefaultValuesData.off)
+        {
+            MethodDefinition MethodDefinitionStruct;
+            FPos = FTell();
+        }
+    } MethodDefinitions;
+    struct
+    {
+        /*while (FPos != Header.fldDefaultValueData.off)
+        {
+            ParameterDefaultValue ParameterDefaultValueStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.prmDefaultValuesData.size/12; i++)
+        {
+            ParameterDefaultValue ParameterDefaultValueStruct;
+        }
+    } ParameterDefaultValues;
+    struct
+    {
+        /*while (FPos != Header.fldAndPrmDefaultValueData.off)
+        {
+            FieldDefaultValue FieldDefaultValueStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.fldDefaultValueData.size/12; i++)
+        {
+            FieldDefaultValue FieldDefaultValueStruct;
+        }
+    } FieldDefaultValues;
     //TODO REPLACE WHEN PROPER STRUCT CAN BE MADE
-    /*FPos = FTell();
-    byte StringLiterals[Header.strLitData.off-FPos];
-    FPos = FTell();
-    byte StringLiteralData[Header.stringsTable.off-FPos];
-    FPos = FTell();
-    byte StringTable[Header.eventDefsData.off-FPos];*/
+    byte FieldAndParameterDefaultValues[Header.fldAndPrmDefaultValueData.size];
+    byte FieldMarshaledSizes[Header.fldMarshalledSizesData.size];
+    struct
+    {
+        /*while (FPos != Header.fields.off)
+        {
+            ParameterDefinition ParameterDefinitionStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.params.size/12; i++)
+        {
+            ParameterDefinition ParameterDefinitionStruct;
+        }
+    } ParameterDefinitions;
+    struct
+    {
+        while (FPos != Header.genericParams.off)
+        {
+            FieldDefinition FieldDefinitionStruct;
+            FPos = FTell();
+        }
+    } FieldDefinitions;
+    struct
+    {
+        /*while (FPos != Header.genericParamConstraints.off)
+        {
+            GenericParameter GenericParameterStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.genericParams.size/16; i++)
+        {
+            GenericParameter GenericParameterStruct;
+        }
+    } GenericParameters;
+    uint32 GenericParameterConstraintTypeIndexes[Header.genericParamConstraints.size/4];
+    struct
+    {
+        /*while (FPos != Header.nestedTypes.off)
+        {
+            GenericContainer GenericContainerStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.genericContainers.size/16; i++)
+        {
+            GenericContainer GenericContainerStruct;
+        }
+    } GenericContainers;
+    uint32 NestedTypeIndexes[Header.nestedTypes.size/4]; //Divide by 4 bcz that's the size of a typeindex
+    uint32 InterfaceTypeIndexes[Header.interfaces.size/4]; //Divide by 4 bcz that's the size of a typeindex
+    uint32 VTableMethodEncodedIndexes[Header.vTableMethods.size/4]; //Divide by 4 bcz that's the size of an encodedmethodindex
+    struct
+    {
+        /*while (FPos != Header.typeDefs.off)
+        {
+            InterfaceOffsetPair InterfaceOffsetPairStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.interfaceOffsetPairs.size/8; i++)
+        {
+            InterfaceOffsetPair InterfaceOffsetPairStruct;
+        }
+    } InterfaceOffsetPairs;
+    struct
+    {
+        while (FPos != Header.images.off)
+        {
+            TypeDefinition TypeDefinitionStruct;
+            FPos = FTell();
+        }
+    } TypeDefinitions;
+    //TODO ADD REGCONTEXTENTRIES FOR OLDER
+    /*struct
+    {
+        while (FPos != Header.images.off)
+        {
+            RegularContextDefinition RegularContextStruct;
+            FPos = FTell();
+        }
+    } RegularContextDefinitions;*/
+    struct
+    {
+        while (FPos != Header.assemblies.off)
+        {
+            ImageDefinition ImageDefinitionStruct;
+            FPos = FTell();
+        }
+    } ImageDefinitions;
+    struct
+    {
+        while (FPos != Header.fieldRefs.off)
+        {
+            AssemblyDefinition AssemblyDefinitionStruct;
+            FPos = FTell();
+        }
+    } AssemblyDefinitions;
+    //TODO ADD METADATAUSAGE* FOR OLDER
+    struct
+    {
+        /*while (FPos != Header.refAssems.off)
+        {
+            FieldReference FieldReferenceStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.fieldRefs.size/8; i++)
+        {
+            FieldReference FieldReferenceStruct;
+        }
+    } FieldReferences;
 } GLOBAL_METADATA_DAT;
