@@ -15,6 +15,7 @@
 //Sources used (huge thanks):
 //https://github.com/SamboyCoding/Cpp2IL
 //https://github.com/sapphire-al2o3/UnityGlobalMetadataLoader
+//https://github.com/4ch12dy/unity3d-metadata-010editor/blob/master/unityMetadata.bt
 
 #include "../LHR/Common.bt"
 
@@ -28,11 +29,6 @@ typedef struct StringLiteral
 {
     uint32 len;
     int32 dIdx;
-};
-
-typedef struct StringLiteralData
-{
-    int32 unk;
 };
 
 typedef struct StringTableEntry
@@ -221,6 +217,24 @@ typedef struct AssemblyDefinition
     }
     int32 refAsemStart;
     int32 refAsemEntries;
+    struct
+    {
+        int32 nameIdx;
+        int32 cultureIdx;
+        if (Header.ver != 24)
+        {
+            int32 hashValueIdx;
+            int32 pKeyIdx;
+            uint32 hashAlgorithm;
+            int32 hashLength;
+            uint32 flags;
+            int32 majorVer;
+            int32 minorVer;
+            int32 buildVer;
+            int32 revision;
+            int32 pKeyToken;
+        }
+    } AssemblyNameDefinition;
 };
 
 typedef struct FieldReference
@@ -229,16 +243,47 @@ typedef struct FieldReference
     int32 fldIdx;
 };
 
+typedef struct CustomAttributeTypeRange
+{
+    if (Header.ver >= 24)
+    {
+        uint32 token;
+    }
+    int32 start;
+    if (Header.ver >= 27)
+    {
+        int32 count;
+    }
+};
+
+typedef struct CustomAttributeDataRange
+{
+    uint32 token;
+    uint32 startOff;
+};
+
+typedef struct MetadataUsagePair
+{
+    uint32 destinationIdx;
+    uint32 encodedSourceIdx;
+};
+
+typedef struct UnresolvedVirtualCallParameterRange
+{
+    uint32 unk;
+    uint32 unk2;
+};
+
 struct
 {
     LittleEndian();
     struct
     {
-        uint32 magic;
+        uint32 magic<bgcolor=cPurple>;
         int32 ver;
         IL2CPP_ENTRY strLit;
         IL2CPP_ENTRY strLitData;
-        IL2CPP_ENTRY stringsTable;
+        IL2CPP_ENTRY stringsTable<bgcolor=cGreen>;
         IL2CPP_ENTRY eventDefsData;
         IL2CPP_ENTRY propertyDefsData;
         IL2CPP_ENTRY methodsDefinitionsData;
@@ -300,16 +345,9 @@ struct
         {
             StringLiteral StringLiteralStruct;
         }
-    } StringLiteralsStruct;
+    } StringLiterals<bgcolor=cDkGreen>;
     FPos = FTell();
-    struct
-    {
-        while (FPos != Header.stringsTable.off)
-        {
-            StringLiteralData StringLiteralDataEntryStruct;
-            FPos = FTell();
-        }
-    } StringLiteralDataStruct;
+    byte StringLiteralData[Header.strLitData.size];
     struct
     {
         while (FPos != Header.eventDefsData.off)
@@ -318,7 +356,7 @@ struct
             //string theStr;
             FPos = FTell();
         }
-    } StringTable;
+    } StringTable<bgcolor=cGreen>;
     struct
     {
         while (FPos != Header.propertyDefsData.off)
@@ -326,7 +364,7 @@ struct
             EventDefinition EventDefinitionStruct;
             FPos = FTell();
         }
-    } EventDefinitions;
+    } EventDefinitions<bgcolor=cLtPurple>;
     struct
     {
         while (FPos != Header.methodsDefinitionsData.off)
@@ -334,7 +372,7 @@ struct
             PropertyDefinition PropertyDefinitionStruct;
             FPos = FTell();
         }
-    } PropertyDefinitions;
+    } PropertyDefinitions<bgcolor=cDkPurple>;
     struct
     {
         while (FPos != Header.prmDefaultValuesData.off)
@@ -342,7 +380,7 @@ struct
             MethodDefinition MethodDefinitionStruct;
             FPos = FTell();
         }
-    } MethodDefinitions;
+    } MethodDefinitions<bgcolor=cWhite>;
     struct
     {
         /*while (FPos != Header.fldDefaultValueData.off)
@@ -354,7 +392,7 @@ struct
         {
             ParameterDefaultValue ParameterDefaultValueStruct;
         }
-    } ParameterDefaultValues;
+    } ParameterDefaultValues<bgcolor=cLtRed>;
     struct
     {
         /*while (FPos != Header.fldAndPrmDefaultValueData.off)
@@ -366,10 +404,11 @@ struct
         {
             FieldDefaultValue FieldDefaultValueStruct;
         }
-    } FieldDefaultValues;
+    } FieldDefaultValues<bgcolor=cDkBlue>;
     //TODO REPLACE WHEN PROPER STRUCT CAN BE MADE
-    byte FieldAndParameterDefaultValues[Header.fldAndPrmDefaultValueData.size];
-    byte FieldMarshaledSizes[Header.fldMarshalledSizesData.size];
+    byte FieldAndParameterDefaultValues[Header.fldAndPrmDefaultValueData.size]<bgcolor=cRed>;
+    //byte FieldMarshaledSizes[Header.fldMarshalledSizesData.size]<bgcolor=cRed>;
+    uint32 FieldMarshaledSizes[Header.fldMarshalledSizesData.size/4]<bgcolor=cRed>;
     struct
     {
         /*while (FPos != Header.fields.off)
@@ -381,7 +420,7 @@ struct
         {
             ParameterDefinition ParameterDefinitionStruct;
         }
-    } ParameterDefinitions;
+    } ParameterDefinitions<bgcolor=cGray>;
     struct
     {
         while (FPos != Header.genericParams.off)
@@ -389,7 +428,7 @@ struct
             FieldDefinition FieldDefinitionStruct;
             FPos = FTell();
         }
-    } FieldDefinitions;
+    } FieldDefinitions<bgcolor=cYellow>;
     struct
     {
         /*while (FPos != Header.genericParamConstraints.off)
@@ -401,8 +440,8 @@ struct
         {
             GenericParameter GenericParameterStruct;
         }
-    } GenericParameters;
-    uint32 GenericParameterConstraintTypeIndexes[Header.genericParamConstraints.size/4];
+    } GenericParameters<bgcolor=cDkYellow>;
+    uint32 GenericParameterConstraintTypeIndexes[Header.genericParamConstraints.size/4]<bgcolor=cLtYellow>;
     struct
     {
         /*while (FPos != Header.nestedTypes.off)
@@ -414,10 +453,10 @@ struct
         {
             GenericContainer GenericContainerStruct;
         }
-    } GenericContainers;
-    uint32 NestedTypeIndexes[Header.nestedTypes.size/4]; //Divide by 4 bcz that's the size of a typeindex
-    uint32 InterfaceTypeIndexes[Header.interfaces.size/4]; //Divide by 4 bcz that's the size of a typeindex
-    uint32 VTableMethodEncodedIndexes[Header.vTableMethods.size/4]; //Divide by 4 bcz that's the size of an encodedmethodindex
+    } GenericContainers<bgcolor=cLtGray>;
+    uint32 NestedTypeIndexes[Header.nestedTypes.size/4]<bgcolor=cAqua>; //Divide by 4 bcz that's the size of a typeindex
+    uint32 InterfaceTypeIndexes[Header.interfaces.size/4]<bgcolor=cDkAqua>; //Divide by 4 bcz that's the size of a typeindex
+    uint32 VTableMethodEncodedIndexes[Header.vTableMethods.size/4]<bgcolor=cLtAqua>; //Divide by 4 bcz that's the size of an encodedmethodindex
     struct
     {
         /*while (FPos != Header.typeDefs.off)
@@ -429,7 +468,7 @@ struct
         {
             InterfaceOffsetPair InterfaceOffsetPairStruct;
         }
-    } InterfaceOffsetPairs;
+    } InterfaceOffsetPairs<bgcolor=cDkGray>;
     struct
     {
         while (FPos != Header.images.off)
@@ -437,7 +476,7 @@ struct
             TypeDefinition TypeDefinitionStruct;
             FPos = FTell();
         }
-    } TypeDefinitions;
+    } TypeDefinitions<bgcolor=cSilver>;
     //TODO ADD REGCONTEXTENTRIES FOR OLDER
     /*struct
     {
@@ -476,4 +515,69 @@ struct
             FieldReference FieldReferenceStruct;
         }
     } FieldReferences;
-} GLOBAL_METADATA_DAT;
+    //struct
+    //{
+        /*while (FPos != Header.refAssems.off)
+        {
+            FieldReference FieldReferenceStruct;
+            FPos = FTell();
+        }*/
+        //for (i = 0; i < Header.fieldRefs.size/8; i++)
+        //{
+            //AssemblyReference AssemblyReferenceStruct;
+        //}
+    //} AssemblyReferences;
+    uint32 AssemblyReferences[Header.refAssems.size/4];
+    /*if (Header.ver < 29) //TODO
+    {
+        struct
+        {
+            while (FPos != Header.attrTypes.off)
+            {
+                CustomAttributeTypeRange CustomAttributeTypeRangeStruct;
+                FPos = FTell();
+            }
+        } CustomAttributeTypeRanges;
+        int32 CustomAttributeTypeIndexes[Header.attrTypes.size/4]; //Divide by 4 bcz that's the size of a typeindex
+    }
+    else
+    {
+    */
+    byte AttributeData[Header.attrData.size]<bgcolor=cDkGreen>;
+    struct
+    {
+        /*while (FPos != Header.attrDataRange.off)
+        {
+            CustomAttributeDataRange CustomAttributeDataRangeStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.attrDataRange.size/8; i++)
+        {
+            CustomAttributeDataRange CustomAttributeDataRangeStruct;
+        }
+    } CustomAttributeDataRangeRanges<bgcolor=cDkRed>;
+    //}
+    int32 UnresolvedVirtualCallParameterTypeIndexes[Header.unresVCallPrmTypes.size/4]; //Divide by 4 bcz that's the size of a typeindex
+    //int32 UnresolvedVirtualCallParameterRanges[Header.unresVCallPrmRanges.size/4];
+    struct
+    {
+        /*while (FPos != Header.attrDataRange.off)
+        {
+            UnresolvedVirtualCallParameterRange UnresolvedVirtualCallParameterRangeStruct;
+            FPos = FTell();
+        }*/
+        for (i = 0; i < Header.unresVCallPrmRanges.size/8; i++)
+        {
+            UnresolvedVirtualCallParameterRange UnresolvedVirtualCallParameterRangeStruct<bgcolor=cBlue>;
+        }
+    } UnresolvedVirtualCallParameterRanges<bgcolor=cLtPurple>;
+    if (Header.winRuntimeStrings.size)
+    {
+        int32 WindowsRuntimeTypeNames[Header.winRuntimeTypeNames.size/4];
+    }
+    if (Header.ver >= 27 && Header.winRuntimeStrings.size)
+    {
+        byte WindowsRuntimeStrings[Header.winRuntimeStrings.size];
+    }
+    int32 ExportedTypeDefinitionIndexes[Header.exportTypeDefs.size/4]<bgcolor=cBlack>;
+} GLOBAL_METADATA_DAT<bgcolor=cRed>;
