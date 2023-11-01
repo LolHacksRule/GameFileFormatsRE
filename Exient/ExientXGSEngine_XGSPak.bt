@@ -50,7 +50,7 @@ typedef enum <int32> {
 } PakCompressionType;
 
 struct XGSPakFile {
-    struct Header {
+    struct {
         char BigEndianChecker[3]<hidden=true>;
         if (BigEndianChecker == "XPK")
         {
@@ -110,12 +110,12 @@ struct XGSPakFile {
             }
         }
         Printf("\n");
-    } XGSPakHdr<bgcolor = cBlue>;
+    } XGSPakHeader<bgcolor = cBlue>;
     struct FolderBase
     {
         if (terminate != 1)
         {
-            if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
+            if (XGSPakHeader.pakVersion == Version0 || isFTGCustomV1 == 1)
             {
                 int32 nameOff;
                 int32 filesInFolder;
@@ -123,7 +123,7 @@ struct XGSPakFile {
                 int32 filesPos;
                 int32 foldersPos;
             }
-            else if (XGSPakHdr.pakVersion <= Version2 && XGSPakHdr.pakVersion != Version0)
+            else if (XGSPakHeader.pakVersion <= Version2 && XGSPakHeader.pakVersion != Version0)
             {
                 if (isABSW_HighResConsole == 1)
                 {
@@ -155,8 +155,8 @@ struct XGSPakFile {
                 }
             }
         }
-    } XGSPakFolderBase[XGSPakHdr.folderCnt]<bgcolor = cRed>;
-    if (XGSPakHdr.fileCnt == 0)
+    } XGSPakFolderBase[XGSPakHeader.folderCnt]<bgcolor = cRed>;
+    if (XGSPakHeader.fileCnt == 0)
     {
         terminate = 1;
         Printf("This PAK file is empty!");
@@ -165,7 +165,7 @@ struct XGSPakFile {
     {
         struct ContentMetaBase
         {
-            if (XGSPakHdr.pakVersion == Version0 || isFTGCustomV1 == 1)
+            if (XGSPakHeader.pakVersion == Version0 || isFTGCustomV1 == 1)
             {
                 int32 nameOff;
                 int32 dFileSize;
@@ -174,7 +174,7 @@ struct XGSPakFile {
                 time_t timestamp; //Oddly enough it's not present in ABGO v187
                 int32 cFileSize;
             }
-            else if (XGSPakHdr.pakVersion >= Version1)
+            else if (XGSPakHeader.pakVersion >= Version1)
             {
                 if (isABSW_HighResConsole == 1)
                 {
@@ -199,30 +199,42 @@ struct XGSPakFile {
                     int32 dmy2;
                 }
             }
-        } XGSPakContentMeta[XGSPakHdr.fileCnt]<bgcolor = cBlue>;
+        } XGSPakContentMeta[XGSPakHeader.fileCnt]<bgcolor = cBlue>;
     }
     if (terminate != 1)
     {
-        struct PakStringContent
+        struct
         {
             //Sub 1 to fix a bug with getting another string
-            for (i = 0; i < (XGSPakHdr.fileCnt + XGSPakHdr.folderCnt) -1; i++)
+            //for (i = 0; i < (XGSPakHeader.fileCnt + XGSPakHeader.folderCnt) -1; i++)
+            /*for (i = 0; i < (XGSPakHeader.folderCnt - 1); i++)
             {
-                struct PakString
+                struct
                 {
+                    
+                    string theFolderName;
+                    Printf("%s/\n", theFolderName);
+                } PakFolderString;
+            }*/
+            for (i = 0; i < (XGSPakHeader.fileCnt + XGSPakHeader.folderCnt) -1; i++)
+            //for (i = 0; i < XGSPakHeader.fileCnt; i++)
+            {
+                struct
+                {
+                    
                     string theContentName;
                     Printf("%s\n", theContentName);
-                } pakStr;
+                } PakString;
             }
-        } pakStrTbl<bgcolor = cGreen>;
+        } PakStringContent<bgcolor = cGreen>;
         struct PakContent
         {
             FSeek(XGSPakContentMeta[0].fileOffset);
-            if (XGSPakHdr.pakVersion == Version2)
+            if (XGSPakHeader.pakVersion == Version2)
             {
-                if (XGSPakHdr.pakCompressionFlag == RawContent)
+                if (XGSPakHeader.pakCompressionFlag == RawContent)
                 {
-                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                    for (i = 0; i < XGSPakHeader.fileCnt; i++)
                     {
                         struct TheRawFile
                         {
@@ -231,9 +243,9 @@ struct XGSPakFile {
                         } theRaw;
                     }
                 }
-                else if (XGSPakHdr.pakCompressionFlag == ZLib)
+                else if (XGSPakHeader.pakCompressionFlag == ZLib)
                 {
-                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                    for (i = 0; i < XGSPakHeader.fileCnt; i++)
                     {
                     //isBigEndian == false;
                         struct ZlibCompressedFile
@@ -247,9 +259,9 @@ struct XGSPakFile {
                         //LittleEndian();
                     }
                 }
-                else if (XGSPakHdr.pakCompressionFlag == LZ4)
+                else if (XGSPakHeader.pakCompressionFlag == LZ4)
                 {
-                    for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                    for (i = 0; i < XGSPakHeader.fileCnt; i++)
                     {
                     //isBigEndian == false;
                         struct LZ4CompressedFile
@@ -261,10 +273,10 @@ struct XGSPakFile {
                     }
                 }
             }
-            else if (XGSPakHdr.pakVersion <= Version1 || isFTGCustomV1 == 1) //Work with V0 as well so let's save code
+            else if (XGSPakHeader.pakVersion <= Version1 || isFTGCustomV1 == 1) //Work with V0 as well so let's save code
             {
                 //byte paddingByte;
-                for (i = 0; i < XGSPakHdr.fileCnt; i++)
+                for (i = 0; i < XGSPakHeader.fileCnt; i++)
                 {
                     struct V0_V1_File
                     {

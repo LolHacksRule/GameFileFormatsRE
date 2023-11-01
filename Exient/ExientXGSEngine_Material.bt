@@ -11,9 +11,10 @@
 //   History: 
 //------------------------------------------------
 
-local uint i <hidden = true> = 0;
+//local uint i <hidden = true> = 0;
+#include "../LHR/Common.bt"
 
-struct XGSMaterial
+struct
 {
     byte BigEndianChecker<hidden=true>;
     if (BigEndianChecker == 0x00)
@@ -24,22 +25,32 @@ struct XGSMaterial
     int32 ver;
     if (ver > 21 && ver != 22)
     {
-        int32 unk[2];
+        int32 unk[2]; //05 + 09 = Metal, 02 + 04 = GLSL_ES (iOS)
     }
     int32 entryCount;
-    struct StringEntries
+    struct
     {
         for (i; i < entryCount; i++)
         {
-            struct StringEntry
+            struct
             {
                 char entry[64];
-            } entry;
+            } StringEntry;
         }
-    } str;
-    int32 unk;
+    } StringEntries;
+    //if (ver > 22)
+    {
+        //int32 unk;
+        //int16 unk2;
+        //byte unk3[2];
+    }
+    /*int32 unk;
     int16 unk2;
     byte unk3[2];
+    if (ver == 18)
+    {
+        float unkflts[372];
+    }
     if (ver == 22)
     {
         float unknownFloats[481];
@@ -47,19 +58,77 @@ struct XGSMaterial
     if (ver == 6)
     {
         float unknownFloats[88];
+    }*/
+    //else
+    {
+        struct
+        {
+            for (i = 0; i < entryCount; i++)
+            {
+                struct
+                {
+                    
+                    uint32 dsz;
+                    byte data[dsz];
+                    /*uint16 entries;
+                    byte unk2[2];
+                    struct
+                    {
+                        Vector4_F32 v4f;
+                        uint32 unk;
+                    } Entry;*/
+                } UnknownDataEntry;
+            }
+        } UnknownData;
     }
     int32 shaderCount;
-    struct ShaderBinaries
+    struct
     {
         for (i = 0; i < shaderCount; i++)
         {
-            struct ShaderBin
+            struct
             {
                 int32 shaderSize;
-                int32 unknown[7];
-                byte shader[unknown[2]];
-            }  ShaderBinary;
+                if (ver != 6) //only tested FTG idk
+                {
+                    int32 unknown[7];
+                    byte shader[unknown[2]];
+                }
+                else
+                {
+                    int32 unknown[5];
+                    byte shader[shaderSize-16];
+                }
+            } ShaderBinary;
         }
-    } ShaderBins;
-    //int32 shaderSize;
-} XMAT;
+    } ShaderBinaries;
+    struct //WIP!
+    {
+        uint32 unknownDatas;
+        if (ver != 6) //only tested FTG idk
+        {
+            int32 neg1;
+        }
+        for (i = 0; i < unknownDatas; i++)
+        {
+            struct
+            {
+                int32 size;
+                if (ver == 6)
+                {
+                    int32 unk;
+                }
+                byte shader[size];
+                uint32 zero;
+                if (ver == 6) //only tested FTG idk
+                {
+                    uint32 unk2[2];
+                }
+                else
+                {
+                    uint16 unk3[2];
+                }
+            } UnknownData2Entry;
+        }
+    } UnknownData2;
+} XGSMaterial;

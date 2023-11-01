@@ -9,8 +9,8 @@ local int i <hidden=true> = 0;
 local int isV1 <hidden=true> = 0;
 //Set these if you want close-to-accurate X and Y offsets to use in image editors like PVRTexTool, this is split in files so it's not possible to detect, 2048x4096, 2048x2048, 1024x1024, 512x512, 256x256, 128x128 would probably be recommended.
 //ATLAS 1
-local int atlas1ManualTexWidth = 0;
-local int atlas1ManualTexHeight = 0;
+local int atlas1ManualTexWidth = 1024;
+local int atlas1ManualTexHeight = 4096;
 //ATLAS 2
 local int atlas2ManualTexWidth = 0;
 local int atlas2ManualTexHeight = 0;
@@ -25,9 +25,9 @@ struct XGSTextureAtlas
     {
         isV1 = 1;
     }
-    int32     subTextureCount; //How many %s_x_of_x textures are used, cannot be 0.
+    int32     subTextureCount; //How many %s_%i_of_%i textures are used, cannot be 0.
     int32     texCnt;
-    int32     hash;//No effect when modifying, maybe it's a timestamp?
+    int32     hash; //No effect when modifying, maybe it's a timestamp?
     if (!isV1)
     {
         char    atlasName[32];
