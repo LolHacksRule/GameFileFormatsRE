@@ -92,14 +92,24 @@ typedef struct GearEntry
     {
         uint32 unk2;
         uint32 jumpPOW;
-        byte unk3[16];
+        uint16 unk3;
+        byte unk4[14];
+        //Printf("%s: %i\n", multiLocs.itemDescMsg.stringEntry, unk4[3]);
     }
 };
 
 typedef struct BattleCardEntry
 {
     MultiLocMessages multiLocs;
-    byte unk[24];
+    uint32 thirtyfour; //Always 34, why, is that what a Battle Card is?
+    uint32 shopPrice;
+    byte unk2[4];
+    uint32 amount;
+    byte amount2;
+    uint16 zero;
+    byte starPoints;
+    //Printf("%s: %x\n", multiLocs.itemDescMsg.stringEntry, unk2[0]);
+    byte unk3[4];
 };
 
 typedef struct EnemyEntry
@@ -130,7 +140,7 @@ typedef struct EnemyEntry
 typedef struct ItemData
 {
     FPos = FTell();
-    while (FPos != hdr.unkOff[0])
+    while (FPos != Header.unkOff[0])
     {
         ItemEntry iEntry;
         FPos = FTell();
@@ -139,7 +149,7 @@ typedef struct ItemData
 
 typedef struct GearData
 {
-    while (FPos != hdr.unkDataOff2[0])
+    while (FPos != Header.unkDataOff2[0])
     {
         GearEntry gEntry;
         FPos = FTell();
@@ -148,7 +158,7 @@ typedef struct GearData
 
 typedef struct BattleCardData
 {
-    while (FPos != hdr.unkDataOff3[0])
+    while (FPos != Header.unkDataOff3[0])
     {
         BattleCardEntry bEntry;
         FPos = FTell();
@@ -157,35 +167,73 @@ typedef struct BattleCardData
 
 typedef struct EnemyData
 {
-    while (FPos != hdr.unkDataOff4[0])
+    while (FPos != Header.unkDataOff4[0])
     {
         EnemyEntry eEntry;
         FPos = FTell();
     }
 };
 
-struct ML5Engine_Database
+struct
 {
-    struct Header
+    struct
     {
-        uint32 itemDataOff;
-        uint32 unkOff[2];
-        uint32 gearDataOff;
-        uint32 unkDataOff2[2];
-        uint32 battleCardDataOff;
-        uint32 unkDataOff3[2];
-        uint32 enemyDataOff;
-        uint32 unkDataOff4[4];
-    } hdr;
-    ItemData iData;
-    //byte unkData[88];
-    //byte unkData2[276];
-    FSeek(hdr.gearDataOff);
-    GearData gData;
-    FSeek(hdr.battleCardDataOff);
-    BattleCardData sData;
-    //byte unkData3[hdr.unkDataOff2[1]-hdr.unkDataOff2[0]];
-    //byte unkData3[hdr.unkDataOff2[1]-hdr.unkDataOff2[0]];
-    FSeek(hdr.enemyDataOff);
-    EnemyData eData;
-} DB_DAT;
+        uint32 itemDataOff<bgcolor=cDkGreen>; //56: MLPJ, 64: ML3DX, 100: ML1DX
+        uint32 unkOff[2]<bgcolor=cRed>;
+        uint32 gearDataOff<bgcolor=cLtGreen>;
+        uint32 unkDataOff2[2]<bgcolor=cRed>;
+        if (itemDataOff > 56)
+        {
+            uint32 badgeDataOff<bgcolor=cPurple>;
+        }
+        else
+        {
+            uint32 battleCardDataOff<bgcolor=cPurple>;
+        }
+        uint32 unkDataOff3[2]<bgcolor=cRed>;
+        if (itemDataOff == 100)
+        {
+            uint32 accessoryDataOff;
+            uint32 unkDataOffML1DX[2]<bgcolor=cRed>;
+            uint32 eventItemDataOff;
+            uint32 unkDataOffML1DX2[2]<bgcolor=cRed>;
+            uint32 beanDataOff;
+            uint32 unkDataOffML1DX3[2]<bgcolor=cRed>;
+            uint32 specialEffectDataOff[3];
+            uint32 unkDataOffML1DX4[2]<bgcolor=cRed>;
+        }
+        if (itemDataOff == 64)
+        {
+            uint32 effectDataOff;
+            uint32 badgeEffectDataOff;
+            uint32 unkDataOffML3DX1[3];
+        }
+        uint32 enemyDataOff<bgcolor=cLtPurple>;
+        if (itemDataOff == 56)
+        {
+            uint32 unkDataOff4[4]<bgcolor=cRed>;
+        }
+        else
+        {
+            uint32 unkDataOffNonML5;
+        }
+    } Header;
+    FSeek(Header.itemDataOff);
+    ItemData ItemDataStruct<bgcolor=cDkGreen>;
+    byte UnknownData1[Header.unkOff[1]-Header.unkOff[0]]<bgcolor=cRed>; //Unicode Glyph cache?
+    byte UnknownData2[Header.gearDataOff-Header.unkOff[1]]<bgcolor=cRed>; //Unicode Glyph cache?
+    FSeek(Header.gearDataOff);  
+    GearData GearDataStruct<bgcolor=cLtGreen>;
+    byte UnknownData3[Header.unkDataOff2[1]-Header.unkDataOff2[0]]<bgcolor=cRed>; //Unicode JP Glyph cache?
+    byte UnknownData4[Header.battleCardDataOff-Header.unkDataOff2[1]]<bgcolor=cRed>; //Glyph cache?
+    FSeek(Header.battleCardDataOff);
+    BattleCardData BattleCardStruct<bgcolor=cPurple>;
+    byte UnknownData5[Header.unkDataOff3[1]-Header.unkDataOff3[0]]<bgcolor=cDkRed>;
+    byte UnknownData6[Header.enemyDataOff-Header.unkDataOff3[1]]<bgcolor=cDkRed>;
+    FSeek(Header.enemyDataOff);
+    EnemyData EnemyDataStruct<bgcolor=cLtPurple>;
+    byte UnknownData7[Header.unkDataOff4[1]-Header.unkDataOff4[0]]<bgcolor=cDkRed>;
+    byte UnknownData8[Header.unkDataOff4[2]-Header.unkDataOff4[1]]<bgcolor=cDkRed>;
+    byte UnknownData9[Header.unkDataOff4[3]-Header.unkDataOff4[2]]<bgcolor=cDkRed>;
+    byte UnknownData10[Header.unkDataOff4[3]-Header.unkDataOff4[2]]<bgcolor=cDkRed>;
+} ML5Engine_Database;

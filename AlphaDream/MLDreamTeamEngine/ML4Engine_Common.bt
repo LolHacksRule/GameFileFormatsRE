@@ -28,3 +28,11 @@ typedef enum <byte>
     ETC1,
     ETC1A4,
 } ML4Engine_TexFmt;
+
+typedef enum <byte>
+{
+    NoFlip,
+    XFlip,
+    YFlip,
+    XYFlip,
+} ML4Engine_Flip;

@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct FileEntry
+{
+    uint32 offset;
+    uint32 size;
+    uint32 CRC;
+    uint32 nameOff;
+    if (ReadByte() == 0x0)
+    {
+        byte dmy[40];
+    }
+};
+
+struct ML5Engine_Archive
+{
+    LittleEndian();
+    uint32 magic;
+    if (magic == 288638786) //BG4 with 11 byte
+    {
+        Printf("Please decompress this file first. (BLZ)");
+        break;
+    }
+    uint16 ver;
+    uint16 files;
+    uint32 dataOffset;
+    uint16 unk[2];
+    FileEntry file[files]<optimize=false>;
+} BG4;

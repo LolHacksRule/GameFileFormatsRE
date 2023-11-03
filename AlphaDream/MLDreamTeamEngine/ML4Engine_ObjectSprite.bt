@@ -114,40 +114,40 @@ typedef struct Header
     byte unk4[64];
 };
 
-struct ObjectSprite
+struct
 {
     LittleEndian();
     Header ObjSpriteHdr;
-    Animation anim[ObjSpriteHdr.animations]<optimize=false>;
+    Animation Animations[ObjSpriteHdr.animations]<optimize=false>;
     FPos = FTell();
     if (ObjSpriteHdr.partsOff == 0)
     {
         ImageInfo unk;
         FSeek(ObjSpriteHdr.framesOff); //For now, idk what those values are
     }
-    Frame frame[totalFrames]<optimize=false>;
+    Frame Frames[totalFrames]<optimize=false>;
     if (ObjSpriteHdr.partsOff > 0)
     {
         FSeek(ObjSpriteHdr.partsOff);
         FPos = FTell();
-        struct Parts
+        struct
         {
             while (FPos < ObjSpriteHdr.possiblyAnimXFormationsOff) 
             {
                 Part part<optimize=false>;
                 FPos = FTell();
             }
-        } parts;
+        } Parts;
     }
     FPos = FTell();
     if (FPos != EOF) //For now, replace with possiblyAnimXFormationsOff or frameTransOff or partTransOff
     {
         FSeek(ObjSpriteHdr.frameTransOff);
-        FrameXForm framexform;
+        FrameXForm FrameTransform;
     }
     if (isML3R)
     {
         FSeek(ObjSpriteHdr.animFloatsOff);
         ML3R_Unknown unknown;
     }
-} xOBJ_DAT_UNCOMP;
+} ObjectSprite;
