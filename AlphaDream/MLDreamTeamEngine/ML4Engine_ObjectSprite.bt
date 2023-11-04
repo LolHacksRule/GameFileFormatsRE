@@ -20,6 +20,7 @@
 local int totalFrames <hidden=true> = 0;
 local int totalParts <hidden=true> = 0;
 local int isML3R <hidden=true> = 0;
+local int isML1DX <hidden=true> = 0;
 
 typedef struct Animation
 {
@@ -30,10 +31,10 @@ typedef struct Animation
     uint16 animXFormEntryOff;
     if (isML3R)
     {
-        uint16 unk;
-        uint16 unk2;
-        uint16 unk3;
-        uint16 unk4;
+        int16 unk;
+        int16 unk2;
+        int16 unk3;
+        int16 unk4;
     }
 };
 
@@ -73,8 +74,11 @@ typedef struct Part
     int16 unk<bgcolor=cRed>;
     uint16 gfxFileOff<bgcolor=cPurple>;
     local uint16 trueGfxFileOff <hidden=false> = gfxFileOff * 64;
-    int16 x;
-    int16 y;
+    if (!isML3R)
+    {
+        int16 x;
+        int16 y;
+    }
 };
 
 typedef struct ImageInfo
@@ -144,8 +148,8 @@ typedef struct Header
     if (fSize < ReadInt()) //kinda
     {
         isML3R = 1;
-        uint32 unk<bgcolor=cRed>;
-        uint32 unk2<bgcolor=cRed>;
+        uint32 ML3R_unk<bgcolor=cRed>; //is it u32
+        uint32 ML3R_unk2<bgcolor=cRed>; //is it u32
     }
     uint32 framesOff<bgcolor=cDkBlue>;
     uint32 partsOff<bgcolor=cDkPurple>;
