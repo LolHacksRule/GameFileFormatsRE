@@ -72,9 +72,44 @@ typedef struct Part
 
 typedef struct ImageInfo
 {
-    int16 unk[2];
+    //int16 unk[2]; //first one is most likely images
+    int16 images;
+    int16 unknowns;
     int16 width;
     int16 height;
+    //uint16 intUnkDatas;
+    /*if (ObjectSpriteHeader.graphicsfmtid == 0)
+    {
+        byte unknownDatas[(unknowns*21)-2];
+    }
+    if (ObjectSpriteHeader.graphicsfmtid == 4)
+    {
+        byte unknownDatas[unknowns*28];
+    }*/
+    //uint16 unk; 
+    while (FPos < ObjectSpriteHeader.framesOff-(images*8)) //taken from 00002.bin, 00062.bin, 000434.bin of MObj of ML4, either 2, 4 or 6 bytes per entry
+    {
+        struct
+        {
+            //byte unkchunk;
+            //int16 unk2;
+            //int16 unk3;
+            //int16 x;
+            //int16 y;
+            //int16 unk2;
+            //int16 w;
+            //int16 h;
+            byte unk;
+        } ImageDef<hidden=true, bgcolor=cRed>;
+        FPos = FTell();
+    }
+    struct //def correct
+    {
+        int16 x;
+        int16 y;
+        int16 w;
+        int16 h;
+    } ImagePlacementDefinitions[images]<bgcolor=cGreen>;
 };
 
 typedef struct ML3R_Unknown
@@ -117,22 +152,22 @@ typedef struct Header
 struct
 {
     LittleEndian();
-    Header ObjSpriteHdr;
-    Animation Animations[ObjSpriteHdr.animations]<optimize=false>;
+    Header ObjectSpriteHeader;
+    Animation Animations[ObjectSpriteHeader.animations]<optimize=false>;
     FPos = FTell();
-    if (ObjSpriteHdr.partsOff == 0)
+    if (ObjectSpriteHeader.partsOff == 0)
     {
-        ImageInfo unk;
-        FSeek(ObjSpriteHdr.framesOff); //For now, idk what those values are
+        ImageInfo ImageInfoData;
+        FSeek(ObjectSpriteHeader.framesOff); //For now, idk what those values are
     }
     Frame Frames[totalFrames]<optimize=false>;
-    if (ObjSpriteHdr.partsOff > 0)
+    if (ObjectSpriteHeader.partsOff > 0)
     {
-        FSeek(ObjSpriteHdr.partsOff);
+        FSeek(ObjectSpriteHeader.partsOff);
         FPos = FTell();
         struct
         {
-            while (FPos < ObjSpriteHdr.possiblyAnimXFormationsOff) 
+            while (FPos < ObjectSpriteHeader.possiblyAnimXFormationsOff) 
             {
                 Part part<optimize=false>;
                 FPos = FTell();
@@ -142,12 +177,12 @@ struct
     FPos = FTell();
     if (FPos != EOF) //For now, replace with possiblyAnimXFormationsOff or frameTransOff or partTransOff
     {
-        FSeek(ObjSpriteHdr.frameTransOff);
+        FSeek(ObjectSpriteHeader.frameTransOff);
         FrameXForm FrameTransform;
     }
     if (isML3R)
     {
-        FSeek(ObjSpriteHdr.animFloatsOff);
+        FSeek(ObjectSpriteHeader.animFloatsOff);
         ML3R_Unknown unknown;
     }
 } ObjectSprite;
