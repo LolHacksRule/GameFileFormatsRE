@@ -11,30 +11,58 @@
 //   History: 
 //------------------------------------------------
 
-typedef struct FileEntry
+#include "../../LHR/Common.bt"
+
+typedef struct FileMeta
 {
-    uint32 offset;
-    uint32 size;
-    uint32 CRC;
-    uint32 nameOff;
-    if (ReadByte() == 0x0)
+    uint32 offset<bgcolor=cRed>;
+    local uint32 trueOffset = (offset & 0x7fffffff);
+    uint32 size<bgcolor=cPurple>;
+    local uint32 trueSize = (size & 0x7fffffff);
+    uint32 fileNameCRC<bgcolor=cBlue>;
+    short fileNameOff<bgcolor=cGreen>;
+    FPos = FTell();
+    FSeek(stringTablePos+fileNameOff);
+    string fileName<bgcolor=cGreen>;
+    Printf("%X\t|%s|%i|%X|\n", offset, fileName, trueSize, fileNameCRC);
+    /*FSeek(Header.dataOffset+trueOffset);
+    if (trueSize > 0)
     {
-        byte dmy[40];
-    }
+        byte fileData[trueSize]<bgcolor=cRed>;
+    }*/
+    FSeek(FPos);
 };
 
 struct ML5Engine_Archive
 {
     LittleEndian();
-    uint32 magic;
-    if (magic == 288638786) //BG4 with 11 byte
+    struct
     {
-        Printf("Please decompress this file first. (BLZ)");
-        break;
+        uint32 magic<bgcolor=cYellow>;
+        if (magic == 288638786) //BG4 with 11 byte
+        {
+            Printf("Please decompress this file first. (BLZ)");
+            break;
+        }
+        int16 ver<bgcolor=cLtPurple>;
+        int16 files<bgcolor=cPurple>;
+        int32 dataOffset<bgcolor=cRed>;
+        int16 fileEntriesDerived<bgcolor=cRed>;
+        int16 fileEntriesMult<bgcolor=cRed>;
+    } Header;
+    local uint32 stringTablePos = 16+(Header.files*14);
+    FileMeta FileMetaEntry[Header.files]<optimize=false>;
+    for (i = 0; i < Header.files; i++)
+    {
+        FSeek(Header.dataOffset); //Todo: check
+        if (FileMetaEntry[i].trueSize != 0)
+        {
+            FSeek(FileMetaEntry[i].trueOffset); //Todo: check
+            struct
+            {
+                local string fileDataFileName = FileMetaEntry[i].fileName;
+                byte data[FileMetaEntry[i].size]<bgcolor=cLtGreen>;
+            } FileDataEntry;
+        }
     }
-    uint16 ver;
-    uint16 files;
-    uint32 dataOffset;
-    uint16 unk[2];
-    FileEntry file[files]<optimize=false>;
 } BG4;
