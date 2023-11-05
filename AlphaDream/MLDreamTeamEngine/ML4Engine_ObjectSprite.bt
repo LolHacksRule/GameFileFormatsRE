@@ -50,7 +50,7 @@ typedef struct FrameXForm //Check
 {
     Vector2_F32 scale;
     Vector2_F32 rot;
-    uint16 trans[2];
+    int16 trans[2];
 };
 
 typedef struct PartXForm //Check
@@ -68,16 +68,56 @@ typedef struct Frame
 
 typedef struct Part
 {
-    byte partSizeID;
-    byte flip;
+    ML4Engine_PartSizeType partSizeID;
+    /*local uint32 targetBPP<hidden=true> = 0;
+    if (partSizeID == 0)
+    {
+        targetBPP = 128;
+    }
+    else if (partSizeID == 1 || partSizeID == 5 || partSizeID == 9)
+    {
+        targetBPP = 512*8;
+    }
+    else if (partSizeID == 2)
+    {
+        targetBPP = 2048*2;
+    }
+    else if (partSizeID == 3)
+    {
+        targetBPP = 8192;
+    }
+    else if (partSizeID == 4 || partSizeID == 8)
+    {
+        targetBPP = 256;
+    }
+    else if (partSizeID == 6 || partSizeID == 10)
+    {
+        targetBPP = 1024*4;
+    }
+    else if (partSizeID == 7 || partSizeID == 11) //?
+    {
+        targetBPP = 4096;
+    }
+    else if (partSizeID > 11) //?
+    {
+        targetBPP = 8192;
+    }
+    //Printf("%i\n", targetBPP);*/
+    ML4Engine_Flip flip;
     uint16 partXFormationsEntryOff;
     int16 unk<bgcolor=cRed>;
     uint16 gfxFileOff<bgcolor=cPurple>;
-    local uint16 trueGfxFileOff <hidden=false> = gfxFileOff * 64;
+    //local uint32 trueGfxFileOff<hidden=false> = (gfxFileOff * targetBPP/32);
+    //Printf("%s\t%s\t%i\t\t\t%i\t%i", EnumToString(partSizeID), EnumToString(flip), partXFormationsEntryOff, unk, trueGfxFileOff);
     if (!isML3R && !isML1DX)
     {
         int16 x;
         int16 y;
+        //Printf("\t\t%i\t%i\n", x, y);
+    }
+    else
+    {
+        //Printf("\n");
     }
 };
 
@@ -157,7 +197,7 @@ typedef struct Header
     uint32 partTransOff<bgcolor=cLtPurple>;
     if (isML3R)
     {
-        uint32 animFloatsOff<bgcolor=cRed>;
+        uint32 ML3RUnknownDataOff<bgcolor=cRed>;
         uint32 zero<bgcolor=cRed>;
     }
     byte unk4[64]<bgcolor=cRed>;
@@ -177,37 +217,56 @@ struct
     if (ObjectSpriteHeader.partsOff == 0)
     {
         ImageInfo ImageInfoData<bgcolor=cPurple>;
-        FSeek(ObjectSpriteHeader.framesOff); //For now, idk what those values are
+        FSeek(ObjectSpriteHeader.framesOff);
     }
-    Frame Frames[totalFrames]<optimize=false, bgcolor=cDkBlue>;
+    //Frame Frames[totalFrames]<optimize=false, bgcolor=cDkBlue>;
     if (ObjectSpriteHeader.partsOff > 0)
     {
         FSeek(ObjectSpriteHeader.partsOff);
         FPos = FTell();
         struct
         {
+            //Printf("Part Size ID\t\tFlip\t\tPart Transformation Offset\tUnknown\tGraphics File Offset\tX Offset\t Y Offset\n");
             while (FPos < ObjectSpriteHeader.possiblyAnimXFormationsOff) 
             {
-                Part part<optimize=false, bgcolor=cDkPurple>;
+                Part PartStruct<optimize=false, bgcolor=cDkPurple>;
                 FPos = FTell();
             }
         } Parts;
     }
-    //FPos = FTell();
-    byte AnimTransformData[ObjectSpriteHeader.frameTransOff - ObjectSpriteHeader.possiblyAnimXFormationsOff];
-    byte FrameTransformData[ObjectSpriteHeader.partTransOff - ObjectSpriteHeader.frameTransOff];
-    if (isML3R && !isML1DX)
+    FPos = FTell();
+    if (FPos != ObjectSpriteHeader.fSize)
     {
-        if (ObjectSpriteHeader.animFloatsOff != 0)
+        if (ObjectSpriteHeader.possiblyAnimXFormationsOff != ObjectSpriteHeader.frameTransOff)
         {
-            byte PartTransformData[ObjectSpriteHeader.animFloatsOff - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
-            FSeek(ObjectSpriteHeader.animFloatsOff);
+            byte AnimTransformData[ObjectSpriteHeader.frameTransOff - ObjectSpriteHeader.possiblyAnimXFormationsOff];
         }
-        ML3R_Unknown ML3RUnknownData<bgcolor=cDkRed>;
-    }
-    else
-    {
-        byte PartTransformData[ObjectSpriteHeader.fSize - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+        //byte FrameTransformData[ObjectSpriteHeader.partTransOff - ObjectSpriteHeader.frameTransOff];
+        if (ObjectSpriteHeader.frameTransOff != ObjectSpriteHeader.partTransOff) //Part trans go first
+        {
+            struct
+            {
+                while (FPos < ObjectSpriteHeader.partTransOff) 
+                {
+                    FrameXForm FrameTransform;
+                    FPos = FTell();
+                }
+            } FrameTransforms<bgcolor=cBlue>;
+            //FrameXForm FrameTransforms[ObjectSpriteHeader.animations]<bgcolor=cBlue>; //For now we're using the above unless we can determine the amount of frame transforms
+        }
+        if (isML3R || isML1DX)
+        {
+            if (ObjectSpriteHeader.ML3RUnknownDataOff != 0)
+            {
+                byte PartTransformData[ObjectSpriteHeader.ML3RUnknownDataOff - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+                FSeek(ObjectSpriteHeader.ML3RUnknownDataOff);
+            }
+            ML3R_Unknown ML3RUnknownData<bgcolor=cDkRed>;
+        }
+        else
+        {
+            byte PartTransformData[ObjectSpriteHeader.fSize - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+        }
     }
     /*if (FPos != ObjectSpriteHeader.fSize)
     {
@@ -230,7 +289,7 @@ struct
     }
     if (isML3R)
     {
-        FSeek(ObjectSpriteHeader.animFloatsOff);
+        FSeek(ObjectSpriteHeader.ML3RUnknownDataOff);
         ML3R_Unknown unknown;
     }*/
 } ObjectSprite;

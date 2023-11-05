@@ -13,26 +13,42 @@
 
 typedef enum <byte>
 {
-    RGBA8888,
-    RGB8888,
-    RGBA5551,
-    RGB565,
-    RGBA4444,
-    LA88,
-    UNKNOWN_88,
-    L8,
-    A8,
-    LA44,
-    L4,
-    A4,
-    ETC1,
-    ETC1A4,
+    ML4Engine_TexFmt_RGBA8888,
+    ML4Engine_TexFmt_RGB8888,
+    ML4Engine_TexFmt_RGBA5551,
+    ML4Engine_TexFmt_RGB565,
+    ML4Engine_TexFmt_RGBA4444,
+    ML4Engine_TexFmt_LA88,
+    ML4Engine_TexFmt_UNKNOWN_88,
+    ML4Engine_TexFmt_L8,
+    ML4Engine_TexFmt_A8,
+    ML4Engine_TexFmt_LA44,
+    ML4Engine_TexFmt_L4,
+    ML4Engine_TexFmt_A4,
+    ML4Engine_TexFmt_ETC1,
+    ML4Engine_TexFmt_ETC1A4,
 } ML4Engine_TexFmt;
 
 typedef enum <byte>
 {
-    NoFlip,
-    XFlip,
-    YFlip,
-    XYFlip,
+    ML4Engine_Flip_NoFlip,
+    ML4Engine_Flip_XFlip,
+    ML4Engine_Flip_YFlip,
+    ML4Engine_Flip_XYFlip,
 } ML4Engine_Flip;
+
+typedef enum <byte>
+{
+    ML4Engine_PartSizeType_8x8,
+    ML4Engine_PartSizeType_16x16,
+    ML4Engine_PartSizeType_32x32,
+    ML4Engine_PartSizeType_64x64,
+    ML4Engine_PartSizeType_16x8,
+    ML4Engine_PartSizeType_32x8_MAYBE,
+    ML4Engine_PartSizeType_32x16,
+    ML4Engine_PartSizeType_64x32,
+    ML4Engine_PartSizeType_8x16,
+    ML4Engine_PartSizeType_8x32,
+    ML4Engine_PartSizeType_16x32,
+    ML4Engine_PartSizeType_64x64_MAYBE,
+} ML4Engine_PartSizeType;
