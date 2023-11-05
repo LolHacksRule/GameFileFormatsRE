@@ -50,5 +50,5 @@ typedef enum <byte>
     ML4Engine_PartSizeType_8x16,
     ML4Engine_PartSizeType_8x32,
     ML4Engine_PartSizeType_16x32,
-    ML4Engine_PartSizeType_64x64_MAYBE,
+    ML4Engine_PartSizeType_32x64_MAYBE,
 } ML4Engine_PartSizeType;
