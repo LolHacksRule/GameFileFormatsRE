@@ -44,11 +44,12 @@ typedef enum <byte>
     ML4Engine_PartSizeType_32x32,
     ML4Engine_PartSizeType_64x64,
     ML4Engine_PartSizeType_16x8,
-    ML4Engine_PartSizeType_32x8_MAYBE,
+    ML4Engine_PartSizeType_32x8,
     ML4Engine_PartSizeType_32x16,
     ML4Engine_PartSizeType_64x32,
     ML4Engine_PartSizeType_8x16,
     ML4Engine_PartSizeType_8x32,
     ML4Engine_PartSizeType_16x32,
-    ML4Engine_PartSizeType_32x64_MAYBE,
+    ML4Engine_PartSizeType_32x64,
+    //Anything above is unknown
 } ML4Engine_PartSizeType;
