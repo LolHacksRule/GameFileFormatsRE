@@ -74,7 +74,7 @@ typedef struct Part
     int16 unk<bgcolor=cRed>;
     uint16 gfxFileOff<bgcolor=cPurple>;
     local uint16 trueGfxFileOff <hidden=false> = gfxFileOff * 64;
-    if (!isML3R)
+    if (!isML3R && !isML1DX)
     {
         int16 x;
         int16 y;
@@ -129,7 +129,6 @@ typedef struct ImageInfo
 
 typedef struct ML3R_Unknown
 {
-    BigEndian();
     while (FPos < EOF) 
     {
         byte floatVal;
@@ -162,6 +161,11 @@ typedef struct Header
         uint32 zero<bgcolor=cRed>;
     }
     byte unk4[64]<bgcolor=cRed>;
+    if (ReadInt() == -16777216)
+    {
+        isML1DX = 1;
+        byte ML1DXPad[4];
+    }
 };
 
 struct
@@ -192,7 +196,19 @@ struct
     //FPos = FTell();
     byte AnimTransformData[ObjectSpriteHeader.frameTransOff - ObjectSpriteHeader.possiblyAnimXFormationsOff];
     byte FrameTransformData[ObjectSpriteHeader.partTransOff - ObjectSpriteHeader.frameTransOff];
-    byte PartTransformData[ObjectSpriteHeader.fSize - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+    if (isML3R && !isML1DX)
+    {
+        if (ObjectSpriteHeader.animFloatsOff != 0)
+        {
+            byte PartTransformData[ObjectSpriteHeader.animFloatsOff - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+            FSeek(ObjectSpriteHeader.animFloatsOff);
+        }
+        ML3R_Unknown ML3RUnknownData<bgcolor=cDkRed>;
+    }
+    else
+    {
+        byte PartTransformData[ObjectSpriteHeader.fSize - ObjectSpriteHeader.partTransOff]<bgcolor=cLtRed>;
+    }
     /*if (FPos != ObjectSpriteHeader.fSize)
     {
         if (ObjectSpriteHeader.frameTransOff != ObjectSpriteHeader.possiblyAnimXFormationsOff)
