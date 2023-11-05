@@ -69,45 +69,11 @@ typedef struct Frame
 typedef struct Part
 {
     ML4Engine_PartSizeType partSizeID;
-    /*local uint32 targetBPP<hidden=true> = 0;
-    if (partSizeID == 0)
-    {
-        targetBPP = 128;
-    }
-    else if (partSizeID == 1 || partSizeID == 5 || partSizeID == 9)
-    {
-        targetBPP = 512*8;
-    }
-    else if (partSizeID == 2)
-    {
-        targetBPP = 2048*2;
-    }
-    else if (partSizeID == 3)
-    {
-        targetBPP = 8192;
-    }
-    else if (partSizeID == 4 || partSizeID == 8)
-    {
-        targetBPP = 256;
-    }
-    else if (partSizeID == 6 || partSizeID == 10)
-    {
-        targetBPP = 1024*4;
-    }
-    else if (partSizeID == 7 || partSizeID == 11) //?
-    {
-        targetBPP = 4096;
-    }
-    else if (partSizeID > 11) //?
-    {
-        targetBPP = 8192;
-    }
-    //Printf("%i\n", targetBPP);*/
     ML4Engine_Flip flip;
     uint16 partXFormationsEntryOff;
     int16 unk<bgcolor=cRed>;
     uint16 gfxFileOff<bgcolor=cPurple>;
-    //local uint32 trueGfxFileOff<hidden=false> = (gfxFileOff * targetBPP/32);
+    local uint32 trueGfxFileOff<hidden=false> = gfxFileOff * 128;
     //Printf("%s\t%s\t%i\t\t\t%i\t%i", EnumToString(partSizeID), EnumToString(flip), partXFormationsEntryOff, unk, trueGfxFileOff);
     if (!isML3R && !isML1DX)
     {
