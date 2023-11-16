@@ -25,7 +25,7 @@ typedef struct RenderEffectBlock
 typedef struct RenderEffectString
 {
     int32 numChars;
-    int32 format;
+    int32 format; //3: Raw Shader
     int32 off;
     //Save pos
     FPos = FTell();

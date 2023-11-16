@@ -118,6 +118,10 @@ typedef struct
 typedef struct
 {
     uint32 nameOff;
+    FPos = FTell();
+    FSeek(Header.strgOff+8+nameOff);
+    string name;
+    FSeek(FPos);
     uint32 unk[3];
     DefaultSoundParam DefaultSoundParamEntry;
     GroupLimiterParam DefaultGroupLimiterParamEntry;
@@ -127,7 +131,7 @@ typedef struct
 
 typedef struct {
     commonBlockHdr GroupBlockHDR;
-    if (hdr.binhdr.ver < 9)
+    if (Header.binhdr.ver < 9)
     {
         uint32 groups;
         uint32 groupOffset[groups];
@@ -162,6 +166,11 @@ typedef struct {
 } GCCDBlock;
 
 typedef struct {
+    commonBlockHdr BFILBlockHDR;
+    byte BYMLData[BFILBlockHDR.blockHdrSize];
+} BFILBlock;
+
+typedef struct {
     commonBlockHdr STRGBlockHDR;
     struct StringTableEntries
     {
@@ -170,7 +179,7 @@ typedef struct {
             struct StringTableEntry
             {
                 string stringEntry;
-                Printf("%s\n", stringEntry);
+                //Printf("%s\n", stringEntry);
             } ste;
             FPos = FTell();
         }
@@ -183,25 +192,33 @@ typedef struct {
     uint32 fSize;
     uint32 treeOff;
     uint32 grpOff;
-    if (binhdr.ver == 9) //Thunder/Sports3
+    if (binhdr.ver >= 9) //Thunder/Sports3
     {
         uint32 mandOff;
         uint32 paseOff;
         uint32 gccdOff;
+        if (binhdr.ver >= 10) //Thunder/Sports3
+        {
+            uint32 bfilOff; //Binary File off?
+        }
     }
     uint32 strgOff;
 } AGSTHdr;
 
 struct BinaryAudioGroupSettings
 {
-    AGSTHdr hdr;
+    AGSTHdr Header;
     TREEBlock TreeBlock;
     GRPBlock GroupBlock;
-    if (hdr.binhdr.ver == 9) //Thunder/Sports3
+    if (Header.binhdr.ver >= 9) //Thunder/Sports3
     {
         MANDBlock MandBlock;
         PASEBlock PaseBlock;
         GCCDBlock GccdBlock;
+        if (Header.binhdr.ver == 10) //Secred
+        {
+            BFILBlock BinaryFileBlock;
+        }
     }
     STRGBlock StringBlock<optimize=false>;
 } BAGST;
