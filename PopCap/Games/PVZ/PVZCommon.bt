@@ -1,0 +1,183 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://plantsvszombies.fandom.com/wiki/User_file_format
+
+#include "../../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    LawnChallengeRecord_LockedOrUnplayed,
+    //Anything before 20 and after 20 is flags at least on Puzzle and Survival and unlocked on MiniGames
+    LawnChallengeRecord_Unlocked = 20,
+} LawnChallengeRecord;
+
+typedef struct LawnChallengeRecords
+{
+    LawnChallengeRecord SurvivalChallengeRecord[5];
+    LawnChallengeRecord SurvivalHardChallengeRecord[5];
+    LawnChallengeRecord LimboPageSurvivalEndlessChallengeRecord[2];
+    LawnChallengeRecord SurvivalEndlessChallengeRecord;
+    LawnChallengeRecord LimboPageSurvivalEndlessChallengeRecord2[2];
+    LawnChallengeRecord MiniGameChallengeRecord[20];
+    LawnChallengeRecord LimboPageMiniGameChallengeRecord[14];
+    uint32 TreeOfWisdomHeight;
+    //LawnChallengeRecord LimboPageMiniGameChallengeRecord2[5];
+    LawnChallengeRecord VasebreakerChallengeRecord[9];
+    LawnChallengeRecord VasebreakerEndlessChallengeRecord;
+    LawnChallengeRecord IZombieChallengeRecord[9];
+    LawnChallengeRecord IZombieEndlessChallengeRecord;
+    LawnChallengeRecord LimboPageMiniGameChallengeRecords2[2];
+    LawnChallengeRecord Unk[28];
+};
+
+typedef enum <uint32>
+{
+    LawnGardenType_Zen,
+    LawnGardenType_Night,
+    LawnGardenType_InWheelBarrow,
+    LawnGardenType_Pool,
+} LawnGardenType;
+
+typedef enum <uint32>
+{
+    LawnUserVersion_PreJul07 = 2,
+    LawnUserVersion_PreFeb08,
+    LawnUserVersion_PreApr08,
+    LawnUserVersion_PreMay08,
+    LawnUserVersion_PreSep08,
+    LawnUserVersion_PreNov08,
+    LawnUserVersion_PreJan09,
+    LawnUserVersion_PreApr09 = 11,
+    LawnUserVersion_Final, 
+} LawnUserVersion;
+
+typedef struct LawnSaveGameHeader
+{
+    uint32 HeaderSz;
+    uint32 Magic;
+    uint32 BuildVer;
+    time_t BuildDate;
+};
+
+typedef struct LawnAchivements
+{
+    U16_Bool HomeLawnSecurity;
+    U16_Bool NobelPeasPrize;
+    U16_Bool BetterOffDead;
+    U16_Bool ChinaShop;
+    U16_Bool Spudow;
+    U16_Bool Explodinator;
+    U16_Bool Morticulturalist;
+    U16_Bool DontPeaInThePool;
+    U16_Bool RollSomeHeads;
+    U16_Bool Grounded;
+    U16_Bool Zombologist;
+    U16_Bool PennyPincher;
+    U16_Bool SunnyDays;
+    U16_Bool PopcornParty;
+    U16_Bool GoodMorning; //Sounds like Uncle Grandpa
+    U16_Bool NoFungusAmongUs; //haha
+    U16_Bool BeyondTheGrave;
+    U16_Bool Immortal;
+    U16_Bool ToweringWisdom;
+    U16_Bool MustacheMode;
+    //U16_Bool DiscoIsUndead; //Steam
+};
+
+typedef struct LawnPurchases
+{
+    U32_Bool GatlingPea;
+    U32_Bool TwinSunflower;
+    U32_Bool GloomShroom;
+    U32_Bool CatTail;
+    U32_Bool WinterMelon;
+    U32_Bool GoldenMagnet;
+    U32_Bool SpikeRock;
+    U32_Bool CobCannon;
+    U32_Bool Imitater;
+    U32_Bool BonusLawnMower; //Unused?
+    time_t MarigoldPotLockoutTime[3];
+    U32_Bool GoldWateringCan;
+    uint32 Fertilizer;
+    uint32 BugSpray;
+    U32_Bool Phonograph;
+    U32_Bool GardeningGlove;
+    U32_Bool NightGarden;
+    U32_Bool WheelBarrow;
+    time_t SnailChocolateTime;
+    uint32 PacketUpgradeLevel;
+    U32_Bool PoolCleaner;
+    U32_Bool RoofCleaner;
+    uint32 Rakes;
+    U32_Bool PoolGarden;
+    uint32 Chocolate; //Divided by 100 ingame
+    uint32 TreeOfWisdom; 
+    uint32 TreeFood; //Divided by 100 ingame
+    U32_Bool WallNutFirstAid;
+    uint32 unk[50];
+};
+
+typedef struct LawnBoard
+{
+    uint32 BoardSz;
+    byte Board[BoardSz];
+};
+
+typedef struct LawnZenGardenPlant
+{
+    uint32 Type;
+    uint32 GardenLocation;
+    Vector2_I32 Pos;
+    /*uint32 PlantColumn;
+    uint32 PlantRow;*/
+    uint64 FaceDirection;
+    time64_t LastWateringTime;
+    uint32 DrawVariation;
+    uint32 Age;
+    uint32 TimesWatered;
+    uint32 FeedsPerGrow;
+    uint64 HappinessNeed;
+    time64_t LastPhoneographOrBugSprayTime;
+    time64_t LastFertilizeTime;
+    time64_t LastChocolateTime;
+    time64_t Dmy;    
+};
+
+typedef struct LawnZombieAvatarItemWithType
+{
+    int32 Type;
+    int32 Color;
+};
+
+typedef struct LawnZombieAvatar
+{
+    LawnZombieAvatarItemWithType Skin; //Theorhetically Type is -1 bcz you can't choose the skin type
+    LawnZombieAvatarItemWithType Clothes;
+    LawnZombieAvatarItemWithType Tidbits;
+    LawnZombieAvatarItemWithType Accessories;
+    LawnZombieAvatarItemWithType FacialHair;
+    LawnZombieAvatarItemWithType Hair;
+    LawnZombieAvatarItemWithType EyeWear;
+    LawnZombieAvatarItemWithType Hat;
+    LawnZombieAvatarItemWithType Backdrop;
+};
+
+typedef struct LawnZombieAvatarInfo
+{
+    Byte_Bool AcceptedZombieAvatarTOS;
+    uint32 Zombatars;
+    LawnZombieAvatar ZombieAvatar[Zombatars];
+    byte unk[0x14];
+    Byte_Bool CreatedOneZombatar;
+};

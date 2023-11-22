@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://plantsvszombies.fandom.com/wiki/User_file_format
+
+#include "PVZCommon.bt"
+
+struct
+{
+    LawnUserVersion UserVersion;
+    uint32 CurrentLevel;
+    uint32 Coins; //Divided by 10
+    uint32 TimesAdventureFinished;
+    //uint32 ChallengeRecords[100];
+    LawnChallengeRecords ChallengeRecords;
+    //uint32 Purchases[80];
+    /*if (UserVersion == 12)
+    {
+        byte Unk[120];
+    }*/
+    LawnPurchases Purchases;
+    uint32 PlayTimeActive;
+    uint32 PlayTimeInactive;
+    uint32 UsedCheatKeys; //How cruel
+    uint32 WokenSnail;
+    uint32 SkippedPacketUpgrade;
+    time_t LastChocolateFeedTime;
+    Vector2_I32 SnailPos;
+    uint32 MiniGamesUnlocked;
+    uint32 PuzzleUnlocked;
+    uint32 UnlockedNewMiniGame;
+    uint32 UnlockedNewVaseBreaker;
+    uint32 UnlockedNewIZombie;
+    uint32 UnlockedNewSurvival;
+    uint32 UnlockedSurvival;
+    uint32 NeedsMsgOnMenu;
+    uint32 NeedsTaco;
+    uint32 HasSeenSnail;
+    uint32 HasSeenUpsell;
+    uint32 PlayerStatsPlaceholder;
+    uint32 ZenGardenPlants;
+    LawnZenGardenPlant ZenGardenPlant[ZenGardenPlants];
+    if (UserVersion >= 11)
+    {
+        LawnAchivements Achivements;
+        LawnZombieAvatarInfo ZombieAvatarInfo;
+    }
+} LawnPlayerInfo_USERx_DAT;
