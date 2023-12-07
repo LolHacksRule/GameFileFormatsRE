@@ -1,0 +1,97 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint16>
+{
+    NMS_CaviarF_FontIcon_ABtn,
+    NMS_CaviarF_FontIcon_BBtn,
+    NMS_CaviarF_FontIcon_XBtn,
+    NMS_CaviarF_FontIcon_YBtn,
+    NMS_CaviarF_FontIcon_LBtn,
+    NMS_CaviarF_FontIcon_RBtn,
+    NMS_CaviarF_FontIcon_DPad,
+    //Unused Wii/U keys? Maybe that explains the F?
+    NMS_CaviarF_FontIcon_PlusBtn,
+    NMS_CaviarF_FontIcon_MinusBtn,
+    NMS_CaviarF_FontIcon_1Btn,
+    NMS_CaviarF_FontIcon_2Btn,
+    //End Wii/U keys
+    NMS_CaviarF_FontIcon_HomeBtn,
+    NMS_CaviarF_FontIcon_PlayCoin,
+    NMS_CaviarF_FontIcon_CPad,
+    NMS_CaviarF_FontIcon_PowerBtn,
+    NMS_CaviarF_FontIcon_DPadUp,
+    NMS_CaviarF_FontIcon_DPadDown,
+    NMS_CaviarF_FontIcon_DPadLeft,
+    NMS_CaviarF_FontIcon_DPadRight,
+    NMS_CaviarF_FontIcon_DPadUpDown,
+    NMS_CaviarF_FontIcon_DPadLeftRight,
+    NMS_CaviarF_FontIcon_NFCReaderN3DS,
+    NMS_CaviarF_FontIcon_Points, //57344 IN MEMORY
+    NMS_CaviarF_FontIcon_HomeO3DS_Part1,
+    NMS_CaviarF_FontIcon_HomeO3DS_Part2,
+    NMS_CaviarF_FontIcon_HomeO3DS_Part3,
+    NMS_CaviarF_FontIcon_StartO3DS_Part1,
+    NMS_CaviarF_FontIcon_StartO3DS_Part2,
+    NMS_CaviarF_FontIcon_StartO3DS_Part3,
+    NMS_CaviarF_FontIcon_AdvRank,
+    NMS_CaviarF_FontIcon_PokeIcon,
+    NMS_CaviarF_FontIcon_Diamond,
+    NMS_CaviarF_FontIcon_PokeType_Physical,
+    NMS_CaviarF_FontIcon_PokeType_Fighting,
+    NMS_CaviarF_FontIcon_PokeType_Flying,
+    NMS_CaviarF_FontIcon_PokeType_Poison,
+    NMS_CaviarF_FontIcon_PokeType_Ground,
+    NMS_CaviarF_FontIcon_PokeType_Rock,
+    NMS_CaviarF_FontIcon_PokeType_Bug,
+    NMS_CaviarF_FontIcon_PokeType_Ghost,
+    NMS_CaviarF_FontIcon_PokeType_Steel,
+    NMS_CaviarF_FontIcon_PokeType_Fire,
+    NMS_CaviarF_FontIcon_PokeType_Water,
+    NMS_CaviarF_FontIcon_PokeType_Grass,
+    NMS_CaviarF_FontIcon_PokeType_Electric,
+    NMS_CaviarF_FontIcon_PokeType_Physic,
+    NMS_CaviarF_FontIcon_PokeType_Ice,
+    NMS_CaviarF_FontIcon_PokeType_Dragon,
+    NMS_CaviarF_FontIcon_PokeType_Dark,
+    NMS_CaviarF_FontIcon_PokeType_Fairy,
+    NMS_CaviarF_FontIcon_BlueCheckmark,
+    NMS_CaviarF_FontIcon_Null,
+    NMS_CaviarF_FontIcon_Star,
+    NMS_CaviarF_FontIcon_EManual,
+    NMS_CaviarF_FontIcon_RainbowStripe, //57639 in memory
+    NMS_CaviarF_FontIcon_GreyArrow,
+    NMS_CaviarF_FontIcon_WhiteCPad, //57641 in memory
+    NMS_CaviarF_FontIcon_RedExclaimation, //57642
+    //58-60 is none?
+    /*
+    //TODO: Find these for ctrl code if possible, found through memory editing
+    NMS_CaviarF_FontIcon_ABtn_2, //57643 in memory
+    NMS_CaviarF_FontIcon_RedComma,
+    NMS_CaviarF_FontIcon_RedPeriod,
+    NMS_CaviarF_FontIcon_RedZero,
+    NMS_CaviarF_FontIcon_RedOne,*/
+    /*NMS_CaviarF_FontIcon_8BitClock,
+    NMS_CaviarF_FontIcon_PictoChatSmile,
+    NMS_CaviarF_FontIcon_PictoChatAngry,
+    NMS_CaviarF_FontIcon_PictoChatSad,
+    NMS_CaviarF_FontIcon_PictoChatStatic,
+    NMS_CaviarF_FontIcon_Brightness,*/
+    //NMS_CaviarF_FontIcon_Unk,
+    /*NMS_CaviarF_FontIcon_BlackSquaredX,
+    NMS_CaviarF_FontIcon_WhiteSquaredX,
+    NMS_CaviarF_FontIcon_BackArrow,*/
+    
+    //NTG:
+    //0x10: {A}
+} NMS_FontIcon_CaviarF;
