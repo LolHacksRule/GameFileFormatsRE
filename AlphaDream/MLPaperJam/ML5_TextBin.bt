@@ -21,6 +21,7 @@ struct ML5_TextBin
         {
             uint16 chars;
             wstring str;
+            Printf("%s\n", WStringToString(str, CHARSET_UTF8));
         } sbe;
         FPos = FTell();
     }

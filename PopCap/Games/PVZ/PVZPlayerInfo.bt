@@ -50,9 +50,13 @@ struct
     uint32 PlayerStatsPlaceholder;
     uint32 ZenGardenPlants;
     LawnZenGardenPlant ZenGardenPlant[ZenGardenPlants];
-    if (UserVersion >= 11)
+    FPos = FTell();
+    if (FPos != EOF)
     {
-        LawnAchivements Achivements;
-        LawnZombieAvatarInfo ZombieAvatarInfo;
+        if (UserVersion >= 11)
+        {
+            LawnAchivements Achivements;
+            LawnZombieAvatarInfo ZombieAvatarInfo;
+        }
     }
 } LawnPlayerInfo_USERx_DAT;

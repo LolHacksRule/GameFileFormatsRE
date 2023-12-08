@@ -7,6 +7,14 @@
 
 //todo: Figure out the flags
 
+/*based off
+https://powervr-graphics.github.io/WebGL_SDK/WebGL_SDK/Documentation/Specifications/PVR%20File%20Format.Specification.Legacy.pdf
+https://powervr-graphics.github.io/WebGL_SDK/WebGL_SDK/Documentation/Specifications/PVR%20File%20Format.Specification.pdf
+https://imagination-technologies-cloudfront-assets.s3.eu-west-1.amazonaws.com/website-files/documents/PVR+File+Format.Specification.pdf
+https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_compression_dxt1.txt
+https://en.wikipedia.org/wiki/S3_Texture_Compression
+*/
+
 LittleEndian();
 
 typedef enum <byte> {
@@ -99,9 +107,9 @@ typedef enum <uint16> {
     CMPR,                           //CMPR/DXT1 with different blocks, nothing on ABGO v101
     ETC2_RGB_2_OR_ETC1,             //On CTR, ETC1 Z-Order 1, works on ABGO v101 (ETC1)
     ETC1_RGB_SPLITALPHA,            //CTR only, nothing on ABGO v101
-    ATC_RGB,                        //Confirm
-    ATC_RGBA_EXPLICIT,
-    ATC_RGBA_INTERPOLATED = 256,
+    ATC_RGB,                        //Confirm, nothing on ABGO v101
+    ATC_RGBA_EXPLICIT,              //Prob nothing on ABGO v101
+    ATC_RGBA_INTERPOLATED,          //Prob nothing on ABGO v101
     XGSTEXFMT_257,                  //Defined in ABGO v101 but idk what it is
     //258-263 are unknown
     DXT1_EXT = 264,                 //DXT1 EXT (?)

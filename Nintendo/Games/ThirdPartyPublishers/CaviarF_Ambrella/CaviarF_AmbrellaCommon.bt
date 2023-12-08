@@ -95,3 +95,20 @@ typedef enum <uint16>
     //NTG:
     //0x10: {A}
 } NMS_FontIcon_CaviarF;
+
+typedef struct NMS_CaviarF_TagGroup
+{
+    if (tagGroup == 1) 
+    {
+        NMS_FontIcon_CaviarF CaviarF_FontIcon<bgcolor=cPurple>;
+        isValidCtrlTag = 1;
+        if (printControlTagInfo)
+        {
+            Printf("</%s>", EnumToString(CaviarF_FontIcon));
+        }
+    }
+    else
+    {
+        
+    }
+};

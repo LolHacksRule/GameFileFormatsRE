@@ -67,7 +67,7 @@ typedef struct LawnSaveGameHeader
     uint32 HeaderSz;
     uint32 Magic;
     uint32 BuildVer;
-    time_t BuildDate;
+    uint32 BuildDateCRC;
 };
 
 typedef struct LawnAchivements
@@ -92,7 +92,7 @@ typedef struct LawnAchivements
     U16_Bool Immortal;
     U16_Bool ToweringWisdom;
     U16_Bool MustacheMode;
-    //U16_Bool DiscoIsUndead; //Steam
+    //U16_Bool DiscoIsUndead; //Uncomment for Steam, why is the user version if this is present the exact same as non-Steam GOTY ¯\_(ツ)_/¯
 };
 
 typedef struct LawnPurchases
@@ -128,10 +128,73 @@ typedef struct LawnPurchases
     uint32 unk[50];
 };
 
+typedef struct LawnDataArray
+{
+    uint32 FreeListHead;
+    uint32 MaxUsed;
+    uint32 Size;
+    uint32 ActSize;
+    byte Data[ActSize];
+};
+
+typedef struct LawnDataIDList
+{
+    int32 Count;
+    uint32 DataID[Count];
+};
+
+typedef struct LawnProjectile
+{
+    uint64 unk;
+    //Vector2_I32 Pos;
+};
+
+typedef struct LawnZombieDefinition
+{
+    
+};
+
+typedef struct LawnImage
+{
+    
+};
+
+typedef struct LawnParticleDefinition
+{
+    int32 ParticleType;
+};
+
+typedef struct LawnParticleEmitter
+{
+    int32 EmitterDefinitionIdx;
+};
+
+
+typedef struct LawnParticleSystem
+{
+    LawnParticleDefinition ParticleDefinition;
+    LawnDataIDList DataIDList;
+};
+
+
 typedef struct LawnBoard
 {
-    uint32 BoardSz;
-    byte Board[BoardSz];
+    uint32 GameMemorySz<bgcolor=cRed>;
+    byte GameMemory[GameMemorySz]<bgcolor=cRed>;
+    //uint32 Zombies;
+    LawnDataArray ZombiesDataArray;
+    LawnDataArray PlantsDataArray;
+    LawnDataArray ProjectilesDataArray;
+    LawnDataArray MoneyDataArray;
+    LawnDataArray LawnMowersDataArray;
+    LawnDataArray GridItemsDataArray;
+    LawnDataArray ParticleSystemsDataArray;
+    LawnDataArray EmittersDataArray;
+    LawnDataArray ParticlesDataArray;
+    LawnDataArray ReanimationsDataArray;
+    LawnDataArray TrailsDataArray;
+    LawnDataArray AttachmentsDataArray;
+    LawnParticleSystem ParticleSystem;
 };
 
 typedef struct LawnZenGardenPlant
