@@ -14,13 +14,25 @@
 typedef enum <uint16> 
 {
     NMS_ML4_MessageTextControlTagType_System,
-    //2 is unused
     NMS_ML4_MessageTextControlTagType_AlignText,
-    NMS_ML4_MessageTextControlTagType_TextRender,
-    //NMS_ML4_MessageTextControlTagType_AnimateText_Half = 5,
-    //NMS_ML4_MessageTextControlTagType_AnimateText_Spaced,
-    //NMS_ML4_MessageTextControlTagType_AnimateText,
+    NMS_ML4_MessageTextControlTagType_AlignAllText_Unused, //unused
+    NMS_ML4_MessageTextControlTagType_TextRender = 3,
+    NMS_ML4_MessageTextControlTagType_TagGroup4,
+    NMS_ML4_MessageTextControlTagType_TagGroup5,
+    NMS_ML4_MessageTextControlTagType_TagGroup6, //Unused
+    NMS_ML4_MessageTextControlTagType_TextAnimation,
+    NMS_ML4_MessageTextControlTagType_TagGroup8,
+    NMS_ML4_MessageTextControlTagType_TagGroup9,
 } NMS_ML4_MessageTextControlTagType; //Unofficial since game doesn't use project binary and idk where they are in the exe
+
+typedef enum <uint16> 
+{
+    NMS_ML4_SystemTagGroupType_Ruby,
+    NMS_ML4_SystemTagGroupType_Font,
+    NMS_ML4_SystemTagGroupType_Size,
+    NMS_ML4_SystemTagGroupType_TextColor,
+    NMS_ML4_SystemTagGroupType_PageBreak, //Different bcz it doesn't wait for user input and happens immediately
+} NMS_ML4_SystemTagGroupType;
 
 typedef enum <uint16> 
 {
@@ -32,8 +44,16 @@ typedef enum <uint16>
 
 typedef enum <uint16> 
 {
+    NMS_ML4_AlignAllTextTagGroupType_Right,
+    NMS_ML4_AlignAllTextTagGroupType_Left,
+    NMS_ML4_AlignAllTextTagGroupType_Top,
+    NMS_ML4_AlignAllTextTagGroupType_Bottom = 4, //?
+} NMS_ML4_AlignAllTextTagGroupType;
+
+typedef enum <uint16> 
+{
     NMS_ML4_TextRenderTagGroupType_DelayTextRender,
-    NMS_ML4_TextRenderTagGroupType_HaltUntilUserInput,
+    NMS_ML4_TextRenderTagGroupType_HaltUntilUserInputOrTouch,
     NMS_ML4_TextRenderTagGroupType_TextSpeed,
     NMS_ML4_TextRenderTagGroupType_TextPos,
 } NMS_ML4_TextRenderTagGroupType;
@@ -42,7 +62,19 @@ typedef enum <uint16>
 {
     //NMS_ML4_AnimateTextTagGroupType_Off,
     //NMS_ML4_AnimateTextTagGroupType_LeftScroll,
+} NMS_ML4_TagGroup5Type;
+
+typedef enum <uint16> 
+{
+    //NMS_ML4_AnimateTextTagGroupType_Off,
+    //NMS_ML4_AnimateTextTagGroupType_LeftScroll,
 } NMS_ML4_AnimateTextTagGroupType;
+
+typedef enum <uint16> 
+{
+    NMS_ML4_TextAnimationTagType_DisableTextAnimation,
+    NMS_ML4_TextAnimationTagType_EnableTextAnimation,
+} NMS_ML4_TextAnimationTagType;
 
 typedef enum <uint16> 
 {
@@ -60,80 +92,99 @@ typedef struct NMS_ML4_TagGroup
 {
     switch (tagGroup)
     {
+        //case 0: NMS_ML4_SystemTagGroupType paramType; break;
         case 1: NMS_ML4_AlignTextTagGroupType paramType; break;
+        case 2: NMS_ML4_AlignAllTextTagGroupType paramType; break;
         case 3: NMS_ML4_TextRenderTagGroupType paramType; break;
-        //case 7: NMS_ML4_AnimateTextTagGroupType paramType; break;
+        case 7: NMS_ML4_TextAnimationTagType paramType; break;
         default: uint16 paramType; break;
     }
     uint16 paramSz;
-    /*if (tagGroup == 0) //Should this be here
+    /*if (tagGroup == 0 && paramType == 3)
     {
         isValidCtrlTag = 1;
-        Printf("</NMS_ML4_System>");
-    }*/
-    if (tagGroup == 1)
-    {
-        isValidCtrlTag = 1;
-        Printf("</%s>", EnumToString(paramType));
-        /*else if (paramType == 4)
+        if (isRGBASet)
         {
-            isValidCtrlTag = 1;
-            Printf("</NMS_ML4_TextBox>");
-        }*/
+            //Printf("</rgba>");
+            if (printControlTagInfo)
+            {
+                Printf("</span>"); //Format for MediaWiki
+            }
+            isRGBASet = 0;
+        }
+        RGBA_UByte TextColor<bgcolor=cPurple>;
+        isRGBASet = 1;
+        //Printf("<rgba%i%i%i%i>", TextColor.R, TextColor.G, TextColor.B, TextColor.A);
+        if (printControlTagInfo)
+        {
+            Printf("<span style=\"color:#%X%X%X%X\">", TextColor.R, TextColor.G, TextColor.B, TextColor.A); //Format for MediaWiki
+        }
     }
-    if (tagGroup == 2)
+    else */if (tagGroup < 2 || tagGroup == 7)
     {
-        uint16 unk; //Text pos?
-        uint16 unk2; //Textbox speed?
-        /*else if (paramType == 4)
+        isValidCtrlTag = 1;
+        if (printControlTagInfo)
         {
-            isValidCtrlTag = 1;
-            Printf("</NMS_ML4_TextBox>");
-        }*/
+            Printf("</%s>", EnumToString(paramType));
+        }
     }
     else if (tagGroup == 3)
     {
         isValidCtrlTag = 1;
         switch (paramType)
         {
-            case 0: uint16 delayText; Printf("</NMS_ML4DelayText%i>", delayText); break;
-            case 1: Printf("</NMS_ML4HaltUntilUserInput>"); break;
-            case 2: uint16 textPos; Printf("</NMS_ML4TextAlignment%i>", textPos); break; //?
+            case 0: uint16 delayText; if (printControlTagInfo) { Printf("</NMS_ML4DelayText%i>", delayText);} break;
+            case 1: if (printControlTagInfo) { Printf("</NMS_ML4HaltUntilUserInput>");} break;
+            case 2: uint16 textScrollSpeed; if (printControlTagInfo) { Printf("</NMS_ML4TextScrollSpeed%i>", textScrollSpeed);} break; //?
         }
-        /*else
-        {
-            Printf("</NMS_ML4HaltUntilUserInput>");
-        }*/
     }
-    /*else if (tagGroup == 4)
-    {
-        isValidCtrlTag = 1;
-        if (paramSz)
-        {
-            U16_Bool unk; //Enable modifiers?
-            uint16 tabs;
-            uint16 unk; //Max 3, beyond does ?
-        }
-        else
-        {
-            Printf("</NMS_ML4EndTextBox>");
-        }
-    }*/
-    /*else if (tagGroup == 7)
+    else if (tagGroup == 4)
     {
         //isValidCtrlTag = 1;
+        U16_Bool enable;
+        uint16 amountOfTabs;
+        U16_Bool enableUnk2;
+        if (printControlTagInfo)
         {
-//            Printf("</%s>", EnumToString(paramType));
+            
         }
-    }*/
-    /*else if (tagGroup == 8)
+        
+    }
+    else if (tagGroup == 5)
     {
-        uint16 textPos;
         isValidCtrlTag = 1;
+        if (printControlTagInfo)
         {
-            //Printf("</%s>", EnumToString(paramType));
+            switch (paramType)
+            {
+                case 0: Printf("</NMS_ML4TagGroup5Param0>"); break;
+                case 1: Printf("</NMS_ML4ImmediatelyRenderFirstLine>"); break;
+            }
         }
-    }*/
+    }
+    else if (tagGroup == 6)
+    {
+        isValidCtrlTag = 1;
+        if (printControlTagInfo)
+        {
+            switch (paramType)
+            {
+                case 0: Printf("</NMS_ML4UseWideTextOnWideTextBox>"); break;
+                default: Printf("</NMS_ML4UseStandardTextOnWideTextBox>"); break;
+            }
+        }
+    }
+    else if (tagGroup == 8)
+    {
+        uint16 unk;
+        isValidCtrlTag = 1;
+        switch (paramType)
+        {
+            case 0: uint16 unk; if (printControlTagInfo) { Printf("</NMS_ML4Unk%i>", unk);} break;
+            case 1: uint16 unk2; if (printControlTagInfo) { Printf("</NMS_ML4Unk2%i>", unk2);} break;
+            default: if (printControlTagInfo) { Printf("</NMS_ML4Unk3>");} break; //?
+        }
+    }
     else
     {
         if (paramSz)
