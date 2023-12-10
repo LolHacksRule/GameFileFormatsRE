@@ -1,0 +1,144 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint16> 
+{
+    NMS_ML4_MessageTextControlTagType_System,
+    //2 is unused
+    NMS_ML4_MessageTextControlTagType_AlignText,
+    NMS_ML4_MessageTextControlTagType_TextRender,
+    //NMS_ML4_MessageTextControlTagType_AnimateText_Half = 5,
+    //NMS_ML4_MessageTextControlTagType_AnimateText_Spaced,
+    //NMS_ML4_MessageTextControlTagType_AnimateText,
+} NMS_ML4_MessageTextControlTagType; //Unofficial since game doesn't use project binary and idk where they are in the exe
+
+typedef enum <uint16> 
+{
+    NMS_ML4_AlignTextTagGroupType_Left,
+    NMS_ML4_AlignTextTagGroupType_Center,
+    NMS_ML4_AlignTextTagGroupType_Right,
+    NMS_ML4_AlignTextTagGroupType_Unknown = 4, //?
+} NMS_ML4_AlignTextTagGroupType;
+
+typedef enum <uint16> 
+{
+    NMS_ML4_TextRenderTagGroupType_DelayTextRender,
+    NMS_ML4_TextRenderTagGroupType_HaltUntilUserInput,
+    NMS_ML4_TextRenderTagGroupType_TextSpeed,
+    NMS_ML4_TextRenderTagGroupType_TextPos,
+} NMS_ML4_TextRenderTagGroupType;
+
+typedef enum <uint16> 
+{
+    //NMS_ML4_AnimateTextTagGroupType_Off,
+    //NMS_ML4_AnimateTextTagGroupType_LeftScroll,
+} NMS_ML4_AnimateTextTagGroupType;
+
+typedef enum <uint16> 
+{
+    NMS_ML4_GameCharacter_AButton = 57344,
+    NMS_ML4_GameCharacter_BButton,
+    NMS_ML4_GameCharacter_XButton,
+    NMS_ML4_GameCharacter_YButton,
+    NMS_ML4_GameCharacter_LButton,
+    NMS_ML4_GameCharacter_RButton,
+    NMS_ML4_GameCharacter_HomeButton = 57459,
+    NMS_ML4_GameCharacter_FootPrint,
+} NMS_ML4_GameCharacter; //Gaiji
+
+typedef struct NMS_ML4_TagGroup
+{
+    switch (tagGroup)
+    {
+        case 1: NMS_ML4_AlignTextTagGroupType paramType; break;
+        case 3: NMS_ML4_TextRenderTagGroupType paramType; break;
+        //case 7: NMS_ML4_AnimateTextTagGroupType paramType; break;
+        default: uint16 paramType; break;
+    }
+    uint16 paramSz;
+    /*if (tagGroup == 0) //Should this be here
+    {
+        isValidCtrlTag = 1;
+        Printf("</NMS_ML4_System>");
+    }*/
+    if (tagGroup == 1)
+    {
+        isValidCtrlTag = 1;
+        Printf("</%s>", EnumToString(paramType));
+        /*else if (paramType == 4)
+        {
+            isValidCtrlTag = 1;
+            Printf("</NMS_ML4_TextBox>");
+        }*/
+    }
+    if (tagGroup == 2)
+    {
+        uint16 unk; //Text pos?
+        uint16 unk2; //Textbox speed?
+        /*else if (paramType == 4)
+        {
+            isValidCtrlTag = 1;
+            Printf("</NMS_ML4_TextBox>");
+        }*/
+    }
+    else if (tagGroup == 3)
+    {
+        isValidCtrlTag = 1;
+        switch (paramType)
+        {
+            case 0: uint16 delayText; Printf("</NMS_ML4DelayText%i>", delayText); break;
+            case 1: Printf("</NMS_ML4HaltUntilUserInput>"); break;
+            case 2: uint16 textPos; Printf("</NMS_ML4TextAlignment%i>", textPos); break; //?
+        }
+        /*else
+        {
+            Printf("</NMS_ML4HaltUntilUserInput>");
+        }*/
+    }
+    /*else if (tagGroup == 4)
+    {
+        isValidCtrlTag = 1;
+        if (paramSz)
+        {
+            U16_Bool unk; //Enable modifiers?
+            uint16 tabs;
+            uint16 unk; //Max 3, beyond does ?
+        }
+        else
+        {
+            Printf("</NMS_ML4EndTextBox>");
+        }
+    }*/
+    /*else if (tagGroup == 7)
+    {
+        //isValidCtrlTag = 1;
+        {
+//            Printf("</%s>", EnumToString(paramType));
+        }
+    }*/
+    /*else if (tagGroup == 8)
+    {
+        uint16 textPos;
+        isValidCtrlTag = 1;
+        {
+            //Printf("</%s>", EnumToString(paramType));
+        }
+    }*/
+    else
+    {
+        if (paramSz)
+        {
+            byte param[paramSz];
+        }
+    }
+};
