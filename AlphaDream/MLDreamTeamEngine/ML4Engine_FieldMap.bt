@@ -32,6 +32,7 @@ typedef struct UnknownSection
 {
     byte unk[SectionDefinitions.Section[i].size];
 };
+
 struct FieldMap
 {
     FPos = FTell();
@@ -60,7 +61,7 @@ struct FieldMap
         for (i = 0; i < gameCheck/8; i++)
         {
             FSeek(SectionDefinitions.Section[i].off);
-            if (SectionDefinitions.Section[i].size)
+            if (SectionDefinitions.Section[i].size && SectionDefinitions.Section[i].off)
             {
                 UnknownSection UnknownSec<bgcolor=cRed>;
             }
