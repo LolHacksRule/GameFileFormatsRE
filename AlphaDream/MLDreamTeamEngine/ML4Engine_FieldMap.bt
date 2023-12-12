@@ -36,8 +36,15 @@ struct FieldMap
 {
     FPos = FTell();
     LittleEndian();
-    uint32 gameCheck<hidden=true>;
-    FSkip(-4);
+    if (ReadUInt() == 0)
+    {
+        local uint gameCheck = 104; //Fix ML3R
+    }
+    else
+    {
+        uint32 gameCheck<hidden=true>;
+        FSkip(-4);
+    }
     struct
     {
         for (i = 0; i < gameCheck/8; i++) //Neat little hack
