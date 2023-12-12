@@ -1,0 +1,70 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Format specs:
+//https://github.com/hadashisora/MnLDTools/blob/master/MnL4MapReader/Form1.cs
+//FruityLoops doc in Yoshi Lighthouse Discord
+
+#include "../../LHR/Common.bt"
+
+typedef struct SectionEntry
+{
+    uint32 off;
+    uint32 size;
+};
+
+typedef struct GraphicsConfigSection
+{
+    byte unk[SectionDefinitions.Section[1].size];
+};
+
+typedef struct UnknownSection
+{
+    byte unk[SectionDefinitions.Section[i].size];
+};
+struct FieldMap
+{
+    FPos = FTell();
+    LittleEndian();
+    uint32 gameCheck<hidden=true>;
+    FSkip(-4);
+    struct
+    {
+        for (i = 0; i < gameCheck/8; i++) //Neat little hack
+        {
+            SectionEntry Section<bgcolor=cGreen>; //14 in ML5, 15 in ML3R
+        }
+    } SectionDefinitions;
+    struct
+    {
+        //FSeek(FieldMapHeader.Section[0].off);
+        //UnknownSection unk;
+        //GraphicsConfigSection gfxCFGSection;
+        for (i = 0; i < gameCheck/8; i++)
+        {
+            FSeek(SectionDefinitions.Section[i].off);
+            if (SectionDefinitions.Section[i].size)
+            {
+                UnknownSection UnknownSec<bgcolor=cRed>;
+            }
+            else
+            {
+                Printf("WARNING SECTION %i IS EMPTY\n", i);
+            }
+        }
+        //byte pad[75];
+        //FSeek(FieldMapHeader.modelSec.modelOff);
+        //FSeek(FieldMapHeader.Section[11].off);
+        //byte model[FieldMapHeader.Section[12].size]<bgcolor=cGreen>;
+    } Sections;
+} MAP_BIN;
