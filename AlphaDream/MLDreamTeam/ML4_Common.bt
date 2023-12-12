@@ -34,13 +34,7 @@ typedef enum <uint16>
     NMS_ML4_SystemTagGroupType_PageBreak, //Different bcz it doesn't wait for user input and happens immediately
 } NMS_ML4_SystemTagGroupType;
 
-typedef enum <uint16> 
-{
-    NMS_ML4_AlignTextTagGroupType_Left,
-    NMS_ML4_AlignTextTagGroupType_Center,
-    NMS_ML4_AlignTextTagGroupType_Right,
-    NMS_ML4_AlignTextTagGroupType_Unknown = 4, //?
-} NMS_ML4_AlignTextTagGroupType;
+//Moved align text to AlphaDreamCommon.bt
 
 typedef enum <uint16> 
 {
@@ -92,14 +86,16 @@ typedef struct NMS_ML4_TagGroup
 {
     switch (tagGroup)
     {
+        //Moved to AlphaDreamCommon.bt
         //case 0: NMS_ML4_SystemTagGroupType paramType; break;
-        case 1: NMS_ML4_AlignTextTagGroupType paramType; break;
+        //case 1: NMS_ML4_AlignTextTagGroupType paramType; break;
         case 2: NMS_ML4_AlignAllTextTagGroupType paramType; break;
         case 3: NMS_ML4_TextRenderTagGroupType paramType; break;
         case 7: NMS_ML4_TextAnimationTagType paramType; break;
         default: uint16 paramType; break;
     }
     uint16 paramSz;
+    //Moved to AlphaDreamCommon
     /*if (tagGroup == 0 && paramType == 3)
     {
         isValidCtrlTag = 1;

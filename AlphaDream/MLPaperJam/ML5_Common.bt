@@ -1,0 +1,96 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint16> 
+{
+    NMS_ML5_MessageTextControlTagType_AlphaDreamSystem,
+    NMS_ML5_MessageTextControlTagType_AlphaDreamTextAlignment,
+    NMS_ML5_MessageTextControlTagType_DelayTextBeforeRender = 2,
+    NMS_ML5_MessageTextControlTagType_InitChoice = 4,
+    NMS_ML5_MessageTextControlTagType_TagGroup6 = 6,
+    NMS_ML5_MessageTextControlTagType_TagGroup8 = 8,
+} NMS_ML5_MessageTextControlTagType; //Unofficial since game doesn't use project binary and idk where they are in the exe
+
+typedef enum <uint16> 
+{
+    NMS_ML5_SystemTagGroupType_Ruby,
+    NMS_ML5_SystemTagGroupType_Font,
+    NMS_ML5_SystemTagGroupType_Size,
+    NMS_ML5_SystemTagGroupType_TextColor,
+    NMS_ML5_SystemTagGroupType_PageBreak, //Different bcz it doesn't wait for user input and happens immediately
+} NMS_ML5_SystemTagGroupType;
+
+typedef enum <uint16> 
+{
+    //NMS_ML5_TextSizeType_None,
+    NMS_ML5_PresetTextSizeType_Small,
+    NMS_ML5_PresetTextSizeType_Medium,
+    NMS_ML5_PresetTextSizeType_Large,
+    NMS_ML5_PresetTextSizeType_Small2, //?
+} NMS_ML5_PresetTextSizeType;
+
+typedef enum <uint16> 
+{
+
+} NMS_ML5_GameCharacter; //Gaiji
+
+typedef struct NMS_ML5_TagGroup
+{
+    switch (tagGroup)
+    {
+        default: uint16 paramType; break;
+    }
+    uint16 paramSz;
+    if (tagGroup == 2)
+    {
+        isValidCtrlTag = 1;
+        uint16 delayText; //Choice?
+        if (printControlTagInfo)
+        {
+            Printf("</ML5_DelayTextBeforeRender%i>", delayText);
+        }
+    }
+    else if (tagGroup == 4)
+    {
+        isValidCtrlTag = 1;
+        if (printControlTagInfo)
+        {
+            Printf("</ML5_Choice>"); //Starts a choice box,
+        }
+    }
+    else if (tagGroup == 6)
+    {
+        isValidCtrlTag = 1;
+        uint16 spacing; //Def correct
+        if (printControlTagInfo)
+        {
+            Printf("<ML5_ChoiceSpacing>%i</ML5_ChoiceSpacing>", spacing);
+        }
+    }
+    else if (tagGroup == 8)
+    {
+        isValidCtrlTag = 1;
+        NMS_ML5_PresetTextSizeType ML5_PresetTextSizeType; //Only 0 is used
+        if (printControlTagInfo)
+        {
+            Printf("</%s>", EnumToString(ML5_PresetTextSizeType));
+        }
+    }
+    else
+    {
+        if (paramSz)
+        {
+            byte param[paramSz];
+        }
+    }
+};
