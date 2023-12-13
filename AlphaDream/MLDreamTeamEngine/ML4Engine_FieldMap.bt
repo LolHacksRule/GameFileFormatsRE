@@ -17,7 +17,7 @@
 
 local uint isML4 <hidden=true> = 0;
 local uint isML5 <hidden=true> = 0;
-local uint isML1R <hidden=true> = 0;
+local uint isML1R <hidden=true> = 1;
 local uint isML3R <hidden=true> = 0;
 local uint sections <hidden=true> = 0;
 
@@ -29,11 +29,6 @@ typedef struct SectionEntry
 {
     uint32 off;
     uint32 size;
-};
-
-typedef struct GraphicsConfigSection
-{
-    byte unk[SectionDefinitions.Section[1].size];
 };
 
 typedef struct Section
@@ -85,12 +80,21 @@ struct FieldMap
                 }
                 else if (isML5)
                 {
-                    switch (i) //Read ML4 structs
+                    switch (i) //Read ML5 structs
                     {
                         //I'm highly convinced 8 is camera l
-                        case 12: ML5Engine_FieldMapFloatStruct ML3R_SomeFloatSection<bgcolor=cBlue>; break;
-                        case 13: ML5Engine_FieldMapOtherFloatStruct ML3R_SomeOtherFloatSection<bgcolor=cBlue>; break;
-                        //case 14: Section ML4_GraphicsSection<bgcolor=cBlue>; break;
+                        case 12: ML5Engine_FieldMapFloatStruct ML5_SomeFloatSection<bgcolor=cBlue>; break;
+                        case 13: ML5Engine_FieldMapOtherFloatStruct ML5_SomeOtherFloatSection<bgcolor=cBlue>; break;
+                        default: Section UnknownSection<bgcolor=cRed>; break;
+                    }
+                }
+                else if (isML1R)
+                {
+                    switch (i) //Read ML5 structs
+                    {
+                        //I'm highly convinced 8 is camera l
+                        case 3: Section ML1R_SomeStringStruct<bgcolor=cBlue>; break;
+                        case 9: Section ML1R_AnotherOtherStringStruct<bgcolor=cBlue>; break;
                         default: Section UnknownSection<bgcolor=cRed>; break;
                     }
                 }
