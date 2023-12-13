@@ -28,9 +28,9 @@ typedef struct GraphicsConfigSection
     byte unk[SectionDefinitions.Section[1].size];
 };
 
-typedef struct UnknownSection
+typedef struct Section
 {
-    byte unk[SectionDefinitions.Section[i].size];
+    byte data[SectionDefinitions.SectionDefinition[i].size];
 };
 
 struct FieldMap
@@ -50,7 +50,7 @@ struct FieldMap
     {
         for (i = 0; i < gameCheck/8; i++) //Neat little hack
         {
-            SectionEntry Section<bgcolor=cGreen>; //14 in ML5, 15 in ML3R
+            SectionEntry SectionDefinition<bgcolor=cGreen>; //14 in ML5, 15 in ML3R
         }
     } SectionDefinitions;
     struct
@@ -60,10 +60,18 @@ struct FieldMap
         //GraphicsConfigSection gfxCFGSection;
         for (i = 0; i < gameCheck/8; i++)
         {
-            FSeek(SectionDefinitions.Section[i].off);
-            if (SectionDefinitions.Section[i].size && SectionDefinitions.Section[i].off)
+            FSeek(SectionDefinitions.SectionDefinition[i].off);
+            if (SectionDefinitions.SectionDefinition[i].size && SectionDefinitions.SectionDefinition[i].off)
             {
-                UnknownSection UnknownSec<bgcolor=cRed>;
+                Printf("SECTION %i IS USED\n", i);
+                if (ReadUInt() == 1481000771)
+                {
+                    Section ML4_FieldModelSection;
+                }
+                else
+                {
+                    Section UnknownSection<bgcolor=cRed>; //In ML5, section 13 and 14 is i32 V3Fs, section 11/12 is unk (2 i32s?) > i32 V3Fs
+                }
             }
             else
             {
