@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//15 is camera? Values are similar to ML4...
+
+typedef struct ML3R_FieldMapStruct16
+{
+    uint32 unk[2]; // 80?
+    uint32 V3Fs;
+    struct //Would use LHR but broken atm
+    {
+        float x;
+        float y;
+        float z;
+    } Vector3Float[V3Fs]; //48
+    struct
+    {
+        while (FPos != SectionDefinitions.SectionDefinition[17].off)
+        {
+            byte unk;
+            FPos = FTell();
+        }
+    } UnknownData<bgcolor=cRed>; //Looks like font cache
+};
+
+typedef struct ML3R_FieldMapStruct17
+{
+    uint32 V3Fs;
+    struct //Would use LHR but broken atm
+    {
+        float x;
+        float y;
+        float z;
+    } Vector3Float[V3Fs]; //48
+    struct
+    {
+        while (FPos != EOF)
+        {
+            byte unk;
+            FPos = FTell();
+        }
+    } UnknownData<bgcolor=cRed>; //Looks like font cache
+};

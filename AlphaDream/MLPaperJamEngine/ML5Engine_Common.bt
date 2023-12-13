@@ -15,3 +15,12 @@ typedef struct ML5Engine_StringEntry
 {
     char stringEntry[24];
 };
+
+typedef struct ML5Engine_FieldMapStruct9
+{
+    while (FPos != SectionDefinitions.SectionDefinition[10].off)
+    {
+        ML5Engine_StringEntry MultiLocName;
+        byte unk[0xc];        
+    }
+};
