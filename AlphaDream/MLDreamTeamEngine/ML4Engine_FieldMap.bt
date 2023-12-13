@@ -22,7 +22,7 @@ local uint isML3R <hidden=true> = 0;
 local uint sections <hidden=true> = 0;
 
 #include "../../LHR/Common.bt"
-#include "../MLBowsersInsideStory_R/ML3R_Common.bt"
+#include "../MLBowsersInsideStory_R/ML3R_Common.bt" //3: Some string table?, 9: Some other string table?
 #include "../MLPaperJamEngine/ML5Engine_Common.bt"
 
 typedef struct SectionEntry
@@ -87,7 +87,10 @@ struct FieldMap
                 {
                     switch (i) //Read ML4 structs
                     {
-                        case 14: Section ML4_GraphicsSection<bgcolor=cBlue>; break;
+                        //I'm highly convinced 8 is camera l
+                        case 12: ML5Engine_FieldMapFloatStruct ML3R_SomeFloatSection<bgcolor=cBlue>; break;
+                        case 13: ML5Engine_FieldMapOtherFloatStruct ML3R_SomeOtherFloatSection<bgcolor=cBlue>; break;
+                        //case 14: Section ML4_GraphicsSection<bgcolor=cBlue>; break;
                         default: Section UnknownSection<bgcolor=cRed>; break;
                     }
                 }
@@ -96,8 +99,8 @@ struct FieldMap
                     switch (i) //Read ML3R structs
                     {
                         case 14: Section ML3R_SomeTextSection<bgcolor=cBlue>; break;
-                        case 16: ML3R_FieldMapStruct16 ML5_SomeFloatSection<bgcolor=cBlue>; break;
-                        case 17: ML3R_FieldMapStruct17 ML5_SomeOtherFloatSection<bgcolor=cBlue>; break;
+                        case 16: ML5Engine_FieldMapFloatStruct ML3R_SomeFloatSection<bgcolor=cBlue>; break;
+                        case 17: ML5Engine_FieldMapOtherFloatStruct ML3R_SomeOtherFloatSection<bgcolor=cBlue>; break;
                         default: Section UnknownSection<bgcolor=cRed>; break;
                     }
                 }

@@ -24,3 +24,56 @@ typedef struct ML5Engine_FieldMapStruct9
         byte unk[0xc];        
     }
 };
+
+//8 (ML5) is camera? Values are similar to ML4...
+
+
+typedef struct ML5Engine_FieldMapFloatStruct
+{
+    uint32 unk[2]; // 80?
+    uint32 V3Fs;
+    struct //Would use LHR but broken atm
+    {
+        float x;
+        float y;
+        float z;
+    } Vector3Float[V3Fs]; //48
+    struct
+    {
+        if (isML3R)
+        {
+            while (FPos != SectionDefinitions.SectionDefinition[17].off)
+            {
+                byte unk;
+                FPos = FTell();
+            }
+        }
+        else //Read ML5
+        {
+            while (FPos != SectionDefinitions.SectionDefinition[13].off)
+            {
+                byte unk;
+                FPos = FTell();
+            }
+        }
+    } UnknownData<bgcolor=cRed>; //Looks like font cache
+};
+
+typedef struct ML5Engine_FieldMapOtherFloatStruct //17 in ML3R, 13 in ML5
+{
+    uint32 V3Fs;
+    struct //Would use LHR but broken atm
+    {
+        float x;
+        float y;
+        float z;
+    } Vector3Float[V3Fs]; //48
+    struct
+    {
+        while (FPos != EOF)
+        {
+            byte unk;
+            FPos = FTell();
+        }
+    } UnknownDataStruct<bgcolor=cRed>; //Looks like font cache
+};
