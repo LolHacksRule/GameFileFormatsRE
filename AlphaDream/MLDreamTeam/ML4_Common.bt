@@ -11,6 +11,11 @@
 //   History: 
 //------------------------------------------------
 
+//MenuEvent:
+//0x00: 0x39 (ver?)
+//0x04: u16 (zero?)
+//0x06: i32 stringTableOff (
+
 typedef enum <uint16> 
 {
     NMS_ML4_MessageTextControlTagType_System,

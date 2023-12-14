@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Field.cro
+
+typedef struct StaffRollBlock
+{
+    wchar_t str[44];
+    uint32 unk;
+    float unk2;
+};
+
+struct
+{
+    uint32 entries;
+    StaffRollBlock StaffRollEntry[entries];
+} StaffRoll;

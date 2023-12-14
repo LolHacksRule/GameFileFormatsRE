@@ -17,7 +17,7 @@
 
 local uint isML4 <hidden=true> = 0;
 local uint isML5 <hidden=true> = 0;
-local uint isML1R <hidden=true> = 1;
+local uint isML1R <hidden=true> = 0;
 local uint isML3R <hidden=true> = 0;
 local uint sections <hidden=true> = 0;
 
@@ -40,7 +40,7 @@ struct FieldMap
 {
     FPos = FTell();
     LittleEndian();
-    if (ReadUInt() == 0)
+    if (ReadUInt() == 0) //Todo implement proper detection
     {
         local uint toFindSections = 104; //Fix ML3R
     }
@@ -55,6 +55,10 @@ struct FieldMap
         for (i = 0; i < sections; i++) //Neat little hack
         {
             SectionEntry SectionDefinition<bgcolor=cGreen>; //14 in ML5, 15 in ML3R
+            if (!SectionDefinitions.SectionDefinition[i].off && !SectionDefinitions.SectionDefinition[i].size) //Hack to fix errors on ML3R KJ/BattleMAP
+            {
+                sections = 2;
+            }
         }
     } SectionDefinitions;
     struct
@@ -67,7 +71,7 @@ struct FieldMap
             FSeek(SectionDefinitions.SectionDefinition[i].off);
             if (SectionDefinitions.SectionDefinition[i].size && SectionDefinitions.SectionDefinition[i].off)
             {
-                Printf("SECTION %i IS USED\n", i);
+                Printf("SECTION %i IS USED (%i bytes)\n", i, SectionDefinitions.SectionDefinition[i].size);
                 if (isML4)
                 {
                     switch (i) //Read ML4 structs
@@ -90,11 +94,10 @@ struct FieldMap
                 }
                 else if (isML1R)
                 {
-                    switch (i) //Read ML5 structs
+                    switch (i) //Read ML1R structs
                     {
-                        //I'm highly convinced 8 is camera l
-                        case 3: Section ML1R_SomeStringStruct<bgcolor=cBlue>; break;
-                        case 9: Section ML1R_AnotherOtherStringStruct<bgcolor=cBlue>; break;
+                        case 3: Section ML1R_SomeStringStruct<bgcolor=cBlue>; break; //48 bytes per entry, beginning is 16 byte -> ML5EngineString -> padding (0)
+                        case 9: Section ML1R_AnotherOtherStringStruct<bgcolor=cBlue>; break; //72/108/144 bytes or 36 bytes per entry?
                         default: Section UnknownSection<bgcolor=cRed>; break;
                     }
                 }
