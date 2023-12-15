@@ -11,17 +11,22 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 //Field.cro
 
 typedef struct StaffRollBlock
 {
     wchar_t str[44];
-    uint32 unk;
+    RGBA_UByte RGBA;
     float unk2;
+    Printf("%i: %s, R: %i G: %i B: %i A: %i, Unknown Float: %f\n", i, str, RGBA.R, RGBA.G, RGBA.B, RGBA.A, unk2);
+    i++;
 };
 
 struct
 {
+    swapRGBAChannels = 1; //Hacky, force RGBA channels wap
     uint32 entries;
-    StaffRollBlock StaffRollEntry[entries];
+    StaffRollBlock StaffRollEntry[entries]<optimize=false>;
 } StaffRoll;
