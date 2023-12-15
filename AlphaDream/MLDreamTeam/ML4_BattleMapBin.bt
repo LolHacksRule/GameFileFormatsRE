@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct FloatTable
+{
+    uint32 floats;
+    float floatVal[floats*13]; //?
+};
+
+typedef struct UnknownStruct
+{
+    uint32 unk2[2];
+    uint32 off;
+    uint32 unk3;
+    uint32 off2;
+    uint32 unk4;
+    uint32 off3;
+    uint32 unk5[2];
+};
+
+typedef struct Entry
+{
+    UnknownStruct UnknownDefinitions;
+    FloatTable FT;
+};
+
+struct
+{
+    uint32 unk; //0xc, version?
+    uint32 endOfUnknownData1;
+    uint32 someOff;
+    Entry StructEntry[3]<optimize=false>;
+} ML4_BattleMapBin;
