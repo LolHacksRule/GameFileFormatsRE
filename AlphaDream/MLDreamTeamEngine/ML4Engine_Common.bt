@@ -19,7 +19,7 @@ typedef enum <byte>
     ML4Engine_TexFmt_RGB565,
     ML4Engine_TexFmt_RGBA4444,
     ML4Engine_TexFmt_LA88,
-    ML4Engine_TexFmt_UNKNOWN_88,
+    ML4Engine_TexFmt_HILO8,
     ML4Engine_TexFmt_L8,
     ML4Engine_TexFmt_A8,
     ML4Engine_TexFmt_LA44,

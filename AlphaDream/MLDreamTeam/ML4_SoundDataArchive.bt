@@ -1,0 +1,85 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/TheFreezebug/sArcExtract
+//https://gbatemp.net/threads/extracting-mario-luigi-dream-teams-ost-sounddata-arc.478103
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    ChunkType_Wave,
+    ChunkType_SFX,
+    ChunkType_SFX_B,
+    //What is 3
+    ChunkType_StreamedSFX = 4,
+    ChunkType_StreamedBGM,
+    ChunkType_StreamedVoice,
+} ChunkType;
+
+typedef struct MetaEntry
+{
+    uint32 fileID;
+    uint32 size;
+    uint32 off;
+    uint32 unk;
+};
+
+typedef struct StringTableChunk
+{
+    UByte_StringEntry StringEntry;
+    //string StringEntryStr;
+    while (ReadByte() == 0x00)
+    {
+        byte pad;
+    }
+};
+
+typedef struct FileDataEntryChunk
+{
+    FSeek(FPos+Meta_Entry[i].off);
+    byte Data[Meta_Entry[i].size];
+    i++;
+};
+
+typedef struct Header
+{
+    ChunkType archiveType;
+    uint32 entries;
+    uint32 chunkSize;
+    uint32 fileDataOff;
+    uint32 tableOff;
+    uint32 stringTableSz;
+    uint32 dmy[2];
+    //uint32 dmy[3];
+};
+
+typedef struct Chunk
+{
+    FPos = FTell();
+    Header ChunkHeader;
+    MetaEntry Meta_Entry[ChunkHeader.entries];
+    StringTableChunk StringTable[ChunkHeader.entries]<optimize=false>;
+    FileDataEntryChunk FileDataEntry[ChunkHeader.entries]<optimize=false>;
+    i = 0;
+};
+
+struct
+{
+    Chunk Wave;
+    Chunk SFX;
+    Chunk SFX_B;
+    Chunk StreamedSFX;
+    Chunk StreamedBGM;
+    Chunk StreamedVoice;
+} ML4_SoundDataArchive;
