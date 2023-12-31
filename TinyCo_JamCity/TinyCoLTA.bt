@@ -22,7 +22,7 @@ struct TinyCoLTA
     uint16 unk<bgcolor=cRed>; //Usually 0xBFFF
     int32 unk2[2]<bgcolor=cRed>;
     int16 totalAnims<bgcolor=cGreen>;
-    int16 unk3<bgcolor=cRed>;
+    int16 unk3<bgcolor=cRed>; //Always 1
     struct AnimationEntries
     {
         struct AnimationEntry

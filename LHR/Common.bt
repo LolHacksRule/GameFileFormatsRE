@@ -15,6 +15,7 @@ local uint i <hidden=true> = 0;
 local uint i2 <hidden = true> = 0;
 local uint i3 <hidden = true> = 0;
 local uint i4 <hidden = true> = 0;
+local uint swapRGBAChannels <hidden = true> = 0;
 
 local int FPos<hidden = true> = FTell();
 
@@ -243,9 +244,34 @@ typedef struct U64_UnicodeStringEntry {
     }
 };
 
+typedef struct Vector2_Byte {
+	byte X;
+    byte Y;
+};
+
+typedef struct Vector2_UByte {
+	ubyte X;
+    ubyte Y;
+};
+
+typedef struct Vector2_I16 {
+	int16 X;
+    int16 Y;
+};
+
+typedef struct Vector2_U16 {
+	uint16 X;
+    uint16 Y;
+};
+
 typedef struct Vector2_F32 {
 	float X;
     float Y;
+};
+
+typedef struct Vector2_I32 {
+	int32 X;
+    int32 Y;
 };
 
 typedef struct Vector2_U32 {
@@ -301,18 +327,38 @@ typedef struct Vector4_I32 {
 };
 
 typedef struct RGBA_UByte {
-    ubyte R;
-    ubyte G;
-    ubyte B;
-    ubyte A;
+    if (swapRGBAChannels)
+    {
+        ubyte A;
+        ubyte R;
+        ubyte G;
+        ubyte B;
+    }
+    else
+    {
+        ubyte R;
+        ubyte G;
+        ubyte B;
+        ubyte A;
+    }
     //Printf("#%02x%02x%02x%02x\n", R, G, B, A);
 };
 
 typedef struct RGBA_Byte {
-    byte R;
-    byte G;
-    byte B;
-    byte A;
+    if (swapRGBAChannels)
+    {
+        byte A;
+        byte R;
+        byte G;
+        byte B;
+    }
+    else
+    {
+        byte R;
+        byte G;
+        byte B;
+        byte A;
+    }
 };
 
 typedef struct RGB_F32 {
@@ -322,15 +368,25 @@ typedef struct RGB_F32 {
 };
 
 typedef struct RGBA_F32 {
-    float R;
-    float G;
-    float B;
-    float A;
+    if (swapRGBAChannels)
+    {
+        float A;
+        float R;
+        float G;
+        float B;
+    }
+    else
+    {
+        float R;
+        float G;
+        float B;
+        float A;
+    }
 };
 
 typedef struct I32_SizeWithData {
 	int32 byteSize<hidden=true>;
-    byte data[fileByteSize];
+    byte data[byteSize];
 };
 
 typedef struct I32_OffsetWithSize {
@@ -340,7 +396,7 @@ typedef struct I32_OffsetWithSize {
 
 typedef struct U32_SizeWithData {
 	uint32 byteSize<hidden=true>;
-    byte data[fileByteSize];
+    byte data[byteSize];
 };
 
 typedef struct U32_OffsetWithSize {

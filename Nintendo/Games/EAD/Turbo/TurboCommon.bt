@@ -11,9 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../../../LHR/Common.bt"
-
-typedef struct MK8_CreationDate
+typedef struct Turbo_CreationDate
 {
     uint32 year;
     uint32 month;
@@ -28,42 +26,42 @@ typedef enum <int32>
 {
     BodyID_Disabled = -1,
     BodyID_CircuitSpecial = 5,
-} MK8_BodyID;
+} Turbo_BodyID;
 
 typedef enum <int32>
 {
     TireID_Disabled = -1,
     TireID_Normal,
-} MK8_TireID;
+} Turbo_TireID;
 
 typedef enum <int32>
 {
     GliderID_Disabled = -1,
     GliderID_SuperGlider,
-} MK8_GliderID;
+} Turbo_GliderID;
 
 typedef enum <int32>
 {
     TrackID_MKStadium,
     TrackID_SunshineAirport = 26,
-} MK8_TrackID;
+} Turbo_TrackID;
 
 typedef enum <int32>
 {
     CharacterID_Disabled = -1,
     CharacterID_Yoshi = 4,
     CharacterID_Rosalina = 12,
-} MK8_CharacterID;
+} Turbo_CharacterID;
 
 typedef enum <byte>
 {
     CharacterVariant_Normal,
-} MK8_CharacterVariant;
+} Turbo_CharacterVariant;
 
 typedef enum <byte>
 {
     MiiWeightClass_Light,
-} MK8_MiiWeightClass;
+} Turbo_MiiWeightClass;
 
 typedef enum <uint32>
 {
@@ -71,14 +69,14 @@ typedef enum <uint32>
     CPUFlag_CPU,
     CPUFlag_VSSecondDriverSlotGhost = 3,
     CPUFlag_Unoccupied,
-} MK8_CPUFlag;
+} Turbo_CPUFlag;
 
 typedef enum <uint32>
 {
     TeamFlag_Red,
     TeamFlag_Blue,
     TeamFlag_Solo,
-} MK8_TeamFlag;
+} Turbo_TeamFlag;
 
 typedef enum <uint32>
 {
@@ -86,7 +84,7 @@ typedef enum <uint32>
     GameMode_TT,
     GameMode_VS,
     GameMode_BM,
-} MK8_GameMode;
+} Turbo_GameMode;
 
 typedef enum <uint32>
 {
@@ -94,14 +92,23 @@ typedef enum <uint32>
     CC_100,
     CC_150,
     CC_200,
-} MK8_CC;
+} Turbo_CC;
 
 typedef enum <byte>
 {
     CountryID_USA = 49,
-} MK8_CountryID;
+} Turbo_CountryID;
 
-typedef struct MK8_TimeAndLapSplits
+typedef enum <byte>
+{
+    Turbo_DisplayTagGroupType_Wait = 0,
+    Turbo_DisplayTagGroupType_RoomName = 3, //RoomName?
+    Turbo_DisplayTagGroupType_Favorite, //Favorite?
+    Turbo_DisplayTagGroupType_TournamentName, //TournamentName?
+    Turbo_DisplayTagGroupType_Round = 6, //Round?
+} Turbo_DisplayTagGroupType;
+
+typedef struct Turbo_TimeAndLapSplits
 {
     uint16 min;
     byte sec;

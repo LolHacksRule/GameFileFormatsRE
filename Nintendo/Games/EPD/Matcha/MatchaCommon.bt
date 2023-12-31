@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int16>
+{
+    NMS_ColorID_Matcha_Red,
+    NMS_ColorID_Matcha_Red2,
+    NMS_ColorID_Matcha_Red3,
+    NMS_ColorID_Matcha_Gray,
+    NMS_ColorID_Matcha_Black,
+    NMS_ColorID_Matcha_White,
+    NMS_ColorID_Matcha_Yellow,
+    NMS_ColorID_Matcha_YellowGreen,
+    NMS_ColorID_Matcha_LightGreen,
+    NMS_ColorID_Matcha_DarkGreen,
+    NMS_ColorID_Matcha_LightBlue,
+    NMS_ColorID_Matcha_DeepBlue,
+    NMS_ColorID_Matcha_Blue,
+    NMS_ColorID_Matcha_BabyPink,
+    NMS_ColorID_Matcha_Purple,
+    NMS_ColorID_Matcha_LogInBonus_1,
+    NMS_ColorID_Matcha_LogInBonus_All,
+    NMS_ColorID_Matcha_LogInBonus_2,
+    NMS_ColorID_Matcha_StageNumber,
+} NMS_ColorID_Matcha;
+
+typedef enum <int16>
+{
+    NMS_TagType_Matcha_System,
+    NMS_TagType_Matcha_Image,
+    NMS_TagType_Matcha_Number,
+    NMS_TagType_Matcha_String,
+    NMS_TagType_Matcha_Skill,
+    NMS_TagType_Matcha_Time,
+} NMS_TagType_Matcha;

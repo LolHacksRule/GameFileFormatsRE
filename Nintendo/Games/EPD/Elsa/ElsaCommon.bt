@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int16>
+{
+    NMS_ColorID_Elsa_Red,
+    NMS_ColorID_Elsa_Blue,
+    NMS_ColorID_Elsa_Pink,
+    NMS_ColorID_Elsa_Gray,
+    NMS_ColorID_Elsa_BlankPlayerTitle,
+    NMS_ColorID_Elsa_Small,
+    NMS_ColorID_Elsa_Yellow,
+    NMS_ColorID_Elsa_ResetColor = -1,
+} NMS_ColorID_Elsa;
+
+typedef enum <int16>
+{
+    
+} NMS_TagType_Elsa;

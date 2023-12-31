@@ -16,7 +16,9 @@
 //0x00000fa0 = ResAssetPrmTbl
 //0x00073048 = NameTbl
 
-#include "../../../../LHR/Common.bt"
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/XLINK-File-Format
+
+#include "../../../LHR/Common.bt"
 
 typedef struct Header
 {
@@ -99,7 +101,12 @@ typedef struct UserDataTbl
     uint32 CRC32[theHdr.users];
     if (theHdr.ver > 30)
     {
+        if (ReadInt() == 0) //WIP fix for Pilot Secred
+        {
+            uint32 dmy;
+        }
         uint64 exRegionOff[theHdr.users];
+        LittleEndian();
     }
     else
     {
@@ -146,8 +153,9 @@ typedef struct ParamDef
     }
 };
 
-typedef struct ParamDefineTbl
-{   if (theHdr.ver > 30)
+typedef struct ParameterDefinitionsTable
+{
+    if (theHdr.ver > 30 && theHdr.ver != 33) //Secred (Final) breaks this, please be consistent with this
     {
         uint64 dataSectionSize;
     }
@@ -160,27 +168,33 @@ typedef struct ParamDefineTbl
         FSkip(-8);
         byte theTbl[dataSectionSize];
     }
-    else
-    //It works for v30 but it's kinda borked
+    else //It works for v30 but it's kinda borked
     {
-        uint32 userParams;
-        uint32 assetParams;
+        uint32 totalUserParams;
+        uint32 totalAssetParams;
+        uint32 userAssetParams;
         uint32 triggerParams;
-        uint32 unk;
         struct Params
         {
-            struct UserParams
+            struct TotalUserParams
             {
-                for (i = 0; i < userParams; i++)
+                for (i = 0; i < totalUserParams; i++)
                 {
-                    ParamDef UserParam;
+                    ParamDef TotalUserParam;
                 }
             } UserPrms;
-            struct AssetParams
+            struct TotalAssetParams
             {
-                for (i = 0; i < assetParams; i++)
+                for (i = 0; i < totalAssetParams; i++)
                 {
-                    ParamDef AssetParam;
+                    ParamDef TotalAssetParam;
+                }
+            } UserPrms;
+            struct UserAssetParams
+            {
+                for (i = 0; i < userAssetParams; i++)
+                {
+                    ParamDef UserAssetParam;
                 }
             } AssetPrms;
             struct TriggerParams
@@ -249,27 +263,27 @@ struct BinaryXLink2
 {
     Header theHdr;
     UserDataTbl UserData;
-    ParamDefineTbl ParamDefine;
+    ParameterDefinitionsTable ParameterDefinitions;
     if (theHdr.ver < 30)
     {
-        struct ResAssetParamTbls
+        struct
         {
             for (i = 0; i < theHdr.resAssetParams; i++)
             {
                 ResAssetParamTableEntry ResAssetParamTbl;
             }
-        } rapts;
+        } ResAssetParamTbls;
         FSeek(theHdr.triggerOverwriteParamsTblOff);
-        struct TrigOverwriteParamTbls
+        struct 
         {
             for (i = 0; i < theHdr.resTiggerOverwriteParams; i++)
             {
                 TrigOverwriteParamTableEntry TrigOverwriteParamTbl;
             }
-        } topts;
+        } TrigOverwriteParamTbls;
     }
     FSeek(theHdr.localPropertyNameRefTblOff);
-    struct LocalPropertyNameRefTbl
+    struct
     {
         if (theHdr.ver > 30)
         {
@@ -279,8 +293,8 @@ struct BinaryXLink2
         {
             uint32 nameTblOff;
         }
-    } lpnrt[theHdr.localPropertyNameRefTables]<optimize=false>;
-    struct LocalPropertyEnumRefTbl
+    } LocalPropertyNameRefTbl[theHdr.localPropertyNameRefTables]<optimize=false>;
+    struct
     {
         if (theHdr.ver > 30)
         {
@@ -290,18 +304,18 @@ struct BinaryXLink2
         {
             uint32 enumTblOff;
         }
-    } lpert[theHdr.localPropertyEnumNameRefTables]<optimize=false>;
-    struct DirectValueTbl
+    } LocalPropertyEnumRefTbl[theHdr.localPropertyEnumNameRefTables]<optimize=false>;
+    struct
     {
         uint32 directVal;
-    } dvt[theHdr.directValueTables];
-    struct RandomTbl
+    } DirectValueTbl[theHdr.directValueTables];
+    struct
     {
         MinMax_F32 randEntry;
-    } rt[theHdr.randomTables];
+    } RandomTbl[theHdr.randomTables];
     if (theHdr.ver < 30)
     {
-        struct CurveTbl
+        struct
         {
             uint16 curvePointStartOff;
             uint16 points;
@@ -311,22 +325,22 @@ struct BinaryXLink2
             uint32 propIdx;
             uint16 localPropNameIdx;
             uint16 pad;
-        } ct[theHdr.curveTables];
-        struct CurvePointTbl
+        } CurveTbl[theHdr.curveTables];
+        struct
         {
             MinMax_F32 cptEntry;
-        } cpt[theHdr.curvePointTables];
+        } CurvePointTbl[theHdr.curvePointTables];
         //TODO: Exregion
         /*struct ExRegion
         {
             
         } er;*/
         FSeek(theHdr.condTblOff);
-        struct ConditionTbl
+        struct
         {
             while (FPos < theHdr.nameTblOff)
             {
-                struct ConditionEntry
+                struct
                 {
                     ContainerType parentContainerType;
                     if (parentContainerType == CT_Random || parentContainerType == CT_Random2)
@@ -342,22 +356,22 @@ struct BinaryXLink2
                         Byte_Bool isSolved;
                         Byte_Bool isGlobal;
                     }
-                } ce;
+                } ConditionEntry;
                 FPos = FTell();
             }
-        } cnt;
+        } ConditionTbl;
     }
     FSeek(theHdr.nameTblOff);
-    struct NameTable
+    struct
     {
         while (FPos < EOF) //Read as many
         {
-            struct NameTableString
+            struct
             {
                 string theString;
                 //Printf("%s\n", theString);
                 FPos = FTell();
-            } ntstr;
+            } NameTableString;
         }
-    } name_table;
+    } NameTable;
 } BXLNK;

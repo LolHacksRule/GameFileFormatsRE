@@ -11,10 +11,11 @@
 //   History: 
 //------------------------------------------------
 
-#include "MK8Common.bt"
+#include "../../../../LHR/Common.bt"
+#include "TurboCommon.bt"
 
 //https://mk8.tockdom.com/wiki/Ghost_Data_(File_Format)
-//https://github.com/kinnay/Nintendo-File-Formats/wiki/MK8-Replay-Files
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/Turbo-Replay-Files
 
 local uint DEBUG_PRINT <hidden=true> = 0;
 
@@ -26,7 +27,7 @@ struct GhostData
         uint32 hdrsize;
         uint32 ver;
         uint32 fSize;
-        MK8_CreationDate cDate;
+        Turbo_CreationDate cDate;
         uint32 CRC32;
         if (DEBUG_PRINT)
         {
@@ -45,15 +46,15 @@ struct GhostData
                 {
                     struct RaceKartInfo
                     {
-                        MK8_BodyID vehBodyID;
-                        MK8_TireID vehTiresID;
-                        MK8_GliderID vehGliderID;
-                        MK8_CharacterID charID;
-                        MK8_CharacterVariant charVariant;
-                        MK8_MiiWeightClass miiWeight;
+                        Turbo_BodyID vehBodyID;
+                        Turbo_TireID vehTiresID;
+                        Turbo_GliderID vehGliderID;
+                        Turbo_CharacterID charID;
+                        Turbo_CharacterVariant charVariant;
+                        Turbo_MiiWeightClass miiWeight;
                         uint16 pad;
-                        MK8_CPUFlag CPUFlag;
-                        MK8_TeamFlag TeamFlag;
+                        Turbo_CPUFlag CPUFlag;
+                        Turbo_TeamFlag TeamFlag;
                         if (DEBUG_PRINT)
                         {
                             Printf("[Player %i]: Body: %s | Tires: %s | Glider: %s | Character: %s | Character Variant: %s | Mii Weight: %s | CPU Flag: %s | Team Flag: %s \n", i, EnumToString(vehBodyID), EnumToString(vehTiresID), EnumToString(vehGliderID), EnumToString(charID), EnumToString(charVariant), EnumToString(miiWeight), EnumToString(CPUFlag), EnumToString(TeamFlag));
@@ -63,11 +64,11 @@ struct GhostData
             } dd;
             struct RaceSettings
             {
-                MK8_TrackID trackId;
+                Turbo_TrackID trackId;
                 U32_Bool isOnline;
-                MK8_GameMode gameMode;
+                Turbo_GameMode gameMode;
                 uint32 unk[2];
-                MK8_CC cc;
+                Turbo_CC cc;
                 Byte_Bool isMirror;
                 Byte_Bool isTeam;
                 byte unk2;
@@ -90,10 +91,10 @@ struct GhostData
         } mi;
         struct Location
         {
-            MK8_CountryID CountryID;
+            Turbo_CountryID CountryID;
             byte subRegionID;
             uint16 unk;
-            MK8_CountryID CountryID2;
+            Turbo_CountryID CountryID2;
             byte subRegionID2;
         } loc;
         byte unk2[90];
@@ -105,15 +106,15 @@ struct GhostData
             {
                 Printf("Lap Splits:\n");
             }
-            MK8_TimeAndLapSplits lap1;
-            MK8_TimeAndLapSplits lap2;
-            MK8_TimeAndLapSplits lap3;
-            MK8_TimeAndLapSplits lap4;
-            MK8_TimeAndLapSplits lap5;
-            MK8_TimeAndLapSplits finishingtime;
-            MK8_TimeAndLapSplits lap6;
-            MK8_TimeAndLapSplits lap7;
-            MK8_TimeAndLapSplits placeholders[4];
+            Turbo_TimeAndLapSplits lap1;
+            Turbo_TimeAndLapSplits lap2;
+            Turbo_TimeAndLapSplits lap3;
+            Turbo_TimeAndLapSplits lap4;
+            Turbo_TimeAndLapSplits lap5;
+            Turbo_TimeAndLapSplits finishingtime;
+            Turbo_TimeAndLapSplits lap6;
+            Turbo_TimeAndLapSplits lap7;
+            Turbo_TimeAndLapSplits placeholders[4];
             if (DEBUG_PRINT)
             {
                 Printf("Lap 1: %i.%i.%i\n", lap1.min, lap1.sec, lap1.ms);

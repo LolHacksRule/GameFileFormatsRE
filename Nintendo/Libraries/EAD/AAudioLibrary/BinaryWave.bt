@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "AALCommon.bt"
+
 typedef struct BWAVHeader
 {
     char magic[4];

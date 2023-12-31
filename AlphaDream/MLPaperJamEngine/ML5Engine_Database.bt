@@ -18,6 +18,8 @@
 
 //Only tested on Paper Jam!
 
+//static.crs
+
 typedef enum <uint16>
 {
     IF_HP,
@@ -63,7 +65,7 @@ typedef struct ItemEntry
     byte unk[8];
     ItemFlag flag;
     uint16 points;
-    byte unk2[4];
+    //byte unk2[4]; //If ML3R, comment
 };
 
 typedef struct WearStats

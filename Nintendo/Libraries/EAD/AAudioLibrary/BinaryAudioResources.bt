@@ -113,13 +113,13 @@ struct BinaryAudioResources
         OffsetSet offsetSet[assets];
         uint32 checkForMINFs<hidden=true>;
         FSkip(-4);
-        if (checkForMINFs != 1096043841)
+        if (checkForMINFs != 1096043841 && checkForMINFs != 1447122754 && checkForMINFs != 0)
         {
-            struct MusicInfoMeta
+            struct
             {
                 uint32 MINFCRCs;
                 uint32 MINFNameCRC[MINFCRCs];
-            } minf_m;
+            } MusicInfoMeta;
         }
         FSeek(offsetSet.metaOff);
         struct AudioMetaEntries

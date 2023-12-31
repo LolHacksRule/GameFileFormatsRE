@@ -11,24 +11,21 @@
 //   History: 
 //------------------------------------------------
 
-typedef enum <int32>
-{
-    None,
-    Inverse,
-    Exponential,
-    Segment,
-} CurveType;
-
 #include "AALCommon.bt"
 
-struct BinaryAudioRollOffCurve
+typedef enum <uint32> {
+	Logarithmic,
+    Linear,
+} CurveType;
+
+struct BinaryAudioUnitDistanceCurve
 {
-    N_AAL_CommonBinHeader theHdr;
+    N_EAD_AAL_CommonBinHeader theHdr;
     CurveType curveType;
-    float rocStart;
-    float rocnd;
+    float start;
+    float end;
     float hold;
     float unit;
     float decay;
-    float culling;
-} BAROC;
+    float cullStart;
+} BAUDC;

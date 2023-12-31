@@ -27,7 +27,7 @@ typedef struct CurveDesc
 
 struct BinaryAudioAttenuation
 {
-    N_AAL_CommonBinHeader theHdr;
+    N_EAD_AAL_CommonBinHeader theHdr;
     uint32 strTblOff;
     //float cullFadeStart;
     //float cullFade;

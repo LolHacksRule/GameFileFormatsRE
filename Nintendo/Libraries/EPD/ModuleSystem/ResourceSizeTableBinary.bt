@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+//This was introduced in UKing but not present in LP2 games
+
 struct ResourceSizeTableBinary
 {
     if (ReadInt() != 1112822610) //Thunder and beyond
@@ -21,7 +23,7 @@ struct ResourceSizeTableBinary
     }
     else
     {
-        char hdr[4]; //BOTW/Sports3
+        char hdr[4]; //UKing/Elsa
         local uint32 nameEntrySize <hidden=true> = 128; //hack
         uint16 checkForBE<hidden=true>;
         FSkip(-2);

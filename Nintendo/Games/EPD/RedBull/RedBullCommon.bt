@@ -1,0 +1,42 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+/*typedef enum <int16>
+{
+    NMS_ColorID_RedBull_Red,
+    NMS_ColorID_RedBull_Orange,
+    NMS_ColorID_RedBull_Special,
+    NMS_ColorID_RedBull_Blue,
+    NMS_ColorID_RedBull_Secret,
+    NMS_ColorID_RedBull_ResetColor,
+} NMS_ColorID_RedBull;*/
+
+typedef enum <uint32> //On CDN it's only Red Orange and Blue
+{
+    NMS_Color_RedBull_Red = 0xFF140FF,
+    NMS_Color_RedBull_Orange = 0xF3980FF,
+    NMS_Color_RedBull_Special = 0xFFE637FF,
+    NMS_Color_RedBull_Blue = 0x067FAFF,
+    NMS_Color_RedBull_Secret = 0xFA820FF,
+    NMS_Color_RedBull_ResetColor = 0x00000FF,
+} NMS_Color_RedBull;
+
+typedef enum <int16>
+{
+    NMS_TagType_RedBull_System,
+    NMS_TagType_RedBull_Number,
+    NMS_TagType_RedBull_Unit,
+    NMS_TagType_RedBull_InsertDate,
+    NMS_TagType_RedBull_Insert,
+    NMS_TagType_RedBull_Operation,
+} NMS_TagType_RedBull;

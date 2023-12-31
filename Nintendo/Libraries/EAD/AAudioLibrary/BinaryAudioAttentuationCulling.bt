@@ -15,7 +15,7 @@
 
 struct BinaryAudioAttenuationCulling
 {
-    N_AAL_CommonBinHeader theHdr;
+    N_EAD_AAL_CommonBinHeader theHdr;
     float cullFadeStart;
     float cullFade;
     uint32 unk;

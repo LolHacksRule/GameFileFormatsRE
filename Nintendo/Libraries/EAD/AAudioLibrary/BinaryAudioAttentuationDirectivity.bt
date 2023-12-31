@@ -11,16 +11,10 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../../../LHR/Common.bt"
-//#include "../Standard/CommonBin.bt"
+#include "AALCommon.bt"
 
-typedef struct N_EAD_AAL_CommonBinHeader {
-    LittleEndian();
-	char   blockType[4];
-    U16_EndianEnum endian;
-    if (endian == U16_Big)
-    {
-        BigEndian();
-    }
-    uint16 ver;
-};
+struct BinaryAudioAADR
+{
+    N_EAD_AAL_CommonBinHeader theHdr;
+    float unk[4];
+} BAADR;

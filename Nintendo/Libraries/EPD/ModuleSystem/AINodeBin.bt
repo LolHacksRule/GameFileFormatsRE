@@ -1,0 +1,204 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/TotkMods/Research/blob/main/Formats/ainb.md
+
+local uint i<hidden=true> = 0;
+
+typedef enum <uint32>
+{
+    FileCategory_AI,
+    FileCategory_Logic,
+    FileCategory_Sequence,
+} FileCategory;
+
+typedef enum <uint32>
+{
+    
+} NodeType;
+
+typedef struct NodeBodyEntry
+{
+    uint32 baseIdx;
+    uint32 params;
+};
+
+typedef struct NodeBodyEntryTwoByte
+{
+    ubyte params;
+    ubyte baseIdx;
+};
+
+typedef struct Command
+{
+    uint32 nameOff;
+    GUID commandGUID;
+    uint16 leftNodeIdx;
+    uint16 rightNodeIdx;
+};
+
+typedef struct Node
+{
+    uint16 nodeType;
+    uint16 nodeIdx;
+    uint16 attachmentParams;
+    byte flag;
+    byte unk;
+    uint32 nameOff;
+    uint32 nameCRC32;
+    uint32 unk2;
+    uint32 nodeBodyOff;
+    uint16 exbFunctions;
+    uint16 exbInputOutputFieldSz;
+    uint16 multiParams;
+    uint16 unk3;
+    uint32 baseAttachmentParamIdx;
+    uint16 basePrecondNode;
+    uint16 precondNodes;
+    uint16 secEntryAddress;
+    uint16 unk4;
+    GUID guid;
+};
+
+typedef struct GlobalParameterEntryReference
+{
+    uint32 nameOff;
+    uint32 nameHash;
+    uint32 unkHash[2];
+};
+
+typedef struct GlobalParameterEntry
+{
+    uint32 flags;
+    uint32 unk;
+    //GlobalParameterEntryReference ref;
+};
+
+typedef struct NodeBody
+{
+    NodeBodyEntry IntImmediateParam;
+    NodeBodyEntry BoolImmediateParam;
+    NodeBodyEntry FloatImmediateParam;
+    NodeBodyEntry StringImmediateParam;
+    NodeBodyEntry V3FImmediateParam;
+    NodeBodyEntry UserDefImmediateParam;
+    NodeBodyEntry IntInputParam;
+    NodeBodyEntry IntOutputRefParam;
+    NodeBodyEntry BoolInputParam;
+    NodeBodyEntry BoolOutputRefParam;
+    NodeBodyEntry FloatInputParam;
+    NodeBodyEntry FloatOutputRefParam;
+    NodeBodyEntry StringInputParam;
+    NodeBodyEntry StringOutputRefParam;
+    NodeBodyEntry V3FInputParam;
+    NodeBodyEntry V3FOutputRefParam;
+    NodeBodyEntry UserDefInputParam;
+    NodeBodyEntry UserDefOutputRefParam;
+    NodeBodyEntryTwoByte BoolFloatInputOutputSourceNode;
+    NodeBodyEntryTwoByte Unk;
+    NodeBodyEntryTwoByte StandardChildNode;
+    NodeBodyEntryTwoByte ResidentUpdateNode;
+    NodeBodyEntryTwoByte StringInputSourceNode;
+    NodeBodyEntryTwoByte IntInputSourceNode;
+    NodeBodyEntryTwoByte Unk2[4];
+};
+
+typedef struct GlobalParameter
+{
+    uint16 entries;
+    uint16 paramIdx;
+    uint16 offForFirstEntry;
+    uint16 unk;
+    GlobalParameterEntry gpe[entries];
+};
+
+typedef struct Attachment
+{
+    uint32 nameOff;
+    uint32 subParamsEntryOff;
+    uint16 exbFunctions;
+    uint16 exbIOFieldSz;
+    uint32 nameHash;
+};
+
+typedef struct ImmediateParam
+{
+    uint32 nameOff;
+    uint32 flags;
+    int32 value;
+};
+
+typedef struct IOParam
+{
+    uint32 nameOff;
+    int16 childNodeOrMPArrayBaseidx;
+    int16 ioSrcNodeIdx;
+    uint32 flags;
+    uint32 defaultVal;
+};
+
+typedef struct Header
+{
+    char   AIB[4];
+    uint32 ver;
+    uint32 filenameOff;
+    uint32 commands;
+    uint32 nodes;
+    uint32 precondNodes;
+    uint32 attachmentParams;
+    uint32 outputNodes;
+    uint32 globalParamsOff;
+    uint32 strTblOff;
+    uint32 resolvesArrayOff;
+    uint32 immediateParamsOff;
+    uint32 residentUpdatesArrayOff;
+    uint32 inputOutputParamsOff;
+    uint32 multiParamsOff;
+    uint32 attachmentParamsOff;
+    uint32 attachmentParamsIndexListOff;
+    uint32 exbSectionOff;
+    uint32 childReplacementsTableOff;
+    uint32 precondNodesArrayOff;
+    uint32 unk; //used in Secred
+    uint32 unk2[2];
+    uint32 embeddedAINodeFilesOff;
+    uint32 fileCategoryNameOff;
+    FileCategory fileCategory;
+    uint32 entryStringsOff;
+    uint32 unk3;
+    uint32 fileIdentificationHashesOff;
+};
+
+struct AINodeBinary
+{
+    Header theHdr;
+    Command command[theHdr.commands];
+    Node node[theHdr.nodes];
+    //GlobalParameter globalParams;
+    struct
+    {
+        for (i = 0; i < theHdr.nodes; i++)
+        {
+            FSeek(node[i].nodeBodyOff);
+            NodeBody NodeBodyStruct;
+        }
+    } NodeBodies;
+    //Attachment attachment[theHdr.attachments];
+    FSeek(theHdr.immediateParamsOff);
+    //ImmediateParam immediateParam;
+    FSeek(theHdr.inputOutputParamsOff);
+    IOParam io;
+    /*GUID unkGUID;
+    FSeek(theHdr.strTblOff);
+    string fileName;*/
+} AINB;
