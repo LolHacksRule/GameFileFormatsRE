@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: PlayMechanic_GLCGZ
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+//Structure of chunks usually is 
+//Texture
+//Unknown data (11)
+
+struct
+{
+    //ONLY TESTED ON GLCGZ2 FROM AB ARCADE AND JURASSIC PARK ARCADE
+    char magic[5]<bgcolor=cLtBlue>;
+    uint32 unk<bgcolor=cRed>; //5
+    uint32 width<bgcolor=cGreen>;
+    uint32 height<bgcolor=cGreen>;
+    uint32 unk2<bgcolor=cRed>; //Seems to always be 4
+    uint32 compressedChunks<bgcolor=cBlue>;
+    uint32 unk3<bgcolor=cRed>; //30
+    uint32 texFmt<bgcolor=cPurple>;
+    uint32 unk4[3]<bgcolor=cRed>;
+    uint32 texParam<bgcolor=cDkRed>; //?
+    byte dmy[64]<bgcolor=cRed>;
+    uint32 off[compressedChunks]<bgcolor=cBlue>;
+    struct
+    {
+        uint32 cSize<bgcolor=cBlue>;
+        Byte_Bool isTexture<bgcolor=cDkGreen>;
+        if (isTexture == 1)
+        {
+            Printf("%i: %i (Texture)\n", i, off[i]);
+        }
+        else
+        {
+            Printf("%i: %i\n", i, off[i]);
+        }
+        byte data[cSize]<bgcolor=cGreen>;
+        i++;
+    } Chunk[compressedChunks]<optimize=false>;
+} PlayMechanixGLCGZ;
