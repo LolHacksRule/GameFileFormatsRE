@@ -13,7 +13,7 @@
 
 #include "../../LHR/Common.bt"
 
-//Viewing of data files from Rovio's proprietary version of the KA3D Engine (Fusion).
+//Viewing of data files from Rovio's proprietary version of the KA3D Engine (Later named Fusion).
 
 local string theLabelID <hidden=true> = "";
 //local uint i <hidden = true> = 0;

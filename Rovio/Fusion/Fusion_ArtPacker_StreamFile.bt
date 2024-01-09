@@ -13,11 +13,12 @@
 
 typedef enum <int64>
 {
+    RGB565 = 5928780230766690304,
     RGBA4444 = 5928780282272691252,
-    RGBA8888 = 5928780282340063288
+    RGBA8888 = 5928780282340063288,
 } texFmt; //Rovio didn't use I64 possibly so I'd rather save text
 
-#include "../LHR/Common.bt"
+#include "../../LHR/Common.bt"
 
 //local int FPos<hidden = true> = FTell();
 
@@ -27,7 +28,7 @@ typedef enum <int64>
 
 //local int EOF<hidden = true> = FPos + FSize;
 
-BigEndian();
+BigEndian(); //KA3D moment
 
 //local uint i<hidden=true> = 0;
 
@@ -44,10 +45,8 @@ struct ArtPackerSTREAM
             uint16 atlasNum;
             uint16 unk[10]; //the first one is width again?
             texFmt theTexFormat;
-            FSkip(-40);
-            byte theRawTex[imageSize];
+            byte theRawTex[imageSize-40];
             FPos = FTell();
         } rawImg;
-        //FSkip(-32);
     }
 } zstreamFile;

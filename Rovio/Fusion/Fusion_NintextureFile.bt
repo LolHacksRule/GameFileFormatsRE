@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../../Nintendo/NintendoWare/caFe/GX2/NW4F_GX2_Standard.bt"
+#include "../../Nintendo/Libraries/NintendoWare/caFe/GX2/NW4F_GX2_Standard.bt"
 
 local uint isWiiU = 0;
 local uint isWii = 0;
@@ -20,7 +20,7 @@ typedef enum <uint32>
 {
     MipHeader = 1296650344,
     WiiUTexture = 1465209888,
-    GameCubeTexture_NotReally = 1195594784
+    GameCube2Texture = 1195594784 //Why is the extension GCT, renamed to GC2 bcz Wii is a sequel of GameCube which may be the reasoning behind it
 } contentType;
 
 typedef enum <uint16>
@@ -70,7 +70,7 @@ typedef struct WiiUTexture
     uint32 texRegisters[5]; //The last one does little
 };
 
-typedef struct GameCubeTexture_NotReally
+typedef struct GameCube2Texture
 {
     contentType magic;
     uint16 width;
@@ -124,7 +124,7 @@ struct Fusion_Nintexture
     else if (checkForHeaderless == 1195594784)
     {
         isWii = 1;
-        GameCubeTexture_NotReally GCT_Headerless;
+        GameCube2Texture GCT_Headerless;
         byte theTexData[GCT_Headerless.pixelSize];
     }
     else
@@ -132,7 +132,7 @@ struct Fusion_Nintexture
         MipHeader MIPh;
         if (isWii)
         {
-            GameCubeTexture_NotReally GCT;
+            GameCube2Texture GCT;
         }
         if (isWiiU)
         {
