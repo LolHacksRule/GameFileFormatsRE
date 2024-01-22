@@ -140,17 +140,25 @@ struct
     short ver;
     if (ver > 190)
     {
-        int32 exportVer;
+        struct
+        {
+            uint16 major;
+            ubyte minor;
+            ubyte build;
+        } HGRExportVersion; //Used nowhere
     }
     short dataFlags;
     if (ver >= 180)
     {
         PlatformType platformType;
     }
-    FogType fogType;
-    float start;
-    float end;
-    RGB_F32 color;
+    struct
+    {
+        FogType fogType;
+        float start;
+        float end;
+        RGB_F32 color;
+    } SceneFogParams;
     int32 chk0;
     int32 textures;
     if (textures)
@@ -175,24 +183,33 @@ struct
             {
                 int32 flags;
             }
-            byte params;
-            struct
+            ubyte texParams;
+            if (texParams)
             {
-                I16_StringEntry paramName;
-                short index;
-            } TextureParam[params]<optimize=false>;
-            byte vec4s;
-            struct
+                struct
+                {
+                    I16_StringEntry paramName;
+                    short index;
+                } TextureParam[texParams]<optimize=false>;
+            }
+            ubyte vec4s;
+            if (vec4s)
             {
-                I16_StringEntry vec4Name;
-                Vector4_F32 vec4;
-            } Vector4Param[vec4s]<optimize=false>;
-            byte f32s;
-            struct
+                struct
+                {
+                    I16_StringEntry vec4ParamName;
+                    Vector4_F32 vec4;
+                } Vector4Param[vec4s]<optimize=false>;
+            }
+            ubyte f32s;
+            if (f32s)
             {
-                I16_StringEntry floatName;
-                float f32;
-            } FloatParam[f32s]<optimize=false>;
+                struct
+                {
+                    I16_StringEntry floatName;
+                    float f32;
+                } FloatParam[f32s]<optimize=false>;
+            }
         } MaterialEntry[materials]<optimize=false>;
     }
     int32 chk1;
@@ -200,6 +217,10 @@ struct
     if (primitives)
     {
         Printf("Primitives are NOT YET SUPPORTED!\n");
+        while (ReadInt() != 305419778) //Finicky skipper
+        {
+            byte dmy<hidden=true>;
+        }
         //FSeek(5979); //Comment when Primitives works perfectly
         /*struct
         {
@@ -246,6 +267,7 @@ struct
             //byte usedBone[usedBones];
         } PrimitiveEntry[primitives]<optimize=false>;*/
     }
+    //FSeek(15881);
     int32 chk2;
     int32 meshes;
     if (meshes)
@@ -315,13 +337,13 @@ struct
             {
                 Vector3_F32 start;
                 Vector3_F32 end;
-            } line[lines];
+            } line[lines]<optimize=false>;
             struct
             {
                 int32 begin;
                 int32 end;
             } path[paths];
-        } LineShapeEntry[lineShapes];
+        } LineShapeEntry[lineShapes]<optimize=false>;
     }
     int32 chk7;
     int32 otherNodes;
@@ -334,14 +356,18 @@ struct
     if (xFormAnimations)
     {
         Printf("Transform animations are NOT YET SUPPORTED!\n");
+        while (ReadInt() != 305419785) //Finicky skipper
+        {
+            byte dmy<hidden=true>;
+        }
         //FSeek(6299625); //uncomment when ready
         /*struct
         {
             I16_StringEntry name;
-            byte posKeyRate;
-            byte rotKeyRate;
-            byte sclKeyRate;
-            byte endBehaviour;
+            ubyte posKeyRate;
+            ubyte rotKeyRate;
+            ubyte sclKeyRate;
+            ubyte endBehaviour;
             if (ver >= 192)
             {
                 Byte_Bool optimized;
@@ -365,13 +391,14 @@ struct
         } XFormAnimation[xFormAnimations]<optimize=false>;*/
     }
     int32 check9;
-    struct
+    uint32 userPropertySets;
+    if (userPropertySets)
     {
-        int32 userPropertySets;
         struct
         {
             I16_StringEntry key;
             I16_StringEntry value;
+            Printf("%s\n%s\n", key.theString, value.theString);
         } UserPropertySet[userPropertySets]<optimize=false>;
-    } UserPropertySets;
+    }
 } HierarchicalGraphicsResource;

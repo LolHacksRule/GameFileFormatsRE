@@ -12,8 +12,18 @@
 //------------------------------------------------
 
 //https://github.com/TotkMods/Research/blob/main/Formats/ainb.md
+//https://epd.zeldamods.org/wiki/AINB
 
-local uint i<hidden=true> = 0;
+#include "../../../../LHR/Common.bt"
+
+typedef struct StringReference
+{
+    uint32 strOff;
+    FPos = FTell();
+    FSeek(theHdr.strTblOff+strOff);
+    string str;
+    FSeek(FPos);
+};
 
 typedef enum <uint32>
 {
@@ -41,7 +51,7 @@ typedef struct NodeBodyEntryTwoByte
 
 typedef struct Command
 {
-    uint32 nameOff;
+    StringReference name;
     GUID commandGUID;
     uint16 leftNodeIdx;
     uint16 rightNodeIdx;
@@ -133,14 +143,14 @@ typedef struct Attachment
 
 typedef struct ImmediateParam
 {
-    uint32 nameOff;
+    StringReference name;
     uint32 flags;
     int32 value;
 };
 
 typedef struct IOParam
 {
-    uint32 nameOff;
+    StringReference name;
     int16 childNodeOrMPArrayBaseidx;
     int16 ioSrcNodeIdx;
     uint32 flags;
