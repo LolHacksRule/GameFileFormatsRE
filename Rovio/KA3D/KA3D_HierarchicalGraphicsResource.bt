@@ -73,10 +73,10 @@ typedef struct Float4Array16
             {
                 for (i2 = 0; i2 < 4; i2++)
                 {
-                    uint16 unk;
+                    uint16 unk<optimize=false>;
                 }
             }
-        } UnknownData;
+        } UnknownData<optimize=false>;
     }
     else
     {
@@ -107,7 +107,7 @@ typedef struct Node
 typedef struct KeyFrameSequence
 {
     int32 keys;
-    if (ver < 192)
+    if (ver < 192) //Breaks on 150
     {
         I16_StringEntry name;
         float scale;
@@ -284,7 +284,10 @@ struct
         {
             Node MeshNode;
             int32 meshPrims;
-            int32 index[meshPrims];
+            if (meshPrims)
+            {
+                int32 index[meshPrims];
+            }
             int32 meshBones;
             if (meshBones)
             {
@@ -361,7 +364,7 @@ struct
     }
     int32 chk8;
     int32 xFormAnimations;
-    if (xFormAnimations)
+    if (xFormAnimations) //Breaks on start_screen.hgr
     {
         Printf("Transform animations are WIP!\n");
         //while (ReadInt() != 305419785) //Finicky skipper
