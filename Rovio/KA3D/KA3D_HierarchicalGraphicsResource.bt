@@ -112,6 +112,14 @@ typedef struct KeyFrameSequence
         I16_StringEntry name;
         float scale;
         Vector4_F32 bias;
+        if (name.theString == "V3_32")
+        {
+            Vector3_F32 v3_32[keys];
+        }
+        else if (name.theString == "V4_32")
+        {
+            Vector4_F32 v4_32[keys];
+        }
     }
     else
     {
@@ -355,13 +363,13 @@ struct
     int32 xFormAnimations;
     if (xFormAnimations)
     {
-        Printf("Transform animations are NOT YET SUPPORTED!\n");
-        while (ReadInt() != 305419785) //Finicky skipper
+        Printf("Transform animations are WIP!\n");
+        //while (ReadInt() != 305419785) //Finicky skipper
         {
-            byte dmy<hidden=true>;
+            //byte dmy<hidden=true>;
         }
-        //FSeek(6299625); //uncomment when ready
-        /*struct
+        //FSeek(6299625); //Remove when ready
+        struct
         {
             I16_StringEntry name;
             ubyte posKeyRate;
@@ -388,7 +396,13 @@ struct
                     KeyFrameSequence sclKFS;
                 }
             }
-        } XFormAnimation[xFormAnimations]<optimize=false>;*/
+            else
+            {
+                KeyFrameSequence posKFS;
+                KeyFrameSequence rotKFS;
+                KeyFrameSequence sclKFS;
+            }
+        } XFormAnimation[xFormAnimations]<optimize=false>;
     }
     int32 check9;
     uint32 userPropertySets;
