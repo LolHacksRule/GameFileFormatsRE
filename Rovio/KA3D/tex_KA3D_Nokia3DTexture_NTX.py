@@ -1,9 +1,8 @@
 #By LHR, ONLY TESTED ON BOUNCE NGAGE
 from inc_noesis import *
-from addrlib import *
 
 def registerNoesisTypes():
-    handle = noesis.register("Rovio KA3D Nokia 3D Texture", ".ntx")
+    handle = noesis.register("KA3D Nokia 3D Texture", ".ntx")
     noesis.setHandlerTypeCheck(handle, noepyCheckType)
     noesis.setHandlerLoadRGBA(handle, noepyLoadRGBA)
     noesis.logPopup()
