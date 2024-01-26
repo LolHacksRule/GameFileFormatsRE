@@ -29,7 +29,7 @@ struct
     uint32 unk3<bgcolor=cRed>; //30
     uint32 texFmt<bgcolor=cPurple>;
     uint32 unk4[3]<bgcolor=cRed>;
-    uint32 texParam<bgcolor=cDkRed>; //?
+    uint32 texParam<bgcolor=cDkRed>; //0x83F3 = DXT5 RGBA S3TC
     byte dmy[64]<bgcolor=cRed>;
     uint32 off[compressedChunks]<bgcolor=cBlue>;
     struct
@@ -38,7 +38,7 @@ struct
         Byte_Bool isTexture<bgcolor=cDkGreen>;
         if (isTexture == 1)
         {
-            Printf("%i: %i (Texture)\n", i, off[i]);
+            Printf("%i: %i / (Texture)\n", i, off[i]);
         }
         else
         {

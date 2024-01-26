@@ -1,0 +1,47 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//ONLY TESTED ON G5 AND G6
+
+typedef struct LabelHeader
+{
+    uint32 magic;
+    char stringEntry[8];
+    uint16 flags;
+    uint16 hdrSz;
+    uint32 labelSz;
+};
+
+typedef struct Label
+{
+    LabelHeader Header;
+    byte data[Header.labelSz];
+    uint32 labelTerminate;
+};
+
+struct
+{
+    FSeek(0x7c);
+    uint32 g6VerChk<hidden=true>; //Check for G5 and G6, G6 is 124
+    FSeek(0x0);
+    if (g6VerChk)
+    {
+        char magic[124];
+        uint32 unk;
+    }
+    else
+    {
+        char magic[128];
+    }
+    Label LabelEntry[2]<optimize=false>;
+} PlayMechanixGEngineResourceFile;

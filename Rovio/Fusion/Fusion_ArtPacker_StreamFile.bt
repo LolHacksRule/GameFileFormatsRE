@@ -43,7 +43,9 @@ struct ArtPackerSTREAM
             uint16 width;
             uint16 height;
             uint16 atlasNum;
-            uint16 unk[10]; //the first one is width again?
+            uint16 unk[2]; //the first one is width again?
+            U16_Bool extrude[4];
+            uint16 unk2[4];
             texFmt theTexFormat;
             byte theRawTex[imageSize-40];
             FPos = FTell();
