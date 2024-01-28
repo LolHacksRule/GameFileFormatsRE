@@ -11,43 +11,188 @@
 //   History: 
 //------------------------------------------------
 
-local uint i<hidden=true> = 0;
+//https://epd.zeldamods.org/wiki/ASB
+//https://docs.google.com/document/d/1iAgTwK0otUaDvb_0Si0TJYiQa7BeI4qNWAX54WUiXTo
+
+#include "../../../../LHR/Common.bt"
+
+//local uint i<hidden=true> = 0;
+
+typedef struct StringReference
+{
+    uint32 strOff;
+    FPos = FTell();
+    FSeek(theHdr.strTblOff+strOff);
+    string str;
+    FSeek(FPos);
+};
 
 typedef struct Header
 {
     char   ASB[4];
-    uint64 ver;
-    uint32 commands;
-    uint32 unk[5];
+    uint32 ver; //0x0304: Billy, 0x0417: TOK, 0x40F: NSS/Thunder
+    uint32 fNameOff;
+    uint32 AnimationSequenceCommands;
+    uint32 elements;
+    uint32 eventInfos;
+    uint32 sec13Count; 
+    uint32 sec7Count;
+    uint32 globalParamsOff;
     uint32 strTblOff;
-    uint32 unkOff; //?b before StrTbl, mostly 4
-    uint32 unk2[17];
-    float unkFloat;
-    uint32 unk3[3];
+    uint32 sec21Off; //?b before StrTbl, mostly 4
+    uint32 sec8Off;
+    uint32 eventInfoOffArrayOff;
+    uint32 unkOff4[2];
+    uint32 unkSectionIndicesOff;
+    uint32 unkSection;
+    uint32 unkSectionEntries;
+    uint32 boneGroupsSectionOff;
+    uint32 boneGroupsSectionCount;
+    uint32 stringTblSz;
+    uint32 xitionTargetsSectionOff;
+    uint32 tagListOff;
+    uint32 stringTripletsSectionOff;
+    uint32 expressionBinarySectionOff; //Section 17
+    uint32 sec11Off;
+    if (ver < 1039)
+    {
+        uint32 sec20OffOld;
+    }
 };
 
 typedef struct Command
 {
-    GUID CommandGUID;
+    StringReference name;
+    FSeek(FPos);
+    if (theHdr.ver > 1027)
+    {
+        uint32 tagsOff;
+    }
+    float unk2;
+    if (theHdr.ver > 1027)
+    {
+        uint32 unk[3];
+    }
+    else
+    {
+        uint32 unk[2];
+    }
+    GUID commandGUID;
+    uint16 nodeIdx[2];
+};
+
+typedef struct Element
+{
+    uint16 type;
+    ubyte unkCount;
+    ubyte unk;
+    uint32 tagsOff;
+    uint32 elementBodyOff;
+    uint16 sec15BaseIdx;
+    uint16 sec15UnkCount2;
+    uint16 sec6BaseIdx;
+    uint16 sec6BaseIdx;
+    GUID elementGUID;
+};
+
+typedef struct ElementBody
+{
+    
+};
+
+typedef struct TriggerEvent
+{
+    StringReference name;
     uint32 unk;
-    uint16 prmOff[2];
-    uint32 dmy2;
-    float unkFloatCmd;
-    uint64 unk;
+    uint32 valueEntryOff;
+    uint32 unk2[2];
+    float startFrame;
+};
+
+typedef struct HoldEvent
+{
+    StringReference name;
+    uint32 unk;
+    uint32 valueEntryOff;
+    uint32 unk2[2];
+    float startFrame;
+    float endFrame;
+};
+
+typedef struct ValueEntry
+{
+    uint32 unk[2];
+};
+
+typedef struct EventInfo
+{
+    uint32 triggerEvents;
+    uint32 holdEvents;
+    TriggerEvent TriggerEventEntry[triggerEvents]<optimize=false>;
+    HoldEvent HoldEventEntry[holdEvents]<optimize=false>;
+    ValueEntry TriggerEventValueEntry[triggerEvents];
+    ValueEntry HoldEventValueEntry[triggerEvents];
+};
+
+typedef struct TransitionTargets
+{
+    uint32 transitions;
+    int32 unk;
+    uint32 entryOff;
+};
+
+typedef struct BoneList
+{
+    StringReference name;
+    uint32 unk;
+};
+
+typedef struct BoneGroup
+{
+    uint32 listOff;
+    StringReference maskName;
+    uint32 bones;
     uint32 unk;
 };
 
 struct AnimationSequenceBinary
 {
     Header theHdr;
-    struct Commands
+    Command CommandEntry[theHdr.AnimationSequenceCommands]<optimize=false>;
+    Element ElementEntry[theHdr.elements]<optimize=false>;
+    //Section 5 (Element Bodies) here
+    //Section 6 here
+    //Section 7 here
+    //Section 8 here
+    //Section 9 (Event Info)
+    if (theHdr.eventInfos)
     {
-        for (i = 0; i < theHdr.commands; i++)
-        {
-            Command theCmd;
-        }
-    } cmds;
-    //GUID CommandGUID;
+        uint32 eventInfoOffset[theHdr.eventInfos]<optimize=false>;
+        FSeek(eventInfoOffset[0]);
+        EventInfo e;
+    }
+    TransitionTargets targets;
+    //Section 11 here
+    //Section 12 (Global Parameters)
+    //Section 13 here
+    //FSeek(theHdr.boneGroupsSectionOff);
+    //BoneGroup boneGroups;
+    //Section 15 here
+    if (theHdr.tagListOff) //Section 16
+    {
+        FSeek(theHdr.tagListOff);
+        uint32 entries;
+        StringReference tagListString[entries];
+    }
+    if (theHdr.expressionBinarySectionOff) //Section 17
+    {
+        FSeek(theHdr.exbSectionOff);
+        byte test;
+    }
+    //Section 18 here
+    //Section 19 here
+    //Section 20 here
+    byte strTblSz[theHdr.strTblSz]; 
     FSeek(theHdr.strTblOff);
     string fileName;
 } ASB;

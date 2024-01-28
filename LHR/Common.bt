@@ -326,6 +326,19 @@ typedef struct Vector4_I32 {
     int32 W;
 };
 
+typedef struct Matrix3x3_F32 {
+	Vector3_F32 X;
+    Vector3_F32 Y;
+    Vector3_F32 Z;
+};
+
+typedef struct Matrix4x4_F32 {
+	Vector4_F32 X;
+    Vector4_F32 Y;
+    Vector4_F32 Z;
+    Vector4_F32 W;
+};
+
 typedef struct RGBA_UByte {
     if (swapRGBAChannels)
     {

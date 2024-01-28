@@ -1,0 +1,57 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://zeldamods.org/wiki/TSCB
+//https://github.com/handsomematt/botw-modding/blob/master/docs/file_formats/tscb.md
+//https://github.com/Sage-of-Mirrors/TSCBReader
+//https://raw.githubusercontent.com/zephenryus/botw-tools/master/tools/terrain/tscb.py
+
+//NOT SPECIFIC TO UKING, ALSO USED IN BILLY (v1035.1)
+
+#include "../../../../LHR/Common.bt"
+
+struct
+{
+    struct
+    {
+        char magic[4];
+        uint32 ver;
+        uint32 verMinor;
+        uint32 fileBaseTblOff;
+        float worldScale;
+        float terrainMeshMaxHeight;
+        uint32 mtrlInfoArrayLen;
+        uint32 areaArrayLen;
+        uint64 pad; //May be two U32s but simplicity
+        float tileSz;
+        uint32 unk; //8 in BOTW
+    } Header;
+    struct
+    {
+        uint32 secSz;
+        uint32 lookupOff;
+        uint32 arrayIdx;
+        Vector4_F32 texAxis;
+    } MaterialInfoArray[Header.mtrlInfoArrayLen];
+    struct
+    {
+        uint32 lookupOff;
+        Vector2_F32 pos;
+        Vector2_F32 terrainHeight;
+        Vector2_F32 waterHeight;
+        uint32 unk;
+        uint32 base;
+        uint64 pad; //May be two U32s but simplicity
+        uint32 extraRef;
+    } AreaArrayLookup[Header.areaArrayLen];
+} TerrainSceneBinary;

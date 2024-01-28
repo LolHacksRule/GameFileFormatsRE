@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-//ONLY TESTED ON KA3D CD ROM AND BOUNCE N-GAGE
+//ONLY TESTED ON KA3D CD ROM AND BOUNCE N-GAGE/MAEMO
 //
 
 #include "../../LHR/Common.bt"
@@ -21,9 +21,23 @@ typedef enum <int16>
     PrimitiveType_Tri = 3,
 } PrimitiveType;
 
+typedef enum <byte>
+{
+    BehaviourType_Repeat,
+    BehaviourType_Oscillate,
+    BehaviourType_Reset,
+    BehaviourType_Stop,
+} BehaviourType;
+
 typedef enum <int16>
 {
-    PlatformType_N3D = 4,
+    PlatformType_DirectX, //Or DX (9)
+    PlatformType_OpenGLES1, //Or EGL/OGLES/GLES1 / OpenGL ES 1.x
+    PlatformType_PlayStationPortable, //Or PSP
+    PlatformType_SoftwareRenderer, //Or SW
+    PlatformType_NokiaN3D, //Or N3D
+    PlatformType_OpenGLES2, //Or GLES2 / Maemo, 5 in public KA3D sceneviewer is treated as DirectX and goes beyond the platform names array since it didn't include the GLES 2 renderer
+    PlatformType_OpenGL, //GL/GL1 / OpenGL 1.x
 } PlatformType;
 
 typedef enum <byte>
@@ -145,7 +159,7 @@ struct
 {
     BigEndian();
     char magic[4];
-    short ver;
+    short ver; //192 is the final public version for samples but src is present for 193
     if (ver > 190)
     {
         struct
@@ -249,9 +263,15 @@ struct
                 I16_StringEntry fmtName2;
             } VertexFormat[vtxFmtCnt]<optimize=false>;
             short mtrlIdx;
+            //Very todo
             if (ver > 150)
             {
                 PrimitiveType primType;
+            }
+            else
+            {
+                float scale;
+                Vector4_F32 scaleBias;
             }
             if (ver >= 190)
             {
@@ -375,10 +395,10 @@ struct
         struct
         {
             I16_StringEntry name;
-            ubyte posKeyRate;
-            ubyte rotKeyRate;
-            ubyte sclKeyRate;
-            ubyte endBehaviour;
+            byte posKeyRate;
+            byte rotKeyRate;
+            byte sclKeyRate;
+            BehaviourType endBehaviour;
             if (ver >= 192)
             {
                 Byte_Bool optimized;
