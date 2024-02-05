@@ -15,25 +15,42 @@
 
 struct ScorpioBinaryTextPool
 {
-    uint32 hdr;
-    uint16 ver;
-    Byte_StringEntry theCategString;
     BigEndian();
-    if (theCategString.byteSize == 0)
+    uint32 hdr;
+    byte ver;
+    if (hdr == 1396855888)
     {
-        FSkip(-1);
+        U16_StringEntry theCategString;
+        if (theCategString.byteSize == 0)
+        {
+            FSkip(-1);
+        }
+        else
+        {
+            Printf("Category: %s\n", theCategString.theString);
+        }
     }
-    else
+    else //Read legacy BTP
     {
-        Printf("Category: %s\n", theCategString.theString);
+        byte dmy;
+        uint16 unk;
+        uint32 fsz;
     }
     uint32 entries;
+    if (hdr != 1396855888)
+    {
+        uint32 u;
+    }
     struct StringEntries
     {
         for (i = 0; i < entries; i++)
         {
             struct StringEntry
             {
+                if (hdr != 1396855888)
+                {
+                    uint32 stringSz;
+                }
                 Byte_StringEntry strID;
                 if (strID.byteSize == 0)
                 {
