@@ -22,11 +22,14 @@ struct ScorpioBinaryIndexFile
     byte unk;
     uint16 unk2;
     Byte_StringEntry arcSrcDir;
-    uint16 unk3;
-    uint16 unk4;
-    uint16 unk6;
-    uint16 unk7;
-    uint32 arcCRC32;
+    uint16 subarchives;
+    struct SubArchiveDef
+    {
+        uint16 chunkSz;
+        uint16 unk6;
+        uint16 unk7;
+        uint32 arcCRC32;
+    } sad[subarchives];
     uint16 archivedFiles;
     struct ArchivedFiles
     {

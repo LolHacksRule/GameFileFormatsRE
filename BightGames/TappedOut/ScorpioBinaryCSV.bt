@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/Nhakin/TSTOModToolkit/blob/master/BsvFile
+
+//https://github.com/schdub/tstoimg
+
+#include "../../LHR/Common.bt"
+
+typedef struct Scrap
+{
+    Vector2_I16 pos;
+    Vector2_I16 wh;
+};
+
+
+typedef struct Region
+{
+    UByte_StringEntry name;
+    Scrap scrap;
+};
+
+typedef struct ScrapDrawData
+{
+    Vector2_F32 v2f;
+    float xScale;
+    Vector2_F32 skew; //VH
+    float yScale;
+    if (flag)
+    {
+        ubyte opacity;
+    }
+};
+
+
+typedef struct Sub
+{
+    uint16 regID;
+    ScrapDrawData sdd;
+};
+
+typedef struct ScrapXForm
+{
+    uint16 subs;
+    ubyte len;
+    {
+        Sub sub[subs]<optimize=false>;
+    }
+};
+
+typedef struct AnimationIndex
+{
+    UByte_StringEntry name;
+    uint16 indexStart;
+    uint16 indexStop;
+};
+
+
+struct
+{
+    LittleEndian(); //It's ok Bight you can use LE when you feel like it
+    uint16 ver;
+    if (ver == 260)
+    {
+        byte unk[5];
+    }
+    uint16 regions;
+    ubyte flag;
+    Region r[regions]<optimize=false>;
+    if (ver == 260)
+    {
+        byte unk2[5];
+    }
+    uint16 transforms;
+    ScrapXForm xf[transforms]<optimize=false>;
+    uint16 animIdxes;
+    
+    AnimationIndex animIdx[animIdxes]<optimize=false>;
+} ScorpioBinaryCSV;

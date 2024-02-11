@@ -1,10 +1,10 @@
 #By LolHacksRule
 
-#Only tested on iOS
+#Only tested on iOS Shrek Kart!
 from inc_noesis import *
 
 def registerNoesisTypes():
-    handle = noesis.register("Shrek Kart Texture (Offzip Dumped)", ".dat;.img")
+    handle = noesis.register("Gameloft 3D Library (Offzip Dumped)", ".dat;.img")
     noesis.setHandlerTypeCheck(handle, noepyCheckType)
     noesis.setHandlerLoadRGBA(handle, noepyLoadRGBA)
     noesis.logPopup()
@@ -21,7 +21,7 @@ def noepyLoadRGBA(data, texList):
     rawImgFmt = bs.readShort() #6: PVR, 8: 8888
     unk = bs.readShort() #1
     rawDataSize = bs.readInt()
-    if rawImgFmt == 6: #Read PVR header
+    if rawImgFmt == 5 or rawImgFmt == 6: #Read PVR header
         PVRhdrSize = bs.readInt()
         PVRimgWidth = bs.readInt()
         PVRimgHeight = bs.readInt()
@@ -52,6 +52,10 @@ def noepyLoadRGBA(data, texList):
     if imgFmt == 0x0008 or imgFmt == 0x0400: #Apparently 0x4000 is RGBA4444 but idk
         print("ARGB8888")
         data = rapi.imageDecodeRaw(data, imgWidth, imgHeight, "r8 g8 b8 a8")
+        texFmt = noesis.NOESISTEX_RGBA32
+    elif imgFmt == 0x18:
+        print("PVRTC_2BPP_RGBA\nWIP!")
+        data = rapi.imageDecodePVRTC(data, imgWidth, imgHeight, 2)
         texFmt = noesis.NOESISTEX_RGBA32
     elif imgFmt == 0x19:
         print("PVRTC_4BPP_RGBA\nWIP!")

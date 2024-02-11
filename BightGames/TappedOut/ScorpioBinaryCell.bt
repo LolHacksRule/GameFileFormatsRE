@@ -1,0 +1,71 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/Nhakin/TSTOModToolkit/blob/master/BCellFile
+
+//https://github.com/schdub/tstoimg
+
+#include "../../LHR/Common.bt"
+
+typedef struct Frame
+{
+    if (magic == "bcell13")
+    {
+        UByte_StringEntry rootTex;
+        FSkip(-1);
+        UByte_StringEntry src;
+    }
+    float unk;
+    Vector2_I16 off;
+    if (magic == "bcell13")
+    {
+        byte unk2;
+        ubyte additionalTextures; //?
+        UByte_StringEntry shadowName;
+        UByte_StringEntry shadowTex;
+        Vector2_F32 v2f2[3];
+        float unk3;
+        if (additionalTextures > 1) //
+        {
+            UByte_StringEntry n[additionalTextures]<optimize=false>;
+            byte unk4[0x0E*additionalTextures];
+        }
+    }
+    else
+    {
+        byte unk5;
+        uint32 idk;
+        float unk6;
+        Vector2_I16 off2;
+        uint16 unk7;
+        uint16 unk8;
+        byte unk;
+    }
+};
+
+struct
+{
+    LittleEndian();
+    char magic[7];
+    byte endMagic;
+    if (magic == "bcell10")
+    {
+        byte pad;
+    }
+    uint16 frames;
+    if (magic == "bcell10")
+    {
+        uint16 pad2;
+    }
+    Frame f[frames]<optimize=false>;
+} ScorpioBinaryCell;
