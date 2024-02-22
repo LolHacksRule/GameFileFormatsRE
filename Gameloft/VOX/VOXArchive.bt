@@ -1,0 +1,52 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct ArchiveIntegrityHash
+{
+    uint32 murmurHash2Integrity1;
+    uint32 murmurHash2Integrity2;
+};
+
+typedef struct ArchiveEntry
+{
+    ArchiveIntegrityHash murmurHash2;
+    uint32 sz;
+    uint32 off;
+};
+
+struct
+{
+    LittleEndian();
+    char magic[7];
+    char ver; //1-3
+    uint32 dmy;
+    uint32 unk;
+    uint32 files;
+    uint32 strTblSz;
+    uint32 archiveEntryOff[2];
+    uint32 nameOffTblOff[2];
+    uint32 nameOff;
+    uint32 murmurHash2Seeds[2];
+    uint32 integrityHashesOff[2];
+    uint32 archNameOff;
+    uint32 hashes[8];
+    uint32 unk3[8];
+    struct
+    {
+        ArchiveEntry ae[files];
+        uint32 nameOffEntry[files];
+        ArchiveIntegrityHash integrityHashes[files];
+    } entryStruct[2]<optimize=false>;
+    byte stringTable[strTblSz];
+    string name;
+} GL_VoxArchive;

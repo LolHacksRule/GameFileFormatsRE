@@ -66,20 +66,28 @@ struct GameloftAndroidMarketArchive
                                     uint64 splitSz;
                                     uint64 splitSzI64;
                                 }
+                                if (ReadUInt() > 0)
+                                {
+                                    ubyte dmy;
+                                }
                                 uint32 zero;
                                 uint32 CRC32;
                                 I16_StringEntry name;
                                 Printf("%s\n", name.theString);
-                                if (name.byteSize == 0)
+                                /*if (name.byteSize == 0)
                                 {
                                     FSkip(-2);
-                                }
+                                }*/
                                 uint32 cSize;
                                 if (cSize == 0) //For v1
                                 {
                                     uint32 combinedSize;
                                     uint32 zsz;
                                 }
+                                /*if (ReadUShort() > name.byteSize+4)
+                                {
+                                    ubyte dmy2;
+                                }*/
                                 I16_StringEntry name2;
                                 if (name2.byteSize == 0)
                                 {

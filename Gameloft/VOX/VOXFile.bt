@@ -1,0 +1,191 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    VoxAmbienceHeader = 1635282806,
+    VoxNativeHeader = 1316515670,
+    VoxAmbienceDataHeader = 1635017060,
+    VoxAudioFormat = 1953326657,
+    VoxAudioSegments = 1835492691,
+    VoxAudioRules = 1701606738,
+    VoxAudioPlaylists = 1953721424,
+    VoxAudioStates = 1952543827,
+    VoxAudioTransitions = 1853059668,
+    VoxAudioGroups = 1936749127,
+    VoxAudioGroupPlaylistElements = 1701868103,
+    VoxAudioData = 1635017028,
+    VoxMSADPCMExtension = 1700885325,
+    VoxAmbienceProjectV3 = 1785688688,
+} VoxBlockType;
+
+typedef enum <uint16>
+{
+    VoxAudioCodec_PCM = 1,
+    VoxAudioCodec_MSADPCM,
+    VoxAudioCodec_MusePack = 2048,
+} VoxAudioCodec;
+
+typedef struct VoxBlockBinForm
+{
+    VoxBlockType magic;
+    uint32 dSz;
+};
+
+typedef struct NativeHeaderBlock
+{
+    char ver[8];
+    uint32 fSz;
+    uint32 rawAudioOff;
+};
+
+typedef struct AmbienceHeaderBlock
+{
+    char ver[dSz];
+};
+
+typedef struct AudioFormatBlock
+{
+    VoxAudioCodec audioCodec;
+    int16 channels;
+    int32 sampleRate;
+    int16 align;
+    int16 bits;
+};
+
+typedef struct AudioSegmentsBlock
+{
+    uint32 subSongs;
+    struct SubSong
+    {
+        uint32 streamOff;
+        uint32 streamSz;
+        uint32 samples;
+        uint32 unk[3];
+    } subSong[subSongs];
+};
+
+typedef struct AudioStatesBlock
+{
+    uint32 entries;
+    struct StateEntry
+    {
+        char name[12];
+        uint32 unk2[5];
+    } entry[entries];
+};
+
+typedef struct AudioPlaylistElementsBlock
+{
+    uint32 entries;
+    struct PlaylistElementEntry
+    {
+        int32 playlist;
+        int32 idx;
+        int32 groupIdx;
+        int32 segmIdx;
+        int32 playPreEntry;
+        int32 playPostExit;
+        int32 loops;
+        int32 weight;
+    } entry[entries];
+};
+
+typedef struct AudioGroupsBlock
+{
+    uint32 entries;
+    struct GroupEntry
+    {
+        int32 playlist;
+        int32 playlistPos;
+        int32 selMode;
+        int32 selPrm;
+        int32 loops;
+        int32 plays;
+    } entry[entries];
+};
+
+typedef struct AudioTransitionsBlock
+{
+    uint32 entries;
+    struct TransitionEntry
+    {
+        int32 fromState;
+        int32 toState;
+        struct
+        {
+            int32 ruleIdx;
+            int32 resetPlaylist;
+        } Params;
+    } entry[entries];
+};
+
+typedef struct AudioRulesBlock
+{
+    uint32 entries;
+    struct RuleEntry
+    {
+        int32 entryPointType;
+        int32 exitPointType;
+        int32 playPreEntry;
+        int32 playPostExit;
+        float fadeInLen;
+        float fadeInOff;
+        float fadeLenOff;
+        float fadeOutOff;
+        int32 transitionSegment;
+    } entry[entries];
+};
+
+typedef struct AudioPlaylistsBlock
+{
+    uint32 entries;
+    struct PlaylistEntry
+    {
+        int32 switchMode;
+        int32 loops;
+    } entry[entries];
+};
+
+
+typedef struct Block
+{
+    VoxBlockType magic;
+    uint32 dSz;
+    switch (magic)
+    {
+        case VoxNativeHeader: NativeHeaderBlock NativeHeader; break;
+        case VoxAmbienceHeader: AmbienceHeaderBlock AmbienceHeader; break;
+        case VoxAudioFormat: AudioFormatBlock AudioFormat; break;
+        case VoxAudioSegments: AudioSegmentsBlock AudioSegments; break;
+        case VoxAudioStates: AudioStatesBlock AudioStates; break;
+        case VoxAudioGroupPlaylistElements: AudioPlaylistElementsBlock AudioPlaylistElements; break;
+        case VoxAudioGroups: AudioGroupsBlock AudioGroups; break;
+        case VoxAudioTransitions: AudioTransitionsBlock AudioTransitions; break;
+        case VoxAudioRules: AudioRulesBlock AudioRules; break;
+        case VoxAudioPlaylists: AudioPlaylistsBlock AudioPlaylists; break;
+        default: byte unknownData[dSz]; break;
+    }
+};
+
+struct
+{
+    LittleEndian();
+    while (FPos != EOF)
+    {
+        Block block;
+        FPos = FTell();
+    }
+} VoxFile;

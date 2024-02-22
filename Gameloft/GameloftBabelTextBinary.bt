@@ -11,13 +11,13 @@
 //   History: 
 //------------------------------------------------
 
-local int i <hidden=true> = 0;
+#include "../LHR/Common.bt"
 
 local int strIDFlag <hidden=true> = 0;
 
-struct GLBabel
+struct
 {
-    char Babel[4];
+    char babel[4];
     int32 unk;
     int32 checkForLang<hidden=true>;
     if (checkForLang > 15)
@@ -56,4 +56,4 @@ struct GLBabel
             int32 dmy[3];
         }
     } babelStrs;
-} GLBBL;
+} GameloftBabelTextBinary;
