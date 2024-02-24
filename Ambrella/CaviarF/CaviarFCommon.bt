@@ -96,19 +96,17 @@ typedef enum <uint16>
     //0x10: {A}
 } NMS_FontIcon_CaviarF;
 
+typedef enum <uint16>
+{
+    NMS_CaviarF_TagGroupType_System,
+    NMS_CaviarF_TagGroupType_FontIcon,
+} NMS_CaviarF_TagGroupType;
+
 typedef struct NMS_CaviarF_TagGroup
 {
-    if (tagGroup == 1) 
+    switch (tagGroup)
     {
-        NMS_FontIcon_CaviarF CaviarF_FontIcon<bgcolor=cPurple>;
-        isValidCtrlTag = 1;
-        if (printControlTagInfo)
-        {
-            Printf("</%s>", EnumToString(CaviarF_FontIcon));
-        }
-    }
-    else
-    {
-        
+        case NMS_CaviarF_TagGroupType_FontIcon: isValidCtrlTag = 1; NMS_FontIcon_CaviarF fontIcon<bgcolor=cPurple>; uint16 paramSz; if (printControlTagInfo) { Printf("</%s>", EnumToString(fontIcon)); }; break;
+        default: uint16 type; uint16 paramSz; byte param[paramSz];
     }
 };
