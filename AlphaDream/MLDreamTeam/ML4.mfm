@@ -1,0 +1,11 @@
+### ML4 Function Map
+
+#System group
+[0, 0] ruby #ruby annotation rendered above the normal text
+  u16 charSpan #number of subsequent characters to render the annotation above (centered)
+  str value #the annotation text
+[0, 2] size #changes the current text size
+  u16 value #relative text size in percent
+[0, 3] color #changes the current text color
+  s16 id #id of the color
+[0, 4] pageBreak #forces a new dialog page
