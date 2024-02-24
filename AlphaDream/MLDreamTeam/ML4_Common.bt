@@ -100,60 +100,22 @@ typedef struct NMS_ML4_TagGroup
         default: uint16 paramType; break;
     }
     uint16 paramSz;
-    //Moved to AlphaDreamCommon
-    /*if (tagGroup == 0 && paramType == 3)
+    //System tag moved to AlphaDreamCommon
+    switch (tagGroup)
     {
-        isValidCtrlTag = 1;
-        if (isRGBASet)
-        {
-            //Printf("</rgba>");
-            if (printControlTagInfo)
-            {
-                Printf("</span>"); //Format for MediaWiki
-            }
-            isRGBASet = 0;
-        }
-        RGBA_UByte TextColor<bgcolor=cPurple>;
-        isRGBASet = 1;
-        //Printf("<rgba%i%i%i%i>", TextColor.R, TextColor.G, TextColor.B, TextColor.A);
-        if (printControlTagInfo)
-        {
-            Printf("<span style=\"color:#%X%X%X%X\">", TextColor.R, TextColor.G, TextColor.B, TextColor.A); //Format for MediaWiki
-        }
-    }
-    else */if (tagGroup < 2 || tagGroup == 7)
-    {
-        isValidCtrlTag = 1;
-        if (printControlTagInfo)
-        {
-            Printf("</%s>", EnumToString(paramType));
-        }
-    }
-    else if (tagGroup == 3)
-    {
-        isValidCtrlTag = 1;
+        case NMS_ML4_MessageTextControlTagType_System:
+        case NMS_ML4_MessageTextControlTagType_AlignText:
+        case NMS_ML4_MessageTextControlTagType_AlignAllText_Unused: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
+        case NMS_ML4_MessageTextControlTagType_TextRender: isValidCtrlTag = 1;
         switch (paramType)
         {
             case 0: uint16 delayText; if (printControlTagInfo) { Printf("</NMS_ML4DelayText%i>", delayText);} break;
             case 1: if (printControlTagInfo) { Printf("</NMS_ML4HaltUntilUserInput>");} break;
             case 2: uint16 textScrollSpeed; if (printControlTagInfo) { Printf("</NMS_ML4TextScrollSpeed%i>", textScrollSpeed);} break; //?
         }
-    }
-    else if (tagGroup == 4)
-    {
-        //isValidCtrlTag = 1;
-        U16_Bool enable;
-        uint16 amountOfTabs;
-        U16_Bool enableUnk2;
-        if (printControlTagInfo)
-        {
-            
-        }
-        
-    }
-    else if (tagGroup == 5)
-    {
-        isValidCtrlTag = 1;
+        break;
+        case NMS_ML4_MessageTextControlTagType_TagGroup4: U16_Bool enable; uint16 amountOfTabs; U16_Bool enableUnk2; break; //?
+        case NMS_ML4_MessageTextControlTagType_TagGroup5: isValidCtrlTag = 1;
         if (printControlTagInfo)
         {
             switch (paramType)
@@ -162,10 +124,8 @@ typedef struct NMS_ML4_TagGroup
                 case 1: Printf("</NMS_ML4ImmediatelyRenderFirstLine>"); break;
             }
         }
-    }
-    else if (tagGroup == 6)
-    {
-        isValidCtrlTag = 1;
+        break;
+        case NMS_ML4_MessageTextControlTagType_TagGroup6: isValidCtrlTag = 1;
         if (printControlTagInfo)
         {
             switch (paramType)
@@ -174,23 +134,16 @@ typedef struct NMS_ML4_TagGroup
                 default: Printf("</NMS_ML4UseStandardTextOnWideTextBox>"); break;
             }
         }
-    }
-    else if (tagGroup == 8)
-    {
-        uint16 unk;
-        isValidCtrlTag = 1;
+        break;
+        case NMS_ML4_MessageTextControlTagType_TextAnimation: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
+        case NMS_ML4_MessageTextControlTagType_TagGroup8: isValidCtrlTag = 1; uint16 unk;
         switch (paramType)
         {
             case 0: uint16 unk; if (printControlTagInfo) { Printf("</NMS_ML4Unk%i>", unk);} break;
             case 1: uint16 unk2; if (printControlTagInfo) { Printf("</NMS_ML4Unk2%i>", unk2);} break;
             default: if (printControlTagInfo) { Printf("</NMS_ML4Unk3>");} break; //?
         }
-    }
-    else
-    {
-        if (paramSz)
-        {
-            byte param[paramSz];
-        }
+        break;
+        default: if (paramSz) { byte param[paramSz]; }; break;
     }
 };
