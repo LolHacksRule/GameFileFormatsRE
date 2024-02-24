@@ -1,11 +1,69 @@
 ### ML4 Function Map
 
-#System group
+#System group, only color is modified
 [0, 0] ruby #ruby annotation rendered above the normal text
   u16 charSpan #number of subsequent characters to render the annotation above (centered)
   str value #the annotation text
 [0, 2] size #changes the current text size
   u16 value #relative text size in percent
-[0, 3] color #changes the current text color
-  s16 id #id of the color
+[0, 3] color #changes the current text color, custom to AlphaDream
+  u8 R
+  u8 G
+  u8 B
+  u8 A
 [0, 4] pageBreak #forces a new dialog page
+
+#AlphaDream text alignment group
+[1, {textAlignment}]
+
+[2, {alignAllText}] #Align all text (unused)
+ 
+#Text render group
+[3, 0] delayText #Delay text
+  u16 duration
+[3, 1] userInputHalt #Halt until user input (different to NMS System pagebreak bcz the game immediately triggers them regardless of input instead)
+[3, 2] textScrollSpeed #Text scrolling speed
+  u16 speed
+
+#Tag group four is unknown
+[4, 0] 
+  u16 enable #Tab of first line?
+  u16 tabs #Related?
+  u16 enable2
+
+#Tag group 5 param 1
+[5, 1] immediatelyRenderFirstLine #Renders the first line
+
+#Tag group 6, unused
+[6, 0] wideTextOnWideTextBox
+[6, 1] useStandardTextOnWideTextBox
+
+#Text animation
+[7, 0] disableTextAnimation
+[7, 1] enableTextAnimation
+
+#Tag group eight is an unknown (u16 with u16 params for types 0 and 1)
+
+#Tag group nine is possibly confirmation boxes, always uses terminator
+[9, 0] confirm
+  {choice} choice
+
+[15, 0] terminateControlTag
+  u16 group
+  u16 type
+
+map textAlignment u16
+  0 Left
+  1 Center
+  2 Right
+  4 Unknown #Left?
+
+map alignAllText u16
+  0 Left
+  1 Center
+  2 Right
+  4 Bottom #?
+
+map choice u16
+  52521 Yes
+  52522 No
