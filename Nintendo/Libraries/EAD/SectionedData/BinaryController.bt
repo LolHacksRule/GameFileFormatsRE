@@ -1,0 +1,100 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct Animation
+{
+    uint16 animNameOff;
+    uint16 layoutAnimNameOff;
+    uint16 nextLayoutAnimNameOff;
+    uint16 isReverse;
+    float speed;
+};
+
+#include "../../../../LHR/Common.bt"
+//https://web.archive.org/web/20230610143403/https://avsys.xyz/wiki/BRCTR_(File_Format)
+//https://wiki.tockdom.com/wiki/BRCTR_(File_Format)
+
+
+//Only supports Revolution Kart atm.
+
+struct 
+{
+    BigEndian();
+    struct
+    {
+        char magic[4]; //Capital for CTR, lcase for Revolution Kart
+        /*if (magic == "BCTR")
+        {
+            LittleEndian();
+        }*/
+        uint16 subheaders;
+        uint16 mainLayoutFStrIdx;
+        uint16 namespaceStrOff; //or MSG
+        uint16 picSrcLayoutFStrOff;
+        uint16 animSubHdrOff;
+        uint16 layoutSubHdrOff;
+        uint16 nameTblOff;
+        uint16 unk;
+    } Header;
+    struct
+    {
+        uint16 groupsOff;
+        uint16 groups;
+        uint16 animsOff;
+        uint16 anims;
+        struct
+        {
+            uint16 nameOff;
+            uint16 paneNameOff;
+            uint16 animIdx;
+            uint16 anims;
+        } Group[groups]<optimize=false>;
+        Animation animation[anims]<optimize=false>;
+    } AnimationsBlock;
+    struct
+    {
+        uint16 variantOff;
+        uint16 variants;
+        uint16 msgsOff;
+        uint16 msgs;
+        uint16 picsOff;
+        uint16 pics;
+        struct
+        {
+            uint16 nameOff;
+            uint16 trns;
+            uint16 animate;
+            uint16 padding;
+            float delay;
+            Vector3_F32 fourBy3Trans;
+            Vector2_F32 fourBy3Scale;
+            Vector3_F32 sixteenBy9Trans;
+            Vector2_F32 sixteenBy9Scale;
+            uint16 firstMsgIdx;
+            uint16 msgs;
+            uint16 firstPicIdx;
+            uint16 pics;
+        } Variant[variants];
+        struct
+        {
+            uint16 layoutPaneName;
+            uint16 msgNameOff;
+            uint32 messageID;
+        } Message[msgs];
+        struct
+        {
+            uint16 layoutPaneName;
+            uint16 srcLayoutPaneName;
+        } Picture[pics];
+    } LayoutBlock;
+} EADBinaryController;
