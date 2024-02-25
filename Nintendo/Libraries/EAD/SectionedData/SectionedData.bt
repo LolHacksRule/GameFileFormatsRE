@@ -1,0 +1,1276 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+//https://mk3ds.com/index.php?title=KMP_(File_Format)
+//https://wiki.tockdom.com/wiki/KMP_(File_Format)
+//iirc avsys wiki had this documented at least for MK7 but it's lost media now
+
+//Shoutouts to course.0
+
+//Used in NDogs CTR and MK 2008+ series (Wii,7,8/+[?]), not specific to MK
+
+typedef enum <uint32>
+{
+    SectionType_NDogsCTRAccessory = 1498563393,
+    SectionType_NDogsCTRAccessoryParam = 1297240129,
+    SectionType_NDogsCTRAnimalTypeParam = 1297110081,
+    SectionType_NDogsCTRAnimalTypePC = 1129337921,
+    SectionType_NDogsCTRAnimalTypeAG = 1195463745,
+    SectionType_NDogsCTRAnimalTypeHL = 1279808577,
+    SectionType_NDogsCTRAnimalTypeScale = 1129534529,
+    SectionType_NDogsCTRAnythingHD = 1145589313,
+    SectionType_NDogsCTRAnythingPS = 1397771841,
+    SectionType_NDogsCTRAnythingLT = 1414286913,
+    SectionType_NDogsCTRCompeDN = 1313096771,
+    SectionType_NDogsCTRCompeCP = 1346587715,
+    SectionType_NDogsCTRCompeCL = 1279478851,
+    SectionType_NDogsCTRCompeCameraParam = 1297105731,
+    SectionType_NDogsCTRCompeCameraPF = 1179665219,
+    SectionType_NDogsCTRCompeCameraPA = 1095779139,
+    SectionType_NDogsCTRCompeCameraP2 = 844120899,
+    SectionType_NDogsCTRCompeCameraPC = 1129333571,
+    SectionType_NDogsCTRCompeCameraPD = 1146110787,
+    SectionType_NDogsCTRCompeCameraPR = 1380991811,
+    SectionType_NDogsCTRCompeCameraPS = 1397769027,
+    SectionType_NDogsCTRDogCameraParam = 1297105732,
+    SectionType_NDogsCTRDogCameraBS = 1396851524,
+    SectionType_NDogsCTRDogCameraPF = 1179665220,
+    SectionType_NDogsCTRDogCameraOS = 1397703492,
+    SectionType_NDogsCTRDogCameraCO = 1129268036,
+    SectionType_NDogsCTRDogParameter = 1414352964, //Table?
+    SectionType_NDogsCTRDogParameterIV = 1447642948,
+    SectionType_NDogsCTRDogParameterVB = 1112950596,
+    SectionType_NDogsCTRCatParameterVB = 1112953923, //In DogParameter confusing
+    SectionType_NDogsCTRDogParameterTG = 1196705604,
+    SectionType_NDogsCTRDogParameterDT = 1413760836,
+    SectionType_NDogsCTRDogParameterLT = 1414285124,
+    SectionType_NDogsCTRDogParameterSL = 1280526148,
+    SectionType_NDogsCTRDogParameterOW = 1464813380,
+    SectionType_NDogsCTRDogParameterNL = 1280198468,
+    SectionType_NDogsCTRDogParameterPS = 1397770052,
+    SectionType_NDogsCTRDogParameterST = 1414743876,
+    SectionType_NDogsCTRDogParameterFG = 1195788100,
+    SectionType_NDogsCTRDogParameterWK = 1264011076, //Walk?
+    SectionType_NDogsCTRDogParameterLK = 1263290180, //Like?
+    SectionType_NDogsCTRDogParameterEV = 1447380804, //Like?
+    SectionType_NDogsCTRDogParameterWT = 1415006020, //Wait?
+    SectionType_NDogsCTRDogParameterCB = 1111705412,
+    SectionType_NDogsCTRDogParameterSP = 1347635012,
+    SectionType_NDogsCTRDogParameterSTTM = 1297372243,
+    SectionType_NDogsCTRDogParameterWGST = 1398032215,
+    SectionType_NDogsCTRDogParameterIVMP = 1297110601,
+    SectionType_NDogsCTRDogParameterHUMC = 1129141576,
+    SectionType_NDogsCTRFieldMap = 1297237571,
+    SectionType_NDogsCTRFieldMapFurniture = 1413891651,
+    SectionType_NDogsCTRFieldMapTGRO = 1330792276,
+    SectionType_NDogsCTRFieldMapRADG = 1195655506,
+    SectionType_NDogsCTRFieldMapREAD = 1145389394,
+    SectionType_NDogsCTRFieldMapRAFZ = 1514553682,
+    SectionType_NDogsCTRFieldMapRACR = 1380139346,
+    SectionType_NDogsCTRFieldMapRADZ = 1514422610,
+    SectionType_NDogsCTRFieldMapRALZ = 1514946898,
+    SectionType_RevolutionKartMapData = 1380666692,
+    SectionType_CTRDashMapData = 1145914435,
+    SectionType_CTRDashDiv = 1111573571, //?
+    SectionType_KartPoint = 1414550603,
+    SectionType_EnemyPoint = 1414549061,
+    SectionType_EnemyPath = 1213222469,
+    SectionType_ItemPoint = 1414550601,
+    SectionType_ItemPath = 1213224009,
+    SectionType_CheckPoint = 1414548291,
+    SectionType_CheckPointPath = 1213221699,
+    SectionType_GlobalObject = 1245859655,
+    SectionType_PointInformation = 1230262096,
+    SectionType_Area = 1095062081,
+    SectionType_Camera = 1162690883,
+    SectionType_JugemPoint = 1414547274,
+    SectionType_CannonPoint = 1414549059,
+    SectionType_MissionSuccessPoint = 1414550349,
+    SectionType_StageInfo = 1229411411,
+    SectionType_CORS = 1397903171, //CTR
+    SectionType_GliderPoint = 1414548551, //CTR
+    SectionType_GliderPath = 1213221959, //CTR
+    SectionType_Shape = 1346455635, //CTR
+} SectionType;
+
+typedef enum <byte>
+{
+    NormalCheckPoint = -1,
+    CheckPointType_LapCountTrigger,
+} CheckPointType;
+
+typedef struct SectionHeader
+{
+    SectionType magic;
+    if (magic != SectionType_RevolutionKartMapData || Header.magic == SectionType_CTRDashDiv)
+    {
+        LittleEndian();
+    }
+    uint16 entries;
+    uint16 other;
+};
+
+typedef struct KartPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 start;
+            uint16 playerIndex;
+            uint16 pad;
+        } KartPointEntry[h.entries];
+    }
+};
+
+typedef struct EnemyPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 enemyPos;
+            float start;
+            uint16 pad[4]; //?
+        } EnemyPointEntry[h.entries];
+    }
+};
+
+typedef struct EnemyPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            if (magic != SectionType_RevolutionKartMapData)
+            {
+                uint16 pointStart;
+                uint16 pointLen;
+                int16 prevGroup[16]; //16 previous enemy points
+                int16 nextGroup[16]; //16 next enemy points
+                uint32 bitFlag; //?
+            }
+            else
+            {
+                ubyte pointStart;
+                ubyte pointLen;
+                byte prevGroup[6]; //6 previous enemy points
+                byte nextGroup[6]; //6 next enemy points
+                ushort bitFlag;
+            }
+        } EnemyPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct ItemPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 itemPos;
+            float bb;
+            uint16 setting1;
+            uint16 setting2; //Two u16s compared to MK7, being a u32, assuming since the header size is the same across both
+        } ItemPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct ItemPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            if (magic != SectionType_RevolutionKartMapData)
+            {
+                uint16 pointStart;
+                uint16 pointLen;
+                int16 prevGroup[6]; //6 previous item points
+                int16 nextGroup[6]; //6 next item points
+            }
+            else
+            {
+                ubyte pointStart;
+                ubyte pointLen;
+                byte prevGroup[6]; //6 previous item points
+                byte nextGroup[6]; //6 next item points
+                uint16 pad;
+            }
+        } ItemPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct CheckPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector2_F32 leftPoint;
+            Vector2_F32 rightPoint;
+            byte respawnID;
+            CheckPointType checkPointType;
+            byte prevCheckPoint;
+            byte nextCheckPoint;
+            if (magic != SectionType_RevolutionKartMapData)
+            {
+                byte unk[4];
+            }
+        } CheckPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct CheckPointPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            ubyte pointStart;
+            ubyte pointLen;
+            byte prevGroup[6]; //6 previous checkpoints
+            byte nextGroup[6]; //6 next checkpoints
+            uint16 pad; //Padding in MKW so assuming padding
+        } CheckPointPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct GlobalObject
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 objectID;
+            uint16 pad; //Padding in MKW so assuming padding
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            Vector3_F32 scl;
+            uint16 route;
+            uint16 setting[8];
+            uint16 presenceFlags;
+            if (magic != SectionType_RevolutionKartMapData)
+            {
+                byte unk[4];
+            }
+        } GlobalObjectEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct PointInformation
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 points;
+            byte setting1;
+            byte setting2;
+            struct
+            {
+                Vector3_F32 pos;
+                uint16 routePointSetting;
+                uint16 additionalSetting;
+            } PointEntry[points];
+        } PointInformationEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct Area
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte shape;
+            byte type;
+            byte cameraIdx;
+            byte priority;
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            Vector3_F32 scl;
+            uint16 setting1;
+            uint16 setting2;
+            byte routeID;
+            byte enemyPointID;
+            uint16 pad;
+        } AreaEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct Camera
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte type;
+            byte nextCameraIdx;
+            byte shake;
+            byte route;
+            uint16 cameraPointVel;
+            uint16 zoomVel;
+            uint16 viewPointVel;
+            byte startFlag;
+            byte movieFlag;
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            float zoomStart;
+            float zoomEnd;
+            Vector3_F32 viewPointStartVec;
+            Vector3_F32 viewPointDestVec;
+            float activeTime;
+        } CameraEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct JugemPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 respawn;
+            Vector3_F32 direction;
+            uint16 respawnPosID;
+            int16 extraFlag;
+        } JugemPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct CannonPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 dest;
+            Vector3_F32 direction;
+            uint16 id;
+            int16 shootEffect;
+        } CannonPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MissionSuccessPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 dest;
+            Vector3_F32 direction;
+            uint16 id;
+            uint16 unk; //Effect, unused, looks similar to cannon point so assuming?
+        } MissionSuccessPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct StageInfo
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte laps;
+            byte polePos;
+            byte normalDist;
+            byte lensFlare;
+            uint32 lensFlareColor;
+            byte flareTrans;
+            uint16 pad;
+            byte pad2;
+        } StageInfoEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct CORSSection
+{
+    SectionHeader h; //Unused
+};
+
+typedef struct GliderPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            float scale;
+            uint32 unk[2];
+        } GliderPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct GliderPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte pointStart;
+            byte pointEnd;
+            byte prevGroups[6];
+            byte nextGroups[6];
+            uint32 unk[2];
+        } GliderPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct Shape
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            SectionHeader sh; //STRM
+            Vector4_F32 v3f[sh.entries];
+        } STRMEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct NDogsCTRAccessoryParam
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x530];
+        } AccessoryParamEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct NDogsCTRAnimalTypePC
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x98];
+        } AnimalTypePCEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct NDogsCTRAnimalTypeAG
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x2c];
+        } AnimalTypeAGEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct NDogsCTRAnimalTypeHL
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct //float data
+        {
+            byte unk[0x30];
+        } AnimalTypeHLEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct NDogsCTRAnimalTypeScale
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector4_F32 entry[h.entries/4];
+    }
+};
+
+typedef struct NDogsCTRAnythingHD
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector3_F32 NDogsCTRAnythingHDEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRAnythingPS
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector3_F32 NDogsCTRAnythingPSEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRAnythingLT
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector3_F32 NDogsCTRAnythingLTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeDN
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x0c];
+        } NDogsCTRCompeDNEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCP
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte floats[0x1c];
+        } NDogsCTRCompeCPEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCL
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte floats[0x20]; //Floats
+        } NDogsCTRCompeCLEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompePF
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte floats[0x20]; //Floats
+        } NDogsCTRCompePFEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPF
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x24]; //Floats
+        } NDogsCTRCompeCameraPFEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPA
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x2c]; //Floats
+        } NDogsCTRCompeCameraPAEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraP2
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats
+        } NDogsCTRCompeCameraP2Entry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPC
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x24]; //Floats
+        } NDogsCTRCompeCameraPCEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPD
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x28]; //Floats
+        } NDogsCTRCompeCameraPDEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPR
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x28]; //Floats
+        } NDogsCTRCompeCameraPREntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCompeCameraPS
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x2C]; //Floats
+        } NDogsCTRCompeCameraPSEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogCameraBS
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector4_F32 NDogsCTRDogCameraBSEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogCameraPF
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector4_F32 min;
+            Vector4_F32 max;
+        } NDogsCTRDogCameraPFEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogCameraOS
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct //?
+        {
+            Vector3_F32 min;
+            Vector3_F32 max;
+        } NDogsCTRDogCameraOSEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogCameraCO
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct //?
+        {
+            Vector3_F32 min;
+            Vector3_F32 max;
+        } NDogsCTRDogCameraCOEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterIV
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct //?
+        {
+            byte unk[0x10];
+        } NDogsCTRDogParameterIVEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterVB
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector4_F32 NDogsCTRDogParameterVBEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRCatParameterVB
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector4_F32 NDogsCTRCatParameterVBEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterTG
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector3_F32 NDogsCTRDogParameterTGEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterDT
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x1C]; //Floats for sure
+        } NDogsCTRDogParameterDTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterLT
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x1c]; //Floats for sure
+        } NDogsCTRDogParameterLTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterSL
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x18]; //Floats for sure
+        } NDogsCTRDogParameterSLEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterOW
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x8]; //Floats for sure
+        } NDogsCTRDogParameterOWEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterNL
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x1c];
+        } NDogsCTRDogParameterNLEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterPS
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x14]; //Floats for sure
+        } NDogsCTRDogParameterPSEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterST
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        float NDogsCTRDogParameterSTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterFG
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        float NDogsCTRDogParameterFGEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterWK
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        float NDogsCTRDogParameterWKEntry[h.entries];
+    }
+};
+
+
+typedef struct NDogsCTRDogParameterLK
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        float NDogsCTRDogParameterLKEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterEV
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        float NDogsCTRDogParameterEVEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterWT
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        Vector2_F32 NDogsCTRDogParameterWTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterCB
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x0C];
+        } NDogsCTRDogParameterCBEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterSP
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint32 unk[2];
+            float unk2;
+        } NDogsCTRDogParameterSPEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterSTTM
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint32 unk;
+        } NDogsCTRDogParameterSPEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterWGST
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            //min max unk?
+            byte unk[0x14];
+        } NDogsCTRDogParameterWGSTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterIVMP
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint32 unk[2];
+            Vector2_F32 unk2;
+        } NDogsCTRDogParameterIVMPEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRDogParameterHUMC
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint32 unk[2];
+        } NDogsCTRDogParameterHUMCEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapTGRO
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector4_F32 v4f;
+        } NDogsCTRDogParameterTGROEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRADG
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats
+        } NDogsCTRDogParameterRADGEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapREAD
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats mostly
+        } NDogsCTRDogParameterREADEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRAFZ
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats mostly
+        } NDogsCTRDogParameterRAFZEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRACR
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats mostly
+        } NDogsCTRDogParameterRACREntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRADZ
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapRALZ
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapRACZ
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x30]; //Floats mostly
+        } NDogsCTRDogParameterRACZEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRDPU
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 unk[2];
+            uint32 unk; //or two i16s/four bytes
+        } NDogsCTRDogParameterDRPUEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRDPA
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[8];
+        } NDogsCTRDogParameterRDPAEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRDPL
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapRDPH
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapRDHH
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapROPW
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x20]; //Two V4Fs?
+        } NDogsCTRDogParameterROPWEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapROPT
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x20]; //floats are split per byte
+        } NDogsCTRDogParameterROPTEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapROPC
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapROCS
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapROCP
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapROOP
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapROAL
+{
+    SectionHeader h; //Empty
+};
+
+typedef struct NDogsCTRFieldMapRDPO
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x10]; //Two V4Fs?
+        } NDogsCTRDogParameterRDPOEntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapRCMR
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte unk[0x48]; //Mostly floats?
+        } NDogsCTRDogParameterRCMREntry[h.entries];
+    }
+};
+
+typedef struct NDogsCTRFieldMapFUNM
+{
+    SectionHeader h; //Empty
+    if (h.entries != 0)
+    {
+        struct
+        {
+            //uint32
+        } NDogsCTRFieldMapFUNMEntry;
+    }
+};
+
+
+struct
+{
+    struct
+    {
+        BigEndian();
+        SectionType magic;
+        if (magic != SectionType_RevolutionKartMapData) //Revolution Kart Map Data
+        {
+            LittleEndian();
+        }
+        uint32 fSize;
+        uint16 sections;
+        uint16 hLen;
+        uint32 version;
+        if (magic != SectionType_CTRDashDiv)
+        {
+            uint32 sectionOffsets[sections]; //Kart Map Data only
+        }
+        //Lazy so shape will error for now
+    } Header;
+    for (i; i < Header.sections; i++)
+    {
+        BigEndian();
+        switch (ReadInt())
+        {
+            //MK
+            case SectionType_KartPoint: KartPoint KTPT; break;
+            case SectionType_EnemyPoint: EnemyPoint ENPT; break;
+            case SectionType_EnemyPath: EnemyPath ENPH; break;
+            case SectionType_ItemPoint: ItemPoint ITPT; break;
+            case SectionType_ItemPath: ItemPath ITPH; break;
+            case SectionType_CheckPoint: CheckPoint CKPT; break;
+            case SectionType_CheckPointPath: CheckPointPath CKPH; break;
+            case SectionType_GlobalObject: GlobalObject GOBJ; break;
+            case SectionType_PointInformation: PointInformation POTI; break;
+            case SectionType_Area: Area AREA; break;
+            case SectionType_Camera: Camera CAME; break;
+            case SectionType_JugemPoint: JugemPoint JGPT; break;
+            case SectionType_CannonPoint: CannonPoint CNPT; break;
+            case SectionType_MissionSuccessPoint: MissionSuccessPoint MSPT; break;
+            case SectionType_StageInfo: StageInfo STGI; break;
+            case SectionType_CORS: CORSSection CORS; break; //CTR
+            case SectionType_GliderPoint: GliderPoint GLPT; break; //CTR
+            case SectionType_GliderPath: GliderPath GLPH; break; //CTR
+            case SectionType_Shape: Shape SHAP; break; //CTR
+            //NDogs CTR
+            case SectionType_NDogsCTRAccessoryParam: NDogsCTRAccessoryParam APRM; break;
+            case SectionType_NDogsCTRAnimalTypePC: NDogsCTRAnimalTypePC ATPC; break;
+            case SectionType_NDogsCTRAnimalTypeAG: NDogsCTRAnimalTypeAG ATAG; break;
+            case SectionType_NDogsCTRAnimalTypeHL: NDogsCTRAnimalTypeHL ATHL; break;
+            case SectionType_NDogsCTRAnimalTypeScale: NDogsCTRAnimalTypeScale ATSC; break;
+            case SectionType_NDogsCTRAnythingHD: NDogsCTRAnythingHD ANHD; break;
+            case SectionType_NDogsCTRAnythingPS: NDogsCTRAnythingPS ANPS; break;
+            case SectionType_NDogsCTRAnythingLT: NDogsCTRAnythingLT ANLT; break;
+            case SectionType_NDogsCTRCompeDN: NDogsCTRCompeDN CDDN; break;
+            case SectionType_NDogsCTRCompeCP: NDogsCTRCompeCP CLCP; break;
+            case SectionType_NDogsCTRCompeCL: NDogsCTRCompeCL CLCL; break;
+            case SectionType_NDogsCTRCompeCameraPF: NDogsCTRCompeCameraPF CCPF; break;
+            case SectionType_NDogsCTRCompeCameraPA: NDogsCTRCompeCameraPA CCPA; break;
+            case SectionType_NDogsCTRCompeCameraP2: NDogsCTRCompeCameraP2 CCP2; break;
+            case SectionType_NDogsCTRCompeCameraPC: NDogsCTRCompeCameraPC CCPC; break;
+            case SectionType_NDogsCTRCompeCameraPD: NDogsCTRCompeCameraPD CCPD; break;
+            case SectionType_NDogsCTRCompeCameraPR: NDogsCTRCompeCameraPR CCPR; break;
+            case SectionType_NDogsCTRCompeCameraPS: NDogsCTRCompeCameraPS CCPS; break;
+            case SectionType_NDogsCTRDogCameraBS: NDogsCTRDogCameraBS DCBS; break;
+            case SectionType_NDogsCTRDogCameraPF: NDogsCTRDogCameraPF DCPF; break;
+            case SectionType_NDogsCTRDogCameraOS: NDogsCTRDogCameraOS DCOS; break;
+            case SectionType_NDogsCTRDogCameraCO: NDogsCTRDogCameraCO DCCO; break;
+            case SectionType_NDogsCTRDogParameterIV: NDogsCTRDogParameterIV DGIV; break;
+            case SectionType_NDogsCTRDogParameterVB: NDogsCTRDogParameterVB DGVB; break;
+            case SectionType_NDogsCTRCatParameterVB: NDogsCTRCatParameterVB CTVB; break; //Why in DogParameter idk
+            case SectionType_NDogsCTRDogParameterTG: NDogsCTRDogParameterTG DGTG; break;
+            case SectionType_NDogsCTRDogParameterDT: NDogsCTRDogParameterDT DGDT; break;
+            case SectionType_NDogsCTRDogParameterLT: NDogsCTRDogParameterLT DGLT; break;
+            case SectionType_NDogsCTRDogParameterSL: NDogsCTRDogParameterSL DGSL; break;
+            case SectionType_NDogsCTRDogParameterOW: NDogsCTRDogParameterOW DGOW; break;
+            case SectionType_NDogsCTRDogParameterNL: NDogsCTRDogParameterNL DGNL; break;
+            case SectionType_NDogsCTRDogParameterPS: NDogsCTRDogParameterPS DGPS; break;
+            case SectionType_NDogsCTRDogParameterST: NDogsCTRDogParameterST DGST; break;
+            case SectionType_NDogsCTRDogParameterFG: NDogsCTRDogParameterFG DGFG; break;
+            case SectionType_NDogsCTRDogParameterWK: NDogsCTRDogParameterWK DGWK; break;
+            case SectionType_NDogsCTRDogParameterLK: NDogsCTRDogParameterLK DGLK; break;
+            case SectionType_NDogsCTRDogParameterEV: NDogsCTRDogParameterEV DGEV; break;
+            case SectionType_NDogsCTRDogParameterWT: NDogsCTRDogParameterWT DGWT; break;
+            case SectionType_NDogsCTRDogParameterCB: NDogsCTRDogParameterCB DGCB; break;
+            case SectionType_NDogsCTRDogParameterSP: NDogsCTRDogParameterSP DGSP; break;
+            case SectionType_NDogsCTRDogParameterSTTM: NDogsCTRDogParameterSTTM STTM; break;
+            case SectionType_NDogsCTRDogParameterWGST: NDogsCTRDogParameterWGST WGST; break;
+            case SectionType_NDogsCTRDogParameterIVMP: NDogsCTRDogParameterIVMP IVMP; break;
+            case SectionType_NDogsCTRDogParameterHUMC: NDogsCTRDogParameterHUMC HUMC; break;
+            case SectionType_NDogsCTRFieldMapTGRO: NDogsCTRFieldMapTGRO TGRO; break;
+            case SectionType_NDogsCTRFieldMapRADG: NDogsCTRFieldMapRADG RADG; break;
+            case SectionType_NDogsCTRFieldMapREAD: NDogsCTRFieldMapREAD READ; break;
+            case SectionType_NDogsCTRFieldMapRAFZ: NDogsCTRFieldMapRAFZ RAFZ; break;
+            case SectionType_NDogsCTRFieldMapRACR: NDogsCTRFieldMapRAFZ RACR; break;
+            case SectionType_NDogsCTRFieldMapRADZ: NDogsCTRFieldMapRAFZ RADZ; break;
+            case SectionType_NDogsCTRFieldMapRALZ: NDogsCTRFieldMapRALZ RALZ; break;
+        }
+    }
+} EADSectionedData<optimize=false>;

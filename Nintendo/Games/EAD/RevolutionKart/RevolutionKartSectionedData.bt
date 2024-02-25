@@ -13,4 +13,4 @@
 
 #include "../../Libraries/EAD/SectionedData.bt"
 
-//Lazy pointer
+//Lazy pointer, used for CTRDash and RevolutionKart
