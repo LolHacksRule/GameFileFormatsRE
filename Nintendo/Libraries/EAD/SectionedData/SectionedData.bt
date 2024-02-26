@@ -200,8 +200,16 @@ typedef struct MK_EnemyPoint
         {
             Vector3_F32 enemyPos;
             float start;
-            uint16 pad[4]; //?
-        } MK_EnemyPointEntry[h.entries];
+            if (Header.magic != SectionType_MK_RevolutionKartMapData)
+            {
+                uint16 pad[4]; //?
+            }
+            else
+            {
+                uint16 pointSetting1;
+                byte otherPointSetting[2];
+            }
+        } MK_EnemyPointEntry[h.entries]<optimize=false>;
     }
 };
 
@@ -212,7 +220,7 @@ typedef struct MK_EnemyPath
     {
         struct
         {
-            if (magic != SectionType_MK_RevolutionKartMapData)
+            if (Header.magic != SectionType_MK_RevolutionKartMapData)
             {
                 uint16 pointStart;
                 uint16 pointLen;
@@ -226,7 +234,7 @@ typedef struct MK_EnemyPath
                 ubyte pointLen;
                 byte prevGroup[6]; //6 previous enemy points
                 byte nextGroup[6]; //6 next enemy points
-                ushort bitFlag;
+                short bitFlag;
             }
         } MK_EnemyPathEntry[h.entries]<optimize=false>;
     }
@@ -254,7 +262,7 @@ typedef struct MK_ItemPath
     {
         struct
         {
-            if (magic != SectionType_MK_RevolutionKartMapData)
+            if (Header.magic != SectionType_MK_RevolutionKartMapData)
             {
                 uint16 pointStart;
                 uint16 pointLen;
@@ -286,7 +294,7 @@ typedef struct MK_CheckPoint
             MK_CheckpointType CheckpointType;
             byte prevCheckPoint;
             byte nextCheckPoint;
-            if (magic != SectionType_RevolutionKartMapData)
+            if (Header.magic != SectionType_MK_RevolutionKartMapData)
             {
                 byte unk[4];
             }
@@ -325,7 +333,7 @@ typedef struct MK_GlobalObject
             uint16 route;
             uint16 setting[8];
             uint16 presenceFlags;
-            if (magic != SectionType_MK_RevolutionKartMapData)
+            if (Header.magic != SectionType_MK_RevolutionKartMapData)
             {
                 byte unk[4];
             }
