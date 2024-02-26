@@ -24,7 +24,7 @@
 typedef enum <uint32>
 {
     SectionType_MK_RevolutionKartMapData = 1380666692,
-    SectionType_MK_CTRDashMapData = 1145914435,
+    SectionType_MK_CTRDashMapData = 1128549700,
     SectionType_MK_CTRDashDiv = 1111573571, //?
     SectionType_MK_KartPoint = 1263816788,
     SectionType_MK_EnemyPoint = 1162760276,
@@ -41,10 +41,10 @@ typedef enum <uint32>
     SectionType_MK_CannonPoint = 1129205844,
     SectionType_MK_MissionSuccessPoint = 1297305684,
     SectionType_MK_StageInfo = 1398032201,
-    SectionType_MK_CORS = 1397903171, //CTR
-    SectionType_MK_GliderPoint = 1414548551, //CTR
-    SectionType_MK_GliderPath = 1213221959, //CTR
-    SectionType_MK_Shape = 1346455635, //CTR
+    SectionType_MK_CORS = 1129271891, //CTR
+    SectionType_MK_GliderPoint = 1196183636, //CTR
+    SectionType_MK_GliderPath = 1196183624, //CTR
+    SectionType_MK_Shape = 1397244240, //CTR
     //NDogs CTR
     SectionType_NDogsCTR_Accessory = 1498563393,
     SectionType_NDogsCTR_AccessoryParam = 1297240129,
@@ -1566,11 +1566,11 @@ struct
     struct
     {
         BigEndian();
-        SectionType magic;
-        if (magic != SectionType_MK_RevolutionKartMapData) //Revolution Kart Map Data
+        if (ReadUInt() != SectionType_MK_RevolutionKartMapData) //Revolution Kart Map Data
         {
             LittleEndian();
         }
+        SectionType magic;
         uint32 fSize;
         uint16 sections;
         uint16 hLen;
@@ -1583,7 +1583,6 @@ struct
     } Header;
     for (i; i < Header.sections; i++)
     {
-        BigEndian();
         switch (ReadInt())
         {
             //MK
