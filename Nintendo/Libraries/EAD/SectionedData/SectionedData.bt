@@ -26,21 +26,21 @@ typedef enum <uint32>
     SectionType_MK_RevolutionKartMapData = 1380666692,
     SectionType_MK_CTRDashMapData = 1145914435,
     SectionType_MK_CTRDashDiv = 1111573571, //?
-    SectionType_MK_KartPoint = 1414550603,
-    SectionType_MK_EnemyPoint = 1414549061,
-    SectionType_MK_EnemyPath = 1213222469,
-    SectionType_MK_ItemPoint = 1414550601,
-    SectionType_MK_ItemPath = 1213224009,
-    SectionType_MK_CheckPoint = 1414548291,
-    SectionType_MK_CheckPointPath = 1213221699,
-    SectionType_MK_GlobalObject = 1245859655,
-    SectionType_MK_PointInformation = 1230262096,
-    SectionType_MK_Area = 1095062081,
-    SectionType_MK_Camera = 1162690883,
-    SectionType_MK_JugemPoint = 1414547274,
-    SectionType_MK_CannonPoint = 1414549059,
-    SectionType_MK_MissionSuccessPoint = 1414550349,
-    SectionType_MK_StageInfo = 1229411411,
+    SectionType_MK_KartPoint = 1263816788,
+    SectionType_MK_EnemyPoint = 1162760276,
+    SectionType_MK_EnemyPath = 1162760264,
+    SectionType_MK_ItemPoint = 1230262356,
+    SectionType_MK_ItemPath = 1230262344,
+    SectionType_MK_CheckPoint = 1129009236,
+    SectionType_MK_CheckPointPath = 1129009224,
+    SectionType_MK_GlobalObject = 1196376650,
+    SectionType_MK_PointInformation = 1347376201,
+    SectionType_MK_Area = 1095910721,
+    SectionType_MK_Camera = 1128353093,
+    SectionType_MK_JugemPoint = 1246187604,
+    SectionType_MK_CannonPoint = 1129205844,
+    SectionType_MK_MissionSuccessPoint = 1297305684,
+    SectionType_MK_StageInfo = 1398032201,
     SectionType_MK_CORS = 1397903171, //CTR
     SectionType_MK_GliderPoint = 1414548551, //CTR
     SectionType_MK_GliderPath = 1213221959, //CTR
@@ -168,7 +168,7 @@ typedef enum <byte>
 typedef struct SectionHeader
 {
     SectionType magic;
-    if (magic != SectionType_MK_RevolutionKartMapData || Header.magic == SectionType_MK_CTRDashDiv)
+    if (Header.magic != SectionType_MK_RevolutionKartMapData || Header.magic == SectionType_MK_CTRDashDiv)
     {
         LittleEndian();
     }
