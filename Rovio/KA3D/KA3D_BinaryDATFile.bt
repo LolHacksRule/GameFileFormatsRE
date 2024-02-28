@@ -94,7 +94,7 @@ typedef struct
         } tdata;
         FSkip(2);
     } compD;
-} cmpBlock;
+} COMPBlock;
 
 typedef struct
 {
@@ -348,23 +348,12 @@ struct KA3DBinary
     //Detect newer KA3D format
     {
         KA3DBlockHeader BaseHeader;
-        DWORD tmpChk<hidden=true>;
-        FSkip(-4);    
-        if (tmpChk == KA3D_BlockType_CompoSprite)
+        switch (ReadString(FTell(),4))
         {
-            cmpBlock CompoSpriteBlock<bgcolor=cRed>;
-        }
-        if (tmpChk == KA3D_BlockType_Text)
-        {
-            TEXTBlock TextBlock<bgcolor=cGreen>;
-        }
-        if (tmpChk == KA3D_BlockType_Sprite)
-        {
-            SPRTBlock SpriteBlock<bgcolor=cBlue>;
-        }
-        if (tmpChk == KA3D_BlockType_Font)
-        {
-            FONTBlock FontBlock<bgcolor=cPurple>;
+            case "COMP": COMPBlock CompoSpriteBlock<bgcolor=cRed>; break;
+            case "TEXT": TEXTBlock TextBlock<bgcolor=cGreen>; break;
+            case "SPRT": SPRTBlock SpriteBlock<bgcolor=cBlue>; break;
+            case "FONT": FONTBlock FontBlock<bgcolor=cPurple>; break;
         }
     }
 } KA3D_DAT<bgcolor=cYellow>;
