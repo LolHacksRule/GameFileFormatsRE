@@ -94,19 +94,30 @@ typedef enum <uint16>
     
     //NTG:
     //0x10: {A}
-} NMS_FontIcon_CaviarF;
+} NMS_CaviarF_FontIcon;
 
 typedef enum <uint16>
 {
     NMS_CaviarF_TagGroupType_System,
     NMS_CaviarF_TagGroupType_FontIcon,
+    NMS_CaviarF_TagGroupType_Character = 7,
 } NMS_CaviarF_TagGroupType;
+
+typedef enum <uint16>
+{
+    NMS_CaviarF_CharacterType_Player,
+    NMS_CaviarF_CharacterType_Magician = 37,
+    NMS_CaviarF_CharacterType_Bandit,
+    NMS_CaviarF_CharacterType_PhantomThief = 40,
+    NMS_CaviarF_CharacterType_Princess,
+} NMS_CaviarF_CharacterType;
 
 typedef struct NMS_CaviarF_TagGroup
 {
     switch (tagGroup)
     {
-        case NMS_CaviarF_TagGroupType_FontIcon: isValidCtrlTag = 1; NMS_FontIcon_CaviarF fontIcon<bgcolor=cPurple>; uint16 paramSz; if (printControlTagInfo) { Printf("</%s>", EnumToString(fontIcon)); }; break;
-        default: uint16 type; uint16 paramSz; byte param[paramSz];
+        case NMS_CaviarF_TagGroupType_FontIcon: isValidCtrlTag = 1; NMS_CaviarF_FontIcon fontIcon<bgcolor=cPurple>; uint16 paramSz; if (printControlTagInfo) { Printf("</%s>", EnumToString(fontIcon)); }; break;
+        case NMS_CaviarF_TagGroupType_Character: isValidCtrlTag = 1; NMS_CaviarF_CharacterType charaType<bgcolor=cDkGreen>; uint16 paramSz<bgcolor=cDkGreen>; uint16 charaNameSize; wchar_t charaName[charaNameSize/2]<bgcolor=cDkGreen>; if (printControlTagInfo){ Printf("<%s>%s</%s>", EnumToString(charaType), charaName, EnumToString(charaType)); }; break;
+        default: uint16 type; uint16 paramSz; if (paramSz) { byte param[paramSz]; }; break;
     }
 };
