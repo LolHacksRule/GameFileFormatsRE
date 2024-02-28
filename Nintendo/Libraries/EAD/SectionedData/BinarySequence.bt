@@ -1,0 +1,153 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+//https://github.com/PabloMK7/EveryFileExplorer/blob/master/MarioKart/MK7/BSEQ.cs
+
+typedef struct NameTableStringOffset
+{
+    uint16 stringOff;
+    FPos = FTell();
+    FSeek(Header.strTblOff+stringOff);
+    string name;
+    FSeek(FPos);
+};
+
+typedef struct EngineCreator
+{
+    NameTableStringOffset creatorName;
+    NameTableStringOffset targetName;
+};
+
+typedef struct CodeName
+{
+    uint16 entries;
+    uint16 defaultID;
+    uint16 ID[entries];
+};
+
+typedef enum <int32>
+{
+    SectionType_PracticalTask,
+    SectionType_PracticalPage,
+    SectionType_Sequence,
+    SectionType_SequenceProxy,
+} SectionType;
+
+typedef struct SectionIdentifier
+{
+    SectionType sectionType;
+    uint32 sequenceID;
+};
+
+typedef struct PracticalSection
+{
+    SectionIdentifier seqID;
+    NameTableStringOffset nameStr;
+    /*uint16 enterOff;
+    uint16 exitOff;
+    uint16 blockType;
+    uint16 blockOff;
+    uint16 unk;
+    CodeName enter;
+    CodeName exit;
+    struct
+    {
+        uint16 seqID2;
+        NameTableStringOffset practicalNam;
+        uint16 practicalSubNameOff;
+        NameTableStringOffset unk;
+    } Block;*/
+    //byte unk[0x40]; //0x30 in NDogs CTR, may be size dependent
+};
+
+typedef struct SequenceSection
+{
+    SectionIdentifier seqID;
+};
+
+typedef struct SequenceProxySection
+{
+    SectionIdentifier seqID;
+};
+
+typedef struct Section4
+{
+    SectionIdentifier seqID;
+};
+
+typedef struct Section5
+{
+    SectionIdentifier seqID;
+};
+
+typedef struct Section6
+{
+    SectionIdentifier seqID;
+};
+
+
+typedef struct Section7
+{
+    SectionIdentifier seqID;
+};
+
+typedef struct Section8
+{
+    SectionIdentifier seqID;
+};
+
+struct
+{
+    LittleEndian();
+    struct
+    {
+        uint32 magic;
+        uint32 initSeqID;
+        uint16 initSeqID2;
+        uint16 unk[9];
+        uint16 sections;
+        uint16 engineCreators;
+        uint32 unk2[2]; //In NDogs CTR this has data
+        uint32 secTblOff;
+        uint32 engineCreatorTblOff;
+        uint32 strTblOff;
+        uint32 secBlockOffs[Header.sections];
+    } Header;
+    struct
+    {
+        for (i; i < Header.sections; i++)
+        {
+            FSeek(Header.secBlockOffs[i]);
+            switch (ReadInt())
+            {
+                case SectionType_PracticalTask: //0x50 in MK
+                case SectionType_PracticalPage: PracticalSection ps; break;
+                case SectionType_Sequence: SequenceSection ss; break;
+                case SectionType_SequenceProxy: SequenceProxySection sps; break;
+                case 4: Section4 s4; break;
+                case 5: Section5 s5; break;
+                case 6: Section6 s6; break;
+                case 7: Section7 s7; break;
+                case 8: Section8 s8; break;
+                default: byte unk; break;
+            }
+        }
+    } Sections;
+    if (Header.engineCreatorTblOff != Header.strTblOff) //If identical ignore
+    {
+        FSeek(Header.engineCreatorTblOff);
+        EngineCreator engineCreator[Header.engineCreators]<optimize=false>;
+    }
+} BinarySequence;
