@@ -1,0 +1,42 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int16>
+{
+    NMS_CTRDash_Tag1Type_Player,
+    NMS_CTRDash_Tag1Type_SingularAndPlural = 4,
+    NMS_CTRDash_Tag1Type_Community,
+    NMS_CTRDash_Tag1Type_SingleAndPlural2x,
+    NMS_CTRDash_Tag1Type_PlayerRegion = 8,
+} NMS_CTRDash_Tag1Type;
+
+typedef struct NMS_CTRDash_TagGroup
+{
+    switch (tagGroup) //Only 1 is used
+    {
+        case 1: isValidCtrlTag = 1; NMS_CTRDash_Tag1Type type; uint16 paramSz;
+        /*switch (type)
+        {
+            case NMS_CTRDash_Tag1Type_SingularAndPlural:
+            U16_UnicodeStringEntry singularStr;
+            uint16 pluralStrSz;
+            if (pluralStrSz)
+            {
+                wchar_t plural[pluralStrSz/2];
+            }
+            if (printControlTagInfo) { Printf("<%s singular=\"%s\" plural=\"%s\">", EnumToString(type), singular, plural); }; ; break;
+            case NMS_CTRDash_Tag1Type_SingleAndPlural2x: uint16 singularStrSz; if (singularStrSz) { wchar_t singular[singularStrSz/2]; } else { wstring singular; } uint16 pluralStrSz; if (pluralStrSz) { wchar_t plural[pluralStrSz/2]; } else { wstring plural; } uint16 extraStrSz; if (extraStrSz) { wchar_t extra[extraStrSz/2]; } else { wstring extra; } if (printControlTagInfo) { Printf("<%s singular=\"%s\" plural=\"%s\" extra=\"%s\">", EnumToString(type), singular, plural, extra); }; break;
+        }*/
+    }
+    if (printControlTagInfo) { Printf("</%s>", EnumToString(type)); }
+};
