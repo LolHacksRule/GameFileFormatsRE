@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <int16>
+{
+    NMS_Meet_StringInsertionType_OneDigitNum,
+    NMS_Meet_StringInsertionType_TwoDigitNum,
+    NMS_Meet_StringInsertionType_String,
+    NMS_Meet_StringInsertionType_WString,
+} NMS_Meet_StringInsertionType;
+
+typedef struct NMS_Meet_TagGroup
+{
+    switch (tagGroup) //Only 1 is used
+    {
+        case 1: isValidCtrlTag = 1; NMS_Meet_StringInsertionType type; uint16 paramSz; break;
+    }
+    if (printControlTagInfo) { Printf("</%s>", EnumToString(type)); }
+};
