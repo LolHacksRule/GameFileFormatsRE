@@ -19,10 +19,11 @@
 
 //Shoutouts to course.0
 
-//Used in NDogs CTR and MK 2008+ series (Wii,7,8/+[?]), not specific to MK
+//Used in NDogs CTR and MK 2005+ series (Wii,7,8/+[?]), not specific to MK
 
 typedef enum <uint32>
 {
+    SectionType_MK_NitroMapData = 1313557828,
     SectionType_MK_RevolutionKartMapData = 1380666692,
     SectionType_MK_CTRDashMapData = 1128549700,
     SectionType_MK_CTRDashDiv = 1111573571, //?
@@ -35,13 +36,13 @@ typedef enum <uint32>
     SectionType_MK_CheckPointPath = 1129009224,
     SectionType_MK_GlobalObject = 1196376650,
     SectionType_MK_PointInformation = 1347376201,
-    SectionType_MK_Area = 1095910721,
-    SectionType_MK_Camera = 1128353093,
+    SectionType_MK_AreaInformation = 1095910721,
+    SectionType_MK_CameraInformation = 1128353093,
     SectionType_MK_JugemPoint = 1246187604,
     SectionType_MK_CannonPoint = 1129205844,
     SectionType_MK_MissionSuccessPoint = 1297305684,
     SectionType_MK_StageInfo = 1398032201,
-    SectionType_MK_CORS = 1129271891, //CTR
+    SectionType_MK_Course = 1129271891, //CTR
     SectionType_MK_GliderPoint = 1196183636, //CTR
     SectionType_MK_GliderPath = 1196183624, //CTR
     SectionType_MK_Shape = 1397244240, //CTR
@@ -159,16 +160,65 @@ typedef enum <uint32>
     SectionType_NDogsCTR_SharedTCM = 1296258131,
 } SectionType;
 
+//MK
+
 typedef enum <byte>
 {
     MK_CheckpointType_NormalCheckPoint = -1,
     MK_CheckpointType_LapCountTrigger,
 } MK_CheckpointType;
 
+typedef enum <int16>
+{
+    MK_EnemyPointSetting1_Default,
+    MK_EnemyPointSetting1_AtStartOfRouteOnlyEnterWithOffRoadCutItem,
+    MK_EnemyPointSetting1_UseOffRoadCutItem,
+    MK_EnemyPointSetting1_PerformWheelie,
+    MK_EnemyPointSetting1_EndWheelie,
+} MK_EnemyPointSetting1; //General control?
+
+typedef enum <byte>
+{
+    MK_EnemyPointSetting2_Default,
+    MK_EnemyPointSetting2_TerminateDrift,
+    MK_EnemyPointSetting2_HopDrift,
+    MK_EnemyPointSetting2_ForceDrift,
+} MK_EnemyPointSetting2; //Drift?
+
+typedef enum <byte>
+{
+    MK_CameraType_Goal,
+    MK_CameraType_FixedSearch,
+    MK_CameraType_PathSearch,
+    MK_CameraType_FollowKart,
+    MK_CameraType_FollowKartPath,
+    MK_CameraType_FixedMovement,
+    MK_CameraType_PathMovement,
+    MK_CameraType_MiniGame,
+    MK_CameraType_SuccessfulMission,
+} MK_CameraType;
+
+typedef enum <byte>
+{
+    MK_AreaShapeType_Box,
+    MK_AreaShapeType_Cylinder,
+} MK_AreaShapeType;
+
+typedef enum <byte>
+{
+    MK_AreaTriggerType_Camera,
+    MK_AreaTriggerType_ClipObject,
+    MK_AreaTriggerType_EffectController,
+    MK_AreaTriggerType_FogController,
+    MK_AreaTriggerType_PullController,
+    MK_AreaTriggerType_EnemyRedirect,
+    MK_AreaTriggerType_MapArea2D,
+} MK_AreaTriggerType;
+
 typedef struct SectionHeader
 {
     SectionType magic;
-    if (Header.magic != SectionType_MK_RevolutionKartMapData || Header.magic == SectionType_MK_CTRDashDiv)
+    if (Header.magic != SectionType_MK_RevolutionKartMapData && Header.magic == SectionType_MK_CTRDashDiv)
     {
         LittleEndian();
     }
@@ -184,9 +234,9 @@ typedef struct MK_KartPoint
         struct
         {
             Vector3_F32 pos;
-            Vector3_F32 start;
-            uint16 playerIndex;
-            uint16 pad;
+            Vector3_F32 dir; //or start
+            int16 playerIndex;
+            int16 pad;
         } MK_KartPointEntry[h.entries];
     }
 };
@@ -206,8 +256,9 @@ typedef struct MK_EnemyPoint
             }
             else
             {
-                uint16 pointSetting1;
-                byte otherPointSetting[2];
+                MK_EnemyPointSetting1 pointSetting1;
+                MK_EnemyPointSetting2 pointSetting2;
+                byte otherPointSetting;
             }
         } MK_EnemyPointEntry[h.entries]<optimize=false>;
     }
@@ -361,30 +412,30 @@ typedef struct MK_PointInformation
     }
 };
 
-typedef struct MK_Area
+typedef struct MK_AreaInformation
 {
     SectionHeader h;
     if (h.entries != 0)
     {
         struct
         {
-            byte shape;
-            byte type;
+            MK_AreaShapeType shape;
+            MK_AreaTriggerType type;
             byte cameraIdx;
-            byte priority;
+            ubyte priority;
             Vector3_F32 pos;
-            Vector3_F32 rot;
+            Vector3_F32 dir; //or rot
             Vector3_F32 scl;
             uint16 setting1;
             uint16 setting2;
-            byte routeID;
-            byte enemyPointID;
+            byte railID; //or Route ID
+            byte enemyLinkID;
             uint16 pad;
-        } MK_AreaEntry[h.entries]<optimize=false>;
+        } MK_AreaInformationEntry[h.entries]<optimize=false>;
     }
 };
 
-typedef struct MK_Camera
+typedef struct MK_CameraInformation
 {
     SectionHeader h;
     if (h.entries != 0)
@@ -393,21 +444,21 @@ typedef struct MK_Camera
         {
             byte type;
             byte nextCameraIdx;
-            byte shake;
+            ubyte shake;
             byte route;
             uint16 cameraPointVel;
             uint16 zoomVel;
             uint16 viewPointVel;
-            byte startFlag;
-            byte movieFlag;
+            ubyte startFlag;
+            ubyte movieFlag;
             Vector3_F32 pos;
-            Vector3_F32 rot;
+            Vector3_F32 dir; //or rot
             float zoomStart;
             float zoomEnd;
             Vector3_F32 viewPointStartVec;
             Vector3_F32 viewPointDestVec;
             float activeTime;
-        } MK_CameraEntry[h.entries]<optimize=false>;
+        } MK_CameraInformationEntry[h.entries]<optimize=false>;
     }
 };
 
@@ -466,8 +517,8 @@ typedef struct MK_StageInfo
             byte laps;
             byte polePos;
             byte normalDist;
-            byte lensFlare;
-            uint32 lensFlareColor;
+            Byte_Bool lensFlare;
+            RGBA_UByte lensFlareColor;
             byte flareTrans;
             uint16 pad;
             byte pad2;
@@ -475,7 +526,7 @@ typedef struct MK_StageInfo
     }
 };
 
-typedef struct MK_CORSSection
+typedef struct MK_CourseSection
 {
     SectionHeader h; //Unused
 };
@@ -1565,7 +1616,6 @@ struct
 {
     struct
     {
-        BigEndian();
         if (ReadUInt() != SectionType_MK_RevolutionKartMapData) //Revolution Kart Map Data
         {
             LittleEndian();
@@ -1595,13 +1645,13 @@ struct
             case SectionType_MK_CheckPointPath: MK_CheckPointPath MK_CKPH; break;
             case SectionType_MK_GlobalObject: MK_GlobalObject MK_GOBJ; break;
             case SectionType_MK_PointInformation: MK_PointInformation MK_POTI; break;
-            case SectionType_MK_Area: MK_Area MK_AREA; break;
-            case SectionType_MK_Camera: MK_Camera MK_CAME; break;
+            case SectionType_MK_AreaInformation: MK_AreaInformation MK_AREA; break;
+            case SectionType_MK_CameraInformation: MK_CameraInformation MK_CAME; break;
             case SectionType_MK_JugemPoint: MK_JugemPoint MK_JGPT; break;
             case SectionType_MK_CannonPoint: MK_CannonPoint MK_CNPT; break;
             case SectionType_MK_MissionSuccessPoint: MK_MissionSuccessPoint MK_MSPT; break;
             case SectionType_MK_StageInfo: MK_StageInfo MK_STGI; break;
-            case SectionType_MK_CORS: MK_CORSSection MK_CORS; break; //CTR
+            case SectionType_MK_CORS: MK_CourseSection MK_CORS; break; //CTR
             case SectionType_MK_GliderPoint: MK_GliderPoint MK_GLPT; break; //CTR
             case SectionType_MK_GliderPath: MK_GliderPath MK_GLPH; break; //CTR
             case SectionType_MK_Shape: MK_Shape MK_SHAP; break; //CTR

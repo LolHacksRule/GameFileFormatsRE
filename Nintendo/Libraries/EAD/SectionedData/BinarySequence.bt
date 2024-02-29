@@ -13,28 +13,53 @@
 
 #include "../../../../LHR/Common.bt"
 
-//https://github.com/PabloMK7/EveryFileExplorer/blob/master/MarioKart/MK7/BSEQ.cs
+//https://github.com/PabloMK7/EveryFileExplorer/blob/master/MarioKart/MK7/BSEQ.cs, not specific to CTRDash as used in NDogs CTR too
 
-typedef struct NameTableStringOffset
+local uint DEBUG_PRINT = 1;
+
+typedef struct NameTableString
 {
-    uint16 stringOff;
+    uint16 stringOff<bgcolor=cDkGreen>;
     FPos = FTell();
     FSeek(Header.strTblOff+stringOff);
-    string name;
+    string name<bgcolor=cGreen>;
     FSeek(FPos);
 };
 
 typedef struct EngineCreator
 {
-    NameTableStringOffset creatorName;
-    NameTableStringOffset targetName;
+    NameTableString creatorName;
+    NameTableString targetName;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t<%s target= \"%s\">\n", creatorName.name, targetName.name);
+    }
 };
 
 typedef struct CodeName
 {
     uint16 entries;
     uint16 defaultID;
-    uint16 ID[entries];
+    if (DEBUG_PRINT)
+    {
+        Printf("\t\t<CodeNames>\n");
+    }
+    if (entries)
+    {
+        struct
+        {
+            uint16 ID;
+            NameTableString name;
+            if (DEBUG_PRINT)
+            {
+                Printf("\t\t\t<%s id=\"%i\">\n", name.name, ID);
+            }
+        } CodeNameEntry[entries]<optimize=false>;
+    }
+    if (DEBUG_PRINT)
+    {
+        Printf("\t\t</CodeNames>\n");
+    }
 };
 
 typedef enum <int32>
@@ -51,61 +76,192 @@ typedef struct SectionIdentifier
     uint32 sequenceID;
 };
 
-typedef struct PracticalSection
+typedef struct Subsection
+{
+    uint16 entries;
+    uint16 unk;
+    struct
+    {
+        //SectionIdentifier seqID;
+        //SectionIdentifier ID;
+    } Entry[entries];
+};
+
+typedef struct Flow
+{
+    uint16 entries;
+    uint16 unk;
+    struct
+    {
+        SectionIdentifier src;
+        SectionIdentifier dst;
+    } Entry[entries];
+};
+
+typedef struct SequenceSectionBlock
 {
     SectionIdentifier seqID;
-    NameTableStringOffset nameStr;
-    /*uint16 enterOff;
+    NameTableString nameStr;
+    uint16 enterOff;
     uint16 exitOff;
-    uint16 blockType;
+    uint16 type;
     uint16 blockOff;
     uint16 unk;
     CodeName enter;
+    FSkip(-(sizeof enter + 20) + exitOff);
     CodeName exit;
+    FSkip(-(sizeof exit + sizeof enter + 20) + blockOff);
+};
+
+typedef struct PracticalSection //Near perfect in both
+{
+    if (DEBUG_PRINT)
+    {
+        Printf("\t<PracticalSection>\n");
+    }
+    SequenceSectionBlock ssb;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t\t<Name>%s</Name>\n", ssb.nameStr.name);
+    }
     struct
     {
-        uint16 seqID2;
-        NameTableStringOffset practicalNam;
-        uint16 practicalSubNameOff;
-        NameTableStringOffset unk;
-    } Block;*/
-    //byte unk[0x40]; //0x30 in NDogs CTR, may be size dependent
+        NameTableString seqID2;
+        NameTableString practicalName;
+        if (DEBUG_PRINT)
+        {
+            Printf("\t\t<PracticalSectionBlock>\n");
+            Printf("\t\t\t<%s practicalName=\"%s\">\n", seqID2.name, practicalName.name);
+        }
+        uint16 unk; //Not strTbl ref
+        uint16 unk2;
+        CodeName practicalSubNames;
+        if (DEBUG_PRINT)
+        {
+            Printf("\t\t</PracticalSectionBlock>\n");
+        }
+    } PracticalSectionBlock;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t</PracticalSection>\n");
+    }
 };
 
 typedef struct SequenceSection
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
+    struct
+    {
+        NameTableString ID; //or count
+        NameTableString name;
+        uint16 subSectionOff;
+        uint16 flowOff;
+        Subsection subsec;
+        //SectionIdentifier scene[unk];
+    } SequenceBlock;
 };
 
 typedef struct SequenceProxySection
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
+    struct
+    {
+        uint16 count;
+        NameTableString unk;
+        uint16 unk; //Scenes?
+        uint16 unk2; //Not a string ref that's for sure
+        //SectionIdentifier scene[unk];
+    } SequenceProxyBlock;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t<SequenceProxySection>\n");
+        Printf("\t\t<Name>%s</Name>\n", ssb.nameStr.name);
+        Printf("\t</SequenceProxySection>\n");
+    }
+};
+
+typedef struct Section1
+{
+    SequenceSectionBlock ssb;
 };
 
 typedef struct Section4
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
+    struct
+    {
+        uint16 count;
+        NameTableString name;
+        uint16 unk; //Not a string pointer
+        uint16 unk2; //If 0 end, not a strtbl off
+        //SectionIdentifier sec[count];
+        //uint32 unk3[unk2];
+    } Section4Block;
 };
 
 typedef struct Section5
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
+    struct
+    {
+        uint16 count;
+        NameTableString name;
+        uint16 unk; //Not a string pointer
+        uint16 unk2; //If 0 end or a string pointer, possibly a off for the block
+        SectionIdentifier sec[count];
+        //uint32 unk3[unk2];
+    } Section5Block;
 };
 
 typedef struct Section6
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
 };
 
 
 typedef struct Section7
 {
-    SectionIdentifier seqID;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t<Section7>\n");
+    }
+    SequenceSectionBlock ssb;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t\t<Name>%s</Name>\n", ssb.nameStr.name);
+    }
+    struct
+    {
+        uint16 count;
+        NameTableString name;
+        uint16 unk; //An off?, for NDogs it's a string ref
+        uint16 unk2; //If 0 end (not for ndogs), total size?
+
+        //IF NDOGS
+        //SectionIdentifier test;
+        //NameTableString unk3;
+        //SectionIdentifier sec[count];
+        //uint32 unk3[unk2];
+    } Section7Block;
+    if (DEBUG_PRINT)
+    {
+        Printf("\t</Section7>\n");
+    }
 };
 
 typedef struct Section8
 {
-    SectionIdentifier seqID;
+    SequenceSectionBlock ssb;
+    struct
+    {
+        uint16 count;
+        NameTableString name;
+        uint16 unk; //Sections or an off?
+        uint16 unk2;
+        SectionIdentifier sec[count];
+        SectionIdentifier unksec;
+        //uint32 unk3[unk2];
+    } Section8Block;
 };
 
 struct
@@ -116,15 +272,20 @@ struct
         uint32 magic;
         uint32 initSeqID;
         uint16 initSeqID2;
+        //NDogs E3Scene-Default dies here
         uint16 unk[9];
-        uint16 sections;
+        uint16 sections; //Engine creators may be here idk why
         uint16 engineCreators;
         uint32 unk2[2]; //In NDogs CTR this has data
-        uint32 secTblOff;
-        uint32 engineCreatorTblOff;
+        uint32 sectionsOff;
+        uint32 engineCreatorsOff;
         uint32 strTblOff;
         uint32 secBlockOffs[Header.sections];
     } Header;
+    if (DEBUG_PRINT)
+    {
+        Printf("<Sections>\n");
+    }
     struct
     {
         for (i; i < Header.sections; i++)
@@ -132,22 +293,38 @@ struct
             FSeek(Header.secBlockOffs[i]);
             switch (ReadInt())
             {
-                case SectionType_PracticalTask: //0x50 in MK
+                /*case SectionType_PracticalTask:
                 case SectionType_PracticalPage: PracticalSection ps; break;
                 case SectionType_Sequence: SequenceSection ss; break;
                 case SectionType_SequenceProxy: SequenceProxySection sps; break;
                 case 4: Section4 s4; break;
                 case 5: Section5 s5; break;
                 case 6: Section6 s6; break;
-                case 7: Section7 s7; break;
-                case 8: Section8 s8; break;
-                default: byte unk; break;
+                case 7: Section7 s7; break;*/
+                case 8: Section8 s8; break; //Root section only? Only appears in BRS
+                //default: Printf("No sections!\n"); break;
             }
         }
     } Sections;
-    if (Header.engineCreatorTblOff != Header.strTblOff) //If identical ignore
+    if (!sizeof Sections < Header.sections)
     {
-        FSeek(Header.engineCreatorTblOff);
-        EngineCreator engineCreator[Header.engineCreators]<optimize=false>;
+        Printf("No sections found!\n");
+    }
+    if (DEBUG_PRINT)
+    {
+        Printf("</Sections>\n");
+    }
+    if (Header.engineCreatorsOff != Header.strTblOff) //If identical ignore
+    {
+        FSeek(Header.engineCreatorsOff);
+        if (DEBUG_PRINT)
+        {
+            Printf("<EngineCreators>\n");
+        }
+        EngineCreator engineCreator[Header.engineCreators]<optimize=false, bgcolor=cDkGreen>;
+        if (DEBUG_PRINT)
+        {
+            Printf("</EngineCreators>\n");
+        }
     }
 } BinarySequence;
