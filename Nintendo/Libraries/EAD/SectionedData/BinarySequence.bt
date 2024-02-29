@@ -293,14 +293,14 @@ struct
             FSeek(Header.secBlockOffs[i]);
             switch (ReadInt())
             {
-                /*case SectionType_PracticalTask:
+                case SectionType_PracticalTask:
                 case SectionType_PracticalPage: PracticalSection ps; break;
                 case SectionType_Sequence: SequenceSection ss; break;
                 case SectionType_SequenceProxy: SequenceProxySection sps; break;
                 case 4: Section4 s4; break;
                 case 5: Section5 s5; break;
                 case 6: Section6 s6; break;
-                case 7: Section7 s7; break;*/
+                case 7: Section7 s7; break;
                 case 8: Section8 s8; break; //Root section only? Only appears in BRS
                 //default: Printf("No sections!\n"); break;
             }
