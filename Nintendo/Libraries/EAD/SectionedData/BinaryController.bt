@@ -11,90 +11,183 @@
 //   History: 
 //------------------------------------------------
 
-typedef struct Animation
-{
-    uint16 animNameOff;
-    uint16 layoutAnimNameOff;
-    uint16 nextLayoutAnimNameOff;
-    uint16 isReverse;
-    float speed;
-};
-
 #include "../../../../LHR/Common.bt"
+
 //https://web.archive.org/web/20230610143403/https://avsys.xyz/wiki/BRCTR_(File_Format)
 //https://wiki.tockdom.com/wiki/BRCTR_(File_Format)
 
+typedef struct CTRHeader
+{
+    char magic[4];
+    uint32 unk;
+};
 
-//Only supports Revolution Kart atm.
+typedef struct CTRControllerInfo
+{
+    uint16 nameType;
+    uint16 name;
+    uint16 nameType2;
+    uint16 layoutName;
+};
+
+typedef struct CTRElementInfo
+{
+    uint16 rootElements;
+    uint16 layouts1; //sub or main/root?
+    uint16 layoutTexts; //Lost message labels?
+    uint16 layoutTextures; //Lost message labels?
+    uint16 variables;
+    uint16 normalElements;
+    uint32 rootElementOff;
+    uint32 layouts1Off; //sub or main?
+    uint32 layoutTextOff; //Lost message labels?
+    uint32 layoutTexturesOff; //Lost message labels?
+    uint32 variablesOff;
+    uint32 normalElementOff;
+    uint32 unkElementNameDataOff[3]; //None in CTRDash
+    uint32 normalElementNameDataOff;
+};
+
+typedef struct CTRRootElement
+{
+    uint16 nameOff;
+    uint16 unk;
+};
+
+typedef struct CTRElement2
+{
+    uint16 strOff;
+    uint16 unk; //unk
+};
+
+typedef struct CTRLayoutTextElement
+{
+    uint16 strOff;
+    uint16 unk; //unk
+};
+
+typedef struct CTRLayoutTextureElement
+{
+    uint16 strOff;
+    uint16 unk; //unk
+};
+
+typedef struct CTRVariableElement
+{
+    uint16 unk; //unk
+    uint16 strOff;
+};
+
+typedef struct CTRNormalElement
+{
+    uint16 nameOff;
+    uint16 topScrn;
+    Vector3_F32 off;
+    uint32 unk;
+};
+
+typedef struct RevolutionKartHeader
+{
+    char magic[4];
+    uint16 subheaders;
+    uint16 mainLayoutFStrIdx;
+    uint16 namespaceStrOff; //or MSG
+    uint16 picSrcLayoutFStrOff;
+    uint16 animSubHdrOff;
+    uint16 layoutSubHdrOff;
+    uint16 nameTblOff;
+    uint16 unk;
+};
+
+typedef struct RevoKartAnimationsBlock
+{
+    uint16 groupsOff;
+    uint16 groups;
+    uint16 animsOff;
+    uint16 anims;
+    struct
+    {
+        uint16 nameOff;
+        uint16 paneNameOff;
+        uint16 animIdx;
+        uint16 anims;
+    } Group[groups]<optimize=false>;
+    struct
+    {
+        uint16 animNameOff;
+        uint16 layoutAnimNameOff;
+        uint16 nextLayoutAnimNameOff;
+        uint16 isReverse;
+        float speed;
+    } Animation[anims]<optimize=false>; 
+};
+
+typedef struct RevoKartLayoutBlock 
+{
+    uint16 variantOff;
+    uint16 variants;
+    uint16 msgsOff;
+    uint16 msgs;
+    uint16 picsOff;
+    uint16 pics;
+    struct
+    {
+        uint16 nameOff;
+        uint16 trns;
+        uint16 animate;
+        uint16 padding;
+        float delay;
+        Vector3_F32 fourBy3Trans;
+        Vector2_F32 fourBy3Scale;
+        Vector3_F32 sixteenBy9Trans;
+        Vector2_F32 sixteenBy9Scale;
+        uint16 firstMsgIdx;
+        uint16 msgs;
+        uint16 firstPicIdx;
+        uint16 pics;
+    } Variant[variants];
+    struct
+    {
+        uint16 layoutPaneName;
+        uint16 msgNameOff;
+        uint32 messageID;
+    } Message[msgs];
+    struct
+    {
+        uint16 layoutPaneName;
+        uint16 srcLayoutPaneName;
+    } Picture[pics];
+};
 
 struct 
 {
     BigEndian();
-    struct
+    switch (ReadInt())
     {
-        char magic[4]; //Capital for CTR, lcase for Revolution Kart
-        /*if (magic == "BCTR")
-        {
+        case 1111708754:
             LittleEndian();
-        }*/
-        uint16 subheaders;
-        uint16 mainLayoutFStrIdx;
-        uint16 namespaceStrOff; //or MSG
-        uint16 picSrcLayoutFStrOff;
-        uint16 animSubHdrOff;
-        uint16 layoutSubHdrOff;
-        uint16 nameTblOff;
-        uint16 unk;
-    } Header;
-    struct
-    {
-        uint16 groupsOff;
-        uint16 groups;
-        uint16 animsOff;
-        uint16 anims;
-        struct
-        {
-            uint16 nameOff;
-            uint16 paneNameOff;
-            uint16 animIdx;
-            uint16 anims;
-        } Group[groups]<optimize=false>;
-        Animation animation[anims]<optimize=false>;
-    } AnimationsBlock;
-    struct
-    {
-        uint16 variantOff;
-        uint16 variants;
-        uint16 msgsOff;
-        uint16 msgs;
-        uint16 picsOff;
-        uint16 pics;
-        struct
-        {
-            uint16 nameOff;
-            uint16 trns;
-            uint16 animate;
-            uint16 padding;
-            float delay;
-            Vector3_F32 fourBy3Trans;
-            Vector2_F32 fourBy3Scale;
-            Vector3_F32 sixteenBy9Trans;
-            Vector2_F32 sixteenBy9Scale;
-            uint16 firstMsgIdx;
-            uint16 msgs;
-            uint16 firstPicIdx;
-            uint16 pics;
-        } Variant[variants];
-        struct
-        {
-            uint16 layoutPaneName;
-            uint16 msgNameOff;
-            uint32 messageID;
-        } Message[msgs];
-        struct
-        {
-            uint16 layoutPaneName;
-            uint16 srcLayoutPaneName;
-        } Picture[pics];
-    } LayoutBlock;
+            CTRHeader Header;
+            CTRControllerInfo ControllerInfoBlock;
+            CTRElementInfo ElementInfoBlock;
+            CTRRootElement RootElement[ElementInfoBlock.rootElements]; //May need to sub 1
+            CTRElement2 Element2[ElementInfoBlock.layouts1];
+            CTRLayoutTextElement LayoutTextElement[ElementInfoBlock.layoutTexts];
+            CTRLayoutTextureElement LayoutTextureElement[ElementInfoBlock.layoutTextures];
+            CTRVariableElement VariableElement[ElementInfoBlock.variables];
+            FSeek(ElementInfoBlock.normalElementOff);
+            CTRNormalElement NormalElement[ElementInfoBlock.normalElements];
+            if (ElementInfoBlock.unkElementNameDataOff[0] != ElementInfoBlock.unkElementNameDataOff[1])
+            {
+                uint32 UnknownElementNameData1[ElementInfoBlock.normalElements]; //Message indexes?
+            }
+            if (ElementInfoBlock.unkElementNameDataOff[1] != ElementInfoBlock.unkElementNameDataOff[2])
+            {
+                uint16 UnknownElementNameData2[ElementInfoBlock.normalElements+1]; //?
+            }
+            uint32 UnknownElementNameData3[ElementInfoBlock.normalElements]; //?
+            FSeek(ElementInfoBlock.normalElementNameDataOff);
+            U32_SizeWithData stringTable;
+            break;
+        case 1650685042: RevolutionKartHeader Header; RevoKartAnimationsBlock AnimationsBlock; RevoKartLayoutBlock LayoutBlock; break;
+    }
 } EADBinaryController;
