@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: MarioKartAGPDX_Engine_BinFont.bt
+//      File: Xeen_BinFont.bt
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Getting data out of a BFNT/Binary FoNT file.
@@ -9,7 +9,7 @@
 //      File Mask: BFNT
 //      ID Bytes: 
 //      History: Mario Kart Arcade GP DX (Engine)
-//      Developer: Xeen Inc.?
+//      Developer: Xeen Inc.
 //------------------------------------------------
 
 //https://www.angelcode.com/products/bmfont/doc/file_format.html (V2) yeah this is pretty much their format, with only the header modified and string table at the EOF with the texture strings, nice original format lol
