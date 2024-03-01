@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: MarioKartAGPDX_Engine_ConditionsFile.bt
+//      File: Xeen_ConditionsFile.bt
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Getting data out of a COND/CONDitions binary.
@@ -9,7 +9,7 @@
 //      File Mask: COND
 //      ID Bytes: 
 //      History: Mario Kart Arcade GP DX (Engine)
-//      Developer: Xeen Inc.?
+//      Developer: Xeen Inc.
 //------------------------------------------------
 
 struct Header {

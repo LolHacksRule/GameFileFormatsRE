@@ -1,6 +1,6 @@
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: Mario Kart Arcade Grand Prix DX (Engine) *.SAII
+//      File: Xeen *.SAII
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Gets some data out of the binary.
@@ -13,7 +13,7 @@
 typedef enum <uint32>
 {
     MK3 = 1229537619, //SAII
-    VACUUM = 843661651, //SAI2
+    VACUUM = 843661651, //SAI2, may be the same in IDSZ
 } GameType;
 
 typedef struct Header
