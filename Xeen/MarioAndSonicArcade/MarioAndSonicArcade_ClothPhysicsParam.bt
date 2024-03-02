@@ -1,0 +1,24 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    uint32 magic;
+    uint32 values;
+    string name;
+    struct
+    {
+        byte unk[0x3C];
+        string name2;
+    } Value[values];
+} MarioAndSonicArcade_ClothPhysicsParam;

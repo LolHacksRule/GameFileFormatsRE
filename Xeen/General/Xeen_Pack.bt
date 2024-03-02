@@ -27,18 +27,18 @@ typedef enum <uint32>
 typedef struct Header
 {
     char magic[4];
-    int32 files;
-    int32 stringTblOff;
-    int32 align;
+    uint32 files;
+    uint32 stringTblOff;
+    uint32 align;
     FileType type;
 };
 
 typedef struct FileEntry
 {
-    int32 nameCRC32;
-    int32 nameOff;
-    int32 off;
-    int32 size;
+    uint32 nameCRC32;
+    uint32 nameOff;
+    uint32 off;
+    uint32 size;
 };
 
 struct Pack

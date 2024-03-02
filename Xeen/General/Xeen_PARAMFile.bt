@@ -20,7 +20,7 @@ struct DataTable {
         char    name[header.strSize]<bgcolor=cGreen>;
     } AnimFileStringData[header.animFileCnt]<optimize=false>;
     struct DummyData {
-        int32    param<bgcolor=cBlue>;
+        int32    param<bgcolor=cBlue>; //if 4 is root?
     } dummyData[header.animFileCnt]<optimize=false>;
     uint32 nameCRC32[header.animFileCnt]<bgcolor=cRed>;
 } dataTable;

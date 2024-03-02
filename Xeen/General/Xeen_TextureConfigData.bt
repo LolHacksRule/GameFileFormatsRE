@@ -24,7 +24,7 @@ typedef struct Header {
     uint    header<bgcolor=cGreen>; //TCD 
     uint    textureCount<bgcolor=cBlue>; //Must be 01+
     uint    texPacksCount<bgcolor=cPurple>; //Must be 01+
-    uint    unk;
+    uint    unk; //header size?
 };
 
 typedef struct MetaDataEntry

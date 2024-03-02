@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: Nintendo Modern/Xeen Inc (2011+) Arcade CSV binaries *.MATTR (LM), *.BIN, *_PARAM.BIN, *.ABT, *.NGW (LM), *.VMD, *.EFD (MKDX)
+//      File: Xeen Inc (2011+) Arcade CSV binaries *.MATTR (LM), *.BIN, *_PARAM.BIN, *.ABT, *.NGW (LM), *.VMD, *.EFD (MKDX)
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Gets some data out of the scripts.
@@ -40,6 +40,7 @@ typedef struct DataEntry
     }
     else*/
     //{
+        //uint32 idx;
         byte data[dataSize]; //Float, or string afaik
     //}
 };

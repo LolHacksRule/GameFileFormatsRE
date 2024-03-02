@@ -1,0 +1,54 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct //WIP
+{
+    string magic;
+    if (ReadByte() == 1)
+    {
+        byte unk;
+    }
+    else
+    {
+        local uint unk = 0;
+    }
+    uint32 varCnt;
+    if (unk)
+    {
+        byte pad[3];
+        uint32 unk2[3];
+    }
+    else
+    {
+        uint32 pad;
+    }
+    struct
+    {
+        uint32 idx;
+        if (unk)
+        {
+            Vector3_F32 unk[2]<optimize=false>;
+            uint32 unk2;
+            Vector3_F32 unk3;
+            Vector3_F32 unk4;
+            uint32 unk3;
+        }
+        else
+        {
+            uint32 unk; //Comment to read ranking param
+            Vector3_F32 unk2[2]<optimize=false>;
+        }
+    } Var[varCnt]<optimize=false>;
+} MarioAndSonicArcade_CharacterSelectionParam; 

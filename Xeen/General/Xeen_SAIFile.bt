@@ -13,7 +13,7 @@
 typedef enum <uint32>
 {
     MK3 = 1229537619, //SAII
-    VACUUM = 843661651, //SAI2, may be the same in IDSZ
+    VACUUM = 843661651, //SAI2 (LMA/MS2016Arcade), may be the same in IDSZ
 } GameType;
 
 typedef struct Header

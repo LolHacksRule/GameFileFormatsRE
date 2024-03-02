@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+
+struct
+{
+    uint64 magic; //screw it
+    uint32 entries;
+    struct
+    {
+        uint32 nameCRC32;
+        byte unk[0x0c];
+    } EntryMeta[entries];
+} MarioAndSonicArcadeEventBinary;

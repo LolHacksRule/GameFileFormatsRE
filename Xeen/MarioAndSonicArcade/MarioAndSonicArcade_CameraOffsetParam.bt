@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct //WIP
+{
+    string magic;
+    byte pad;
+    uint64 varCnt; //maybe
+    struct
+    {
+        uint32 idx;
+        byte dmy[0x20];
+        Vector3_F32 something;
+    } Var[varCnt]<optimize=false>;
+} MarioAndSonicArcade_CameraOffsetParam;

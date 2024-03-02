@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    uint64 magic; //screw it
+    uint32 count;
+    struct
+    {
+        char modelOrFlag[256];
+        char paramOrMotion[256];
+        uint16 unk3;
+        float unk4;
+        uint16 unk5;
+    } Entry[count];
+} MarioAndSonicArcade_SAD;
