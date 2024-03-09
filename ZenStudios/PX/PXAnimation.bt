@@ -17,21 +17,34 @@ struct
 {
     LittleEndian();
     PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
-    uint32 unk; //8 in PVZ on MacOS
-    uint32 unk2;
-    Vector3_F32 initPos; //Prob
+    uint32 unk; //7 in PVZ on MacOS CDN, 7 on iOS/Android CDN
+    time_t exportDate; //Export date i32, seems to be a day before the table date
+    Vector2_F32 initPos; //Prob or is it vec2F32 some count i32
     uint32 entries;
+    if (entries)
+    {
+        time_t timestamp[entries+2]; //Export date i32, seems to be a day before the table date
+        U32_StringEntry exportString;
+        U32_StringEntry name;
+        PX_Platform platform; //3 on iOS, 5 on Android, platform ID?
+        uint32 unk2[2]; //Seems to be 0
+    }
+    uint32 entries2;
     struct
     {
         UByte_StringEntry name;
         Vector2_F32 unk;
-    } Entry[entries]<optimize=false>;
-    /*uint32 entries2;
+    } Entry[entries2]<optimize=false>;
+    uint32 entries3;
     struct
     {
         uint16 unk[2];  //?
         UByte_StringEntry name;
         uint16 unk2;
-        Vector2_F32 unk3;
-    } Entry[entries2]<optimize=false>;*/
+        uint16 unk3;
+        uint32 unk4;
+        uint32 unk5;
+        float unk6[unk5];
+        Vector3_F32 unk7;
+    } Entry[entries3]<optimize=false>;
 } PXAnimation;

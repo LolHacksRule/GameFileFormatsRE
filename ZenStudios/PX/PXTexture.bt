@@ -28,7 +28,7 @@ struct PXTexture
             uint32 texSz<bgcolor=cBlue>;
             if (textureFormat >= 224 && textureFormat < 352)
             {
-                uint32 align<bgcolor=cRed>; //Same as WUT from Fusion soo I'm gonna assume
+                uint32 align<bgcolor=cRed>; //Same as WUT from Fun Labs Fusion soo I'm gonna assume
             }
             //On WiiU, the off is read at 0x20, NX is at 0x1c
             byte tex[texSz]<bgcolor=cLtBlue>;

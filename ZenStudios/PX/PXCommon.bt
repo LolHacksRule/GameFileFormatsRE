@@ -63,9 +63,14 @@ typedef enum <uint32>
     PX_NX_SWIZZLED_BC5S = 376,
 } PX_TextureFormat;
 
+typedef enum <uint32>
+{
+    PX_Platform_iOS = 3,
+    PX_Platform_Android = 5,
+} PX_Platform;
+
 typedef struct PXBinaryHeader
 {
     uint32 magic;
     PX_BinaryDataType PXBinDataType;
-    
 };
