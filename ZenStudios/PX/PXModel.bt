@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "PXCommon.bt"
+
+struct
+{
+    LittleEndian();
+    PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
+    uint32 ver;
+    time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
+    uint32 unk;
+    U32_Bool metadata;
+    if (metadata)
+    {
+        struct
+        {
+            PX_Platform exportPlatform;
+            U32_StringEntry srcPath;
+            U32_StringEntry name; //same as PXM
+        } Metadata;
+    }
+    uint32 unk2[14];
+    //U32_StringEntry name;
+} PXM;
