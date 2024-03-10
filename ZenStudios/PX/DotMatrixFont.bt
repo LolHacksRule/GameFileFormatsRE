@@ -18,7 +18,7 @@ struct DotMatrixFont
     uint16 fontCharacters;
     //Guess, idk how this works, if anything is undefined, please write a PR
     FSkip(4);
-    uint16 texSzChk;
+    uint16 texSzChk<hidden=true>;
     FSkip(-6);
     if (texSzChk == 4)
     {

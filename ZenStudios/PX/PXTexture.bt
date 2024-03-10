@@ -16,7 +16,7 @@
 struct PXTexture
 {
     LittleEndian();
-    PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
+    PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
     PX_TextureFormat textureFormat<bgcolor=cPurple>;
     uint32 width<bgcolor=cGreen>;
     uint32 height<bgcolor=cGreen>;

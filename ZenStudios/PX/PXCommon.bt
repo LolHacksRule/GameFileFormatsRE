@@ -69,8 +69,214 @@ typedef enum <uint32>
     PX_Platform_Android = 5,
 } PX_Platform;
 
-typedef struct PXBinaryHeader
+typedef struct PX_BinaryHeader
 {
     uint32 magic;
-    PX_BinaryDataType PXBinDataType;
+    PX_BinaryDataType PXBinaryDataType;
 };
+
+typedef struct PX_BoundingSphere
+{
+    Vector3_F32 bs;
+    //? an i32?
+};
+
+typedef struct PX_AAAB_Float
+{
+    //LE?
+    Vector3_F32 x;
+    Vector3_F32 y;
+};
+
+typedef struct PX_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float
+{
+    uint32 values;
+    byte unk[6*values-2]; //why
+    //Seems to have floats at the end
+};
+
+typedef struct PX_AnimationChannel_FloatListFloat
+{
+    uint32 values;
+    Vector2_F32 Entry[values]; //Would be seperate but simplify
+};
+
+
+typedef struct PX_AnimationChannel_FloatListBool //Def correct, what do they do though
+{
+    uint32 values;
+    struct
+    {
+        float f32;
+        Byte_Bool bool;
+    } Entry[values];
+};
+
+typedef struct PX_AnimationChannel_Float_LerpQuaternionFloatA //15 bytes
+{
+    float values;
+    byte unk[values*0x0F]; 
+};
+
+typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat //Matching sizes but is it the right data
+{
+    uint32 values;
+    struct
+    {
+        float f32;
+        float lerp;
+        Vector3_F32 trans;
+        Vector3_F32 quat; //Should be four
+    } Entry[values];
+};
+
+typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float //Matching sizes (44bytes) but is it the right data
+{
+    uint32 values;
+    struct
+    {
+        float f32;
+        float lerp;
+        Vector3_F32 trans; //3?
+        Vector3_F32 quat; //Should be four
+        Vector3_F32 scale; //Def right
+    } Entry[values];
+};
+
+typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
+{
+    float values;
+    byte unk;
+};
+
+typedef struct PX_AnimationChannel_FloatMatrix3x4
+{
+    uint32 values;
+    struct
+    {
+        float f32;
+        Vector3_F32 mtx[values*4];
+    } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatBezierFloat
+{
+    uint32 values;
+    byte unk[values*0x20];
+};
+
+typedef struct PX_AnimationChannel_FloatLinearFloat //Right values wrong definitions?
+{
+    uint32 values;
+    struct
+    {
+        float f32;
+        float linear;
+    } Entry[values];
+};
+
+typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy challenge, unintentionally idk
+{
+    PX_TypeInfo_Space = 4096, //Model
+    //Transformable
+    PX_TypeInfo_Transformable, //Model
+    PX_TypeInfo_Transformable_Mesh, //Model BE?
+    PX_TypeInfo_Transformable_Sphere = 4100, //Model
+    PX_TypeInfo_Transformable_MaterialLibrary, //Model
+    PX_TypeInfo_Transformable_CorneredUnitCube, //Model
+    PX_TypeInfo_Transformable_MaxBox, //Model
+    PX_TypeInfo_Transformable_MaxCapsule, //Model
+    PX_TypeInfo_Transformable_MaxRect, //Model
+    PX_TypeInfo_Transformable_LineStrips3 = 4128, //Model
+    PX_TypeInfo_Transformable_Spline3, //Model
+    //Space
+    PX_TypeInfo_Space_Joint = 4144, //Model
+    PX_TypeInfo_Space_Light = 4352, //Model
+    PX_TypeInfo_Space_DirectionalLight, //Model
+    PX_TypeInfo_Space_AmbientLight, //Model
+    //Camera
+    PX_TypeInfo_Camera = 4608, //Model
+    PX_TypeInfo_OrthographicCamera, //Model
+    PX_TypeInfo_PerspectiveCamera, //Model
+    //Particle Emitter Shapes
+    PX_TypeInfo_ParticleEmitterShape = 8192,
+    PX_TypeInfo_ParticleEmitterShape_OmniZ,
+    PX_TypeInfo_ParticleEmitterShape_PlaneZ,
+    PX_TypeInfo_ParticleEmitterShape_DiskJetZ,
+    PX_TypeInfo_ParticleEmitterShape_CylinderSurface,
+    PX_TypeInfo_ParticleEmitterShape_Sphere,
+    //Animation Channel
+    PX_TypeInfo_AnimationChannel = 12288,
+    PX_TypeInfo_AnimationChannel_Float,
+    PX_TypeInfo_AnimationChannel_Floatx2,
+    PX_TypeInfo_AnimationChannel_FloatLinearFloat,
+    PX_TypeInfo_AnimationChannel_FloatBezierFloat,
+    PX_TypeInfo_AnimationChannel_FloatMaxTcbFloat,
+    PX_TypeInfo_AnimationChannel_FloatConstFloat,
+    PX_TypeInfo_AnimationChannel_FloatListFloat,
+    PX_TypeInfo_AnimationChannel_FloatMaxNoiseFloat,
+    PX_TypeInfo_AnimationChannel_FloatPoint3Float = 12352,
+    PX_TypeInfo_AnimationChannel_FloatLinearPoint3Float,
+    PX_TypeInfo_AnimationChannel_FloatBezierPoint3Float,
+    PX_TypeInfo_AnimationChannel_FloatMaxTcbPoint3Float,
+    PX_TypeInfo_AnimationChannel_Float_Bool = 12384,
+    PX_TypeInfo_AnimationChannel_Float_ListBool,
+    PX_TypeInfo_AnimationChannel_Float_QuaternionFloat = 12416,
+    PX_TypeInfo_AnimationChannel_Float_SlerpQuaternionFloat,
+    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloat,
+    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloatA,
+    PX_TypeInfo_AnimationChannel_FloatChannel3 = 12800,
+    PX_TypeInfo_AnimationChannel_FloatIndependentEularAngles3Float,
+    PX_TypeInfo_AnimationChannel_FloatTransform = 12832,
+    PX_TypeInfo_AnimationChannel_FloatMatrix3x4,
+    PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat = 12835,
+    PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float,
+    PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA,
+    PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA, //why
+    PX_TypeInfo_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float, //why
+    //Effect Element
+    PX_TypeInfo_EffectElement = 16384,
+    PX_TypeInfo_EffectElement_ParticleEmitter,
+    PX_TypeInfo_EffectElement_Sprite3D,
+    //Material
+    PX_TypeInfo_Material = 20480,
+    PX_TypeInfo_ShaderMaterial,
+    PX_TypeInfo_ShaderMaterial_MaxDirectXEffectMaterial = 20496,
+    PX_TypeInfo_ShaderMaterial_EffectMaterial = 20552,
+    //Shader
+    PX_TypeInfo_Shader = 24576,
+    PX_TypeInfo_SimpleShader,
+    PX_TypeInfo_SolidShader,
+    PX_TypeInfo_TextureShader,
+    //Mesh Surface Modifier
+    PX_TypeInfo_MeshSurfaceModifier = 36864,
+    PX_TypeInfo_MeshSurfaceModifier_Morph,
+    PX_TypeInfo_MeshSurfaceModifier_Skin,
+    //Force Field
+    PX_TypeInfo_ForceField = 40960,
+    PX_TypeInfo_ForceField_Constant,
+    PX_TypeInfo_ForceField_PointQuadraticDecay,
+    PX_TypeInfo_ForceField_PointExponentialDecay,
+    //Model Component
+    PX_TypeInfo_ModelComponent = 45056,
+    PX_TypeInfo_ModelComponentCollection_Mesh, //?
+    PX_TypeInfo_ModelComponentCollection_Raw = 45311,
+    PX_TypeInfo_ModelComponentCollection_Skeleton,   
+    PX_TypeInfo_ModelComponentCollection_ShaderProgram = 45568,
+    //Mesh
+    PX_TypeInfo_Mesh = 49152,
+    PX_TypeInfo_GeneralMesh,
+    PX_TypeInfo_MultiStreamStaticMesh = 49217,
+    PX_TypeInfo_MultiStreamSkeletalMesh = 49234,
+    //Transformable Constraint
+    PX_TypeInfo_TransformableConstraint = 53248,
+    PX_TypeInfo_TransformableConstraint_LookAt,
+    //Vertex Program
+    PX_TypeInfo_VertexProgram = 61440,
+    PX_TypeInfo_VertexProgram_ClipSpacePush,
+    PX_TypeInfo_VertexProgram_ModelSpacePush,
+    PX_TypeInfo_VertexProgram_CartoonPush,
+    //Float creators
+    PX_TypeInfo_Spline3Float = 65536,
+    PX_TypeInfo_BezierSpline3Float,
+} PX_TypeInfo;

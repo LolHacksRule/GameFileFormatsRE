@@ -16,8 +16,8 @@
 struct
 {
     LittleEndian();
-    PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
-    uint32 unk; //7 in PVZ on MacOS CDN, 7 on iOS/Android CDN
+    PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
+    uint32 unk; //7 in PVZ on MacOS CDN, 7 on iOS/Android CDN, 7 Amazon standalone
     time_t exportDate; //Export date i32, seems to be a day before the table date
     Vector2_F32 initPos; //Prob or is it vec2F32 some count i32
     uint32 entries;
@@ -35,16 +35,28 @@ struct
         UByte_StringEntry name;
         Vector2_F32 unk;
     } Entry[entries2]<optimize=false>;
-    uint32 entries3;
+    uint32 particleEmitterShapes;
     struct
     {
-        uint16 unk[2];  //?
+        BigEndian(); //Why
+        PX_TypeInfo rootTypeInfo;
+        LittleEndian();
         UByte_StringEntry name;
-        uint16 unk2;
-        uint16 unk3;
-        uint32 unk4;
-        uint32 unk5;
-        float unk6[unk5];
-        Vector3_F32 unk7;
-    } Entry[entries3]<optimize=false>;
+        uint32 unk;
+        PX_TypeInfo dataTypeInfo;
+        /*switch (dataTypeInfo) //why
+        {
+            case 12291: PX_AnimationChannel_FloatLinearFloat floatLinFloat; break; //it fits :shrug:
+            case 12292: PX_AnimationChannel_FloatBezierFloat floatBezFloat; break; //it fits :shrug:
+            case 12295: PX_AnimationChannel_FloatListFloat floatListFloat; break; //it fits :shrug:
+            case 12385: PX_AnimationChannel_FloatListBool floatListBool; break;
+            case 12419: PX_AnimationChannel_Float_LerpQuaternionFloatA animationChannelFloatLerpQuaternionFloatA; break;
+            case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx; break;
+            case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat unk2; break;
+            case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float unk2; break;
+            case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk2; break;
+            case 12839: PX_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float unk2; break;
+            default: Printf("Unsupported data type. %u\n", dataTypeInfo); break;
+        }*/
+    } ParticleEmitterShape[particleEmitterShapes]<optimize=false>;
 } PXAnimation;

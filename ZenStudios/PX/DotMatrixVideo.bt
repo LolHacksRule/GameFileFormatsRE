@@ -15,7 +15,7 @@ typedef struct FrameInfo
 {
     uint16 width;
     uint16 height;
-    if (height == 48) //X360
+    if (height == 48) //X360 32x48(?)
     {
         byte texture[384];
     }
@@ -25,8 +25,9 @@ typedef struct FrameInfo
     }
     else
     {
-        byte texture[1024]; //I2 encoded no pal/pal 0 or some kind of 8 bit pal?
+        byte texture[1024]; //I2 encoded no pal/pal 0 or some kind of 8 bit pal? 128x32(?)
     }
+    //byte texture[(width*height)/4]; //TEMP hack idk if it works
 };
 
 struct DotMatrixVideo

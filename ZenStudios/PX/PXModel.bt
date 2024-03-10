@@ -16,7 +16,7 @@
 struct
 {
     LittleEndian();
-    PXBinaryHeader PXBinaryHdr<bgcolor=cDkBlue>;
+    PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
     uint32 ver;
     time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
     uint32 unk;
@@ -30,6 +30,8 @@ struct
             U32_StringEntry name; //same as PXM
         } Metadata;
     }
-    uint32 unk2[14];
+    uint32 unk2[13];
+    PX_TypeInfo ti;
     //U32_StringEntry name;
+    //For an entry, after 6 bytes is a flag
 } PXM;

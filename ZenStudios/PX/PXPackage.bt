@@ -15,27 +15,27 @@
 
 typedef enum <uint32>
 {
-    PXFlagU32_Raw = 0,
-    PXFlagU32_UseCompression = 2,
-    PXFlagU32_UseCompression_Legacy,
-} PXPackageFlag_U32;
+    PX_PackageFlag_U32_Raw = 0,
+    PX_PackageFlag_U32_UseCompression = 2,
+    PX_PackageFlag_U32_UseCompression_Legacy,
+} PX_PackageFlag_U32;
 
 typedef enum <ubyte>
 {
-	PXFlagByte_Raw = 0,
-    PXFlagByte_UseCompression = 2,
-    PXFlagByte_UseCompression_Legacy,
-    PXFlagByte_UseCompression_2014,
-    PXFlagByte_UseCompression_ZP1_PS3 = 131, //Idk
-} PXPackageFlag_UByte;
+	PX_PackageFlag_UByte_Raw = 0,
+    PX_PackageFlag_UByte_UseCompression = 2,
+    PX_PackageFlag_UByte_UseCompression_Legacy,
+    PX_PackageFlag_UByte_UseCompression_2014,
+    PX_PackageFlag_UByte_UseCompression_ZP1_PS3 = 131, //Idk
+} PX_PackageFlag_UByte;
 
 typedef enum <uint32>
 {
-    PXPackageVariantType_Simple_Legacy, //PXFX1 X360
-	PXPackageVariantType_Simple,
-    PXPackageVariantType_Hashed,
-    PXPackageVariantType_XOR, //PFX3 (PC) / Zen Pinball mobile newer
-} PXPackageVariantType;
+    PX_PackageVariantType_Simple_Legacy, //PFX1 X360
+	PX_PackageVariantType_Simple,
+    PX_PackageVariantType_Hashed,
+    PX_PackageVariantType_XOR, //PFX3 (PC) / Zen Pinball mobile newer
+} PX_PackageVariantType;
 
 struct PXPackage
 {
@@ -51,8 +51,8 @@ struct PXPackage
             char hashedStr[strSz];
         } jh;
     }
-	PXBinaryHeader PXBinaryHdr;
-	PXPackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
+	PX_BinaryHeader PXBinaryHeader;
+	PX_PackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
 	if (PXPDataType <= 2)
 	{
 		uint32 files;
@@ -104,12 +104,12 @@ struct PXPackage
 				if (PXPDataType == 0)
 				{
 					uint32 cSz;
-					PXPackageFlag_U32 flags;
+					PX_PackageFlag_U32 flags;
 					Byte_StringEntry fileName;
 				}
 				else
 				{
-					PXPackageFlag_UByte flags;
+					PX_PackageFlag_UByte flags;
 					Byte_StringEntry fileName;
 					//Printf("%s\n", fileName.theString);
 					//Printf("%s\n", fileName.theString);
