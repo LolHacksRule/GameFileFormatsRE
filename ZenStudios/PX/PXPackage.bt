@@ -40,9 +40,7 @@ typedef enum <uint32>
 struct PXPackage
 {
 	LittleEndian();
-    uint32 checkForJenkinsHashHdr<hidden=true>;
-    FSkip(-4);
-    if (checkForJenkinsHashHdr == 2937534864)
+    if (ReadUInt() == 2937534864)
     {
         struct JenkinsHash
         {
@@ -69,27 +67,25 @@ struct PXPackage
 		Printf("PXP XOR variant is WIP!");
 		uint64 PXPSz;
         byte dmy[32]; //MD5?
-		uint32 XORMetaSz;
+        uint32 XORMetaSz;
         struct TableOfContentsXOR
         {
-            uint32 sz;
-            uint32 xSz[2];
+            uint32 crc32[3];
             uint32 XORMetaTableCryptKey;
             uint32 XORMetaTableCRC32;
             //byte dmy2[36];
             //uint32 files;
+            byte XORMeta[XORMetaSz];
         } TOC_XOR;
-        byte XORMeta[XORMetaSz];
-		FSeek(0);
-		byte PXP[PXPSz];
+		byte PXP[PXPSz-FTell()];
 		break;
 	}
 	if (PXPDataType == 2) //ZP1 PS3, ZP2 patch wiiu/ps4 and PFX3 Win10 because Zen, haven't tested others
 	{
         //why, if these mismatch game dies
-		uint16 unk[2]; //the other is 3d90, on small files 0x02 is 0xEA
-		uint16 unk2[2]; //the other is ccf8, on small files 0x02 is 0x48
-		uint16 unk3[2]; //the other is 3990, on small files 0x02 is 0x17
+		uint32 crc1; //the other is 3d90, on small files 0x02 is 0xEA, based off 0x903DEAEE
+		uint32 crc2; //the other is ccf8, on small files 0x02 is 0x48, based off 0xF8CC486C
+		uint32 crc3; //the other is 3990, on small files 0x02 is 0x17, based off 0x903917AF
 		uint32 unk4; //Some other CRC?
         uint32 metaTableCRC32;
 	}
@@ -112,8 +108,7 @@ struct PXPackage
 					PX_PackageFlag_UByte flags;
 					Byte_StringEntry fileName;
 					//Printf("%s\n", fileName.theString);
-					//Printf("%s\n", fileName.theString);
-					for(i2 = 0; i2 < 4; i2++ )
+					for (i2 = 0; i2 < 4; i2++ )
 					{
 						struct PaddingChecker
 						{
@@ -137,7 +132,7 @@ struct PXPackage
 					//idk
 					uint32 checkForUnusuallyLargeNum<hidden=true>;
 					FSkip(-4);
-					if (checkForUnusuallyLargeNum >= 10000000 && checkForUnusuallyLargeNum != 1179011410)
+					if (checkForUnusuallyLargeNum >= 10000000 && checkForUnusuallyLargeNum != 1179011410 && checkForUnusuallyLargeNum != 17836831)
 					{
 						FSkip(-1);
 					}

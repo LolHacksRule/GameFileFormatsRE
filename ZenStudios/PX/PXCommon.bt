@@ -15,58 +15,74 @@
 
 typedef enum <uint32>
 {
-    PXDataType_None,
-    PXDataType_Package = 5,
-    PXDataType_Texture = 16,
-    PXDataType_CubeMapTexture = 18,
-    PXDataType_Model = 32,
-    PXDataType_Animation = 64,
+    PX_BinaryDataType_None,
+    PX_BinaryDataType_Package = 5,
+    PX_BinaryDataType_Texture = 16,
+    PX_BinaryDataType_CubeMapTexture = 18,
+    PX_BinaryDataType_Model = 32,
+    PX_BinaryDataType_Animation = 64,
 } PX_BinaryDataType;
 
-typedef enum <uint32>
+typedef enum <uint32> //Zen seems to use multiple hardcoded values to point to these why idk
 {
-    PX_RGB888 = 20,
-    PX_RGBA8888 = 22,
-    PX_RGBA8888_2, //X360 but may be CTR too
-    PX_RGB888_2,
-    PX_PSP2_SWIZZLED_DXT1 = 60, //?
-    PX_DXT1 = 64,
-    PX_DXT2,
-    PX_DXT3,
-    PX_DXT4 = 68,
-    PX_XBOX360_SWIZZLED_DXT1 = 80,
-    PX_XBOX360_SWIZZLED_DXT4 = 84,
-    PX_PSP2_SWIZZLED_DXT5 = 100, //?
-    PX_PVRTC4_LEGACY = 128, //2008 RollerCoaster
-    PX_PVRTC4 = 130,
-    PX_PVRTC4A,
-    PX_ETC2_RGB = 138, //Is this ETC1 or ETC2?
-    PX_ETC1A4 = 141, //Is this ETC1 or ETC2?
-    PX_CTR_SWIZZLED_RGB888 = 144,
-    PX_CTR_SWIZZLED_RGBA8888,
-    PX_CTR_SWIZZLED_ETC1,
-    PX_CTR_SWIZZLED_ETC1A4, 
-    PX_PSP2_SWIZZLED_RGBA8888 = 192,
-    PX_WIIU_SWIZZLED_RGBX8888 = 224,
-    PX_WIIU_SWIZZLED_RGBA8888,
-    PX_WIIU_SWIZZLED_BC1 = 240,
-    PX_WIIU_SWIZZLED_BC2 = 242,
-    PX_WIIU_SWIZZLED_BC3 = 244,
-    PX_DXT1_2 = 320,
-    PX_BC5S = 328, //CONFIRM
-    PX_NX_SWIZZLED_RGBA8888_SRGB = 352,
-    PX_NX_SWIZZLED_RGBA8888,
-    PX_NX_SWIZZLED_DXT1 = 368,
-    PX_NX_SWIZZLED_DXT3,
-    PX_NX_SWIZZLED_DXT5,
-    PX_NX_SWIZZLED_UNK = 373,
-    PX_NX_SWIZZLED_BC5S = 376,
+    PX_TextureFormat_RGB888 = 20,
+    PX_TextureFormat_RGBA8888 = 22,
+    PX_TextureFormat_ARGB8888, //X360 but may be CTR too
+    PX_TextureFormat_BGR888,
+    PX_TextureFormat_PSP2_SWIZZLED_DXT1 = 60, //?
+    PX_TextureFormat_DXT1 = 64,
+    PX_TextureFormat_DXT2,
+    PX_TextureFormat_DXT3,
+    PX_TextureFormat_DXT4 = 68,
+    PX_TextureFormat_XBOX360_SWIZZLED_DXT1 = 80,
+    PX_TextureFormat_XBOX360_SWIZZLED_DXT4 = 84,
+    PX_TextureFormat_PSP2_SWIZZLED_DXT5 = 100, //?
+    PX_TextureFormat_PVRTC4BPP_LEGACY = 128, //2008 RollerCoaster, according to FX2, PVRTC2
+    PX_TextureFormat_PVRTC2BPP_ALPHA, //2008 RollerCoaster, according to FX2, PVRTC2
+    PX_TextureFormat_PVRTC4BPP = 130,
+    PX_TextureFormat_PVRTC4BPP_ALPHA,
+    PX_TextureFormat_ETC1_RGB = 138,
+    PX_TextureFormat_ETC1ALPHA4BPP = 141, //Is this ETC1 or ETC2?, not in FX2
+    PX_TextureFormat_CTR_SWIZZLED_BGR888 = 144,
+    PX_TextureFormat_CTR_SWIZZLED_ARGB8888,
+    PX_TextureFormat_CTR_SWIZZLED_ETC1,
+    PX_TextureFormat_CTR_SWIZZLED_ETC1ALPHA4BPP,
+    PX_TextureFormat_CTR_NORMAL_MAP_BGR888 = 160,
+    PX_TextureFormat_CTR_NORMAL_MAP_ARGB8888,
+    PX_TextureFormat_CTR_NORMAL_MAP_ETC1,
+    PX_TextureFormat_CTR_NORMAL_MAP_ETC1ALPHA4BPP, 
+    PX_TextureFormat_PSP2_SWIZZLED_RGBA8888 = 192,
+    PX_TextureFormat_WIIU_SWIZZLED_RGBX8888 = 224,
+    PX_TextureFormat_WIIU_SWIZZLED_RGBA8888,
+    PX_TextureFormat_WIIU_SWIZZLED_BC1 = 240,
+    PX_TextureFormat_WIIU_SWIZZLED_BC2 = 242,
+    PX_TextureFormat_WIIU_SWIZZLED_BC3 = 244,
+    PX_TextureFormat_DXT1_2 = 320,
+    PX_TextureFormat_BC5S = 328, //CONFIRM
+    PX_TextureFormat_NX_SWIZZLED_RGBA8888_SRGB = 352,
+    PX_TextureFormat_NX_SWIZZLED_RGBA8888,
+    PX_TextureFormat_NX_SWIZZLED_DXT1 = 368,
+    PX_TextureFormat_NX_SWIZZLED_DXT3,
+    PX_TextureFormat_NX_SWIZZLED_DXT5,
+    PX_TextureFormat_NX_SWIZZLED_UNK = 373,
+    PX_TextureFormat_NX_SWIZZLED_BC5S = 376,
 } PX_TextureFormat;
 
 typedef enum <uint32>
 {
-    PX_Platform_iOS = 3,
-    PX_Platform_Android = 5,
+    PX_Platform_X360 = 1,
+    PX_Platform_PS3,
+    PX_Platform_iOS,
+    PX_Platform_PSP2, //Vita
+    PX_Platform_Android,
+    PX_Platform_CTR, //3DS
+    PX_Platform_D3D11,
+    PX_Platform_OSX,
+    PX_Platform_Cafe,
+    PX_Platform_D3D9,
+    PX_Platform_Orbis,
+    PX_Platform_Durango,
+    PX_Platform_NX, 
 } PX_Platform;
 
 typedef struct PX_BinaryHeader
@@ -88,9 +104,9 @@ typedef struct PX_AAAB_Float
     Vector3_F32 y;
 };
 
-typedef struct PX_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float
+typedef struct PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float
 {
-    uint32 values;
+    uint32 values; //PVZ only has 7 set
     byte unk[6*values-2]; //why
     //Seems to have floats at the end
 };
@@ -98,24 +114,34 @@ typedef struct PX_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScal
 typedef struct PX_AnimationChannel_FloatListFloat
 {
     uint32 values;
-    Vector2_F32 Entry[values]; //Would be seperate but simplify
+    struct
+    {
+        float time;
+        float value;  
+    } Entry[values]; //Would be seperate but simplify
 };
 
 
-typedef struct PX_AnimationChannel_FloatListBool //Def correct, what do they do though
+typedef struct PX_AnimationChannel_FloatListBool //5 bytes, def correct, what does the bool do
 {
     uint32 values;
     struct
     {
-        float f32;
+        float time;
         Byte_Bool bool;
     } Entry[values];
 };
 
-typedef struct PX_AnimationChannel_Float_LerpQuaternionFloatA //15 bytes
+typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
 {
-    float values;
-    byte unk[values*0x0F]; 
+    //float time;
+    // val //Quaternion_float
+};
+
+typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?)
+{
+    float values; //?
+    //byte unk[values*0x0F]; 
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat //Matching sizes but is it the right data
@@ -135,7 +161,7 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
     uint32 values;
     struct
     {
-        float f32;
+        float time;
         float lerp;
         Vector3_F32 trans; //3?
         Vector3_F32 quat; //Should be four
@@ -145,34 +171,57 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
 {
-    float values;
-    byte unk;
+    float time;
+    //We know at least a float is here
+    //float unk[values*3];
 };
 
-typedef struct PX_AnimationChannel_FloatMatrix3x4
+typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
 {
     uint32 values;
     struct
     {
-        float f32;
-        Vector3_F32 mtx[values*4];
+        float time;
+        Vector3_F32 mtx[4];
     } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatBezierFloat
 {
     uint32 values;
-    byte unk[values*0x20];
+    struct
+    {
+        Vector4_F32 time;
+        Vector4_F32 value;
+    } Entry[values];
 };
 
-typedef struct PX_AnimationChannel_FloatLinearFloat //Right values wrong definitions?
+typedef struct PX_AnimationChannel_FloatLinearFloat
 {
     uint32 values;
     struct
     {
-        float f32;
-        float linear;
+        float time;
+        float val;
     } Entry[values];
+};
+
+
+typedef struct PX_AnimationChannel_FloatBezierPoint3Float
+{
+    uint32 values;
+    struct
+    {
+        /*float bez[8];
+        float bez2[8];
+        float bezPoint3[8];*/
+        byte unk[96];
+    } Entry[values];
+};
+
+typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA //184/216 bytes?
+{
+    //float time; //FPS?
 };
 
 typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy challenge, unintentionally idk
@@ -206,36 +255,36 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     PX_TypeInfo_ParticleEmitterShape_CylinderSurface,
     PX_TypeInfo_ParticleEmitterShape_Sphere,
     //Animation Channel
-    PX_TypeInfo_AnimationChannel = 12288,
-    PX_TypeInfo_AnimationChannel_Float,
-    PX_TypeInfo_AnimationChannel_Floatx2,
+    PX_TypeInfo_AnimationChannel = 12288, //Model (?)
+    PX_TypeInfo_AnimationChannel_Float, 
+    PX_TypeInfo_AnimationChannel_Floatx2, //Unused in PVZ
     PX_TypeInfo_AnimationChannel_FloatLinearFloat,
     PX_TypeInfo_AnimationChannel_FloatBezierFloat,
-    PX_TypeInfo_AnimationChannel_FloatMaxTcbFloat,
-    PX_TypeInfo_AnimationChannel_FloatConstFloat,
+    PX_TypeInfo_AnimationChannel_FloatMaxTcbFloat, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_FloatConstantFloat, //Unused in PVZ
     PX_TypeInfo_AnimationChannel_FloatListFloat,
-    PX_TypeInfo_AnimationChannel_FloatMaxNoiseFloat,
+    PX_TypeInfo_AnimationChannel_FloatMaxNoiseFloat, //Unused in PVZ
     PX_TypeInfo_AnimationChannel_FloatPoint3Float = 12352,
     PX_TypeInfo_AnimationChannel_FloatLinearPoint3Float,
     PX_TypeInfo_AnimationChannel_FloatBezierPoint3Float,
-    PX_TypeInfo_AnimationChannel_FloatMaxTcbPoint3Float,
-    PX_TypeInfo_AnimationChannel_Float_Bool = 12384,
+    PX_TypeInfo_AnimationChannel_FloatMaxTcbPoint3Float, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_Float_Bool = 12384, //Unused in PVZ
     PX_TypeInfo_AnimationChannel_Float_ListBool,
-    PX_TypeInfo_AnimationChannel_Float_QuaternionFloat = 12416,
-    PX_TypeInfo_AnimationChannel_Float_SlerpQuaternionFloat,
-    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloat,
+    PX_TypeInfo_AnimationChannel_Float_QuaternionFloat = 12416, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_Float_SlerpQuaternionFloat, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloat, //Unused in PVZ
     PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloatA,
-    PX_TypeInfo_AnimationChannel_FloatChannel3 = 12800,
-    PX_TypeInfo_AnimationChannel_FloatIndependentEularAngles3Float,
-    PX_TypeInfo_AnimationChannel_FloatTransform = 12832,
+    PX_TypeInfo_AnimationChannel_FloatChannel3 = 12800, //May be in a model
+    PX_TypeInfo_AnimationChannel_FloatIndependentEularAngles3Float, //May be in a model
+    PX_TypeInfo_AnimationChannel_FloatTransform = 12832, //May be in a model
     PX_TypeInfo_AnimationChannel_FloatMatrix3x4,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat = 12835,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA, //why
-    PX_TypeInfo_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float, //why
+    PX_TypeInfo_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float, //why
     //Effect Element
-    PX_TypeInfo_EffectElement = 16384,
+    PX_TypeInfo_EffectElement = 16384, //May be in a model
     PX_TypeInfo_EffectElement_ParticleEmitter,
     PX_TypeInfo_EffectElement_Sprite3D,
     //Material
@@ -266,7 +315,7 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     //Mesh
     PX_TypeInfo_Mesh = 49152,
     PX_TypeInfo_GeneralMesh,
-    PX_TypeInfo_MultiStreamStaticMesh = 49217,
+    PX_TypeInfo_MultiStreamStaticMesh = 49217, //101 bytes?
     PX_TypeInfo_MultiStreamSkeletalMesh = 49234,
     //Transformable Constraint
     PX_TypeInfo_TransformableConstraint = 53248,

@@ -17,7 +17,7 @@ struct
 {
     LittleEndian();
     PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
-    uint32 unk; //7 in PVZ on MacOS CDN, 7 on iOS/Android CDN, 7 Amazon standalone
+    uint32 ver; //7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot
     time_t exportDate; //Export date i32, seems to be a day before the table date
     Vector2_F32 initPos; //Prob or is it vec2F32 some count i32
     uint32 entries;
@@ -39,24 +39,42 @@ struct
     struct
     {
         BigEndian(); //Why
-        PX_TypeInfo rootTypeInfo;
+        PX_TypeInfo rootTypeInfo; //0x00201000 is also a PES
         LittleEndian();
         UByte_StringEntry name;
-        uint32 unk;
+        if (ver == 9) //Fix PFX3 (V9)
+        {
+            float unk3;
+            UByte_StringEntry unk;
+        }
+        else
+        {
+            uint32 unk2;
+        }
         PX_TypeInfo dataTypeInfo;
-        /*switch (dataTypeInfo) //why
+        switch (dataTypeInfo) //why
         {
             case 12291: PX_AnimationChannel_FloatLinearFloat floatLinFloat; break; //it fits :shrug:
             case 12292: PX_AnimationChannel_FloatBezierFloat floatBezFloat; break; //it fits :shrug:
             case 12295: PX_AnimationChannel_FloatListFloat floatListFloat; break; //it fits :shrug:
+            case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezPoint3Float; break;
             case 12385: PX_AnimationChannel_FloatListBool floatListBool; break;
-            case 12419: PX_AnimationChannel_Float_LerpQuaternionFloatA animationChannelFloatLerpQuaternionFloatA; break;
+            case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA animationChannelFloatLerpQuaternionFloatA; break;
             case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx; break;
-            case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat unk2; break;
-            case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float unk2; break;
-            case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk2; break;
-            case 12839: PX_AnimationChannel_FloatConstTranslationFloatQuaternionFloatScale3Float unk2; break;
-            default: Printf("Unsupported data type. %u\n", dataTypeInfo); break;
-        }*/
+            case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat unk3; break;
+            case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float unk3; break;
+            case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk3; break;
+            case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk3; break;
+            case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float unk3; break;
+            default:
+            /*if (FTell() != EOF)
+            {
+                while (ReadUInt() != 8192 && ReadUInt() != 2105344) //this too bcz idk
+                {
+                    byte pad;
+                }
+            }*/
+            Printf("Unsupported data type. %u\n", dataTypeInfo); break;
+        }
     } ParticleEmitterShape[particleEmitterShapes]<optimize=false>;
 } PXAnimation;

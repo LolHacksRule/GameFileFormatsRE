@@ -13,14 +13,14 @@
 
 #include "PXCommon.bt"
 
-struct PXTexture
+struct
 {
     LittleEndian();
     PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
     PX_TextureFormat textureFormat<bgcolor=cPurple>;
     uint32 width<bgcolor=cGreen>;
     uint32 height<bgcolor=cGreen>;
-    if (PXBinaryHdr.PXBinDataType == 12 || PXBinaryHdr.PXBinDataType == 16)
+    if (PXBinaryHeader.PXBinaryDataType == 12 || PXBinaryHeader.PXBinaryDataType == 16)
     {
         uint32 mips<bgcolor=cPurple>;
         if (textureFormat >= 224 && textureFormat != 320 && textureFormat != 328)
@@ -35,11 +35,11 @@ struct PXTexture
         }
         else
         {
-            byte tex[FileSize() - FTell()]<bgcolor=cRed>; //Idk
+            byte tex[EOF - FTell()]<bgcolor=cRed>; //Idk
         }
     }
     else
     {
-        byte tex[FileSize() - FTell()]<bgcolor=cRed>; //Idk
+        byte tex[EOF - FTell()]<bgcolor=cRed>; //Idk
     }
-} PXT;
+} PXTexture_PXT;
