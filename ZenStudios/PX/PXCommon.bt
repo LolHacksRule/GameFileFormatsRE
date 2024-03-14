@@ -97,11 +97,11 @@ typedef struct PX_BoundingSphere
     //? an i32?
 };
 
-typedef struct PX_AAAB_Float
+typedef struct PX_AABB_Float
 {
     //LE?
-    Vector3_F32 x;
-    Vector3_F32 y;
+    Vector3_F32 center; //center
+    Vector3_F32 halfSize; //halfSz
 };
 
 typedef struct PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float
@@ -134,14 +134,23 @@ typedef struct PX_AnimationChannel_FloatListBool //5 bytes, def correct, what do
 
 typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
 {
-    //float time;
-    // val //Quaternion_float
+    uint32 values;
+    struct
+    {
+        float time;
+        Vector4_F32 val; //qfloat
+    } Entry[values];
 };
 
 typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?)
 {
-    float values; //?
-    //byte unk[values*0x0F]; 
+    float time; //?
+    /*uint16 entries;
+    struct
+    {
+        Vector4_F32 val; //qfloat
+        Vector4_F32 c;
+    } Entry[entries];*/
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat //Matching sizes but is it the right data
@@ -149,10 +158,9 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat 
     uint32 values;
     struct
     {
-        float f32;
-        float lerp;
+        float time;
         Vector3_F32 trans;
-        Vector3_F32 quat; //Should be four
+        Vector4_F32 quat; //Should be four, quat
     } Entry[values];
 };
 
@@ -162,9 +170,8 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
     struct
     {
         float time;
-        float lerp;
         Vector3_F32 trans; //3?
-        Vector3_F32 quat; //Should be four
+        Vector4_F32 rot; //Should be four, quat
         Vector3_F32 scale; //Def right
     } Entry[values];
 };
@@ -172,6 +179,10 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
 {
     float time;
+    /*Vector3_F32 t;
+    Vector3_F32 tc[3];
+    Vector4_F32 q;
+    Vector4_F32 qc[4];*/
     //We know at least a float is here
     //float unk[values*3];
 };
@@ -184,6 +195,59 @@ typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
         float time;
         Vector3_F32 mtx[4];
     } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatMaxTcbFloat 
+{
+    uint32 values;
+    struct
+    {
+        float time;
+        float val;
+        float tension;
+        float continuity;
+        float bias;
+        Vector2_F32 ease; //in/out
+    } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatLinearPoint3Float 
+{
+    uint32 values;
+    struct
+    {
+        float time;
+        Vector3_F32 val;
+    } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatMaxTcbPoint3Float 
+{
+    uint32 values;
+    struct
+    {
+        float time;
+        Vector3_F32 val;
+        float tension;
+        float continuity;
+        float bias;
+        Vector2_F32 ease; //in/out
+    } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatSlerpQuaternionFloat
+{
+    uint32 values; //unknown if needed
+    struct
+    {
+        float time;
+        Vector4_F32 val;
+    } Entry[values]<optimize=false>;
+};
+
+typedef struct PX_AnimationChannel_FloatConstantFloat
+{
+    float time;
 };
 
 typedef struct PX_AnimationChannel_FloatBezierFloat

@@ -13,15 +13,20 @@
 
 #include "PXCommon.bt"
 
+typedef struct Transformable
+{
+    
+};
+
 struct
 {
     LittleEndian();
     PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
-    uint32 ver;
+    uint32 ver; //15 I've only seen so far
     time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
-    uint32 unk;
-    U32_Bool metadata;
-    if (metadata)
+    uint32 unk; //2 in PFX3
+    uint32 flag; //Seems to not be a bool but def an i32 at least in PFX3
+    if (flag)
     {
         struct
         {
@@ -30,8 +35,39 @@ struct
             U32_StringEntry name; //same as PXM
         } Metadata;
     }
-    uint32 unk2[13];
+    uint32 unk2[12];
+    if (flag > 1) //Idk how this works
+    {
+        uint32 unk3;
+    }
+    uint32 shaderMaterials;
+    struct
+    {
+        PX_TypeInfo ti;
+        U32_StringEntry name;
+        byte unk[28];
+        byte samplers;
+        struct
+        {
+            UByte_StringEntry texSamp;
+            uint32 unk;
+        } Sampler[samplers]<optimize=false>;
+        byte unk2[3];
+        byte count;
+        /*struct
+        {
+            UByte_StringEntry unk;
+            uint32 unk2;
+        } Unknown[count]<optimize=false>;
+        UByte_StringEntry unk4;
+        byte unk5[24];
+        UByte_StringEntry shPass;
+        byte unk6[12];
+        UByte_StringEntry resPass;
+        byte unk7[20];
+        UByte_StringEntry texSamp2;*/
+    } ShaderMaterial[shaderMaterials]<optimize=false>;
+    uint32 unk4;
     PX_TypeInfo ti;
-    //U32_StringEntry name;
     //For an entry, after 6 bytes is a flag
 } PXM;

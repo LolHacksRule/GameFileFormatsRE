@@ -56,9 +56,11 @@ struct
         {
             case 12291: PX_AnimationChannel_FloatLinearFloat floatLinFloat; break; //it fits :shrug:
             case 12292: PX_AnimationChannel_FloatBezierFloat floatBezFloat; break; //it fits :shrug:
+            case 12294: PX_AnimationChannel_FloatConstantFloat floatConstantFloat; break; //it fits :shrug:
             case 12295: PX_AnimationChannel_FloatListFloat floatListFloat; break; //it fits :shrug:
             case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezPoint3Float; break;
             case 12385: PX_AnimationChannel_FloatListBool floatListBool; break;
+            case 12418: PX_AnimationChannel_FloatLerpQuaternionFloat animationChannelFloatLerpQuaternionFloat; break;
             case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA animationChannelFloatLerpQuaternionFloatA; break;
             case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx; break;
             case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat unk3; break;
