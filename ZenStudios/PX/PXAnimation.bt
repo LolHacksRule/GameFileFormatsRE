@@ -13,7 +13,7 @@
 
 #include "PXCommon.bt"
 
-local uint DEBUG_PRINT = 1;
+local uint DEBUG_PRINT = 0; //Write fancy stuff (will lag if on big files)
 
 struct
 {
@@ -67,7 +67,7 @@ struct
     uint32 animNodes<bgcolor=cRed>;
     if (DEBUG_PRINT && animNodes)
     {
-        //Printf("Animation Nodes:\n");
+        Printf("Animation Nodes:\n");
     }
     //FSeek(668);
     if (animNodes)
@@ -79,11 +79,25 @@ struct
             LittleEndian();
             UByte_StringEntry animatableName<bgcolor=cGreen>;
             float animationChannel<bgcolor=cRed>; //or flags?
+            if (DEBUG_PRINT)
+            {
+                Printf("----Animation Node Start----\n");
+                Printf(" Animatable Name: %s\n", animatableName.theString);
+                Printf(" Animation Channel(?): %f\n", animationChannel);
+            }
             if (ver == 9) //Fix PFX3 (V9)
             {
                 UByte_StringEntry animatableChannelName<bgcolor=cGreen>;
+                if (DEBUG_PRINT)
+                {
+                    Printf(" Animatable Channel Name: %s\n", animatableChannelName.theString);
+                }
             }
             PX_TypeInfo dataTypeInfo<bgcolor=cDkGreen>;
+            if (DEBUG_PRINT)
+            {
+                Printf(" Animation Node Data Type: %s\n", EnumToString(dataTypeInfo));
+            }
             switch (dataTypeInfo) //why
             {
                 case 12291: PX_AnimationChannel_FloatLinearFloat floatLinearFloat<bgcolor=cGreen>; break;
@@ -101,10 +115,7 @@ struct
                 //case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk; break;
                 case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float floatConstantTranslationFloatQuaternionFloatScale3Float<bgcolor=cDkPurple>; break;
                 default: //Finicky way to "identify" and skip unknown chunks
-                if (DEBUG_PRINT)
-                {
-                    Printf("Unsupported data type at index %i (%s).\n", i, EnumToString(dataTypeInfo)); //If () is returned, expect broken output
-                }
+                Printf("Unsupported data type at index %i (%s).\n", i, EnumToString(dataTypeInfo)); //If () is returned, expect broken output
                 BigEndian();
                 if (FTell() != EOF)
                 {
@@ -118,6 +129,10 @@ struct
                 }
                 LittleEndian();
                 break;
+            }
+            if (DEBUG_PRINT)
+            {
+                Printf("----Animation Node End  ----\n");
             }
             i++;
         } AnimationNode[animNodes]<optimize=false>; //or PES

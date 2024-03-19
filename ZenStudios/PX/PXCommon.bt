@@ -110,6 +110,10 @@ typedef struct PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatS
     Vector3_F32 translation;
     Vector4_F32 quaternion;
     Vector3_F32 scale;
+    if (DEBUG_PRINT)
+    {
+        Printf("  Flags: %u, Translation (%f,%f,%f), Quaternion (%f,%f,%f,%f), Scale (%f,%f,%f)\n", flags, translation.X, translation.Y, translation.Z, quaternion.X, quaternion.Y, quaternion.Z, quaternion.W, scale.X, scale.Y, scale.Z);
+    }
 };
 
 typedef struct PX_AnimationChannel_FloatListFloat
@@ -118,8 +122,12 @@ typedef struct PX_AnimationChannel_FloatListFloat
     struct
     {
         float time;
-        float value;  
-    } Entry[values]; //Would be seperate but simplify
+        float value;
+        if (DEBUG_PRINT)
+        {
+            Printf("  Time: %f, Value: %f\n", time, value);
+        }
+    } Entry[values]<optimize=false>; //Would be seperate but simplify
 };
 
 
@@ -130,7 +138,11 @@ typedef struct PX_AnimationChannel_FloatListBool
     {
         float time;
         Byte_Bool bool; //?
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf("  Time: %f, Bool: %s\n", time, EnumToString(bool));
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
@@ -140,7 +152,11 @@ typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
     {
         float time;
         Vector4_F32 val;
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: (%f,%f,%f,%f)\n", time, val.X, val.Y, val.Z, val.W);
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?), big endian floats at the end?
@@ -164,7 +180,11 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat 
         float time;
         Vector3_F32 trans;
         Vector4_F32 quat; //Should be four, quat
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Translation: (%f,%f,%f), Quaternion: (%f,%f,%f,%f)\n", time, trans.X, trans.Y, trans.Z, quat.X, quat.Y, quat.Z, quat.W);
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float //Matching sizes (44bytes) but is it the right data
@@ -176,7 +196,11 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
         Vector3_F32 trans;
         Vector4_F32 rot; //Should be four, quat
         Vector3_F32 scale; //Def right
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Translation: (%f,%f,%f), Rotation: (%f,%f,%f,%f), Scale: (%f,%f,%f)\n", time, trans.X, trans.Y, trans.Z, quat.X, quat.Y, quat.Z, quat.W, scale.X, scale.Y, scale.Z);
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
@@ -207,6 +231,10 @@ typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
     {
         float time;
         Vector3_F32 mtx[4];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Matrix: ([%f,%f,%f],[%f,%f,%f],[%f,%f,%f],[%f,%f,%f])\n", time, mtx[0].X, mtx[0].Y, mtx[0].Z, mtx[1].X, mtx[1].Y, mtx[1].Z, mtx[2].X, mtx[2].Y, mtx[2].Z, mtx[3].X, mtx[3].Y, mtx[3].Z);
+        }
     } Entry[values]<optimize=false>;
 };
 
@@ -221,6 +249,10 @@ typedef struct PX_AnimationChannel_FloatMaxTcbFloat //Haven't seen it used
         float continuity;
         float bias;
         Vector2_F32 ease; //in/out
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: %f, Tension: %f, Continuity: %f, Bias: %f, Ease In: %f, Ease Out: %f\n", time, val, tension, continuity, bias, ease.X, ease.Y);
+        }
     } Entry[values]<optimize=false>;
 };
 
@@ -231,6 +263,10 @@ typedef struct PX_AnimationChannel_FloatLinearPoint3Float
     {
         float time;
         Vector3_F32 val;
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: (%f,%f,%f)\n", time, val.X, val.Y, val.Z);
+        }
     } Entry[values]<optimize=false>;
 };
 
@@ -245,6 +281,10 @@ typedef struct PX_AnimationChannel_FloatMaxTcbPoint3Float
         float continuity;
         float bias;
         Vector2_F32 ease; //in/out
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: (%f,%f,%f), Tension: %f, Continuity: %f, Bias: %f, Ease In: %f, Ease Out: %f\n", time, val.X, val.Y, val.Z, tension, continuity, bias, ease.X, ease.Y);
+        }
     } Entry[values]<optimize=false>;
 };
 
@@ -255,12 +295,20 @@ typedef struct PX_AnimationChannel_FloatSlerpQuaternionFloat
     {
         float time;
         Vector4_F32 val;
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: (%f,%f,%f)\n", time, val.X, val.Y, val.Z, val.W);
+        }
     } Entry[values]<optimize=false>;
 };
 
-typedef struct PX_AnimationChannel_FloatConstantFloat
+typedef struct PX_AnimationChannel_FloatConstantFloat //Pointless struct but I'd rather label structs so it's easier to idenity
 {
     float time;
+    if (DEBUG_PRINT)
+    {
+        Printf(" Time: %f\n", time);
+    }
 };
 
 typedef struct PX_AnimationChannel_FloatBezierFloat
@@ -270,7 +318,11 @@ typedef struct PX_AnimationChannel_FloatBezierFloat
     {
         Vector4_F32 time;
         Vector4_F32 value;
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: (%f,%f,%f,%f), Value: (%f,%f,%f,%f)\n", time.X, time.Y, time.Z, time.W, value.X, value.Y, value.Z, value.W);
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLinearFloat
@@ -280,13 +332,21 @@ typedef struct PX_AnimationChannel_FloatLinearFloat
     {
         float time;
         float val;
-    } Entry[values];
+        if (DEBUG_PRINT)
+        {
+            Printf(" Time: %f, Value: %f\n", time, val);
+        }
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatBezierPoint3Float_SegmentChannel
 {
     Vector4_F32 time;
     Vector4_F32 value;
+    if (DEBUG_PRINT)
+    {
+        Printf(" Segment Channel\n  Time: (%f,%f,%f,%f), Value: (%f,%f,%f,%f)\n", time.X, time.Y, time.Z, time.W, value.X, value.Y, value.Z, value.W);
+    }
 };
 
 typedef struct PX_AnimationChannel_FloatBezierPoint3Float
@@ -294,8 +354,8 @@ typedef struct PX_AnimationChannel_FloatBezierPoint3Float
     uint32 values;
     struct
     {
-        PX_AnimationChannel_FloatBezierPoint3Float_SegmentChannel channel[3]; //XYZ
-    } Entry[values];
+        PX_AnimationChannel_FloatBezierPoint3Float_SegmentChannel channel[3]<optimize=false>; //XYZ
+    } Entry[values]<optimize=false>;
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA //184/216 bytes?
@@ -372,7 +432,7 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA,
     PX_TypeInfo_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA, //why
-    PX_TypeInfo_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float, //why
+    PX_TypeInfo_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float,
     //Effect Element
     PX_TypeInfo_EffectElement = 16384, //May be in a model
     PX_TypeInfo_EffectElement_ParticleEmitter,
