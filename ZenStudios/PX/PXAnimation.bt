@@ -13,70 +13,117 @@
 
 #include "PXCommon.bt"
 
+local uint DEBUG_PRINT = 1;
+
 struct
 {
     LittleEndian();
     PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
-    uint32 ver; //7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot
-    time_t exportDate; //Export date i32, seems to be a day before the table date
-    Vector2_F32 initPos; //Prob or is it vec2F32 some count i32
-    uint32 entries;
+    if (PXBinaryHeader.PXBinaryDataType != PX_BinaryDataType_Animation)
+    {
+        Printf("Not a PX Animation.");
+        break;
+    }
+    uint32 ver<bgcolor=cGreen>; //7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot, mostly
+    time_t exportDate<bgcolor=cLtBlue>; //Export date i32, seems to be a day before the table date
+    float lenNoSpeed<bgcolor=cBlue>;
+    float speed<bgcolor=cBlue>;
+    uint32 entries<bgcolor=cRed>; //> 1 has export meta, only seen 2
+    if (DEBUG_PRINT)
+    {
+        Printf("Version: %u\n", ver);
+        Printf("Export date (unknown year): %s\n", TimeTToString(exportDate));
+        Printf("Length no speed: %f\n", lenNoSpeed);
+        Printf("Speed: %f\n", speed);
+    }
     if (entries)
     {
-        time_t timestamp[entries+2]; //Export date i32, seems to be a day before the table date
-        U32_StringEntry exportString;
-        U32_StringEntry name;
-        PX_Platform platform; //3 on iOS, 5 on Android, platform ID?
-        uint32 unk2[2]; //Seems to be 0
+        time_t timestamp[entries+2]<bgcolor=cLtBlue>; //Export date i32, seems to be a day before the table date, or is it 3 timestamps + 1 u32
+        U32_StringEntry exportString<bgcolor=cGreen>;
+        U32_StringEntry name<bgcolor=cGreen>;
+        PX_Platform platform<bgcolor=cBlue>; //3 on iOS, 5 on Android, platform ID?
+        uint32 unk2[2]<bgcolor=cRed>; //Seems to be 0
+        if (DEBUG_PRINT)
+        {
+            Printf("Export Source: %s\n", exportString.theString);
+            Printf("Platform: %s\n", EnumToString(platform));
+        }
     }
-    uint32 entries2;
+    uint32 animClips<bgcolor=cGreen>; //Seems to always be present
+    if (DEBUG_PRINT)
+    {
+        Printf("Animation Clips:\n");
+    }
     struct
     {
         UByte_StringEntry name;
-        Vector2_F32 unk;
-    } Entry[entries2]<optimize=false>;
-    uint32 particleEmitterShapes;
-    struct
+        float startNoSpeed;
+        float endNoSpeed;
+        if (DEBUG_PRINT)
+        {
+            Printf(" %s: start: %f end %f\n", name.theString, startNoSpeed, endNoSpeed);
+        }
+    } AnimationClip[animClips]<optimize=false, bgcolor=cGreen>;
+    uint32 animNodes<bgcolor=cRed>;
+    if (DEBUG_PRINT && animNodes)
     {
-        BigEndian(); //Why
-        PX_TypeInfo rootTypeInfo; //0x00201000 is also a PES
-        LittleEndian();
-        UByte_StringEntry name;
-        if (ver == 9) //Fix PFX3 (V9)
+        //Printf("Animation Nodes:\n");
+    }
+    //FSeek(668);
+    if (animNodes)
+    {
+        struct
         {
-            float unk3;
-            UByte_StringEntry unk;
-        }
-        else
-        {
-            uint32 unk2;
-        }
-        PX_TypeInfo dataTypeInfo;
-        switch (dataTypeInfo) //why
-        {
-            case 12291: PX_AnimationChannel_FloatLinearFloat floatLinFloat; break; //it fits :shrug:
-            case 12292: PX_AnimationChannel_FloatBezierFloat floatBezFloat; break; //it fits :shrug:
-            case 12294: PX_AnimationChannel_FloatConstantFloat floatConstantFloat; break; //it fits :shrug:
-            case 12295: PX_AnimationChannel_FloatListFloat floatListFloat; break; //it fits :shrug:
-            case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezPoint3Float; break;
-            case 12385: PX_AnimationChannel_FloatListBool floatListBool; break;
-            case 12418: PX_AnimationChannel_FloatLerpQuaternionFloat animationChannelFloatLerpQuaternionFloat; break;
-            case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA animationChannelFloatLerpQuaternionFloatA; break;
-            case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx; break;
-            case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat unk3; break;
-            case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float unk3; break;
-            case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk3; break;
-            case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk3; break;
-            case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float unk3; break;
-            default:
-            /*if (FTell() != EOF)
+            BigEndian(); //Why
+            PX_TypeInfo rootTypeInfo<bgcolor=cBlue>; //0x00201000 is also a PES, why idk
+            LittleEndian();
+            UByte_StringEntry animatableName<bgcolor=cGreen>;
+            float animationChannel<bgcolor=cRed>; //or flags?
+            if (ver == 9) //Fix PFX3 (V9)
             {
-                while (ReadUInt() != 8192 && ReadUInt() != 2105344) //this too bcz idk
+                UByte_StringEntry animatableChannelName<bgcolor=cGreen>;
+            }
+            PX_TypeInfo dataTypeInfo<bgcolor=cDkGreen>;
+            switch (dataTypeInfo) //why
+            {
+                case 12291: PX_AnimationChannel_FloatLinearFloat floatLinearFloat<bgcolor=cGreen>; break;
+                case 12292: PX_AnimationChannel_FloatBezierFloat floatBezierFloat<bgcolor=cLtGreen>; break;
+                case 12294: PX_AnimationChannel_FloatConstantFloat floatConstantFloat<bgcolor=cGreen>; break;
+                case 12295: PX_AnimationChannel_FloatListFloat floatListFloat<bgcolor=cPurple>; break;
+                case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezierPoint3Float<bgcolor=cDkPurple>; break;
+                case 12385: PX_AnimationChannel_FloatListBool floatListBool<bgcolor=cBlue>; break;
+                case 12418: PX_AnimationChannel_FloatLerpQuaternionFloat floatLerpQuaternionFloat<bgcolor=cBlue>; break;
+                //case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA unk; break;
+                case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx<bgcolor=cBlue>; break;
+                case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat floatLerpTranslationFloatLerpQuaternionFloat<bgcolor=cBlue>; break;
+                case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float floatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float<bgcolor=cBlue>; break;
+                //case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk; break; //WIP
+                //case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk; break;
+                case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float floatConstantTranslationFloatQuaternionFloatScale3Float<bgcolor=cDkPurple>; break;
+                default: //Finicky way to "identify" and skip unknown chunks
+                if (DEBUG_PRINT)
                 {
-                    byte pad;
+                    Printf("Unsupported data type at index %i (%s).\n", i, EnumToString(dataTypeInfo)); //If () is returned, expect broken output
                 }
-            }*/
-            Printf("Unsupported data type. %u\n", dataTypeInfo); break;
-        }
-    } ParticleEmitterShape[particleEmitterShapes]<optimize=false>;
+                BigEndian();
+                if (FTell() != EOF)
+                {
+                    struct
+                    {
+                        while (ReadUInt() != 8192 && ReadUInt() != 2105344 && ReadUInt() != 2101248) //this too bcz idk, warning: breaks on chunks with root type magic in them
+                        {
+                            byte unk;
+                        }
+                    } UnknownDataType<bgcolor=cRed>;
+                }
+                LittleEndian();
+                break;
+            }
+            i++;
+        } AnimationNode[animNodes]<optimize=false>; //or PES
+    }
+    else
+    {
+        Printf("No animation nodes.");
+    }
 } PXAnimation;

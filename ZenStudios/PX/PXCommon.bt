@@ -93,22 +93,23 @@ typedef struct PX_BinaryHeader
 
 typedef struct PX_BoundingSphere
 {
-    Vector3_F32 bs;
-    //? an i32?
+    Vector3_F32 center;
+    float radius;
 };
 
 typedef struct PX_AABB_Float
 {
     //LE?
-    Vector3_F32 center; //center
-    Vector3_F32 halfSize; //halfSz
+    Vector3_F32 center;
+    Vector3_F32 halfSz;
 };
 
 typedef struct PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float
 {
-    uint32 values; //PVZ only has 7 set
-    byte unk[6*values-2]; //why
-    //Seems to have floats at the end
+    uint32 flags; //Variety, what do they do though
+    Vector3_F32 translation;
+    Vector4_F32 quaternion;
+    Vector3_F32 scale;
 };
 
 typedef struct PX_AnimationChannel_FloatListFloat
@@ -122,13 +123,13 @@ typedef struct PX_AnimationChannel_FloatListFloat
 };
 
 
-typedef struct PX_AnimationChannel_FloatListBool //5 bytes, def correct, what does the bool do
+typedef struct PX_AnimationChannel_FloatListBool
 {
     uint32 values;
     struct
     {
         float time;
-        Byte_Bool bool;
+        Byte_Bool bool; //?
     } Entry[values];
 };
 
@@ -138,18 +139,20 @@ typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
     struct
     {
         float time;
-        Vector4_F32 val; //qfloat
+        Vector4_F32 val;
     } Entry[values];
 };
 
-typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?)
+typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?), big endian floats at the end?
 {
-    float time; //?
-    /*uint16 entries;
+    float fps; //?
+    uint32 flags;
+    /*uint32 entries;
+    Vector3_F32 trans;
+    Vector3_F32 scale;
     struct
     {
-        Vector4_F32 val; //qfloat
-        Vector4_F32 c;
+        Vector4_F32 q; //qfloat
     } Entry[entries];*/
 };
 
@@ -170,7 +173,7 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
     struct
     {
         float time;
-        Vector3_F32 trans; //3?
+        Vector3_F32 trans;
         Vector4_F32 rot; //Should be four, quat
         Vector3_F32 scale; //Def right
     } Entry[values];
@@ -178,13 +181,23 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
 {
-    float time;
-    /*Vector3_F32 t;
-    Vector3_F32 tc[3];
-    Vector4_F32 q;
-    Vector4_F32 qc[4];*/
+    float fps; //def right, seems to always be 30
+    Vector3_F32 tMin;
+    Vector3_F32 tScale;
+    uint32 flags;
+    if (flags) //?
+    {
+        uint32 unk;
+    }
+    Vector3_F32 scale;
+    /*
+    uint32 unk2;
+    struct
+    {
+        Vector3_F32 trans;
+        Vector4_F32 quat;
+    } e[unk2];*/
     //We know at least a float is here
-    //float unk[values*3];
 };
 
 typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
@@ -197,7 +210,7 @@ typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
     } Entry[values]<optimize=false>;
 };
 
-typedef struct PX_AnimationChannel_FloatMaxTcbFloat 
+typedef struct PX_AnimationChannel_FloatMaxTcbFloat //Haven't seen it used
 {
     uint32 values;
     struct
@@ -237,7 +250,7 @@ typedef struct PX_AnimationChannel_FloatMaxTcbPoint3Float
 
 typedef struct PX_AnimationChannel_FloatSlerpQuaternionFloat
 {
-    uint32 values; //unknown if needed
+    uint32 values;
     struct
     {
         float time;
@@ -270,25 +283,38 @@ typedef struct PX_AnimationChannel_FloatLinearFloat
     } Entry[values];
 };
 
+typedef struct PX_AnimationChannel_FloatBezierPoint3Float_SegmentChannel
+{
+    Vector4_F32 time;
+    Vector4_F32 value;
+};
 
 typedef struct PX_AnimationChannel_FloatBezierPoint3Float
 {
     uint32 values;
     struct
     {
-        /*float bez[8];
-        float bez2[8];
-        float bezPoint3[8];*/
-        byte unk[96];
+        PX_AnimationChannel_FloatBezierPoint3Float_SegmentChannel channel[3]; //XYZ
     } Entry[values];
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA //184/216 bytes?
 {
-    //float time; //FPS?
+    float fps;
+    Vector3_F32 tMin;
+    Vector3_F32 tScale;
+    Vector3_F32 sMin;
+    Vector3_F32 sScale;
+    //uint32 test; //?
+    /*struct
+    {
+        Vector3_F32 trans;
+        Vector4_F32 quat;
+        Vector3_F32 scale;
+    } Entry[test];*/
 };
 
-typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy challenge, unintentionally idk
+typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy challenge, unintentionally idk, Key means multiple usually
 {
     PX_TypeInfo_Space = 4096, //Model
     //Transformable
@@ -332,12 +358,12 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     PX_TypeInfo_AnimationChannel_FloatLinearPoint3Float,
     PX_TypeInfo_AnimationChannel_FloatBezierPoint3Float,
     PX_TypeInfo_AnimationChannel_FloatMaxTcbPoint3Float, //Unused in PVZ
-    PX_TypeInfo_AnimationChannel_Float_Bool = 12384, //Unused in PVZ
-    PX_TypeInfo_AnimationChannel_Float_ListBool,
-    PX_TypeInfo_AnimationChannel_Float_QuaternionFloat = 12416, //Unused in PVZ
-    PX_TypeInfo_AnimationChannel_Float_SlerpQuaternionFloat, //Unused in PVZ
-    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloat, //Unused in PVZ
-    PX_TypeInfo_AnimationChannel_Float_LerpQuaternionFloatA,
+    PX_TypeInfo_AnimationChannel_FloatBool = 12384, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_FloatListBool,
+    PX_TypeInfo_AnimationChannel_FloatQuaternionFloat = 12416, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_FloatSlerpQuaternionFloat, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_FloatLerpQuaternionFloat, //Unused in PVZ
+    PX_TypeInfo_AnimationChannel_FloatLerpQuaternionFloatA,
     PX_TypeInfo_AnimationChannel_FloatChannel3 = 12800, //May be in a model
     PX_TypeInfo_AnimationChannel_FloatIndependentEularAngles3Float, //May be in a model
     PX_TypeInfo_AnimationChannel_FloatTransform = 12832, //May be in a model
