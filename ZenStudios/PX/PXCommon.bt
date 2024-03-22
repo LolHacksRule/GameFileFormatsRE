@@ -12,6 +12,7 @@
 //------------------------------------------------
 
 #include "../../LHR/Common.bt"
+#include "../PFX2/PFX2Common.bt"
 
 typedef enum <uint32>
 {

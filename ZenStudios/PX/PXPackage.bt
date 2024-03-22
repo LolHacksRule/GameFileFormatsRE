@@ -11,6 +11,27 @@
 //	 History: 
 //------------------------------------------------
 
+//From undertow, might help
+/*
+LZSS in .pxp
+
+The data is compressed with LZSS in different setups.
+After you unpacked the compressed files from the .pxp archives (with the quickBMS script from xentax),
+the files contain chunks of 65.536 uncompressed bytes (starting with '0d' byte, followed by 3-byte chunksize),
+the last chunk start with '0e' byte, followed by 3-byte uncompressed chunksize (add %numberOf0bChunks * 65536% to get the total), then 3-byte chunksize.
+These chunks contain "subchunks" of 4096 uncompressed bytes. Every subchunk can have a different setup for the offset/length 16 bit! This is determined by the 0xF0 masked 4 bit in the first 16 bit.
+The LZSS compression uses a "flag" byte for the following 8 entries, a '0' is an uncompressed 1-byte literal, a '1' is a 2-byte offset/length pair.
+I already figured out 16 modes (but dunno what the other 12 bit are for, so there might be more to it :().
+You can extract the file data/configs.pxp and then place the uncompressed files in the directory data/configs The game will then read these files instead of the configs.pxp (u can makes sure it does this correctly by renaming the .pxp).
+Currently one can only mess around with the plain text files (.cfg, .lst), because the textures/models are in a proprietary format :(
+
+Attached a quick&dirty php script to uncompress (because i dont know if quickbms supports all the LZSS setups).
+
+Would be nice if someone can figure out the format the textures are stored in (maybe dds with stripped headers?).
+
+EDIT: figured out the last mode, kinda obvious "0" means no compression at all :o i updated the php script
+*/
+
 #include "PXCommon.bt"
 
 typedef enum <uint32>
@@ -40,172 +61,191 @@ typedef enum <uint32>
 struct PXPackage
 {
 	LittleEndian();
+    if (ReadUInt() == 2) //Assume encrypted data, 2 is the header
+    {
+        Printf("Encrypted data detected. Please decrypt the content then try again.\n");
+        break;
+    }
+    if (ReadUInt() != 3441055824 && ReadUInt() != 2937534864) //Assume decrypted data
+    {
+        PFX2DecryptedDataHeader ed;
+    }
     if (ReadUInt() == 2937534864)
     {
-        struct JenkinsHash
-        {
-            uint32 jenkinsHasherMagic;
-            uint32 strSz;
-            char hashedStr[strSz];
-        } jh;
+        PFX2JenkinsHash jh;
     }
-	PX_BinaryHeader PXBinaryHeader;
-	PX_PackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
-	if (PXPDataType <= 2)
-	{
-		uint32 files;
-		uint32 metaTableSz;
-		if (PXPDataType == 0)
-		{
-			FSkip(-4);
-		}
-		uint32 isXOR<hidden=true>;
-		FSkip(-4);
-	}
-	else
-	{
-		Printf("PXP XOR variant is WIP!");
-		uint64 PXPSz;
-        byte dmy[32]; //MD5?
-        uint32 XORMetaSz;
-        struct TableOfContentsXOR
+    if (ReadUInt() == 2) //Check again
+    {
+        Printf("Encrypted data detected. Please decrypt the content then try again.\n");
+        break;
+    }
+    if (ReadUInt() == 3441055824)
+    {
+	    PX_BinaryHeader PXBinaryHeader;
+        if (PXBinaryHeader.PXBinaryDataType == PX_BinaryDataType_Package)
         {
-            uint32 crc32[3];
-            uint32 XORMetaTableCryptKey;
-            uint32 XORMetaTableCRC32;
-            //byte dmy2[36];
-            //uint32 files;
-            byte XORMeta[XORMetaSz];
-        } TOC_XOR;
-		byte PXP[PXPSz-FTell()];
-		break;
-	}
-	if (PXPDataType == 2) //ZP1 PS3, ZP2 patch wiiu/ps4 and PFX3 Win10 because Zen, haven't tested others
-	{
-        //why, if these mismatch game dies
-		uint32 crc1; //the other is 3d90, on small files 0x02 is 0xEA, based off 0x903DEAEE
-		uint32 crc2; //the other is ccf8, on small files 0x02 is 0x48, based off 0xF8CC486C
-		uint32 crc3; //the other is 3990, on small files 0x02 is 0x17, based off 0x903917AF
-		uint32 unk4; //Some other CRC?
-        uint32 metaTableCRC32;
-	}
-	struct FileMetaData
-	{
-		for (i = 0; i < files; i++)
-		{
-			struct MetaEntry
-			{
-				uint32 dataOff;
-				uint32 uncDSz;
-				if (PXPDataType == 0)
-				{
-					uint32 cSz;
-					PX_PackageFlag_U32 flags;
-					Byte_StringEntry fileName;
-				}
-				else
-				{
-					PX_PackageFlag_UByte flags;
-					Byte_StringEntry fileName;
-					//Printf("%s\n", fileName.theString);
-					for (i2 = 0; i2 < 4; i2++ )
-					{
-						struct PaddingChecker
-						{
-							byte dmy;
-							if (dmy == 0x00)
-							{
-								//FSkip(1);
-								//break;
-							}
-							else
-							{
-								break;
-							}
-						} padChk<hidden = true>;
-						if (padChk.dmy != 0x00)
-						{
-							FSkip(-1);
-							break;
-						}
-					}
-					//idk
-					uint32 checkForUnusuallyLargeNum<hidden=true>;
-					FSkip(-4);
-					if (checkForUnusuallyLargeNum >= 10000000 && checkForUnusuallyLargeNum != 1179011410 && checkForUnusuallyLargeNum != 17836831)
-					{
-						FSkip(-1);
-					}
-                    //If reading 2008 PXP, comment out this and the below value
-                    if (flags == 3)
-                    {
-                        uint32 legacyCsz;
-                    }
-					uint32 cSz;
-				}
-				/*byte type;
-				FSkip(3);
-				uint32 unk;*/
-			} MetaEntryStruct;
-		}
-	} FileMetaDataStruct;
-    /*
-	struct FileEntries
-	{
-		for (i = 0; i < files; i++)
-		{
-            FSeek(fmd.mentry[i].dataOff);
-			struct FileEntry
-			{   
-				//byte data[fmd.mentry[i].cSz];
-				if (fmd.mentry[i].flags == 0)
-				{
-					byte data[fmd.mentry[i].uncDSz];
-				}
-				else if (PXPDataType == 0)
-				{
-					byte data[fmd.mentry[i].cSz];
-				}
-				else
-				{
-					byte chunkType;
-					if (PXPDataType == 0)
-					{
-						uint16 chunkSz;
-					}
-					else
-					{
-						uint32 chunkSz : 24;
-                        FSkip(-1);
-					}
-					if (chunkType < 2 && chunkType != 0)
-					{
-						uint16 chunkCSz;
-					}
-					else if (chunkType == 4 || chunkType == 14)
-					{
-						uint32 chunkCSz : 24;
-                        FSkip(-1);
-					}
-					else
-					{
-						Printf("Error!");	 
-					}
-				}
-                FSkip(-7);
-                //if (PXPDataType == 2)
+	        PX_PackageVariantType PXPDataType; //Since this is inconsistent in PFX2 and usable in multiple titles, it's prob wise to refer to this as type instead of ver
+	        if (PXPDataType <= 2)
+	        {
+		        uint32 files;
+		        uint32 metaTableSz;
+		        if (PXPDataType == 0)
+		        {
+			        FSkip(-4);
+		        }
+		        uint32 isXOR<hidden=true>;
+		        FSkip(-4);
+	        }
+	        else
+	        {
+		        Printf("PXP XOR variant is WIP!");
+		        int64 PXPSz;
+                uint32 fingerprintCRC32[8];
+                uint32 XORMetaSz;
+                struct TableOfContentsXOR
                 {
-                    if (fmd.mentry[i].flags > 0)
-                    {
-                        byte file[fmd.mentry[i].cSz]<optimize=false>;
-                    }
-                    else
-                    {
-                        byte file[fmd.mentry[i].uncDSz]<optimize=false>;
-                    }
-                }
-			} fen;
-		}
-	} fens;
-    */
+                    uint32 crc32[3];
+                    uint32 XORMetaTableCryptKey;
+                    uint32 XORMetaTableCRC32;
+                    //byte dmy2[36];
+                    //uint32 files;
+                    byte XORMeta[XORMetaSz];
+                } TOC_XOR;
+		        byte PXP[PXPSz-FTell()];
+		        break;
+	        }
+	        if (PXPDataType == 2) //ZP1 PS3, ZP2 patch wiiu/ps4 and PFX3 Win10 because Zen, haven't tested others
+	        {
+                //why, if these mismatch game dies
+		        uint32 crc1; //the other is 3d90, on small files 0x02 is 0xEA, based off 0x903DEAEE
+		        uint32 crc2; //the other is ccf8, on small files 0x02 is 0x48, based off 0xF8CC486C
+		        uint32 crc3; //the other is 3990, on small files 0x02 is 0x17, based off 0x903917AF
+		        uint32 unk4; //Some other CRC?
+                uint32 metaTableCRC32;
+	        }
+	        struct FileMetaData
+	        {
+		        for (i = 0; i < files; i++)
+		        {
+			        struct MetaEntry
+			        {
+				        uint32 dataOff;
+				        uint32 uncDSz;
+				        if (PXPDataType == 0)
+				        {
+					        uint32 cSz;
+					        PX_PackageFlag_U32 flags;
+					        Byte_StringEntry fileName;
+				        }
+				        else
+				        {
+					        PX_PackageFlag_UByte flags;
+					        Byte_StringEntry fileName;
+					        //Printf("%s\n", fileName.theString);
+					        for (i2 = 0; i2 < 4; i2++ )
+					        {
+						        struct PaddingChecker
+						        {
+							        byte dmy;
+							        if (dmy == 0x00)
+							        {
+								        //FSkip(1);
+								        //break;
+							        }
+							        else
+							        {
+								        break;
+							        }
+						        } padChk<hidden = true>;
+						        if (padChk.dmy != 0x00)
+						        {
+							        FSkip(-1);
+							        break;
+						        }
+					        }
+					        //idk
+					        uint32 checkForUnusuallyLargeNum<hidden=true>;
+					        FSkip(-4);
+					        if (checkForUnusuallyLargeNum >= 10000000 && checkForUnusuallyLargeNum != 1179011410 && checkForUnusuallyLargeNum != 17836831)
+					        {
+						        FSkip(-1);
+					        }
+                            //If reading 2008 PXP, comment out this and the below value
+                            if (flags == 3)
+                            {
+                                uint32 legacyCsz;
+                            }
+					        uint32 cSz;
+				        }
+				        /*byte type;
+				        FSkip(3);
+				        uint32 unk;*/
+			        } MetaEntryStruct;
+		        }
+	        } FileMetaDataStruct;
+            /*
+	        struct FileEntries
+	        {
+		        for (i = 0; i < files; i++)
+		        {
+                    FSeek(FileMetaDataStruct.MetaEntryStruct[i].dataOff);
+			        struct FileEntry
+			        {   
+				        //byte data[FileMetaDataStruct.MetaEntryStruct[i].cSz];
+				        if (FileMetaDataStruct.MetaEntryStruct[i].flags == 0)
+				        {
+					        byte data[FileMetaDataStruct.MetaEntryStruct[i].uncDSz];
+				        }
+				        else if (PXPDataType == 0)
+				        {
+					        byte data[FileMetaDataStruct.MetaEntryStruct[i].cSz];
+				        }
+				        else
+				        {
+					        byte chunkType;
+					        if (PXPDataType == 0)
+					        {
+						        uint16 chunkSz;
+					        }
+					        else
+					        {
+						        uint32 chunkSz : 24;
+                                FSkip(-1);
+					        }
+					        if (chunkType < 2 && chunkType != 0)
+					        {
+						        uint16 chunkCSz;
+					        }
+					        else if (chunkType == 4 || chunkType == 14)
+					        {
+						        uint32 chunkCSz : 24;
+                                FSkip(-1);
+					        }
+					        else
+					        {
+						        Printf("Error!");	 
+					        }
+				        }
+                        FSkip(-7);
+                        //if (PXPDataType == 2)
+                        {
+                            if (FileMetaDataStruct.MetaEntryStruct[i].flags > 0)
+                            {
+                                byte file[FileMetaDataStruct.MetaEntryStruct[i].cSz]<optimize=false>;
+                            }
+                            else
+                            {
+                                byte file[FileMetaDataStruct.MetaEntryStruct[i].uncDSz]<optimize=false>;
+                            }
+                        }
+			        } fen;
+		        }
+	        } fens;
+            */
+        }
+    }
+    else
+    {
+        Printf("Possibly encrypted data.");
+    }
 } PXP;

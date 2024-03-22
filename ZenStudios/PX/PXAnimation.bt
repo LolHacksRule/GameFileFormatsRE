@@ -61,7 +61,7 @@ struct
         float endNoSpeed;
         if (DEBUG_PRINT)
         {
-            Printf(" %s: start: %f end %f\n", name.theString, startNoSpeed, endNoSpeed);
+            Printf(" %s: start (no speed): %f end (no speed) %f\n", name.theString, startNoSpeed, endNoSpeed);
         }
     } AnimationClip[animClips]<optimize=false, bgcolor=cGreen>;
     uint32 animNodes<bgcolor=cRed>;
