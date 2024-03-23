@@ -24,9 +24,12 @@ struct
         Printf("Not a PX Animation.");
         break;
     }
-    uint32 ver<bgcolor=cGreen>; //7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot, mostly
-    time_t exportDate<bgcolor=cLtBlue>; //Export date i32, seems to be a day before the table date
-    float lenNoSpeed<bgcolor=cBlue>;
+    uint32 ver<bgcolor=cGreen>; //6 in Zen Pinball RollerCoaster, 7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot, mostly
+    if (ver > 6)
+    {
+        time_t exportDate<bgcolor=cLtBlue>; //Export date i32, seems to be a day before the table date
+    }
+    float lenNoSpeed<bgcolor=cBlue>; //Always 0xB2CBF0A0 in v6 (at least in gui)
     float speed<bgcolor=cBlue>;
     uint32 entries<bgcolor=cRed>; //> 1 has export meta, only seen 2
     if (DEBUG_PRINT)
@@ -74,61 +77,68 @@ struct
     {
         struct
         {
-            BigEndian(); //Why
-            PX_TypeInfo rootTypeInfo<bgcolor=cBlue>; //0x00201000 is also a PES, why idk
-            LittleEndian();
-            UByte_StringEntry animatableName<bgcolor=cGreen>;
-            float animationChannel<bgcolor=cRed>; //or flags?
-            if (DEBUG_PRINT)
+            if (ver > 6)
             {
-                Printf("----Animation Node Start----\n");
-                Printf(" Animatable Name: %s\n", animatableName.theString);
-                Printf(" Animation Channel(?): %f\n", animationChannel);
-            }
-            if (ver == 9) //Fix PFX3 (V9)
-            {
-                UByte_StringEntry animatableChannelName<bgcolor=cGreen>;
+                BigEndian(); //Why
+                PX_TypeInfo rootTypeInfo<bgcolor=cBlue>; //0x00201000 is also a PES, why idk
+                LittleEndian();
+                UByte_StringEntry animatableName<bgcolor=cGreen>;
+                float animationChannel<bgcolor=cRed>; //or flags?
                 if (DEBUG_PRINT)
                 {
-                    Printf(" Animatable Channel Name: %s\n", animatableChannelName.theString);
+                    Printf("----Animation Node Start----\n");
+                    Printf(" Animatable Name: %s\n", animatableName.theString);
+                    Printf(" Animation Channel(?): %f\n", animationChannel);
                 }
-            }
-            PX_TypeInfo dataTypeInfo<bgcolor=cDkGreen>;
-            if (DEBUG_PRINT)
-            {
-                Printf(" Animation Node Data Type: %s\n", EnumToString(dataTypeInfo));
-            }
-            switch (dataTypeInfo) //why
-            {
-                case 12291: PX_AnimationChannel_FloatLinearFloat floatLinearFloat<bgcolor=cGreen>; break;
-                case 12292: PX_AnimationChannel_FloatBezierFloat floatBezierFloat<bgcolor=cLtGreen>; break;
-                case 12294: PX_AnimationChannel_FloatConstantFloat floatConstantFloat<bgcolor=cGreen>; break;
-                case 12295: PX_AnimationChannel_FloatListFloat floatListFloat<bgcolor=cPurple>; break;
-                case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezierPoint3Float<bgcolor=cDkPurple>; break;
-                case 12385: PX_AnimationChannel_FloatListBool floatListBool<bgcolor=cBlue>; break;
-                case 12418: PX_AnimationChannel_FloatLerpQuaternionFloat floatLerpQuaternionFloat<bgcolor=cBlue>; break;
-                //case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA unk; break;
-                case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx<bgcolor=cBlue>; break;
-                case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat floatLerpTranslationFloatLerpQuaternionFloat<bgcolor=cBlue>; break;
-                case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float floatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float<bgcolor=cBlue>; break;
-                //case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk; break; //WIP
-                //case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk; break;
-                case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float floatConstantTranslationFloatQuaternionFloatScale3Float<bgcolor=cDkPurple>; break;
-                default: //Finicky way to "identify" and skip unknown chunks
-                Printf("Unsupported data type at index %i (%s).\n", i, EnumToString(dataTypeInfo)); //If () is returned, expect broken output
-                BigEndian();
-                if (FTell() != EOF)
+                if (ver == 9) //Fix PFX3 (V9)
                 {
-                    struct
+                    UByte_StringEntry animatableChannelName<bgcolor=cGreen>;
+                    if (DEBUG_PRINT)
                     {
-                        while (ReadUInt() != 8192 && ReadUInt() != 2105344 && ReadUInt() != 2101248) //this too bcz idk, warning: breaks on chunks with root type magic in them
-                        {
-                            byte unk;
-                        }
-                    } UnknownDataType<bgcolor=cRed>;
+                        Printf(" Animatable Channel Name: %s\n", animatableChannelName.theString);
+                    }
                 }
-                LittleEndian();
-                break;
+                PX_TypeInfo dataTypeInfo<bgcolor=cDkGreen>;
+                if (DEBUG_PRINT)
+                {
+                    Printf(" Animation Node Data Type: %s\n", EnumToString(dataTypeInfo));
+                }
+                switch (dataTypeInfo) //why
+                {
+                    case 12291: PX_AnimationChannel_FloatLinearFloat floatLinearFloat<bgcolor=cGreen>; break;
+                    case 12292: PX_AnimationChannel_FloatBezierFloat floatBezierFloat<bgcolor=cLtGreen>; break;
+                    case 12294: PX_AnimationChannel_FloatConstantFloat floatConstantFloat<bgcolor=cGreen>; break;
+                    case 12295: PX_AnimationChannel_FloatListFloat floatListFloat<bgcolor=cPurple>; break;
+                    case 12354: PX_AnimationChannel_FloatBezierPoint3Float floatBezierPoint3Float<bgcolor=cDkPurple>; break;
+                    case 12385: PX_AnimationChannel_FloatListBool floatListBool<bgcolor=cBlue>; break;
+                    case 12418: PX_AnimationChannel_FloatLerpQuaternionFloat floatLerpQuaternionFloat<bgcolor=cBlue>; break;
+                    //case 12419: PX_AnimationChannel_FloatLerpQuaternionFloatA unk; break;
+                    case 12833: PX_AnimationChannel_FloatMatrix3x4 mtx<bgcolor=cBlue>; break;
+                    case 12835: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat floatLerpTranslationFloatLerpQuaternionFloat<bgcolor=cBlue>; break;
+                    case 12836: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float floatLerpTranslationFloatLerpQuaternionFloatLerpScale3Float<bgcolor=cBlue>; break;
+                    //case 12837: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA unk; break; //WIP
+                    //case 12838: PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatLerpScale3FloatA unk; break;
+                    case 12839: PX_AnimationChannel_FloatConstantTranslationFloatQuaternionFloatScale3Float floatConstantTranslationFloatQuaternionFloatScale3Float<bgcolor=cDkPurple>; break;
+                    default: //Finicky way to "identify" and skip unknown chunks
+                    Printf("Unsupported data type at index %i (%s).\n", i, EnumToString(dataTypeInfo)); //If () is returned, expect broken output
+                    BigEndian();
+                    if (FTell() != EOF)
+                    {
+                        struct
+                        {
+                            while (ReadUInt() != 8192 && ReadUInt() != 2105344 && ReadUInt() != 2101248) //this too bcz idk, warning: breaks on chunks with root type magic in them
+                            {
+                                byte unk;
+                            }
+                        } UnknownDataType<bgcolor=cRed>;
+                    }
+                    LittleEndian();
+                    break;
+                }
+            }
+            else
+            {
+                Printf("Animation node version 6 is currently unsupported.\n");
             }
             if (DEBUG_PRINT)
             {

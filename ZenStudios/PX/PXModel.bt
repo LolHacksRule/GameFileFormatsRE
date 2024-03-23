@@ -22,23 +22,26 @@ struct
 {
     LittleEndian();
     PX_BinaryHeader PXBinaryHeader<bgcolor=cDkBlue>;
-    uint32 ver; //15 I've only seen so far
-    time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
-    uint32 unk; //2 in PFX3
-    uint32 flag; //Seems to not be a bool but def an i32 at least in PFX3
-    if (flag)
+    uint32 ver; //10 or 15 I've only seen so far
+    if (ver > 10)
     {
-        struct
+        time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
+        uint32 unk; //2 in PFX3
+        uint32 flag; //Seems to not be a bool but def an i32 at least in PFX3
+        if (flag)
         {
-            PX_Platform exportPlatform;
-            U32_StringEntry srcPath;
-            U32_StringEntry name; //same as PXM
-        } Metadata;
-    }
-    uint32 unk2[12];
-    if (flag > 1) //Idk how this works
-    {
-        uint32 unk3;
+            struct
+            {
+                PX_Platform exportPlatform;
+                U32_StringEntry srcPath;
+                U32_StringEntry name; //same as PXM
+            } Metadata;
+        }
+        uint32 unk2[12];
+        if (flag > 1) //Idk how this works
+        {
+            uint32 unk3;
+        }
     }
     uint32 shaderMaterials;
     struct

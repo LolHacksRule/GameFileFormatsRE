@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+//A two byte frame count; then for each frame four bytes of unknown purpose, possibly frame timing info; then 1024 bytes of frame data. So 32 rows x 32 bytes is 1024 which means a byte is 4 pixels. This translates to a 128x32 pixel three colour screen with the other bit being an alpha flag. -Zenhax
+
 typedef struct FrameInfo
 {
     uint16 width;
@@ -32,6 +34,7 @@ typedef struct FrameInfo
 
 struct DotMatrixVideo
 {
+    LittleEndian();
     uint16 frames;
     FrameInfo fbtl[frames]<optimize=false>;
 } DMV;

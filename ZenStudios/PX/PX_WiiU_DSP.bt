@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+#include "../../Nintendo/Libraries/GCADPCM.bt"
+
+/*
+codec = DSP
+channels = 1 
+sample_rate = @0x9:BE$4
+coef_offset = 0x1D
+coef_endianness = BE
+start_offset = 0x61
+num_samples = data_size
+
+Finicky txth from ZenHax
+*/
+
+struct
+{
+    BigEndian();
+    byte isStereo<bgcolor=cBlue>; //or loop
+    N_Dolphin_ADPCM GCADPCMHeader<bgcolor=cPurple>;
+    byte ADPCMData[EOF-sizeof GCADPCMHeader-1]<bgcolor=cRed>;
+} PX_WiiU_DSP;

@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct N_Dolphin_ADPCM
+{
+    uint32 samples;
+    uint32 adpcmNibbles;
+    uint32 sampleRate;
+    uint16 loop;
+    uint16 fmt;
+    uint32 startAddr;
+    uint32 endAddr;
+    uint32 dmy;
+    uint16 coefficient[16];
+    uint16 gain;
+    uint16 predictorScale;
+    uint16 history[2];
+    uint16 loopScale;
+    uint16 loopHistoryContext[2];
+    uint16 padding[11];
+};
