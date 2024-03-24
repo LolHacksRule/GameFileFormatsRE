@@ -24,7 +24,7 @@ struct
         Printf("Not a PX Animation.");
         break;
     }
-    uint32 ver<bgcolor=cGreen>; //6 in Zen Pinball RollerCoaster, 7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 9 in PFX3 first depot, mostly
+    uint32 ver<bgcolor=cGreen>; //6 in Zen Pinball RollerCoaster, 7 in PVZ on MacOS/Amazon/iOS/Android standalone CDN, 8 in PVZ standalone iOS CDN, 9 in PFX3 first depot, mostly
     if (ver > 6)
     {
         time_t exportDate<bgcolor=cLtBlue>; //Export date i32, seems to be a day before the table date
@@ -53,20 +53,23 @@ struct
         }
     }
     uint32 animClips<bgcolor=cGreen>; //Seems to always be present
-    if (DEBUG_PRINT)
+    if (animClips)
     {
-        Printf("Animation Clips:\n");
-    }
-    struct
-    {
-        UByte_StringEntry name;
-        float startNoSpeed;
-        float endNoSpeed;
         if (DEBUG_PRINT)
         {
-            Printf(" %s: start (no speed): %f end (no speed) %f\n", name.theString, startNoSpeed, endNoSpeed);
+            Printf("Animation Clips:\n");
         }
-    } AnimationClip[animClips]<optimize=false, bgcolor=cGreen>;
+        struct
+        {
+            UByte_StringEntry name;
+            float startNoSpeed;
+            float endNoSpeed;
+            if (DEBUG_PRINT)
+            {
+                Printf(" %s: start (no speed): %f end (no speed) %f\n", name.theString, startNoSpeed, endNoSpeed);
+            }
+        } AnimationClip[animClips]<optimize=false, bgcolor=cGreen>;
+    }
     uint32 animNodes<bgcolor=cRed>;
     if (DEBUG_PRINT && animNodes)
     {
@@ -77,12 +80,12 @@ struct
     {
         struct
         {            
-            if (ver > 6)
+            if (ver >= 6)
             {
-                if (ver == 7) //Finicky fix
+                if (ver <= 7) //Finicky fix
                 {
-                    uint32 unk;
-                    uint32 unk2;
+                    uint32 unk<bgcolor=cRed>;
+                    uint32 unk2<bgcolor=cRed>;
                 }
                 else
                 {
@@ -114,7 +117,7 @@ struct
                 }
                 if (ver == 7)
                 {
-                    float animCh;
+                    float animCh<bgcolor=cRed>; //Correct?
                 }
                 switch (dataTypeInfo) //why
                 {
@@ -155,7 +158,7 @@ struct
             }
             else
             {
-                Printf("Animation node version 6 is currently unsupported.\n");
+                Printf("Animation node version %i is currently unsupported.\n", ver);
             }
             if (DEBUG_PRINT)
             {
