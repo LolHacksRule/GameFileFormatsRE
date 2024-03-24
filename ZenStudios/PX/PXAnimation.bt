@@ -76,14 +76,23 @@ struct
     if (animNodes)
     {
         struct
-        {
+        {            
             if (ver > 6)
             {
-                BigEndian(); //Why
-                PX_TypeInfo rootTypeInfo<bgcolor=cBlue>; //0x00201000 is also a PES, why idk
-                LittleEndian();
-                UByte_StringEntry animatableName<bgcolor=cGreen>;
-                float animationChannel<bgcolor=cRed>; //or flags?
+                if (ver == 7) //Finicky fix
+                {
+                    uint32 unk;
+                    uint32 unk2;
+                }
+                else
+                {
+                    //Seems to break on v7
+                    BigEndian(); //Why
+                    PX_TypeInfo rootTypeInfo<bgcolor=cBlue>; //0x00201000 is also a PES, why idk
+                    LittleEndian();
+                    UByte_StringEntry animatableName<bgcolor=cGreen>;
+                    float animationChannel<bgcolor=cRed>; //or flags?
+                }
                 if (DEBUG_PRINT)
                 {
                     Printf("----Animation Node Start----\n");
@@ -102,6 +111,10 @@ struct
                 if (DEBUG_PRINT)
                 {
                     Printf(" Animation Node Data Type: %s\n", EnumToString(dataTypeInfo));
+                }
+                if (ver == 7)
+                {
+                    float animCh;
                 }
                 switch (dataTypeInfo) //why
                 {
@@ -131,6 +144,10 @@ struct
                                 byte unk;
                             }
                         } UnknownDataType<bgcolor=cRed>;
+                        if (ver == 7)
+                        {
+                            FSkip(-2);
+                        }
                     }
                     LittleEndian();
                     break;
