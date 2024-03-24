@@ -27,7 +27,7 @@ struct
     {
         time_t timestamp[3]; //Same in PVZ ball.pxm, ball_melon.pxm and table.pxm
         uint32 unk; //2 in PFX3
-        uint32 flag; //Seems to not be a bool but def an i32 at least in PFX3
+        uint32 flag; //Seems to not be a bool but def an i32 at least in PFX3, 1/+ seems to include metadata (PVZ Amazon (+Final) CDN, PVZ/ZP Android/iOS CDN not PVZ MacOS CDN), 2 idk, 3 idk
         if (flag)
         {
             struct
@@ -38,10 +38,15 @@ struct
             } Metadata;
         }
         uint32 unk2[12];
-        if (flag > 1) //Idk how this works
+        //? is 3 in PFX3, is this metadata
+        //uint32 unk2[12];
+        if (modelSubVersion > 1 && flag == 3) //Idk how this works
         {
             uint32 unk3;
+            //byte unk[0x12];
         }
+        PX_BoundingSphere bs;
+        PX_AABB_Float aabb;
     }
     uint32 shaderMaterials;
     struct
@@ -73,4 +78,4 @@ struct
     uint32 unk4;
     PX_TypeInfo ti;
     //For an entry, after 6 bytes is a flag
-} PXM;
+} PXModel;

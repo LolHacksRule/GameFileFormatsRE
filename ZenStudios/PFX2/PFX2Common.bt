@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct PFX2JenkinsHash
+{
+    uint32 jenkinsHasherMagic;
+    uint32 strSz;
+    char hashedStr[strSz];
+};
+
+typedef struct PFX2DecryptedDataHeader
+{
+    uint32 unk[8]; //Changes across every revision
+    uint32 unk2[4]; //Seems to be identical from the same names
+    time_t timeStamp; //For sure, at least not in FX3
+};
