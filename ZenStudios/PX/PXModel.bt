@@ -13,11 +13,6 @@
 
 #include "PXCommon.bt"
 
-typedef struct Transformable
-{
-    
-};
-
 struct
 {
     LittleEndian();
@@ -40,13 +35,13 @@ struct
         uint32 unk2[12];
         //? is 3 in PFX3, is this metadata
         //uint32 unk2[12];
-        if (modelSubVersion > 1 && flag == 3) //Idk how this works
+        if (unk > 1 && flag == 3) //Idk how this works
         {
             uint32 unk3;
             //byte unk[0x12];
         }
-        PX_BoundingSphere bs;
-        PX_AABB_Float aabb;
+        //PX_BoundingSphere bs;
+        //PX_AABB_Float aabb;
     }
     uint32 shaderMaterials;
     struct
@@ -75,7 +70,25 @@ struct
         byte unk7[20];
         UByte_StringEntry texSamp2;*/
     } ShaderMaterial[shaderMaterials]<optimize=false>;
-    uint32 unk4;
-    PX_TypeInfo ti;
+    /*FSeek(45753402);
+    struct
+    {
+        PX_TypeInfo dataTypeInfo;
+        uint64 dmy;
+        UByte_StringEntry name;
+        switch (dataTypeInfo)
+        {
+            case 4098: PX_Transformable_Mesh xformableMesh; break;
+            case 4100: PX_Transformable_Sphere xformableSphere; break;
+            case 4144: PX_Space_Joint joint; break;
+            case 4353: PX_Space_DirectionalLight directionalLight; break;
+            case 4610: PX_PerspectiveCamera perspectiveCamera; break;
+            case 16385: PX_EffectElement_ParticleEmitter particleEmitter; break;
+            default: Printf("Warning: Index %i has an undefined type ID\n", i); break;
+        }
+        i++;
+    } type[60]<optimize=false>;*/
+    /*uint32 unk4;
+    PX_TypeInfo ti;*/
     //For an entry, after 6 bytes is a flag
 } PXModel;

@@ -160,17 +160,15 @@ typedef struct PX_AnimationChannel_FloatLerpQuaternionFloat
     } Entry[values]<optimize=false>;
 };
 
-typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?), big endian floats at the end?
+typedef struct PX_AnimationChannel_FloatLerpQuaternionFloatA //15 (single?), big endian floats at the end? 0x18 is OBV a float
 {
     float fps; //?
-    uint32 flags;
-    /*uint32 entries;
+    uint32 flags; //or an I16 count before flags
+    /*uint32 unk;
     Vector3_F32 trans;
     Vector3_F32 scale;
-    struct
-    {
-        Vector4_F32 q; //qfloat
-    } Entry[entries];*/
+    //Vector3_F32 max;
+    uint32 entries;*/
 };
 
 typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloat //Matching sizes but is it the right data
@@ -215,13 +213,14 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatA
         uint32 unk;
     }
     Vector3_F32 scale;
-    /*
+    
     uint32 unk2;
     struct
     {
+        float time;
         Vector3_F32 trans;
         Vector4_F32 quat;
-    } e[unk2];*/
+    } e[unk2];
     //We know at least a float is here
 };
 
@@ -231,10 +230,10 @@ typedef struct PX_AnimationChannel_FloatMatrix3x4 //52 bytes
     struct
     {
         float time;
-        Vector3_F32 mtx[4];
+        Matrix3x4_F32 mtx;
         if (DEBUG_PRINT)
         {
-            Printf(" Time: %f, Matrix: ([%f,%f,%f],[%f,%f,%f],[%f,%f,%f],[%f,%f,%f])\n", time, mtx[0].X, mtx[0].Y, mtx[0].Z, mtx[1].X, mtx[1].Y, mtx[1].Z, mtx[2].X, mtx[2].Y, mtx[2].Z, mtx[3].X, mtx[3].Y, mtx[3].Z);
+            Printf(" Time: %f, Matrix: ([%f,%f,%f],[%f,%f,%f],[%f,%f,%f],[%f,%f,%f])\n", time, mtx.X.X, mtx.X.Y, mtx.X.Z, mtx.Y.X, mtx.Y.Y, mtx.Y.Z, mtx.Z.X, mtx.Z.Y, mtx.Z.Z, mtx.W.X, mtx.W.Y, mtx.W.Z);
         }
     } Entry[values]<optimize=false>;
 };
@@ -375,13 +374,78 @@ typedef struct PX_AnimationChannel_FloatLerpTranslationFloatLerpQuaternionFloatL
     } Entry[test];*/
 };
 
+typedef struct PX_TransformableConstraint
+{
+    uint32 unk[3];
+};
+
+typedef struct PX_Transformable
+{
+    PX_TransformableConstraint tc;
+    Matrix3x4_F32 mtx; //?
+};
+
+typedef struct PX_Transformable_Mesh
+{
+    PX_TransformableConstraint tc;
+    Matrix3x4_F32 mtx; //?
+    Vector3_F32 unk[2];
+    uint32 end;
+};
+
+typedef struct PX_PerspectiveFrustum
+{
+    Vector4_F32 angleTangent; //LRTB
+    Vector2_F32 plane; //Near Far
+    Vector2_F32 FOV; //Near Far
+    float aspectRatio;
+    Vector3_F32 eyeDistSterographic3D;
+};
+
+typedef struct PX_PerspectiveCamera
+{
+    PX_TransformableConstraint tc;
+    Matrix3x4_F32 mtx; //?
+    PX_PerspectiveFrustum pf;
+};
+
+typedef struct PX_Transformable_Sphere
+{
+    PX_TransformableConstraint tc;
+    Matrix4x3_F32 mtx; //?
+    Vector4_F32 unk[2];
+    uint32 end;
+};
+
+typedef struct PX_Space_DirectionalLight //148 bytes?
+{
+    byte unk[148];
+};
+
+typedef struct PX_Space_Joint
+{
+    PX_TransformableConstraint tc;
+    struct
+    {
+        uint32 joints;
+        uint32 jointParents;
+        uint32 interactiveJoints;
+    } Skeleton;
+};
+
+typedef struct PX_EffectElement_ParticleEmitter
+{
+    PX_TransformableConstraint tc;
+};
+
+
 typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy challenge, unintentionally idk, Key means multiple usually
 {
     PX_TypeInfo_Space = 4096, //Model
     //Transformable
-    PX_TypeInfo_Transformable, //Model
-    PX_TypeInfo_Transformable_Mesh, //Model BE?
-    PX_TypeInfo_Transformable_Sphere = 4100, //Model
+    PX_TypeInfo_Transformable, //Model, 84-92 bytes?
+    PX_TypeInfo_Transformable_Mesh, //Model BE? 88-112 (88, 96 bytes?)
+    PX_TypeInfo_Transformable_Sphere = 4100, //Model, 96-100 bytes?
     PX_TypeInfo_Transformable_MaterialLibrary, //Model
     PX_TypeInfo_Transformable_CorneredUnitCube, //Model
     PX_TypeInfo_Transformable_MaxBox, //Model
@@ -390,10 +454,12 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     PX_TypeInfo_Transformable_LineStrips3 = 4128, //Model
     PX_TypeInfo_Transformable_Spline3, //Model
     //Space
-    PX_TypeInfo_Space_Joint = 4144, //Model
+    PX_TypeInfo_Space_Joint = 4144, //Model, 24-40 bytes?
     PX_TypeInfo_Space_Light = 4352, //Model
-    PX_TypeInfo_Space_DirectionalLight, //Model
+    PX_TypeInfo_Space_DirectionalLight, //Model, 148-156 bytes?
     PX_TypeInfo_Space_AmbientLight, //Model
+    PX_TypeInfo_Space_OmniLight, //Model, shoutouts to Content/Tables/ZEN_Noir/Layout/Noirs2_Noir, 172-204 bytes?
+    PX_TypeInfo_Space_SpotLight, //Model, shoutouts to Content/Tables/ZEN_Noir/Layout/Noirs2_Noir, 220 bytes?
     //Camera
     PX_TypeInfo_Camera = 4608, //Model
     PX_TypeInfo_OrthographicCamera, //Model
@@ -454,7 +520,7 @@ typedef enum <uint32> //Shoutouts to Zen for making this a confusing and messy c
     PX_TypeInfo_MeshSurfaceModifier_Skin,
     //Force Field
     PX_TypeInfo_ForceField = 40960,
-    PX_TypeInfo_ForceField_Constant,
+    PX_TypeInfo_ForceField_Constant, //Model? 96 bytes
     PX_TypeInfo_ForceField_PointQuadraticDecay,
     PX_TypeInfo_ForceField_PointExponentialDecay,
     //Model Component
