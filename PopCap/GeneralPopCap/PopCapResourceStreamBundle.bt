@@ -76,22 +76,16 @@ typedef enum <uint32> {
 typedef struct SubGroupInfo //Accurate?
 {
     char thePoolName[128];
-    struct InfoEntries
+    struct InfoEntry
     {
-        for (i2 = 0; i2 < 64; i2++)
+        uint32 idx<bgcolor = cPurple>;
+        uint32 ratio<bgcolor = cDkBlue>;
+        if (rsb1Hdr.RSBHeader.verMajor > 1)
         {
-            struct InfoEntry
-            {
-                uint32 idx<bgcolor = cPurple>;
-                uint32 ratio<bgcolor = cDkBlue>;
-                if (rsb1Hdr.RSBHeader.verMajor > 1)
-                {
-                    PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
-                    uint32 unk <bgcolor = cRed>;
-                }
-            } info_entry;
+            PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
+            uint32 unk <bgcolor = cRed>;
         }
-    } info_entries;
+    } info_entry[64]<optimize=false>;
     uint32 subgroups;
 };
 
@@ -164,16 +158,13 @@ typedef struct ResListXMLPtxInfo
         uint32 unkxml3;
         /*if (unkxml3 == 0)
         {
-            for (i = 0; i < languageCount - 1; i++)
-            {
                 struct XMLLang
                 {
                     byte langStr[4];
                     uint32 pt3IDOff;
                     uint32 resN;
                     uint32 unk[3];
-                } xl;
-            }
+                } xl[languageCount - 1;
         }
         else
         {
@@ -407,35 +398,11 @@ struct ResourceStreamBundle
     //uint32 
     byte StringTable[rsb1Hdr.fileIdxSize]<bgcolor = cLtBlue>;
     byte SubGroupList[rsb1Hdr.resGroupNameToIDSize]<bgcolor = cYellow>;
-    struct SubGroupInfoTable
-    {
-        for (i = 0; i < rsb1Hdr.resGroupInfoTableEntryCnt; i++)
-        {
-            SubGroupInfo SubGroupInfoBlock<bgcolor = cGreen>;
-        }
-    } subg;
+    SubGroupInfo SubGroupInfoBlock[rsb1Hdr.resGroupInfoTableEntryCnt]<optimize=false, bgcolor = cGreen>;
     byte ResGroupList[rsb1Hdr.resGroupListSize]<bgcolor = cBlack>;
-    struct ResGroupInfoTable
-    {
-        for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
-        {
-            ResGroupInfo ResGroupInfoBlock<bgcolor = cPurple>;
-        }
-    } resginfotbl;
-    struct AutoPoolTable
-    {
-        for (i = 0; i < rsb1Hdr.AutoPoolTableResGroupEntryCnt; i++)
-        {
-            AutoPool AutoPoolBlock<bgcolor = cRed>;
-        }
-    } autoPoolTbl;
-    struct PTXInfoTable
-    {
-        for (i = 0; i < rsb1Hdr.ptxInfoTableEntryCnt; i++)
-        {
-            PTXInfo PTXInfoBlock<bgcolor = cLtRed>;
-        }
-    } ptxInfoTbl;
+    ResGroupInfo ResGroupInfoBlock[rsb1Hdr.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
+    AutoPool AutoPoolBlock[rsb1Hdr.AutoPoolTableResGroupEntryCnt]<bgcolor = cRed>;
+    PTXInfo PTXInfoBlock[rsb1Hdr.ptxInfoTableEntryCnt]<optimize=false, bgcolor = cLtRed>;
     if (rsb1Hdr.xmlPart1Off != 0)
     {
         FSeek(rsb1Hdr.xmlPart1Off);
@@ -446,13 +413,7 @@ struct ResourceStreamBundle
     FPos = FTell();
     if (FPos < EOF)
     {
-        struct ResourceStreamGroupTable
-        {
-            for (i = 0; i < rsb1Hdr.resGroupFileCnt; i++)
-            {
-                ResourceStreamGroup ResourceStreamGroupFile<bgcolor = cPurple>;
-            }
-        } rsgps;
+        ResourceStreamGroup ResourceStreamGroupFile[rsb1Hdr.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
     }
     else
     {
