@@ -18,11 +18,11 @@ https://github.com/Nineteendo/PVZ2tools/blob/master/OBBEdit/README.md
 http://www.watto.org/specs.html?specs=Archive_RSB_1BSR
 https://github.com/YingFengTingYu/PopStudio
 Bejeweled 3 (Japanese) PDBs
+Unstripped Plants vs Zombies on Android
 */
 
 //Tested on various.
 #include "../../LHR/Common.bt"
-#include "GeneralPopCapIncludes.bt"
 
 local int ver4Rsb <hidden=true> = 0;
 //local int i <hidden=true> = 0;
@@ -30,6 +30,48 @@ local int ver4Rsb <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
+
+typedef enum <uint32> {
+    German = 1145390149, //DEDE
+	English = 1162761555, //ENUS
+    Spanish = 1163085139, //ESES
+    French = 1179797074, //FRFR
+    Italian = 1230260564, //ITIT
+    Portuguese = 1347699282, //PTBR
+    Japanese = 1245792848 //JAJP
+} PopCap_ResStream_Lang;
+
+typedef struct ResourceStreamHeader
+{
+    char  hdr[4];
+    if (hdr == "rsb1")
+    {
+        BigEndian();
+        Printf("PS3/X360 Resource Stream Bundle\n");
+    }
+    if (hdr == "1bsr")
+    {
+        LittleEndian();
+        Printf("Android/iOS/PS4 Resource Stream Bundle\n");
+    }
+    uint32 verMajor; //Should be same as hdr, 4 = PVZ2, BookWorm Heroes, 3 = Console Ports/Bejeweled Classic/Peggle 2, PVZ (v1.9.5+), 2 = ? (Please contact me if you found a V2 RSB) 1.1 = Bejeweled Classic (v1.0.0), A.S.P for iOS
+    uint32 verMinor; 
+};
+
+typedef enum <uint32>
+{
+    AlphaFmt_ETC1_RGB_A = 100
+} PopCap_PopTexture_AlphaFormat;
+
+typedef enum <uint32> {
+	ARGB8888,
+    RGBA4444,
+    RGB565,
+    RGBA5551,
+    DXT5 = 5, //PS4/Xbox 360
+    ETC1_RGB_A8 = 147,
+    RGBA4444_BLOCK = 21 //?
+} PopCap_PopTexture_ImageFormat;
 
 typedef struct SubGroupInfo //Accurate?
 {
@@ -42,7 +84,7 @@ typedef struct SubGroupInfo //Accurate?
             {
                 uint32 idx<bgcolor = cPurple>;
                 uint32 ratio<bgcolor = cDkBlue>;
-                if (rsb1Hdr.version > 1)
+                if (rsb1Hdr.RSBHeader.verMajor > 1)
                 {
                     PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
                     uint32 unk <bgcolor = cRed>;
@@ -72,7 +114,7 @@ typedef struct ResGroupInfo
     uint32 pt1ZSize;
     uint32 pt1Size;
     FSkip(20);
-    if (rsb1Hdr.version > 1)
+    if (rsb1Hdr.RSBHeader.verMajor > 1)
     {
         uint32 texCnt;
         uint32 idx;
@@ -105,11 +147,10 @@ typedef struct PTXInfo
     if (rsb1Hdr.ptxInfoTableItemSize == 20) //Helps with DEV1/2 RSBs from PVZ2C
     {
         uint32 alphaSize; //Is it alphaSize?
-    }
-    if (rsb1Hdr.ptxInfoTableItemSize == 24)
-    {
-        uint32 alphaSize;
-        PopCap_PopTexture_AlphaFormat alphaFormat;
+        if (rsb1Hdr.ptxInfoTableItemSize == 24)
+        {
+            PopCap_PopTexture_AlphaFormat alphaFormat;
+        }
     }
 };
 
@@ -165,9 +206,7 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
 {
     isCompressedPTXFile = 0;
     isPVZ2CompressedPTXFile = 0;
-    char  hdr[4];
-    uint32 rsgVerMajor; //Should be same as hdr
-    uint32 rsgVerMinor;
+    ResourceStreamHeader RSGHeader;
     uint32 tSize; //Dummy?
     uint32 dataCmnSize;
     uint32 dataResidentOff;
@@ -327,24 +366,12 @@ struct ResourceStreamBundle
 {
     struct ResStreamBundleHeader
     {
-        char header[4]<bgcolor = cBlue>;
-        if (header == "rsb1")
-        {
-            BigEndian();
-            Printf("PS3/X360 Resource Stream Bundle\n");
-        }
-        if (header == "1bsr")
-        {
-            LittleEndian();
-            Printf("Android/iOS/PS4 Resource Stream Bundle\n");
-        }
-        uint32 version<bgcolor = cYellow>; //4 = PVZ2, Zuma's Revenge (X360), BookWorm Heroes, 3 = Console Ports/BejClassic/Peggle2, 2: ? (Please contact me if you found a V2 RSB) 1: Bejeweled Classic v1.0.0, A.S.P for iOS
-        if (version == 4)
+        ResourceStreamHeader RSBHeader;
+        if (RSBHeader.verMajor == 4)
         {
             local int ver4Rsb<hidden=true>  = 1;
         }
-        uint32 verMinor;
-        Printf("Version %i.%i\n", version, verMinor);
+        Printf("Version %i.%i\n", RSBHeader.verMajor, RSBHeader.verMinor);
         uint32 cmnDataSize<bgcolor = cPurple>; //Dummy?
         uint32 fileIdxSize<bgcolor = cWhite>;
         uint32 fileIdxOffset<bgcolor = cWhite>; //70 or 108 for V3
