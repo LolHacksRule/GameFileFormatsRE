@@ -80,7 +80,7 @@ typedef struct SubGroupInfo //Accurate?
     {
         uint32 idx<bgcolor = cPurple>;
         uint32 ratio<bgcolor = cDkBlue>;
-        if (rsb1Hdr.RSBHeader.verMajor > 1)
+        if (Header.RSBHeader.verMajor > 1)
         {
             PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
             uint32 unk <bgcolor = cRed>;
@@ -91,7 +91,7 @@ typedef struct SubGroupInfo //Accurate?
 
 typedef struct ResGroupInfo
 {
-    //byte subGroupInfoData[rsb1Hdr.resGroupFileNameTableItemSize];
+    //byte subGroupInfoData[Header.resGroupFileNameTableItemSize];
     char thePoolName[128];
     //string thePoolName;
     //FSkip(128 - sizeof thePoolName); 
@@ -108,7 +108,7 @@ typedef struct ResGroupInfo
     uint32 pt1ZSize;
     uint32 pt1Size;
     FSkip(20);
-    if (rsb1Hdr.RSBHeader.verMajor > 1)
+    if (Header.RSBHeader.verMajor > 1)
     {
         uint32 texCnt;
         uint32 idx;
@@ -117,7 +117,7 @@ typedef struct ResGroupInfo
 
 typedef struct AutoPool
 {
-    //byte autoPoolData[rsb1Hdr.AutoPoolTableItemSize];
+    //byte autoPoolData[Header.AutoPoolTableItemSize];
     char thePoolName[128];
     //string thePoolName;
     //FSkip(128 - sizeof thePoolName); 
@@ -138,10 +138,10 @@ typedef struct PTXInfo
     uint32 height;
     uint32 pitch;
     PopCap_PopTexture_ImageFormat textureFormat;
-    if (rsb1Hdr.ptxInfoTableItemSize == 20) //Helps with DEV1/2 RSBs from PVZ2C
+    if (Header.ptxInfoTableItemSize == 20) //Helps with DEV1/2 RSBs from PVZ2C
     {
         uint32 alphaSize; //Is it alphaSize?
-        if (rsb1Hdr.ptxInfoTableItemSize == 24)
+        if (Header.ptxInfoTableItemSize == 24)
         {
             PopCap_PopTexture_AlphaFormat alphaFormat;
         }
@@ -171,7 +171,7 @@ typedef struct ResListXMLPtxInfo
             
         }*/
     } rl_xptxhdrpart1;
-    /*FSeek(rsb1Hdr.xmlPart2Off);
+    /*FSeek(Header.xmlPart2Off);
     struct Part2
     {
         uint16 xmlPTXtype;
@@ -186,7 +186,7 @@ typedef struct ResListXMLPtxInfo
         uint16 xmlPTXCols;
         uint32 offtoPt3;
     } rl_xptxhdrpart2;*/
-    FSeek(rsb1Hdr.xmlPart3Off+1); //For now
+    FSeek(Header.xmlPart3Off+1); //For now
     struct Part3
     {
         string theFile;
@@ -335,7 +335,7 @@ typedef struct ResourceStreamGroup //WIP! Seems to read all RSGs I have, getting
             uint32 texWidth;
             uint32 texHeight;
         }
-        FSeek(rsb1Hdr.firstResGroupDataOffst);
+        FSeek(Header.firstResGroupDataOffst);
         byte pad[dOff];
         if (compressed)
         {
@@ -390,30 +390,30 @@ struct ResourceStreamBundle
         {
             uint32 resourceStreamBundleLen; //?
         }
-    } rsb1Hdr;
+    } Header;
     //struct StringTable
     //{
         //wchar_t str[9];
     //} rsbStrings;
     //uint32 
-    byte StringTable[rsb1Hdr.fileIdxSize]<bgcolor = cLtBlue>;
-    byte SubGroupList[rsb1Hdr.resGroupNameToIDSize]<bgcolor = cYellow>;
-    SubGroupInfo SubGroupInfoBlock[rsb1Hdr.resGroupInfoTableEntryCnt]<optimize=false, bgcolor = cGreen>;
-    byte ResGroupList[rsb1Hdr.resGroupListSize]<bgcolor = cBlack>;
-    ResGroupInfo ResGroupInfoBlock[rsb1Hdr.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
-    AutoPool AutoPoolBlock[rsb1Hdr.AutoPoolTableResGroupEntryCnt]<bgcolor = cRed>;
-    PTXInfo PTXInfoBlock[rsb1Hdr.ptxInfoTableEntryCnt]<optimize=false, bgcolor = cLtRed>;
-    if (rsb1Hdr.xmlPart1Off != 0)
+    byte StringTable[Header.fileIdxSize]<bgcolor = cLtBlue>;
+    byte SubGroupList[Header.resGroupNameToIDSize]<bgcolor = cYellow>;
+    SubGroupInfo SubGroupInfoBlock[Header.resGroupInfoTableEntryCnt]<optimize=false, bgcolor = cGreen>;
+    byte ResGroupList[Header.resGroupListSize]<bgcolor = cBlack>;
+    ResGroupInfo ResGroupInfoBlock[Header.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
+    AutoPool AutoPoolBlock[Header.AutoPoolTableResGroupEntryCnt]<bgcolor = cRed>;
+    PTXInfo PTXInfoBlock[Header.ptxInfoTableEntryCnt]<optimize=false, bgcolor = cLtRed>;
+    if (Header.xmlPart1Off != 0)
     {
-        FSeek(rsb1Hdr.xmlPart1Off);
-        ResListXMLPtxInfo resListXML;
+        FSeek(Header.xmlPart1Off);
+        ResListXMLPtxInfo ResListXML; //Unsupported atm
     }
-    FSeek(rsb1Hdr.cmnDataSize); //Go to RSG files
+    FSeek(Header.cmnDataSize); //Go to RSG files
     //Hack to detect stupid assetless RSB from newer BejBlitz (why)
     FPos = FTell();
     if (FPos < EOF)
     {
-        ResourceStreamGroup ResourceStreamGroupFile[rsb1Hdr.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
+        ResourceStreamGroup ResourceStreamGroupFile[Header.resGroupFileCnt]<optimize=false, bgcolor = cPurple>;
     }
     else
     {
