@@ -420,6 +420,6 @@ struct
     }
     else
     {
-        Printf("Bejeweled Blitz RSB detected! Nothing to do...");
+        Printf("Bejeweled Blitz RSB detected! Nothing to do... Maybe add the RSG files from the app into the RSB in order then try again?");
     }
 } PopCapResourceStreamBundle;
