@@ -237,7 +237,7 @@ typedef struct NMS_ProjectAttributeLabelsBlockV1
 typedef struct NMS_ProjectAttributeListsBlockV2
 {
     NMS_CommonBlockHeader ALI2Header;
-    if (printLabels)
+    if (printTextStrings)
     {
         Printf("Attribute Lists:\n");
     }
@@ -255,7 +255,7 @@ typedef struct NMS_ProjectAttributeListsBlockV2
             }
         }
     } NMS_ProjectAttributeLists;
-    if (printLabels)
+    if (printTextStrings)
     {
         Printf("Attribute Lists End\n");
     }
@@ -377,7 +377,7 @@ typedef struct NMS_ProjectStylesBlockV3
 
 typedef struct NMS_ProjectStyleLabelsBlockV1
 {
-    if (printDebugLogs)
+    if (printLabels)
     {
         Printf("Styles:\n");
     }
