@@ -80,7 +80,7 @@ typedef struct SubGroupInfo //Accurate?
     {
         uint32 idx<bgcolor = cPurple>;
         uint32 ratio<bgcolor = cDkBlue>;
-        if (ResStreamsBundleHeader.ResStreamsHeader.verMajor > 1)
+        if (ResStreamsBundleHeader.BaseHeader.ResStreamsHeader.verMajor > 1)
         {
             PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
             uint32 unk <bgcolor = cRed>;
@@ -108,7 +108,7 @@ typedef struct ResGroupInfo
     uint32 pt1ZSize;
     uint32 pt1Size;
     FSkip(20);
-    if (ResStreamsBundleHeader.ResStreamsHeader.verMajor > 1)
+    if (ResStreamsBundleHeader.BaseHeader.ResStreamsHeader.verMajor > 1)
     {
         uint32 texCnt;
         uint32 idx;
@@ -357,14 +357,14 @@ struct
 {
     struct
     {
-        ResourceStreamHeader ResStreamsHeader;
-        if (ResStreamsHeader.verMajor == 4)
-        {
-            local int ver4Rsb<hidden=true>  = 1;
-        }
-        Printf("Version %i.%i\n", ResStreamsHeader.verMajor, ResStreamsHeader.verMinor);
         struct
         {
+            ResourceStreamHeader ResStreamsHeader;
+            if (ResStreamsHeader.verMajor == 4)
+            {
+                local int ver4Rsb<hidden=true>  = 1;
+            }
+            Printf("Version %i.%i\n", ResStreamsHeader.verMajor, ResStreamsHeader.verMinor);
             uint32 cmnDataSize<bgcolor = cPurple>; //Dummy?
             uint32 fileIdxSize<bgcolor = cWhite>;
             uint32 fileIdxOffset<bgcolor = cWhite>; //70 or 108 for V3

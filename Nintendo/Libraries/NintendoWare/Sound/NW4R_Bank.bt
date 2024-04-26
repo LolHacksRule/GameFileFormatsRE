@@ -87,7 +87,7 @@ struct NW4R_Bank
     struct BankStruct
     {
         BigEndian();
-        NW_CommonBinHdr BRBNKHdr;
+        NW_CommonBinHeader BRBNKHdr;
         //We'd go to the subchunk offs if v7+ but that's unnecessary
         DataTable DATAChunk;
         if (BRBNKHdr.ver > 1) 

@@ -126,13 +126,10 @@ typedef struct KeyFrameSequence
         I16_StringEntry name;
         float scale;
         Vector4_F32 bias;
-        if (name.theString == "V3_32")
+        switch (name.theString)
         {
-            Vector3_F32 v3_32[keys];
-        }
-        else if (name.theString == "V4_32")
-        {
-            Vector4_F32 v4_32[keys];
+            case "V3_32": Vector3_F32 v3_32[keys]; break;
+            case "V4_32": Vector4_F32 v4_32[keys]; break;
         }
     }
     else

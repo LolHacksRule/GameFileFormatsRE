@@ -1,0 +1,155 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+#include "../../GCADPCM.bt"
+
+//https://web.archive.org/web/20220922235351/https://avsys.xyz/wiki/BFSTM_(File_Format)
+
+typedef enum <byte>
+{
+    SoundEncoding_8BitPCM,
+    SoundEncoding_16BitPCM,
+    SoundEncoding_DSPADPCM,
+    SoundEncoding_IMAADPCM,
+} SoundEncoding;
+
+typedef struct InfoSection
+{
+    NW_SubChunk INFOChunk;
+    FPos = FTell();
+    NW2011_BlockDefinitionWithoutSize streamInfo;
+    NW2011_BlockDefinitionWithoutSize trackInfo;
+    NW2011_BlockDefinitionWithoutSize channelInfo;
+    struct
+    {
+        SoundEncoding encoding;
+        Byte_Bool loop;
+        ubyte channels;
+        ubyte regions;
+        uint32 sampleRate;
+        uint32 loopStart;
+        uint32 loopEnd;
+        uint32 blocks;
+        uint32 blockOneSz;
+        uint32 blockOneSampleSz;
+        uint32 lastBlockSz;
+        uint32 lastBlockSampleSz;
+        uint32 lastBlockSampleSzWPad;
+        uint32 seekInfoSize;
+        uint32 seekSampleInterval;
+        if (BlockHeader.signature == "CSTM")
+        {
+            NW2011_BlockDefinitionWithoutSize sampleDataRef;
+        }
+        else
+        {
+            NW2011_BlockTypeID sampleDataFlag;
+            uint16 pad;
+            int32 sampleDataOff;
+            uint16 regionInfoSz;
+            uint16 pad2;
+            uint16 regionInfoFlag; //0
+            uint16 pad3;
+            int32 regionInfoOff;
+            if (BlockHeader.version.major >= 4)
+            {
+                uint32 origLoopStart;
+                uint32 origLoopEnd;
+            }
+            if (BlockHeader.version.major >= 5)
+            {
+                uint32 crc;
+            }
+        }
+    } StreamInfo;
+    if (trackInfo.typeID != 0) //I need a sample
+    {
+        uint32 entries;
+        if (entries)
+        {
+            NW2011_BlockDefinitionWithoutSize ref[entries];
+            //NW2011
+            struct
+            {
+                byte vol;
+                byte pan;
+                byte span;
+                byte flags;
+                uint16 globalChannelIndexTableFlag;
+                uint16 pad;
+                int32 globalChannelIndexTableOff;
+            } TrackInfo[entries];
+            struct
+            {
+                uint32 indexes;
+                byte index[indexes];
+            } GlobalChannelIndexTable[entries];
+        }
+    }
+    struct
+    {
+        uint32 entries;
+        if (entries)
+        {
+            NW2011_BlockDefinitionWithoutSize ref[entries];
+            struct
+            {
+                NW2011_BlockTypeID channelInfoBlockDef;
+                uint16 pad;
+                int32 ADPCMInfoOff;
+            } ChannelInfoEntry[entries];
+            struct
+            {
+                uint16 coef[16];
+                uint16 predScale;
+                uint16 yn[2];
+                uint16 loopPredScale;
+                uint16 loopYn[2];
+                uint16 pad;
+            } DSPADPCMChannelInfo[entries];
+        }
+    } ChannelInfo;
+};
+
+typedef struct SeekSection
+{
+    NW_SubChunk SEEKChunk;
+    struct
+    {
+        int16 sample[2];
+    } HistoryInfo[INFO.StreamInfo.blocks * INFO.StreamInfo.channels];
+};
+
+typedef struct RegionSection
+{
+    NW_SubChunk SEEKChunk;
+    struct
+    {
+        int16 sample[2];
+    } HistoryInfo[INFO.StreamInfo.blocks * INFO.StreamInfo.channels];
+};
+
+typedef struct DataSection
+{
+    NW_SubChunk DataChunk;
+    byte data[DataChunk.blockSize-8];
+};
+
+struct
+{
+    NW_CommonBinHeader BlockHeader;
+    InfoSection INFO;
+    SeekSection SEEK;
+    DataSection DATA;
+} NW4F_Stream_BFSTM;

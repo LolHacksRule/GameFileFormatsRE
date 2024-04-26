@@ -1,0 +1,228 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+/*
+https://problemkaputt.de/gbatek-ds-sound-files-sdat-sound-data-archive.htm
+https://openkh.dev/khds/common/file/type/sdat.html
+http://www.feshrine.net/hacking/doc/nds-sdat.html
+https://gota7.github.io/NitroStudio2/specs/soundData.html
+*/
+
+//WIP!
+
+typedef struct NitroSoundData_OffsetReferenceTable
+{
+    uint32 entries;
+    uint32 entry[entries];
+};
+
+typedef struct NitroSoundData_SequenceArchiveInfoSymbolEntry
+{
+    uint32 entries;
+    struct
+    {
+        
+    } Entry[entries];
+};
+
+typedef enum <byte>
+{
+    NitroSoundData_GroupEntryType_Sequence,  
+    NitroSoundData_GroupEntryType_Bank,  
+    NitroSoundData_GroupEntryType_WaveArchive,  
+    NitroSoundData_GroupEntryType_SequenceArchive,  
+} NitroSoundData_GroupEntryType;
+
+typedef struct NitroSoundData_SymbolTable
+{
+    FPos = FTell();
+    NW_SubChunk SYMBChunk;
+    uint32 seqInfoRef;
+    uint32 seqArcInfoRef;
+    uint32 bankInfoRef;
+    uint32 waveArcInfoRef;
+    uint32 playerInfoRef;
+    uint32 groupInfoRef;
+    uint32 streamPlayerInfoRef;
+    uint32 streamInfoRef;
+    uint32 pad[6];
+    FSeek(FPos+seqInfoRef);
+    NitroSoundData_OffsetReferenceTable SequenceInfoSymbol;
+    //NitroSoundData_SequenceArchiveInfoSymbolEntry SequenceArchiveInfoSymbol;
+    FSeek(FPos+bankInfoRef);
+    NitroSoundData_OffsetReferenceTable BankInfoSymbol;
+    NitroSoundData_OffsetReferenceTable WaveArchiveInfoSymbol;
+    NitroSoundData_OffsetReferenceTable PlayerInfoSymbol;
+    NitroSoundData_OffsetReferenceTable GroupInfoSymbol;
+    NitroSoundData_OffsetReferenceTable StreamPlayerInfoSymbol;
+    NitroSoundData_OffsetReferenceTable StreamInfoSymbol;
+};
+
+typedef struct NitroSoundData_InfoTable
+{
+    FPos = FTell();
+    NW_SubChunk INFOChunk;
+    uint32 seqInfoRef;
+    uint32 seqArcInfoRef;
+    uint32 bankInfoRef;
+    uint32 waveArcInfoRef;
+    uint32 playerInfoRef;
+    uint32 groupInfoRef;
+    uint32 streamPlayerInfoRef;
+    uint32 streamInfoRef;
+    uint32 pad[6];
+    if (seqInfoRef != 0)
+    {
+        FSeek(FPos+seqInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            if (offsetRefTbl.entries)
+            {
+                struct
+                {
+                    uint32 fileID;
+                    uint16 bankID;
+                    ubyte volume;
+                    ubyte channelPriority;
+                    ubyte playerPriority;
+                    ubyte playerID;
+                    uint16 pad;
+                } SequenceInfoEntry[offsetRefTbl.entries-1]; //init
+            }
+        } SequenceInfo;
+    }
+    if (seqArcInfoRef != 0)
+    {
+        FSeek(FPos+seqArcInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            uint32 fileID[offsetRefTbl.entries];
+        } SequenceArchiveInfo;
+    }
+    if (bankInfoRef != 0)
+    {
+        FSeek(FPos+bankInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            struct
+            {
+                uint32 fileID;
+                int16 waveArc[4];
+            } BankInfoEntry[offsetRefTbl.entries];
+        } BankInfo;
+    }
+    if (waveArcInfoRef != 0)
+    {
+        FSeek(FPos+waveArcInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            struct
+            {
+                uint32 fileID;
+            } WaveArchiveInfo[offsetRefTbl.entries];
+        } WaveArchiveInfo;
+    }
+    if (playerInfoRef != 0)
+    {
+        FSeek(FPos+playerInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            struct
+            {
+                uint16 sequences;
+                uint16 channelAllocFlags;
+                uint32 reservedHeapSz;
+            } PlayerInfoEntry[offsetRefTbl.entries];
+        } PlayerInfo;
+    }
+    /*if (groupInfoRef != 0)
+    {
+        FSeek(FPos+groupInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+        } GroupInfo;
+    }*/ //Unsupported atm
+    if (streamPlayerInfoRef != 0)
+    {
+        FSeek(FPos+streamPlayerInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            struct
+            {
+                ubyte channels;
+                ubyte left;
+                ubyte right;
+                ubyte pad[21];
+            } StreamPlayerInfoEntry[offsetRefTbl.entries];
+        } StreamPlayerInfo;
+    }
+    /*if (streamInfoRef != 0)
+    {
+        FSeek(FPos+streamInfoRef);
+        struct
+        {
+            NitroSoundData_OffsetReferenceTable offsetRefTbl;
+            struct
+            {
+                //Why
+                uint32 fileID; //Note ID and bool
+                ubyte vol;
+                ubyte priority;
+                ubyte streamPlayerID;
+                ubyte pad[5];
+            } StreamInfoEntry[offsetRefTbl.entries];
+        } StreamInfo;
+    }*/ //Unsupported atm
+};
+
+typedef struct NitroSoundData_FileAllocTable
+{
+    NW_SubChunk FATChunk;
+    uint32 entries;
+    struct
+    {
+        uint32 absOff;
+        uint32 size;
+        uint32 pad[2];
+    } Entry[entries];
+};
+
+typedef struct NitroSoundData_FileData
+{
+    NW_SubChunk FILEChunk;
+    uint32 files;
+    byte pad[0x0c];
+};
+
+struct
+{
+    NW_CommonBinHeader SDATHeader;
+    if (SDATHeader.blocks == 4)
+    {
+        NitroSoundData_SymbolTable SYMB;
+        FSeek(SDATHeader.block[1].off);
+    }
+    NitroSoundData_InfoTable INFO;
+    FSeek(SDATHeader.block[2].off);
+    NitroSoundData_FileAllocTable FAT;
+    NitroSoundData_FileData FILE;
+} NitroSoundData_SDAT;

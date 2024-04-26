@@ -1,0 +1,188 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Sources:
+//https://mk8.tockdom.com/wiki/MSBT_(File_Format)
+//https://problemkaputt.de/gbatek-3ds-files-messages-msgstdbn.htm
+//https://github.com/PrimeDecomp/PrimeRemasterStructs/blob/main/MessageTable.bt
+//https://zeldamods.org/wiki/Msbt
+//https://kuribo64.net/wiki/?page=MSBT
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/LMS-File-Format
+//H4nACpvyBz4 on some site
+//https://github.com/SunakazeKun/galaxymsbt
+//https://www.smwcentral.net/?p=viewthread&t=76115
+//https://medium.com/@zrzrv5/i-built-a-tears-of-the-kingdom-interactive-map-in-just-one-weekend-with-help-of-generative-ai-9891b309e109
+//https://mgba-emu.github.io/gbatek/#3dsfilesmessagesmsgstdbn
+//https://pikmintkb.com/wiki/MSBT_file_(Pikmin_3)
+//https://github.com/lojewalo/msyt (GitLab is removed)
+//https://github.com/NiceneNerd/msyt
+//https://hack64.net/wiki/doku.php?id=super_mario_galaxy_2:list_of_tools
+//iatTKUw00Vo
+//https://usermanual.wiki/Document/msyttoolsguidev4.2131714140
+//https://github.com/SunakazeKun/Whitehole-for-SMG1
+//https://github.com/Arisotura/Whitehole
+//https://github.com/NWPlayer123/Whitehole
+//https://github.com/Arisotura/WhiteholeCS
+//https://github.com/shibbo/Whitehole
+//https://github.com/ObsidianX/3dstools
+//https://acmods.org/wiki/New_Horizons:MSBT_functions
+//https://github.com/Treeki/CylindricalEarth
+//https://gist.githubusercontent.com/Xzonn/f779dcb213fa8c366779f8b22c94f0c4/raw/05f12462e6f414fad9073999da97303b4fd44f6b/wmbt.py
+//https://github.com/MrCheeze/totk-tools
+//https://github.com/IcySon55/3DLandMSBTeditor
+//https://github.com/SunakazeKun/galaxymsbt
+//https://github.com/ZyphronG/Tomato //Control code of SMRVL prob is related
+//https://github.com/epichickensoup/honoruty //Control code of SMRVL prob is related
+//https://www.romhacking.net/utilities/1132/
+//https://github.com/OatmealDome/MSBTEditor
+//http://smg2-5.wikidot.com/msbt
+//https://github.com/PudCrewTristan/Super-Mario-Galaxy-Remastered
+//https://github.com/shibbo/Takochu/
+//https://github.com/RunningOutRate/Takochu
+//https://github.com/MichaelHinrichs/Takochu
+//https://github.com/Eigen-aiuHck/Takochu
+//https://github.com/SunakazeKun/pymsb
+//https://github.com/SunakazeKun/galaxymsbt
+//https://github.com/FanTranslatorsInternational/Kuriimu2/issues/277
+//https://github.com/FanTranslatorsInternational/Kuriimu2/issues/23
+//https://github.com/lojewalo/msbt-rs/pull/4
+//https://github.com/lojewalo/msbt-rs/issues/3
+//https://github.com/lojewalo/msbt-rs
+//https://gist.github.com/NWPlayer123/bfc341c465ae573d3cbd48a14656b590
+//https://gist.github.com/NWPlayer123/aeb4db821d23cb1282e113733dfefcae
+//https://github.com/rickfay/z17-randomizer
+//https://github.com/ssrando/ssrando
+//https://github.com/lepelog/sslib-rs
+//https://github.com/AbdyyEee/FLW3-Editor
+//https://github.com/Trippixyz/CLMS
+//https://github.com/kenshiisod/botw-gettext
+//https://github.com/matthew-e-brown/AC-Dataparse (also issues/1)
+//https://gitlab.com/AeonSake/nintendo-tools
+//https://gitlab.com/AeonSake/msbt-editor
+//https://github.com/SuperHackio/Hack.io
+//https://github.com/Trippixyz/LibMessageStudio-File-Formats
+//https://github.com/ArchLeaders/MfmToYaml
+
+#include "../../../../LHR/Common.bt" //Move to NMSBinary*?
+#include "TagEnums.bt"
+
+//init do not modify
+local uint totalTextLabels <hidden=true> = 0;
+local uint hasTextLabels <hidden=true> = 0;
+
+typedef enum <byte>
+{
+    NMS_TextEncoding_UTF8,
+    NMS_TextEncoding_UTF16,
+    NMS_TextEncoding_UTF32
+} NMS_TextEncoding;
+
+typedef enum <byte>
+{
+    NMS_TextAttributeType_UByte,
+    NMS_TextAttributeType_UShort,
+    NMS_TextAttributeType_UInt32,
+    NMS_TextAttributeType_SByte,
+    NMS_TextAttributeType_Int32,
+    NMS_TextAttributeType_Int16,
+    NMS_TextAttributeType_Float,
+    NMS_TextAttributeType_Float64,
+    NMS_TextAttributeType_String,
+    NMS_TextAttributeType_List,
+} NMS_TextAttributeType;
+
+typedef struct NMS_Style
+{
+    int32 rgnWidth;
+    int32 lines;
+    int32 fontIdx;
+    int32 colrIdx;
+};
+
+typedef struct
+{
+    uint16 paramSz;
+    if (paramSz)
+    {
+        /*if (paramSz == 1)
+        {
+            uint16 unk;
+        }
+        else*/
+        {
+            switch (BlockHeader.encoding)
+            {
+                case NMS_TextEncoding_UTF8: string text[paramSz]; break;
+                case NMS_TextEncoding_UTF16: wchar_t text[paramSz/2]; break;
+                case NMS_TextEncoding_UTF32: wchar_t text[paramSz]; wchar_t dummy<hidden=true, bgcolor=cRed>; break; //Haven't seen text uses this
+            }
+        }
+    }
+} NMS_SizedTextString;
+
+typedef struct NMS_CommonBinHeader
+{
+    char                theBinType[8];
+    U16_EndianEnum      byteOrderMark; //If you error here don't run the script this way
+    if (byteOrderMark == U16_Big)
+    {
+        BigEndian();
+    }
+    uint16              dmy;
+    NMS_TextEncoding    encoding;
+    byte                version; //v4 is used in NS message projects, idk why Thunder doesn't use a message project
+    uint16              blocks;
+    uint16              unusedFlags;
+    int32               fileSize;
+    uint16              pad;
+    uint32              pad2; //ML4 uses this
+    uint32              pad3; //ML4 uses this
+};
+
+typedef struct NMS_CommonBlockHeader
+{
+    char blockType[4];
+    uint32 size;
+    uint64 pad;
+};
+
+typedef struct NMS_HashTableSlot
+{
+    uint32 labelNum;
+    if (labelNum != 0 /*&& BlockHeader.version == 3*/)
+    {
+        totalTextLabels = totalTextLabels + labelNum;
+    }
+    uint32 labelOff;
+};
+
+typedef struct NMS_Label
+{
+    UByte_StringEntry label;
+    uint32 labelIdx;
+    if (printLabels)
+    {
+        Printf("\t%i: %s\n", labelIdx, label.theString);
+    }
+};
+
+typedef struct NMS_CommonHashTable
+{
+    uint32 hashIndexes;
+    NMS_HashTableSlot HashIndex[hashIndexes]<optimize=false>;
+    if (hasTextLabels && ReadUByte() != 0xAB) //May break non NLI1, temp fix
+    {
+        NMS_Label TextLabel[totalTextLabels]<optimize=false>;
+    }
+    totalTextLabels = 0; //init so others don't break
+};

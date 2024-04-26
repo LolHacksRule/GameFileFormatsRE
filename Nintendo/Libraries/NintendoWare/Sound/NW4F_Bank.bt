@@ -15,7 +15,7 @@
 
 struct NW4F_Bank
 {
-    NW_CommonBinHdr FBNKHdr;
+    NW_CommonBinHeader FBNKHdr;
     struct Info
     {
         NW_SubChunk INFOChunk;

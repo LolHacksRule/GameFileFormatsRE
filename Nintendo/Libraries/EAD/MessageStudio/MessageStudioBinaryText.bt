@@ -1,0 +1,244 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "MessageStudioCommon.bt"
+
+//INIT DO NOT CHANGE
+local uint hasOnlyTextBlock <hidden=true> = 0; //Hack: Fix files with no LBL1 or NLI1 block
+local uint useNodeLabelInfoInsteadOfTextLabels <hidden=true> = 0; //Hack: Fix NLI1 block
+
+//SETTINGS:
+local uint printLabels <hidden=true> = 0; //Print text labels
+local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
+local uint printControlTagInfo <hidden=true> = 0; //Print information about control tags
+local uint printDebugLogs <hidden=true> = 0;
+
+//Perfectly reads: Turbo (Wii U), MP10, Sports+1
+//Todo: Text Attributes, Text Strings (better code, esp for UTF8+)
+
+typedef enum <uint16>
+{
+    NMS_SystemCommon_Ruby,
+    NMS_SystemCommon_Font,
+    NMS_SystemCommon_Size,
+    NMS_SystemCommon_TextColor,
+    NMS_SystemCommon_PageBreak,
+} NMS_SystemCommon_TagGroupType;
+
+typedef enum <uint16>
+{
+    NMS_ControlTag_Start = 0x0E,
+    NMS_ControlTag_Terminate,
+} NMS_ControlTagType;
+
+typedef struct NMS_TextAttribute
+{
+    byte attribute[attributeSize];
+};
+
+typedef struct NMS_TextAttributesBlockV1
+{
+    NMS_CommonBlockHeader ATR1Header;
+    byte TextAttributes[ATR1Header.size]; 
+};
+
+typedef struct NMS_TextStylesBlockV1
+{
+    NMS_CommonBlockHeader TSY1Header;
+    struct
+    {
+        if (TSY1Header.size > 12)
+        {
+            NMS_Style Style[TSY1Header.size / 16];
+            if (sizeof Style < TSY1Header.size) //Dies here sometimes
+            {
+                uint32 unk[3]; //ML4 and ML5 do a stupid
+            }
+        }
+        else
+        {
+            uint32 unk[TSY1Header.size/4]; //fix kinda
+        }
+    } TextStyles;
+};
+
+typedef struct NMS_TextNodeLabelInfoBlockV1 //Shortest lived block only in MK7, MK8 and NDogs CTR
+{
+    NMS_CommonBlockHeader NLI1Header;
+    NMS_CommonHashTable NodeLabelInfoHashTable;
+};
+
+typedef struct NMS_TextLabelsBlockV1
+{
+    NMS_CommonBlockHeader LBL1Header;
+    if (printLabels == 1) //Tempoarily disable
+    {
+        printLabels = 0;
+        NMS_CommonHashTable   TextLabelsHashTable;
+        printLabels = 1;
+    }
+    else
+    {
+        NMS_CommonHashTable   TextLabelsHashTable;
+    }
+};
+
+typedef struct NMS_ControlTag
+{
+    NMS_ControlTagType identifier;
+    uint16 unknownTag; uint16 unknownGroup; uint16 paramSz; if (paramSz) { byte param[paramSz]; }; //Control tags are not yet supported
+};
+
+typedef struct NMS_ControlTagEnd
+{
+    NMS_ControlTagType identifier;
+    uint16 tagGroup;
+    uint16 tagType;
+};
+
+typedef struct NMS_MessageTextEntry //Pain
+{
+    if (printLabels) //Output labels in CSV form
+    {
+        if (hasTextLabels) //From hash table
+        {
+            local string currentLabelName = TextLabelsBlockV1.TextLabelsHashTable.TextLabel[i2].label.theString; //Will output garbage but you should be able to make it out
+            Printf("%i: %s\t", TextLabelsBlockV1.TextLabelsHashTable.TextLabel[i2].labelIdx, TextLabelsBlockV1.TextLabelsHashTable.TextLabel[i2].label.theString);
+        }
+        else //From i2
+        {
+            local uint32 TextLabel = i2;
+            Printf("%i\t", i2);
+        }
+    }
+    while ((BlockHeader.encoding == NMS_TextEncoding_UTF8 && ReadByte() != 0 || ReadShort() == NMS_ControlTag_Start || ReadShort() == NMS_ControlTag_Terminate) || (BlockHeader.encoding > 0 && ReadShort() != 0) && (FTell() != EOF)) //Read int fixes some stuff idk
+    {
+        if (ReadShort() == NMS_ControlTag_Start) //Read control code
+        {
+            NMS_ControlTag MsgTextCtrlTag<bgcolor=cRed, optimize=false>;
+        }
+        else if (ReadShort() == NMS_ControlTag_Terminate) //Read control termination
+        {
+            NMS_ControlTagEnd MsgTextCtrlTagEnd<bgcolor=cDkRed, optimize=false>;
+        }
+        else
+        {
+            switch (BlockHeader.encoding)
+            {
+                case NMS_TextEncoding_UTF8: char text<bgcolor=cGreen>; break; //Identical across BE and LE, simple
+                case NMS_TextEncoding_UTF16: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen, hidden=true>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //A little finicky
+                case NMS_TextEncoding_UTF32: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen, hidden=false>; uint16 dmy<bgcolor=cDkGreen, hidden=true>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //Finicky
+            }
+            if (printTextStrings)
+            {
+                Printf("%s", WStringToString(text, CHARSET_UTF8));
+            }
+            if (printTextStrings || printControlTagInfo)
+            {
+                Printf("\n");
+            }
+        }
+    }
+    switch (BlockHeader.encoding)
+    {
+        case NMS_TextEncoding_UTF8: byte endString<hidden=true, bgcolor=cRed>; break;
+        case NMS_TextEncoding_UTF16: uint16 endString<hidden=true, bgcolor=cRed>; break;
+        case NMS_TextEncoding_UTF32: uint32 endString<hidden=true, bgcolor=cRed>; break;
+    }
+};
+
+typedef struct NMS_TextBlockV2
+{
+    NMS_CommonBlockHeader TXT2Header;
+    //byte data[TXT2Header.size];
+    struct
+    {
+        FPos = FTell();
+        uint32 messages;
+        if (messages)
+        {
+            //Printf("Label ID\tMessage\n");
+            uint32 messageOff[messages];
+            if (printTextStrings)
+            {
+                Printf("Text Strings:\n");
+            }
+            for (i2 = 0; i2 < messages; i2++)
+            {
+                if (hasTextLabels)
+                {
+                    FSeek(FPos+messageOff[TextLabelsBlockV1.TextLabelsHashTable.TextLabel[i2].labelIdx]);
+                }
+                else if (useNodeLabelInfoInsteadOfTextLabels) //Skip jump using NLI1
+                {
+                    FSeek(FPos+messageOff[TextNodeLabelInfoBlockV1.NodeLabelInfoHashTable.HashIndex[i2].labelOff]);
+                }
+                else
+                {
+                    FSeek(FPos+messageOff[i2]);
+                }
+                if (BlockHeader.byteOrderMark == U16_Big)
+                {
+                    if (ReadShort() != 0x00) //Bad
+                    {
+                        NMS_MessageTextEntry MessageTextEntryBE<optimize=false>;
+                    }
+                }
+                else if (ReadByte() != 0x00)
+                {
+                    NMS_MessageTextEntry MessageTextEntry<optimize=false>;
+                }
+                else
+                {
+                    if (printDebugLogs)
+                    {
+                        Printf("WARNING: STRING ID %i has no text!\n", i2);
+                    }
+                }
+            }
+            FSeek(FPos+TXT2Header.size); //Skip so the padding checker works properly
+        }
+    } MessageTexts;
+    if (printTextStrings)
+    {
+        Printf("Text Strings End\n");
+    }
+};
+
+struct
+{
+    LittleEndian();
+    NMS_CommonBinHeader BlockHeader<bgcolor=cSilver>;
+    if (BlockHeader.theBinType != "MsgStdBn")
+    {
+        Printf("Not a Message Studio Binary Text (MSBT) file.");
+        break;
+    }
+    Printf("----------Control tag groups are not yet supported.-----------\n");
+    for (i = 0; i < BlockHeader.blocks; i++)
+    {
+        switch (ReadString(FTell(),4)) //We're reading out of order bcz NMS can export unordered data
+        {
+            case "LBL1": hasTextLabels = 1; NMS_TextLabelsBlockV1 TextLabelsBlockV1<optimize=false, bgcolor=cGreen>; break;
+            case "TXT2": if (i == 0) { hasOnlyTextBlock = 1; }
+            case "TXTW": NMS_TextBlockV2 TextBlockV2<optimize=false, bgcolor=cBlue>; break;
+            case "NLI1": useNodeLabelInfoInsteadOfTextLabels = 1; NMS_TextNodeLabelInfoBlockV1 TextNodeLabelInfoBlockV1<optimize=false, bgcolor=cBlue>; break; //MK7/NDogs CTR
+            case "TSY1": NMS_TextStylesBlockV1 TextStylesBlockV1<optimize=false, bgcolor=cLtBlue>; break; //Some text files (like Meet) have this first why idk
+            case "ATR1": NMS_TextAttributesBlockV1 TextAttributesBlockV1<optimize=false, bgcolor=cRed>; break;
+        }
+        while ((FTell() != EOF && FTell() != BlockHeader.fileSize) && ((ReadUByte() == 0xAB || ReadUByte() == 0x00) || i == BlockHeader.blocks - 1 ))
+        {
+            byte pad<bgcolor=cRed, hidden=true>;
+        }
+    }
+} NMS_BinaryText;

@@ -1,0 +1,355 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+//THIS IS PORTED FROM:
+//https://avsys.xyz/wiki/BYAML_(File_Format)
+//https://zeldamods.org/wiki/BYML
+//https://mk8.tockdom.com/wiki/BYAML_(File_Format)
+//https://github.com/kinnay/Nintendo-File-Formats/wiki/BYAML-File-Format
+
+//THIS IS JUST TO AID WITH RE, ONLY TESTED ON VERSION 1, 2, 3, 5 AND 7!
+
+local string stringTblIdxString <hidden=true> = "";
+local uint32 DEBUG_PRINT_YAML <hidden=true> = 0; //Write a skeleton of the BYAML, will be laggy on big ones
+typedef enum <uint16>
+{
+    BigEndian = 22850, //BY
+    LittleEndian = 16985, //YB
+} BYAML_BOM;
+
+typedef enum <byte>
+{
+    PlainHashContainer = 0x20,
+    ValueHashContainer,
+    ValueHashIndex = 0xA0,
+    SerializedDataContainerRef,
+    BinaryData,
+    FileBinaryData,
+    ArrayContainer = 0xC0,
+    StringHashContainer,
+    SpecialStringTableContainer,
+    SerializedDataContainer,
+    BooleanValue = 0xD0,
+    S32Value,
+    F32Value,
+    U32Value,
+    S64Value,
+    U64Value,
+    Double,
+    Null = 0xFF,
+} BYAML_NodeType;
+
+typedef struct Node
+{
+    BYAML_NodeType identifier;
+    if (FTell() != FSize - 3)
+    {
+        uint32 entries : 24;
+        FSkip(-1);
+        if (identifier == SpecialStringTableContainer)
+        {
+            uint32 entry[entries+1];
+            struct
+            {
+                string stringEntry;
+            } ContainerStringEntry[entries]<optimize=false>;
+        }
+        else if (identifier == SerializedDataContainer)
+        {
+            uint32 entry[entries+1];
+        }
+        else if (identifier == StringHashContainer)
+        {
+            if (entries)
+            {
+                struct
+                {
+                    uint32 nameIdx : 24;
+                    stringTblIdxString = HashKeyTable.ContainerStringEntry[nameIdx].stringEntry;
+                    local string tempStrToDisp = stringTblIdxString;
+                    if (DEBUG_PRINT_YAML)
+                    {
+                        Printf("%s:\n", tempStrToDisp);
+                    }
+                    FSkip(-1);
+                    BYAML_NodeType NodeType;
+                    if (NodeType == S32Value)
+                    {
+                        int32 i32<bgcolor=cDkGreen>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("%i\n", i32);
+                        }
+                    }
+                    else if (NodeType == SerializedDataContainerRef)
+                    {
+                        int32 refi32<bgcolor=cWhite>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("%i\n", refi32);
+                        }
+                    }
+                    else if (NodeType == BinaryData)
+                    {
+                        if (Header.version > 1)
+                        {
+                            uint32 bDataOff;
+                            if (DEBUG_PRINT_YAML)
+                            {
+                                Printf("%u\n", bDataOff);
+                            }
+                            local uint32 FPosForBinaryData <hidden=true> = FTell();
+                            FSeek(bDataOff);
+                        }
+                        uint32 bDataSz<bgcolor=cDkRed>;
+                        uint32 align;
+                        byte bData[bDataSz]<bgcolor=cRed>;
+                        if (Header.version > 1)
+                        {
+                            FSeek(FPosForBinaryData);
+                        }
+                    }
+                    else if (NodeType == U32Value)
+                    {
+                        uint32 u32<bgcolor=cGreen>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("%u\n", u32);
+                        }
+                    }
+                    else if (NodeType == BooleanValue)
+                    {
+                        I32_Bool i32bool<bgcolor=cBlue>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            if (i32bool == 0)
+                            {
+                                Printf("False\n");
+                            }
+                            if (i32bool == 1)
+                            {
+                                Printf("True\n");
+                            }
+                        }
+                    }
+                    else if (NodeType == F32Value)
+                    {
+                        float f32<bgcolor=cLtBlue>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("%f\n", f32);
+                        }
+                    }
+                    else if (NodeType == U64Value)
+                    {
+                        uint32 u64loc<bgcolor=cLtGreen>;
+                        local uint32 FPosForU64Value <hidden=true> = FTell();
+                        //FPosForU64Value = FTell();
+                        FSeek(u64loc);
+                        uint64 u64<bgcolor=cLtGreen>;
+                        FSeek(FPosForU64Value);
+                        //FSkip(u64loc-12);
+                    }
+                    //May break
+                    else if (NodeType == StringHashContainer || NodeType == ArrayContainer)
+                    {
+                        uint32 containerOff<bgcolor=cPurple>;
+                        local uint32 FPosForContainer <hidden=true> = FTell(); //Hack :shrug:
+                        //FPosForContainer = FTell();
+                        FSeek(containerOff);
+                        struct Node NestedNode<bgcolor=cRed>;
+                        FSeek(FPosForContainer);
+                    }
+                    else if (NodeType == ValueHashIndex)
+                    {
+                        uint32 valueHashIdx<bgcolor=cGreen>;
+                        stringTblIdxString = StringTable.ContainerStringEntry[valueHashIdx].stringEntry;
+                        local string tempStrToDisp2 = stringTblIdxString;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("%s\n", tempStrToDisp2);
+                        }
+                    }
+                    //May break idk
+                    else if (NodeType == FileBinaryData)
+                    {
+                        uint32 fOff;
+                        local uint32 FPosForFileBinaryData = FTell();
+                        FSeek(fOff);
+                        uint32 fSize<bgcolor=cGreen>;
+                        uint32 align<bgcolor=cRed>;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("Offset: %u, Size: %u, Align(?): %u,\n", fOff, fSize, align);
+                        }
+                        byte file[fSize]<bgcolor=cGreen>;
+                        FSeek(FPosForFileBinaryData);
+                        //FSeek(FPos);
+                    }
+                    else if (NodeType == Null)
+                    {
+                        uint32 null;
+                    }
+                    else
+                    {
+                        //Printf(EnumToString(identifier));
+                        Printf("UNKNOWN NODE DETECTED\n");
+                    }
+                } ContainerEntry[entries]<optimize=false>;
+            }
+        }
+        else if (identifier == ArrayContainer)
+        {
+            if (entries)
+            {
+                BYAML_NodeType arrayEntry[entries]<bgcolor=cRed>;
+            }
+            else
+            {
+                if (DEBUG_PRINT_YAML)
+                {
+                    Printf(" []\n");
+                }
+            }
+            local uint skipPad <hidden=true> = LHR_Align(entries, 4);
+            if (skipPad > 0)
+            {
+                byte pad[skipPad]<bgcolor=cRed>;
+            }
+            if (entries)
+            {
+                i = 0;
+                struct
+                {
+                    if (arrayEntry[i] == ValueHashIndex)
+                    {
+                        uint32 valueHashIdx<bgcolor=cGreen>;
+                        stringTblIdxString = StringTable.ContainerStringEntry[valueHashIdx].stringEntry;
+                        local string tempStrToDisp3 = stringTblIdxString;
+                        if (DEBUG_PRINT_YAML)
+                        {
+                            Printf("- %s\n", tempStrToDisp3);
+                        }
+                    }
+                    else if (arrayEntry[i] == BooleanValue)
+                    {
+                        I32_Bool i32bool<bgcolor=cBlue>;
+                    }
+                    else if (arrayEntry[i] == S32Value)
+                    {
+                        int32 s32<bgcolor=cLtGreen>;
+                    }
+                    else if (arrayEntry[i] == F32Value)
+                    {
+                        float f32<bgcolor=cLtBlue>;
+                    }
+                    //Bad
+                    else if (arrayEntry[i] == StringHashContainer || arrayEntry[i] == ArrayContainer)
+                    {
+                        uint32 containerOff<bgcolor=cPurple>;
+                        local uint32 FPosForArray <hidden=true> = FTell(); //Hack :shrug:
+                        FSeek(containerOff);
+                        struct Node ArrayNode<bgcolor=cPurple>;
+                        FSeek(FPosForArray);
+                    }
+                    i++;
+                } ArrayValue[entries]<optimize=false>;
+            }
+            i = 0;
+        }
+        else if (identifier == 0xc4) //?
+        {
+            byte arrayEntry[entries];
+            local uint skipPad <hidden=true> = LHR_Align(entries, 4);
+            if (skipPad > 0)
+            {
+                byte pad[skipPad]<bgcolor=cRed>;
+            }
+            struct Node ArrayNode;
+            uint32 test[entries];
+        }
+    }
+    else
+    {
+        byte dmy[3];
+        //if (entries == 0 && dmy == 0)
+        {
+            //Printf("BYAML is empty!\n");
+        }
+    }
+};
+
+struct
+{
+    LittleEndian();
+    struct
+    {
+        BYAML_BOM magic;
+        if (magic == BigEndian)
+        {
+            BigEndian();
+        }
+        uint16 version; //1: MK8?, 2: ActionLibrary, 3/4: LunchPack, 7: ModuleSystem
+        uint32 hashKeyTblOff;
+        uint32 strTblOff;
+        if (version == 1)
+        {
+            uint32 serializedDataContainerOff;
+        }
+        uint32 rootNodeOff;
+    } Header<bgcolor=cDkBlue>;
+    if (Header.hashKeyTblOff)
+    {
+        FSeek(Header.hashKeyTblOff);
+        Node HashKeyTable<bgcolor=cPurple>;
+    }
+    if (Header.strTblOff)
+    {
+        FSeek(Header.strTblOff);
+        Node StringTable<bgcolor=cGreen>;
+    }
+    if (Header.rootNodeOff)
+    {
+        FSeek(Header.rootNodeOff);
+        if (DEBUG_PRINT_YAML)
+        {
+            Printf("root:\n");
+        }
+        Node RootNode<bgcolor=cBlue>;
+        if (DEBUG_PRINT_YAML)
+        {
+            //Print YAML end
+            Printf("################\n");
+        }
+        Printf("BYAML read successful.");
+        if (Header.version == 1)
+        {
+            Printf("\nBinary data is currently unsupported.");
+        }
+        if (Header.version == 3)
+        {
+            Printf("\nData may be hashed.");
+        }
+    }
+    if (Header.version == 1)
+    {
+        FSeek(Header.serializedDataContainerOff);
+        Node SerializedDataContainer<bgcolor=cRed>;
+    }
+    else
+    {
+        //Printf("BYAML is empty!\n");
+    }
+} ActionLibrary_BinaryYAML;

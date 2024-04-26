@@ -190,7 +190,7 @@ typedef struct SymbolTable
 {
     NW_SubChunk SYMBChunk;
     FPos = FTell();
-    if (BRSARHdr.ver > 7)
+    if (BlockHeader.ver > 7)
     {
         uint32 fNameTblOff;
         uint32 soundTreeOff;
@@ -214,7 +214,7 @@ typedef struct SymbolTable
             }
         } FNEs;
     } FNT;
-    if (BRSARHdr.ver > 7) //BBA
+    if (BlockHeader.ver > 7) //BBA
     {
         Tree SoundTree;
         Tree PlayerTree;
@@ -227,7 +227,7 @@ typedef struct INFOTable
 {
     NW_SubChunk INFOChunk;
     FPos = FTell();
-    if (BRSARHdr.ver > 7)
+    if (BlockHeader.ver > 7)
     {
         struct DataReferences
         {
@@ -287,11 +287,11 @@ struct NW4R_SoundArchive
 {
     struct SoundArchiveStruct
     {
-        NW_CommonBinHdr BRSARHdr;
+        NW_CommonBinHeader BlockHeader;
         SymbolTable SYMB;
-        FSeek(BRSARHdr.block[1].off);
+        FSeek(BlockHeader.block[1].off);
         INFOTable INFO;
-        FSeek(BRSARHdr.block[2].off);
+        FSeek(BlockHeader.block[2].off);
         NW_FileDataTable FILE;
     } BRSAR_STRUCT;
 } BRSAR;

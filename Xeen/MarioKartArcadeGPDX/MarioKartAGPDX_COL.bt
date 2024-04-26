@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct Header
+{
+    uint64 magic;
+    uint32 unk;
+    uint32 unk2;
+};
+
+typedef struct Entry
+{
+    byte entryData[1177];
+    //uint32 unk2[2];
+};
+
+struct Collision
+{
+    Header hdr;
+    Entry entry[hdr.unk + hdr.unk2];
+} COL;

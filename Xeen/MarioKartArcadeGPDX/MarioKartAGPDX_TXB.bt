@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct MessageInfo
+{
+    /*int32 displaySize;
+    int32 rubyDisplaySize;
+    int32 charSpace;
+    int32 lineSpace;
+    int32 textHAlign;
+    int32 textVAlign;
+    int32 textWrappingPos;
+    int32 defaultFontColor;
+    int32 personSFXID;
+    int32 emotionSFXID;
+    //VACUUM has these
+    
+    int32 lineBreaks;
+    int32 lineStartIndex;
+    int32 strBSize;
+    int32 strDataOff;
+    int32 ruby;
+    int32 rubySize;
+    int32 rubyOff;
+    int32 rubyKanjiOff;
+    int32 rubySizeOff;
+    int32 colors;
+    int32 colorStartOff;
+    int32 colorSizeOff;
+    int32 colorOff;*/
+    int32 unk[2];
+};
+
+typedef struct Header
+{
+    int64 magic;
+    int32 texts;
+    //int32 lines;
+};
+
+struct TextBinary_MKDX
+{
+    Header hdr;
+    if (hdr.texts > 0)
+    {
+        MessageInfo meta[hdr.texts]<optimize=false>;
+        //uint32 msgSz_noNull[hdr.lines];
+        struct MessageStrings
+        {
+            for (i = 0; i < hdr.texts; i++)
+            {
+                struct MessageString
+                {
+                    wstring msg;
+                    /*if (meta[i].colors != 0)
+                    {
+                        float color[meta[i].colors];
+                        uint32 coloroff[meta[i].colors];
+                        uint32 colorstrSz[meta[i].colors];
+                    }*/
+                } msg;
+            }
+        } ms_str;
+    }
+} TXB;

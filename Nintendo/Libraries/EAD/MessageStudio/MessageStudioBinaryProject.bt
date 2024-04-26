@@ -1,0 +1,518 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "MessageStudioCommon.bt"
+
+//INIT DO NOT CHANGE
+local uint alreadyPrintedTagGroupName <hidden=true> = 0;
+local uint hasControlTagGroups <hidden=true> = 0;
+local uint currentTagGroup <hidden=true> = 0;
+local uint currentTagParam <hidden=true> = 0;
+
+local uint printLabels <hidden=true> = 0; //Print text labels (WIP)
+local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
+local uint printDebugLogs <hidden=true> = 0; //Prints debug logs (WIP)
+local uint dumpAeonSakeNMSFunctionMap <hidden=true> = 0; //Dump a function map (MFM) for AeonSake's MSBT editor (WIP)
+
+//Perfectly reads all V2-V4 MSBP
+
+typedef struct NMS_ProjectTagGroup
+{
+    if (ReadShort() == i2 || BlockHeader.version == 4) //Fix MP10
+    {
+        uint16 idx;
+    }
+    uint16 tags;
+    if (tags)
+    {
+        uint16 tagIndex[tags];
+    }
+    string tagGroupName;
+};
+
+typedef struct NMS_ProjectTag
+{
+    uint16 params;
+    if (params)
+    {
+        uint16 paramIdx[params];
+    }
+    string name;
+    if (printDebugLogs)
+    {
+        Printf("\t\t%i: %s (%i Params", i2, name, params);
+        if (params)
+        {
+            Printf(" [");
+            for (i = 0; i < params; i++)
+            {
+                Printf("%i,", paramIdx[i]);
+            }
+            Printf("]");
+        }
+        Printf(")\n");
+        currentTagParam++;
+        if (currentTagParam == ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].tags)
+        {
+            currentTagGroup++;
+            currentTagParam = 0;
+            alreadyPrintedTagGroupName = 0;
+        }
+    }
+};
+
+typedef struct NMS_ProjectTagParam
+{
+    NMS_TextAttributeType paramType;
+    if (paramType == 9)
+    {
+        byte pad;
+        uint16 tagListItems;
+        uint16 tagListItemIdx[tagListItems];
+    }
+    string name;
+    if (printDebugLogs)
+    {
+        Printf("\t%i: %s (Type: %s)\n", i2, name, EnumToString(paramType));
+    }
+};
+
+typedef struct NMS_ProjectTagListItem
+{
+    string name;
+    if (printDebugLogs)
+    {
+        Printf("\t%i: %s\n", i2, name);
+    }
+};
+
+typedef struct NMS_ProjectContentInfoFileName
+{
+    string name;
+    if (printTextStrings)
+    {
+        Printf("\t%i: %s\n", i2, name);
+    }
+};
+
+typedef struct NMS_ProjectAttributeListItemName
+{
+    string name;
+    if (printTextStrings)
+    {
+        Printf("\t%i: %s (%i)\n", i3, name, i2);
+    }
+    i3++;
+};
+
+typedef struct NMS_ProjectAttribute
+{
+    NMS_TextAttributeType type;
+    byte pad;
+    uint16 listIdx;
+    uint32 off;
+};
+
+typedef struct NMS_ProjectAttributeList
+{
+    uint32 attributeListItems;
+    uint32 attributeListOff[attributeListItems];
+    NMS_ProjectAttributeListItemName ProjectAttributeListItemName[attributeListItems]<optimize=false>;
+    i3 = 0;
+};
+
+typedef struct NMS_ProjectColorInfoBlockV1
+{
+    NMS_CommonBlockHeader CLR1Header;
+    /*if (printDebugLogs) //Todo move this to Color Labels
+    {
+        Printf("Color Info:\n");
+    }*/
+    struct
+    {
+        if (BlockHeader.version == 4)
+        {
+            int32 colors; //Why, literally why
+        }
+        else 
+        {
+            uint32 colors;
+        }
+        if (colors)
+        {
+            for (i2 = 0; i2 < colors; i2++)
+            {
+                RGBA_UByte RGBAColor;
+                /*if (printDebugLogs)
+                {
+                    Printf("\t0x%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
+                    //Printf("#%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
+                }*/
+            }
+        }
+    } NMS_ProjectColorInfo;
+    /*if (printDebugLogs)
+    {
+        Printf("Color Info End\n");
+    }*/
+};
+
+typedef struct NMS_ProjectColorLabelsBlockV1
+{
+    NMS_CommonBlockHeader CLB1Header;
+    if (printLabels)
+    {
+        Printf("Color Info:\n");
+    }
+    if (printLabels == 1) //Tempoarily disable
+    {
+        printLabels = 0;
+        NMS_CommonHashTable NMS_ProjectColorLabelsHashTable;
+        printLabels = 1;
+    }
+    else
+    {
+        NMS_CommonHashTable NMS_ProjectColorLabelsHashTable;
+    }
+    if (printLabels)
+    {
+        for (i2 = 0; i2 < ProjectColorInfoBlockV1.NMS_ProjectColorInfo.colors; i2++)
+        {
+            Printf("\t%i: %s (0x%X%X%X%X)\n", NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx, NMS_ProjectColorLabelsHashTable.TextLabel[i2].label.theString, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].R, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].G, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].B, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].A);
+        }
+        Printf("Color Info End\n");
+    }
+};
+
+typedef struct NMS_ProjectAttributeInfoBlockV2
+{
+    NMS_CommonBlockHeader ATI2Header;
+    struct
+    {
+        uint32 attributes;
+        if (attributes)
+        {
+            NMS_ProjectAttribute ProjectAttribute[attributes];
+        }
+    } NMS_ProjectAttributeInfo;
+};
+
+typedef struct NMS_ProjectAttributeLabelsBlockV1
+{
+    NMS_CommonBlockHeader ALB1Header;
+    if (printLabels)
+    {
+        Printf("Attribute Info:\n");
+    }
+    if (printLabels == 1) //Tempoarily disable
+    {
+        printLabels = 0;
+        NMS_CommonHashTable NMS_ProjectAttributeLabelsHashTable;
+        printLabels = 1;
+    }
+    else
+    {
+        NMS_CommonHashTable NMS_ProjectAttributeLabelsHashTable;
+    }
+    if (printLabels)
+    {
+        for (i2 = 0; i2 < ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.attributes; i2++)
+        {
+            Printf("\t%i: %s (Type: %s, List Index: %i, Offset: %i)\n", NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx, NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].label.theString, EnumToString(ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].type), ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].listIdx, ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].off);
+        }
+        Printf("Attribute Info End\n");
+    }
+};
+
+typedef struct NMS_ProjectAttributeListsBlockV2
+{
+    NMS_CommonBlockHeader ALI2Header;
+    if (printLabels)
+    {
+        Printf("Attribute Lists:\n");
+    }
+    struct
+    {
+        FPos = FTell();
+        uint32 attributeLists;
+        if (attributeLists)
+        {
+            uint32 attributeListOff[attributeLists];
+            for (i2 = 0; i2 < attributeLists; i2++)
+            {
+                FSeek(FPos+attributeListOff[i2]);
+                NMS_ProjectAttributeList ProjectAttributeList<optimize=false>;
+            }
+        }
+    } NMS_ProjectAttributeLists;
+    if (printLabels)
+    {
+        Printf("Attribute Lists End\n");
+    }
+};
+
+typedef struct NMS_ProjectTagGroupsBlockV2
+{
+    NMS_CommonBlockHeader TGG2Header;
+    struct
+    {
+        FPos = FTell();
+        uint16 tagGroups;
+        uint16 pad;
+        uint32 tagGroupOffs[tagGroups];
+        for (i2 = 0; i2 < tagGroups; i2++)
+        {
+            FSeek(FPos+tagGroupOffs[i2]);
+            NMS_ProjectTagGroup ProjectTagGroup;
+        }
+    } NMS_ProjectTagGroups;
+};
+
+typedef struct NMS_ProjectTagInfoBlockV2
+{
+    NMS_CommonBlockHeader TAG2Header;
+    if (printDebugLogs) //Maybe move to Tag Params
+    {
+        Printf("Tag Group Information:\n");
+    }
+    struct
+    {
+        FPos = FTell();
+        uint16 tags;
+        uint16 pad;
+        uint32 tagOffset[tags];
+        for (i2 = 0; i2 < tags; i2++)
+        {
+            FSeek(FPos+tagOffset[i2]);
+            if (printDebugLogs && !alreadyPrintedTagGroupName)
+            {
+                Printf("\t%s\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].tagGroupName);
+                alreadyPrintedTagGroupName = 1;
+            }
+            NMS_ProjectTag ProjectTagInfo;
+        }
+        currentTagGroup = 0;
+    } NMS_ProjectTagInfo;
+    if (printDebugLogs)
+    {
+        Printf("Tag Group Information End\n");
+    }
+};
+
+typedef struct NMS_ProjectTagParameterInfoBlockV2
+{
+    NMS_CommonBlockHeader TGP2Header;
+    if (printDebugLogs)
+    {
+        Printf("Tag Parameters:\n");
+    }
+    struct
+    {
+        FPos = FTell();
+        uint16 params;
+        uint16 pad;
+        uint32 tagParamOffset[params];
+        for (i2 = 0; i2 < params; i2++)
+        {
+            FSeek(FPos+tagParamOffset[i2]);
+            NMS_ProjectTagParam ProjectTagParam;
+        }
+    } NMS_ProjectTagParameterInfo;
+    if (printDebugLogs)
+    {
+        Printf("Tag Parameters End\n");
+    }
+};
+
+typedef struct NMS_ProjectTagListItemDefBlockV2
+{
+    NMS_CommonBlockHeader TGL2Header;
+    struct
+    {
+        FPos = FTell();
+        uint16 taglistItems;
+        uint16 pad;
+        if (taglistItems)
+        {
+            if (printDebugLogs)
+            {
+                Printf("Tag List Items:\n");
+            }
+            uint32 taglistItemOff[taglistItems];
+            for (i2 = 0; i2 < taglistItems; i2++)
+            {
+                FSeek(FPos+taglistItemOff[i2]);
+                NMS_ProjectTagListItem name;
+            }
+            if (printDebugLogs)
+            {
+                Printf("Tag List Items End\n");
+            }
+        }
+    } NMS_ProjectTagListItemDef;
+};
+
+typedef struct NMS_ProjectStylesBlockV3
+{
+    NMS_CommonBlockHeader SYL3Header;
+    struct
+    {
+        uint32 styles;
+        if (styles)
+        {
+            NMS_Style Style[styles];
+        }
+    } NMS_ProjectStyles;
+};
+
+typedef struct NMS_ProjectStyleLabelsBlockV1
+{
+    if (printDebugLogs)
+    {
+        Printf("Styles:\n");
+    }
+    NMS_CommonBlockHeader SLB1Header;
+    if (printLabels == 1) //Tempoarily disable
+    {
+        printLabels = 0;
+        NMS_CommonHashTable ProjectStyleLabelsHashTable;
+        printLabels = 1;
+    }
+    else
+    {
+        NMS_CommonHashTable ProjectStyleLabelsHashTable;
+    }
+    if (printLabels == 1) //Tempoarily disable
+    {
+        for (i2 = 0; i2 < ProjectStylesBlockV3.NMS_ProjectStyles.styles; i2++)
+        {
+            Printf("\t%i: %s (Region Width: %i, Lines: %i, Font Index: %i, Color Index: %i)\n", ProjectStyleLabelsHashTable.TextLabel[i2].labelIdx, ProjectStyleLabelsHashTable.TextLabel[i2].label.theString, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].rgnWidth, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].lines, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].fontIdx, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].colrIdx);
+        }
+        Printf("Styles End\n");
+    }
+};
+
+typedef struct NMS_ProjectContentInfoBlockV1
+{
+    NMS_CommonBlockHeader CTI1Header;
+    if (printTextStrings)
+    {
+        Printf("Content Info:\n");
+    }
+    struct
+    {
+        FPos = FTell();
+        uint32 fileNames;
+        uint32 fileNameOff[fileNames];
+        for (i2 = 0; i2 < fileNames; i2++)
+        {
+            FSeek(FPos+fileNameOff[i2]); //Todo fix printouts
+            NMS_ProjectContentInfoFileName FileName<optimize=false>;
+        }
+    } ProjectContentInfo;
+    if (printTextStrings)
+    {
+        Printf("Content Info End\n");
+    }
+};
+
+struct
+{
+    LittleEndian();
+    NMS_CommonBinHeader BlockHeader<bgcolor=cSilver>;
+    if (BlockHeader.theBinType != "MsgPrjBn")
+    {
+        Printf("Not a Message Studio Binary Project (MSBP) file.");
+        break;
+    }
+    for (i = 0; i < BlockHeader.blocks; i++)
+    {
+        switch (ReadString(FTell(),4)) //We're reading out of order bcz NMS can export unordered data
+        {
+            case "CLR1": NMS_ProjectColorInfoBlockV1 ProjectColorInfoBlockV1<optimize=false, bgcolor=cPurple>; break;
+            case "CLB1": hasTextLabels = 1; NMS_ProjectColorLabelsBlockV1 ProjectColorLabelsBlockV1<optimize=false, bgcolor=cLtPurple>; break;
+            case "ATI2": NMS_ProjectAttributeInfoBlockV2 ProjectAttributeInfoBlockV2<optimize=false, bgcolor=cBlack>; break;
+            case "ALB1": hasTextLabels = 1; NMS_ProjectAttributeLabelsBlockV1 ProjectAttributeLabelsBlockV1<optimize=false, bgcolor=cBlack>; break;
+            case "ALI2": NMS_ProjectAttributeListsBlockV2 ProjectAttributeListsBlockV2<optimize=false, bgcolor=cBlack>; break;
+            case "TGG2": hasControlTagGroups = 1; NMS_ProjectTagGroupsBlockV2 ProjectTagGroupsBlockV2<optimize=false, bgcolor=cAqua>; break;
+            case "TAG2": NMS_ProjectTagInfoBlockV2 ProjectTagInfoBlockV2<optimize=false, bgcolor=cLtAqua>; break;
+            case "TGP2": NMS_ProjectTagParameterInfoBlockV2 ProjectTagParameterInfoBlockV2<optimize=false, bgcolor=cDkAqua>; break;
+            case "TGL2": NMS_ProjectTagListItemDefBlockV2 ProjectTagListItemDefBlockV2<optimize=false, bgcolor=cDkAqua>; break;
+            case "SYL3": NMS_ProjectStylesBlockV3 ProjectStylesBlockV3<optimize=false, bgcolor=cDkBlue>; break;
+            case "SLB1": hasTextLabels = 1; NMS_ProjectStyleLabelsBlockV1 ProjectStyleLabelsBlockV1<optimize=false, bgcolor=cDkBlue>; break;
+            case "CTI1": NMS_ProjectContentInfoBlockV1 ProjectContentInfoBlockV1<optimize=false, bgcolor=cDkBlue>; break;
+        }
+        while ((FTell() != EOF && FTell() != BlockHeader.fileSize) && ((ReadUByte() == 0xAB || ReadUByte() == 0x00) || i == BlockHeader.blocks - 1 ))
+        {
+            byte pad<bgcolor=cRed, hidden=true>;
+        }
+    }
+    if (dumpAeonSakeNMSFunctionMap)
+    {
+        if (BlockHeader.theBinType == "MsgPrjBn")
+        {
+            Printf("-----MFM-----\n### Function Map\n\n");
+            if (BlockHeader.blocks && hasControlTagGroups)
+            {
+                for (i = 0; i < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.tagGroups; i++) //Print tag groups, correct
+                {
+                    Printf("#%s group\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tagGroupName);
+                    for (i2 = 0; i2 < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tags; i2++) //Print tag info, correct
+                    {
+                        Printf("[%i, %i] %s\n", i, i2, ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[i2].name);
+                        for (i3 = 0; i3 < ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[i2].params; i3++) //Print tag params
+                        {
+                            switch (ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[i3].paramType)
+                            {
+                                case 0: Printf("  u8"); break;
+                                case 1: Printf("  u16"); break;
+                                case 2: Printf("  u32"); break;
+                                case 3: Printf("  s8"); break;
+                                case 4: Printf("  s16"); break;
+                                case 5: Printf("  s32"); break;
+                                case 6: Printf("  f32"); break;
+                                case 7: Printf("  f64"); break;
+                                case 8: Printf("  str"); break;
+                                case 9: Printf("  nstr"); break;
+                                default: Printf("#Failed to convert tag."); break;
+                            }
+                            Printf(" %s\n", ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[i2].name);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Printf("#Project does not have tag groups.\n\n");
+            }
+            if (ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[3].params <= 1)
+            {
+                Printf("map CustomTextColor u32\n");
+                for (i = 0; i < ProjectColorInfoBlockV1.NMS_ProjectColorInfo.colors; i++) //Print colors
+                {
+                    Printf("  %i %s #0x%X%X%X%X\n", ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx, ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].label.theString, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].R, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].G, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].B, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].A);
+                }
+            }
+            else
+            {
+                Printf("#The software probably uses 4-byte RGBA colors. Skipped dumping color hexes.\n");
+            }
+            Printf("#End MFM dump.\n");
+        }
+        else
+        {
+            Printf("MFM dump only works on MSBP files.\n");
+        }
+    }
+    Printf("Successfully read MSB* file.");
+} NMS_BinaryProject;

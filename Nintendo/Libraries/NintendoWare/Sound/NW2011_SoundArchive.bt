@@ -1,0 +1,37 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//Original sources:
+//Citric Composer
+//https://github.com/Kinnay/Nintendo-File-Formats/wiki
+//https://mk8.tockdom.com/wiki/BFSAR_(File_Format)
+
+local string stringTblIdxString <hidden=true> = "";
+
+#include "../NW_CommonBin.bt"
+
+//Perfectly reads:
+//MK8 (Wii U Kiosk) + MP10 Kiosk / 2.2.0
+//SMO (Base) / 2.4.0
+//NSMBUDX Kiosk / WarioWare Get it Together (Final and Kiosk) / 2.5.0 Sound.bfsar
+
+//3DS support is WIP
+
+struct
+{
+    NW_CommonBinHeader BlockHeader;
+    NW2011_StringSection STRG; //1:1 to CTR, call NWCommon to save space
+    NW2011_InfoSection INFO;
+    //Not sure how loading FILE chunks will be programmed, for now, load the entire chunk
+    NW_FileDataTable FILE;
+} NW2011_SoundArchive_BFSAR_BCSAR;

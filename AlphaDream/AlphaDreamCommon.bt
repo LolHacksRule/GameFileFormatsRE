@@ -37,7 +37,7 @@ typedef struct NMS_AlphaDreamTextAlignmentTagGroup
     }
 };
 
-typedef struct NMS_AlphaDreamSystemColorTag
+typedef struct NMS_AlphaDreamSystemColorTag //Not in alphadream specifically
 {
     uint16 paramID;
     isValidCtrlTag = 1;

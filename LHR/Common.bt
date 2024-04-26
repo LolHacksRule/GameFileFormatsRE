@@ -243,7 +243,6 @@ typedef struct U64_UnicodeStringEntry {
         wchar_t theString[byteSize];
     }
 };
-
 typedef struct Vector2_Byte {
 	byte X;
     byte Y;

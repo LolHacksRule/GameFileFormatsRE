@@ -86,8 +86,8 @@ struct XGSLangDatabase
                     LangType LanguageType; //Careful when changing this! Setting an identical enum to another language's causes a crash.
                     if (printStrings == 1)
                     {
-                        Printf("String Block Size [%i]: %i\nLanguage ID: %i\n", i, strBlockSize, 
-LanguageType);
+                        Printf("String Block Size [%i]: %i\nLanguage ID: %s\n", i, strBlockSize, 
+EnumToString(LanguageType));
                     }
                 } locMeta;
             }
@@ -133,61 +133,24 @@ LanguageType);
             {
                 struct Language
                 {
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == English)
+                    switch (meta.locMetaTbl.locMeta[i].LanguageType)
                     {
-                        tempLang = "English";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == French)
-                    {
-                        tempLang = "French";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == German)
-                    {
-                        tempLang = "German";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Italian)
-                    {
-                        tempLang = "Italian";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Spanish)
-                    {
-                        tempLang = "Spanish";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Japanese)
-                    {
-                        tempLang = "Japanese";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == StringIDs)
-                    {
-                        tempLang = "String IDs";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Dutch)
-                    {
-                        tempLang = "Dutch";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Chinese)
-                    {
-                        tempLang = "Chinese";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Portugeuse || meta.locMetaTbl.locMeta[i].LanguageType == Portugeuse_Old)
-                    {
-                        tempLang = "Portugeuse";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Russian || meta.locMetaTbl.locMeta[i].LanguageType == Russian_Old)
-                    {
-                        tempLang = "Russian";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Arabic)
-                    {
-                        tempLang = "Arabic";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType == Korean)
-                    {
-                        tempLang = "Korean";
-                    }
-                    if (meta.locMetaTbl.locMeta[i].LanguageType > Korean)
-                    {
-                        tempLang = "Unknown!"; //for now
+                        case English: tempLang = "English"; break;
+                        case French: tempLang = "French"; break;
+                        case German: tempLang = "German"; break;
+                        case Italian: tempLang = "Italian"; break;
+                        case Spanish: tempLang = "Spanish"; break;
+                        case Japanese: tempLang = "Japanese"; break;
+                        case StringIDs: tempLang = "String IDs"; break;
+                        case Dutch: tempLang = "Dutch"; break;
+                        case Chinese: tempLang = "Chinese"; break;
+                        case Portugeuse:
+                        case Portugeuse_Old: tempLang = "Portugeuse"; break;
+                        case Russian:
+                        case Russian_Old: tempLang = "Russian";
+                        case Arabic: tempLang = "Arabic"; break;
+                        case Korean: tempLang = "Korean"; break;
+                        default: tempLang = "Unknown!"; break; //for now
                     }
                     local string theLanguage = tempLang;
                     if (printStrings == 1)

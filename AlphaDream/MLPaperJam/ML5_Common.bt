@@ -13,13 +13,13 @@
 
 typedef enum <uint16> 
 {
-    NMS_ML5_MessageTextControlTagType_AlphaDreamSystem,
-    NMS_ML5_MessageTextControlTagType_AlphaDreamTextAlignment,
-    NMS_ML5_MessageTextControlTagType_DelayTextBeforeRender = 2,
-    NMS_ML5_MessageTextControlTagType_InitChoice = 4,
-    NMS_ML5_MessageTextControlTagType_TagGroup6 = 6,
-    NMS_ML5_MessageTextControlTagType_TagGroup8 = 8,
-} NMS_ML5_MessageTextControlTagType; //Unofficial since game doesn't use project binary and idk where they are in the exe
+    NMS_ML5_TagGroupType_AlphaDreamSystem,
+    NMS_ML5_TagGroupType_AlphaDreamTextAlignment,
+    NMS_ML5_TagGroupType_DelayTextBeforeRender = 2,
+    NMS_ML5_TagGroupType_InitChoice = 4,
+    NMS_ML5_TagGroupType_TagGroup6 = 6,
+    NMS_ML5_TagGroupType_TagGroup8 = 8,
+} NMS_ML5_TagGroupType; //Unofficial since game doesn't use project binary and idk where they are in the exe
 
 typedef enum <uint16> 
 {
@@ -44,7 +44,7 @@ typedef enum <uint16>
 
 } NMS_ML5_GameCharacter; //Gaiji
 
-typedef struct NMS_ML5_TagGroup
+typedef struct NMS_Custom_TagGroup
 {
     switch (tagGroup)
     {

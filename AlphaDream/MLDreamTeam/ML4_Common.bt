@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../../../AlphaDream/AlphaDreamCommon.bt"
+
 //MenuEvent:
 //0x00: 0x39 (ver?)
 //0x04: u16 (zero?)
@@ -18,17 +20,17 @@
 
 typedef enum <uint16> 
 {
-    NMS_ML4_MessageTextControlTagType_System,
-    NMS_ML4_MessageTextControlTagType_AlignText,
-    NMS_ML4_MessageTextControlTagType_AlignAllText_Unused, //unused
-    NMS_ML4_MessageTextControlTagType_TextRender = 3,
-    NMS_ML4_MessageTextControlTagType_TagGroup4,
-    NMS_ML4_MessageTextControlTagType_TagGroup5,
-    NMS_ML4_MessageTextControlTagType_TagGroup6, //Unused
-    NMS_ML4_MessageTextControlTagType_TextAnimation,
-    NMS_ML4_MessageTextControlTagType_TagGroup8,
-    NMS_ML4_MessageTextControlTagType_TagGroup9,
-} NMS_ML4_MessageTextControlTagType; //Unofficial since game doesn't use project binary and idk where they are in the exe
+    NMS_ML4_TagGroupType_System,
+    NMS_ML4_TagGroupType_AlignText,
+    NMS_ML4_TagGroupType_AlignAllText_Unused, //unused
+    NMS_ML4_TagGroupType_TextRender = 3,
+    NMS_ML4_TagGroupType_TagGroup4,
+    NMS_ML4_TagGroupType_TagGroup5,
+    NMS_ML4_TagGroupType_TagGroup6, //Unused
+    NMS_ML4_TagGroupType_TextAnimation,
+    NMS_ML4_TagGroupType_TagGroup8,
+    NMS_ML4_TagGroupType_TagGroup9,
+} NMS_ML4_TagGroupType; //Unofficial since game doesn't use project binary and idk where they are in the exe
 
 typedef enum <uint16> 
 {
@@ -87,7 +89,7 @@ typedef enum <uint16>
     NMS_ML4_GameCharacter_FootPrint,
 } NMS_ML4_GameCharacter; //Gaiji
 
-typedef struct NMS_ML4_TagGroup
+typedef struct NMS_Custom_TagGroup
 {
     switch (tagGroup)
     {
@@ -103,10 +105,10 @@ typedef struct NMS_ML4_TagGroup
     //System tag moved to AlphaDreamCommon
     switch (tagGroup)
     {
-        case NMS_ML4_MessageTextControlTagType_System:
-        case NMS_ML4_MessageTextControlTagType_AlignText:
-        case NMS_ML4_MessageTextControlTagType_AlignAllText_Unused: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
-        case NMS_ML4_MessageTextControlTagType_TextRender: isValidCtrlTag = 1;
+        case NMS_ML4_TagGroupType_System:
+        case NMS_ML4_TagGroupType_AlignText:
+        case NMS_ML4_TagGroupType_AlignAllText_Unused: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
+        case NMS_ML4_TagGroupType_TextRender: isValidCtrlTag = 1;
         switch (paramType)
         {
             case 0: uint16 delayText; if (printControlTagInfo) { Printf("</NMS_ML4DelayText%i>", delayText);} break;
@@ -114,8 +116,8 @@ typedef struct NMS_ML4_TagGroup
             case 2: uint16 textScrollSpeed; if (printControlTagInfo) { Printf("</NMS_ML4TextScrollSpeed%i>", textScrollSpeed);} break; //?
         }
         break;
-        case NMS_ML4_MessageTextControlTagType_TagGroup4: U16_Bool enable; uint16 amountOfTabs; U16_Bool enableUnk2; break; //?
-        case NMS_ML4_MessageTextControlTagType_TagGroup5: isValidCtrlTag = 1;
+        case NMS_ML4_TagGroupType_TagGroup4: U16_Bool enable; uint16 amountOfTabs; U16_Bool enableUnk2; break; //?
+        case NMS_ML4_TagGroupType_TagGroup5: isValidCtrlTag = 1;
         if (printControlTagInfo)
         {
             switch (paramType)
@@ -125,7 +127,7 @@ typedef struct NMS_ML4_TagGroup
             }
         }
         break;
-        case NMS_ML4_MessageTextControlTagType_TagGroup6: isValidCtrlTag = 1;
+        case NMS_ML4_TagGroupType_TagGroup6: isValidCtrlTag = 1;
         if (printControlTagInfo)
         {
             switch (paramType)
@@ -135,8 +137,8 @@ typedef struct NMS_ML4_TagGroup
             }
         }
         break;
-        case NMS_ML4_MessageTextControlTagType_TextAnimation: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
-        case NMS_ML4_MessageTextControlTagType_TagGroup8: isValidCtrlTag = 1; uint16 unk;
+        case NMS_ML4_TagGroupType_TextAnimation: isValidCtrlTag = 1; if (printControlTagInfo) { Printf("</%s>", EnumToString(paramType)); }; break;
+        case NMS_ML4_TagGroupType_TagGroup8: isValidCtrlTag = 1; uint16 unk;
         switch (paramType)
         {
             case 0: uint16 unk; if (printControlTagInfo) { Printf("</NMS_ML4Unk%i>", unk);} break;
