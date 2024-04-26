@@ -20,7 +20,6 @@ local uint useNodeLabelInfoInsteadOfTextLabels <hidden=true> = 0; //Hack: Fix NL
 //SETTINGS:
 local uint printLabels <hidden=true> = 0; //Print text labels
 local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
-local uint printControlTagInfo <hidden=true> = 0; //Print information about control tags
 local uint printDebugLogs <hidden=true> = 0;
 
 //Perfectly reads: Turbo (Wii U), MP10, Sports+1
@@ -143,7 +142,7 @@ typedef struct NMS_MessageTextEntry //Pain
             {
                 Printf("%s", WStringToString(text, CHARSET_UTF8));
             }
-            if (printTextStrings || printControlTagInfo)
+            if (printTextStrings)
             {
                 Printf("\n");
             }
