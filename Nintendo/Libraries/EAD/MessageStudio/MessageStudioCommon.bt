@@ -74,7 +74,6 @@
 //https://github.com/ArchLeaders/MfmToYaml
 
 #include "../../../../LHR/Common.bt" //Move to NMSBinary*?
-#include "TagEnums.bt"
 
 //init do not modify
 local uint totalTextLabels <hidden=true> = 0;
