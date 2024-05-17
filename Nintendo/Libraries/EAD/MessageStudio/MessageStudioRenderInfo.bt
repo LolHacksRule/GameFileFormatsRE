@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+//Not sure about the source, seems to be in the 3DS Home Menu, NDCube Mario Parties and Animal Crossing Pocket Camp, but not many EAD games maybe it's either NDCube or Nintendo
+
+struct NMS_RenderInfo
+{
+    uint32 entries;
+    struct
+    {
+        uint32 width; //Def right
+        uint32 line;
+        RGBA_Byte RGBA;
+        uint32 fontIdx;
+        uint32 fontSz;
+        float scaleVertical;
+        float scaleHorizontal;
+        float spaceVertical;
+        float spaceHorizontal;
+
+        //Unknown extra content
+        uint32 zero;
+        uint32 four;
+        uint32 zero2[2];
+        float unkF32; //80
+    } Entry[entries]<optimize=false>;
+} RI_MSTL;

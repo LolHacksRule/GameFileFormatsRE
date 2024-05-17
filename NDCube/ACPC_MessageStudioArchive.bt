@@ -17,31 +17,33 @@
 
 struct ACPC_MessageStudioArchive
 {
-    uint32 hdr;
-    uint32 unk;
-    uint32 files;
-    uint32 messDataOff;
-    //uint32 unk2;
+    struct
+    {
+        char magic[4]; //MSAC
+        uint32 ver; //101 or 100
+        uint32 files;
+        uint32 messDataOff;
+    } Header;
     struct MessageFileInfos
     {
-        for (i = 0; i < files; i++)
+        for (i = 0; i < Header.files; i++)
         {
             I32_OffsetWithSize MessageFileInfo;
         }
-    } msgf;
+    } msgf<bgcolor=cBlue>;
     struct FileStrings
     {
-        for (i = 0; i < files; i++)
+        for (i = 0; i < Header.files; i++)
         {
             struct FileString
             {
                 string msgFilePath;
-            } fs;
+            } fs<bgcolor=cGreen>;
         }
     } fss;
     struct MessageFiles
     {
-        for (i = 0; i < files; i++)
+        for (i = 0; i < Header.files; i++)
         {
             struct MessageFile
             {
@@ -49,5 +51,5 @@ struct ACPC_MessageStudioArchive
                 byte msgFile[msgf.MessageFileInfo[i].dataSize];
             } mf;
         }
-    } mfs;
+    } mfs<bgcolor=cLtBlue>;
 } MSAC;

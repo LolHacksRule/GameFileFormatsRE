@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+//local string name = "";
+
+struct ACPC_MessageStudioFontSize
+{
+    struct
+    {
+        char magic[4]; //msfs
+        uint32 ver; //101 or 100
+        uint32 hSz;
+        uint32 entries;
+    } Header;
+    struct MessageFileInfos
+    {
+        for (i = 0; i < Header.entries; i++)
+        {
+            uint16 size;
+            uint16 type;
+        }
+    } msgf<bgcolor=cBlue>;
+} MSFS;

@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+
+//local string name = "";
+
+struct ACPC_MessageStudioFlowChartNodeList
+{
+    struct
+    {
+        char magic[4]; //msfs
+        uint32 ver; //101 or 100
+        uint32 entries;
+    } Header;
+    //Everything beyond is XOR 0x01 + i for a string starting with NDCube, why this is obfuscated idk
+} MSAC;

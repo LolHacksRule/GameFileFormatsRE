@@ -1,0 +1,452 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint i <hidden=true> = 0;
+local uint i2 <hidden = true> = 0;
+local uint i3 <hidden = true> = 0;
+local uint i4 <hidden = true> = 0;
+local uint swapRGBAChannels <hidden = true> = 0;
+
+local int FPos<hidden = true> = FTell();
+
+local int FSize<hidden = true> = FileSize();
+
+local int EOF<hidden = true> = FPos + FSize;
+
+int LHR_Align(int value, int alignment)
+{
+    return ((value + (alignment - 1)) & (~(alignment - 1))) - value;
+}
+
+typedef enum <uint16> {
+	U16_Little = 0xFEFF,
+    U16_Big = 0xFFFE,
+} U16_EndianEnum;
+
+typedef enum <byte> {
+	UByte_Little = 0xFF,
+    UByte_Big = 0xFE,
+} UByte_EndianEnum;
+
+typedef enum <uint32> {
+	U32_False,
+    U32_True,
+} U32_Bool;
+
+typedef enum <int32> {
+	I32_False,
+    I32_True,
+} I32_Bool;
+
+typedef enum <int16> {
+	I16_False,
+    I16_True,
+} I16_Bool;
+
+typedef enum <uint16> {
+	U16_False,
+    U16_True,
+} U16_Bool;
+
+typedef enum <byte> {
+	Byte_False,
+    Byte_True,
+} Byte_Bool;
+
+typedef struct I16_StringEntry {
+	int16 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        //FSkip(2);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I16_UnicodeStringEntry {
+	int16 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U16_StringEntry {
+	uint16 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        //FSkip(2);
+        Printf("String is empty!\n");
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U16_UnicodeStringEntry {
+	uint16 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(2);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct I32_StringEntry {
+	int32 byteSize;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I32_UnicodeStringEntry {
+	int32 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U32_StringEntry {
+	uint32 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U32_UnicodeStringEntry {
+	uint32 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(4);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct Byte_StringEntry {
+	byte byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        //FSkip(1);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct UByte_StringEntry {
+	ubyte byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        //FSkip(1);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct Byte_UnicodeStringEntry {
+	byte byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(1);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct I64_StringEntry {
+	int64 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct I64_UnicodeStringEntry {
+	int64 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct U64_StringEntry {
+	uint64 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        char theString[byteSize];
+    }
+};
+
+typedef struct U64_UnicodeStringEntry {
+	uint64 byteSize<hidden=true>;
+    if (byteSize == 0)
+    {
+        FSkip(8);
+    }
+    else
+    {
+        wchar_t theString[byteSize];
+    }
+};
+
+typedef struct Vector2_Byte {
+	byte X;
+    byte Y;
+};
+
+typedef struct Vector2_UByte {
+	ubyte X;
+    ubyte Y;
+};
+
+typedef struct Vector2_I16 {
+	int16 X;
+    int16 Y;
+};
+
+typedef struct Vector2_U16 {
+	uint16 X;
+    uint16 Y;
+};
+
+typedef struct Vector2_F32 {
+	float X;
+    float Y;
+};
+
+typedef struct Vector2_I32 {
+	int32 X;
+    int32 Y;
+};
+
+typedef struct Vector2_U32 {
+	uint32 X;
+    uint32 Y;
+};
+
+typedef struct MinMax_F32 {
+	float min;
+    float max;
+};
+
+typedef struct MinMax_I32 {
+	int32 min;
+    int32 max;
+};
+
+typedef struct MinMax_U32 {
+	uint32 min;
+    uint32 max;
+};
+
+typedef struct Vector3_F32 {
+	float X;
+    float Y;
+    float Z;
+};
+
+
+typedef struct Vector3_U16 {
+	uint16 X;
+    uint16 Y;
+    uint16 Z;
+};
+
+typedef struct Vector3_U32 {
+	uint32 X;
+    uint32 Y;
+    uint32 Z;
+};
+
+typedef struct Vector3_I32 {
+	int32 X;
+    int32 Y;
+    int32 Z;
+};
+
+typedef struct Vector4_F32 {
+	float X;
+    float Y;
+    float Z;
+    float W;
+};
+
+typedef struct Vector4_Byte {
+	byte X;
+    byte Y;
+    byte Z;
+    byte W;
+};
+
+typedef struct Vector4_I16 {
+	int16 X;
+    int16 Y;
+    int16 Z;
+    int16 W;
+};
+
+typedef struct Vector4_I32 {
+	int32 X;
+    int32 Y;
+    int32 Z;
+    int32 W;
+};
+
+typedef struct Matrix3x3_F32 {
+	Vector3_F32 X;
+    Vector3_F32 Y;
+    Vector3_F32 Z;
+};
+
+typedef struct Matrix3x4_F32 {
+	Vector3_F32 X;
+    Vector3_F32 Y;
+    Vector3_F32 Z;
+    Vector3_F32 W;
+};
+
+typedef struct Matrix4x3_F32 {
+	Vector4_F32 X;
+    Vector4_F32 Y;
+    Vector4_F32 Z;
+};
+
+typedef struct Matrix4x4_F32 {
+	Vector4_F32 X;
+    Vector4_F32 Y;
+    Vector4_F32 Z;
+    Vector4_F32 W;
+};
+
+typedef struct RGBA_UByte {
+    if (swapRGBAChannels)
+    {
+        ubyte A;
+        ubyte R;
+        ubyte G;
+        ubyte B;
+    }
+    else
+    {
+        ubyte R;
+        ubyte G;
+        ubyte B;
+        ubyte A;
+    }
+    //Printf("#%02x%02x%02x%02x\n", R, G, B, A);
+};
+
+typedef struct RGBA_Byte {
+    if (swapRGBAChannels)
+    {
+        byte A;
+        byte R;
+        byte G;
+        byte B;
+    }
+    else
+    {
+        byte R;
+        byte G;
+        byte B;
+        byte A;
+    }
+};
+
+typedef struct RGB_F32 {
+    float R;
+    float G;
+    float B;
+};
+
+typedef struct RGBA_F32 {
+    if (swapRGBAChannels)
+    {
+        float A;
+        float R;
+        float G;
+        float B;
+    }
+    else
+    {
+        float R;
+        float G;
+        float B;
+        float A;
+    }
+};
+
+typedef struct I32_SizeWithData {
+	int32 byteSize<hidden=true>;
+    byte data[byteSize];
+};
+
+typedef struct I32_OffsetWithSize {
+	int32 dataOffset;
+    int32 dataSize;
+};
+
+typedef struct U32_SizeWithData {
+	uint32 byteSize<hidden=true>;
+    byte data[byteSize];
+};
+
+typedef struct U32_OffsetWithSize {
+	uint32 dataOffset<hidden=true>;
+    int32 dataSize;
+};
