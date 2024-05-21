@@ -41,7 +41,16 @@ typedef struct NMS_TextAttribute
 typedef struct NMS_TextAttributesBlockV1
 {
     NMS_CommonBlockHeader ATR1Header;
-    byte TextAttributes[ATR1Header.size]; 
+    struct
+    {
+        uint32 textAttributes;
+        uint32 attributeSize;
+        //When custom tag groups work custom attributes will also work
+        {
+            NMS_TextAttribute UnknownTextAttribute[textAttributes]<optimize=false>;
+        }
+    } TextAttributes;
+    //byte TextAttributes[ATR1Header.size]; 
 };
 
 typedef struct NMS_TextStylesBlockV1

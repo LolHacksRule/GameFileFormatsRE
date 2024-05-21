@@ -110,7 +110,7 @@ typedef struct NMS_ProjectAttributeListItemName
     string name;
     if (printTextStrings)
     {
-        Printf("\t%i: %s (%i)\n", i3, name, i2);
+        Printf("\t\t%i: %s (%i)\n", i3, name, i2);
     }
     i3++;
 };
@@ -127,6 +127,10 @@ typedef struct NMS_ProjectAttributeList
 {
     uint32 attributeListItems;
     uint32 attributeListOff[attributeListItems];
+    if (printTextStrings)
+    {
+        Printf("\t%s:\n", ProjectAttributeLabelsBlockV1.NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].label.theString); //TODO
+    }
     NMS_ProjectAttributeListItemName ProjectAttributeListItemName[attributeListItems]<optimize=false>;
     i3 = 0;
 };
@@ -404,7 +408,7 @@ typedef struct NMS_ProjectContentInfoBlockV1
     NMS_CommonBlockHeader CTI1Header;
     if (printTextStrings)
     {
-        Printf("Content Info:\n");
+        Printf("Content Info (Note \"?\" are likely characters that do not get encoded by NMS):\n");
     }
     struct
     {
