@@ -89,7 +89,7 @@ typedef enum <uint16>
     NMS_ML4_GameCharacter_FootPrint,
 } NMS_ML4_GameCharacter; //Gaiji
 
-typedef struct NMS_Custom_TagGroup
+typedef struct NMS_CustomTagGroup
 {
     switch (tagGroup)
     {

@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifdef NMS_TARGET_WAGONU
+
+/*
+Gray        0x808080FF
+Blue        0x0ACCAFF
+Orange      0xFF8C0FF
+LightBlue   0x0DAFFFF
+LightOrange 0xFF9E0FF
+Red         0xFF23CFF
+*/
+
+typedef struct NMS_Custom_TagGroup
+{
+    
+};
+
+#endif

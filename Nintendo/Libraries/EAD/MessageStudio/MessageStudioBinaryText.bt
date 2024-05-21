@@ -1,13 +1,13 @@
 //------------------------------------------------
 //--- 010 Editor v14.0 Binary Template
 //
-//      File: 
-//   Authors: 
+//      File: MessageStudioBinaryText.bt
+//   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
 //  Category: 
-// File Mask: 
-//  ID Bytes: 
+// File Mask: *.msbt, *.bnbmsg
+//  ID Bytes: 4D 73 67 53 74 64 42 6E
 //   History: 
 //------------------------------------------------
 
@@ -16,10 +16,11 @@
 //INIT DO NOT CHANGE
 local uint hasOnlyTextBlock <hidden=true> = 0; //Hack: Fix files with no LBL1 or NLI1 block
 local uint useNodeLabelInfoInsteadOfTextLabels <hidden=true> = 0; //Hack: Fix NLI1 block
+local uint isRGBASet <hidden=true> = 0;
 
 //SETTINGS:
-local uint printLabels <hidden=true> = 0; //Print text labels
-local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
+local uint printLabels <hidden=true> = 1; //Print text labels
+local uint printTextStrings <hidden=true> = 1; //Will lag on lengthy messages
 local uint printDebugLogs <hidden=true> = 0;
 
 //Perfectly reads: Turbo (Wii U), MP10, Sports+1
@@ -27,18 +28,9 @@ local uint printDebugLogs <hidden=true> = 0;
 
 typedef enum <uint16>
 {
-    NMS_SystemCommon_Ruby,
-    NMS_SystemCommon_Font,
-    NMS_SystemCommon_Size,
-    NMS_SystemCommon_TextColor,
-    NMS_SystemCommon_PageBreak,
-} NMS_SystemCommon_TagGroupType;
-
-typedef enum <uint16>
-{
-    NMS_ControlTag_Start = 0x0E,
-    NMS_ControlTag_Terminate,
-} NMS_ControlTagType;
+    NMS_TagGroup_Start = 0x0E,
+    NMS_TagGroup_Terminate,
+} NMS_TagGroupType;
 
 typedef struct NMS_TextAttribute
 {
@@ -92,17 +84,33 @@ typedef struct NMS_TextLabelsBlockV1
     }
 };
 
-typedef struct NMS_ControlTag
+/*typedef struct NMS_LegacySystemColorTag
 {
-    NMS_ControlTagType identifier;
-    uint16 unknownTag; uint16 unknownGroup; uint16 paramSz; if (paramSz) { byte param[paramSz]; }; //Control tags are not yet supported
-};
+    uint16 paramID;
+    isValidCtrlTag = 1;
+    uint16 paramSz;
+    if (isRGBASet)
+    {
+        //Printf("</rgba>");
+        if (printControlTagInfo)
+        {
+            Printf("</span>"); //Format for MediaWiki
+        }
+        isRGBASet = 0;
+    }
+    RGBA_UByte TextColor<bgcolor=cPurple>;
+    isRGBASet = 1;
+    //Printf("<rgba%i%i%i%i>", TextColor.R, TextColor.G, TextColor.B, TextColor.A);
+    if (printControlTagInfo)
+    {
+        Printf("<span style=\"color:#%X%X%X%X\">", TextColor.R, TextColor.G, TextColor.B, TextColor.A); //Format for MediaWiki
+    }
+};*/
 
-typedef struct NMS_ControlTagEnd
+typedef struct NMS_TagGroup
 {
-    NMS_ControlTagType identifier;
-    uint16 tagGroup;
-    uint16 tagType;
+    NMS_TagGroupType identifier;
+    uint16 unknownTag; uint16 unknownGroup; uint16 paramSz; if (paramSz && identifier != NMS_TagGroup_Terminate) { byte param[paramSz]; };
 };
 
 typedef struct NMS_MessageTextEntry //Pain
@@ -120,15 +128,23 @@ typedef struct NMS_MessageTextEntry //Pain
             Printf("%i\t", i2);
         }
     }
-    while ((BlockHeader.encoding == NMS_TextEncoding_UTF8 && ReadByte() != 0 || ReadShort() == NMS_ControlTag_Start || ReadShort() == NMS_ControlTag_Terminate) || (BlockHeader.encoding > 0 && ReadShort() != 0) && (FTell() != EOF)) //Read int fixes some stuff idk
+    while ((BlockHeader.encoding == NMS_TextEncoding_UTF8 && ReadByte() != 0 || ReadShort() == NMS_TagGroup_Start || ReadShort() == NMS_TagGroup_Terminate) || (BlockHeader.encoding > 0 && ReadShort() != 0) && (FTell() != EOF)) //Read int fixes some stuff idk
     {
-        if (ReadShort() == NMS_ControlTag_Start) //Read control code
+        if (ReadShort() == NMS_TagGroup_Start || ReadShort() == NMS_TagGroup_Terminate) //Read control code
         {
-            NMS_ControlTag MsgTextCtrlTag<bgcolor=cRed, optimize=false>;
-        }
-        else if (ReadShort() == NMS_ControlTag_Terminate) //Read control termination
-        {
-            NMS_ControlTagEnd MsgTextCtrlTagEnd<bgcolor=cDkRed, optimize=false>;
+            //Soon custom groups will be supported
+            {
+                NMS_TagGroup UnknownTagGroup<bgcolor=cRed, optimize=false>;
+                if (printTextStrings)
+                {
+                    Printf("<NMS_TagGroup tag=\"%i\" group=\"%i\">", UnknownTagGroup.unknownTag, UnknownTagGroup.unknownGroup);
+                    for (i = 0; i < UnknownTagGroup.paramSz; i++)
+                    {
+                        Printf("%x", UnknownTagGroup.param[i]);
+                    }
+                    Printf("</NMS_TagGroup>");
+                }
+            }
         }
         else
         {
@@ -142,11 +158,11 @@ typedef struct NMS_MessageTextEntry //Pain
             {
                 Printf("%s", WStringToString(text, CHARSET_UTF8));
             }
-            if (printTextStrings)
-            {
-                Printf("\n");
-            }
         }
+    }
+    if (printTextStrings || printLabels)
+    {
+        Printf("\n");
     }
     switch (BlockHeader.encoding)
     {
@@ -223,7 +239,6 @@ struct
         Printf("Not a Message Studio Binary Text (MSBT) file.");
         break;
     }
-    Printf("----------Control tag groups are not yet supported.-----------\n");
     for (i = 0; i < BlockHeader.blocks; i++)
     {
         switch (ReadString(FTell(),4)) //We're reading out of order bcz NMS can export unordered data

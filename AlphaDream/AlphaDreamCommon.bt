@@ -36,26 +36,3 @@ typedef struct NMS_AlphaDreamTextAlignmentTagGroup
         Printf("</%s>", EnumToString(paramType));
     }
 };
-
-typedef struct NMS_AlphaDreamSystemColorTag //Not in alphadream specifically
-{
-    uint16 paramID;
-    isValidCtrlTag = 1;
-    uint16 paramSz;
-    if (isRGBASet)
-    {
-        //Printf("</rgba>");
-        if (printControlTagInfo)
-        {
-            Printf("</span>"); //Format for MediaWiki
-        }
-        isRGBASet = 0;
-    }
-    RGBA_UByte TextColor<bgcolor=cPurple>;
-    isRGBASet = 1;
-    //Printf("<rgba%i%i%i%i>", TextColor.R, TextColor.G, TextColor.B, TextColor.A);
-    if (printControlTagInfo)
-    {
-        Printf("<span style=\"color:#%X%X%X%X\">", TextColor.R, TextColor.G, TextColor.B, TextColor.A); //Format for MediaWiki
-    }
-};

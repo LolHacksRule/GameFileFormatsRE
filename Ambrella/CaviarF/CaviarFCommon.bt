@@ -112,7 +112,7 @@ typedef enum <uint16>
     NMS_CaviarF_CharacterType_Princess,
 } NMS_CaviarF_CharacterType;
 
-typedef struct NMS_Custom_TagGroup
+typedef struct NMS_CustomTagGroup
 {
     switch (tagGroup)
     {

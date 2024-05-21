@@ -99,6 +99,8 @@ typedef enum <byte>
     CountryID_USA = 49,
 } Turbo_CountryID;
 
+#ifdef NMS_TARGET_TURBO
+
 typedef enum <byte>
 {
     Turbo_DisplayTagGroupType_Wait = 0,
@@ -107,6 +109,8 @@ typedef enum <byte>
     Turbo_DisplayTagGroupType_TournamentName, //TournamentName?
     Turbo_DisplayTagGroupType_Round = 6, //Round?
 } Turbo_DisplayTagGroupType;
+
+#endif
 
 typedef struct Turbo_TimeAndLapSplits
 {
