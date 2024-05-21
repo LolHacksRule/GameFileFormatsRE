@@ -19,9 +19,10 @@ local uint useNodeLabelInfoInsteadOfTextLabels <hidden=true> = 0; //Hack: Fix NL
 local uint isRGBASet <hidden=true> = 0;
 
 //SETTINGS:
-local uint printLabels <hidden=true> = 1; //Print text labels
-local uint printTextStrings <hidden=true> = 1; //Will lag on lengthy messages
+local uint printLabels <hidden=true> = 0; //Print text labels
+local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
 local uint printDebugLogs <hidden=true> = 0;
+local uint printNewLines <hidden=true> = 0; //Print newlines
 
 //Perfectly reads: Turbo (Wii U), MP10, Sports+1
 //Todo: Text Attributes, Text Strings (better code, esp for UTF8+)
@@ -156,7 +157,14 @@ typedef struct NMS_MessageTextEntry //Pain
             }
             if (printTextStrings)
             {
-                Printf("%s", WStringToString(text, CHARSET_UTF8));
+                if (printNewLines && text == 10)
+                {
+                    Printf("\\n");
+                }
+                else
+                {
+                    Printf("%s", WStringToString(text, CHARSET_UTF8));
+                }
             }
         }
     }
