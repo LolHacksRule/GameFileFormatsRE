@@ -135,8 +135,8 @@ typedef struct NMS_MessageTextEntry //Pain
             switch (BlockHeader.encoding)
             {
                 case NMS_TextEncoding_UTF8: char text<bgcolor=cGreen>; break; //Identical across BE and LE, simple
-                case NMS_TextEncoding_UTF16: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen, hidden=false>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //A little finicky
-                case NMS_TextEncoding_UTF32: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen, hidden=false>; uint16 dmy<bgcolor=cDkGreen, hidden=true>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //Finicky
+                case NMS_TextEncoding_UTF16: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //A little finicky
+                case NMS_TextEncoding_UTF32: if (BlockHeader.byteOrderMark == U16_Big) { LittleEndian(); } wchar_t text<bgcolor=cGreen>; uint16 dmy<bgcolor=cDkGreen, hidden=true>; if (BlockHeader.byteOrderMark == U16_Big) { BigEndian(); }; break; //Finicky
             }
             if (printTextStrings)
             {
