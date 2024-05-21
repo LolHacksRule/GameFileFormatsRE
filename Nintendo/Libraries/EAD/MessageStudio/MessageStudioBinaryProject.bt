@@ -150,15 +150,12 @@ typedef struct NMS_ProjectColorInfoBlockV1
         }
         if (colors)
         {
-            for (i2 = 0; i2 < colors; i2++)
+            RGBA_UByte RGBAColor[colors]<optimize=false>;
+            /*if (printDebugLogs)
             {
-                RGBA_UByte RGBAColor;
-                /*if (printDebugLogs)
-                {
-                    Printf("\t0x%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
-                    //Printf("#%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
-                }*/
-            }
+                Printf("\t0x%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
+                //Printf("#%X%X%X%X\n", RGBAColor.R, RGBAColor.G, RGBAColor.B, RGBAColor.A);
+            }*/
         }
     } NMS_ProjectColorInfo;
     /*if (printDebugLogs)
