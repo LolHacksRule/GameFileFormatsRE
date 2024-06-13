@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-struct N_Dolphin_ADPCM
+typedef struct
 {
     uint32 samples;
     uint32 adpcmNibbles;
@@ -28,4 +28,4 @@ struct N_Dolphin_ADPCM
     uint16 loopScale;
     uint16 loopHistoryContext[2];
     uint16 padding[11];
-};
+} N_Dolphin_ADPCM;

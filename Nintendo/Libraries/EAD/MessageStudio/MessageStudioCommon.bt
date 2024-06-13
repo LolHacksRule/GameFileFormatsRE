@@ -72,6 +72,9 @@
 //https://github.com/SuperHackio/Hack.io
 //https://github.com/Trippixyz/LibMessageStudio-File-Formats
 //https://github.com/ArchLeaders/MfmToYaml
+//https://wiki.wexosmk.xyz/index.php/MSBT_(File_Format)
+//https://wiki.wexosmk.xyz/index.php/MSBP_(File_Format)
+//https://wiki.wexosmk.xyz/index.php/MSBF_(File_Format)
 
 #include "../../../../LHR/Common.bt" //Move to NMSBinary*?
 

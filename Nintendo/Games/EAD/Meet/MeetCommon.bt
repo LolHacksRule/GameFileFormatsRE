@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#ifdef NMS_TARGET_MEET
+
 typedef enum <int16>
 {
     NMS_Meet_StringInsertionType_OneDigitNum,
@@ -19,11 +21,12 @@ typedef enum <int16>
     NMS_Meet_StringInsertionType_WString,
 } NMS_Meet_StringInsertionType;
 
-typedef struct NMS_Meet_TagGroup
+typedef struct NMS_Custom_TagGroup
 {
-    switch (tagGroup) //Only 1 is used
-    {
-        case 1: isValidCtrlTag = 1; NMS_Meet_StringInsertionType type; uint16 paramSz; break;
-    }
+    isValidCtrlTag = 1;
+    NMS_Meet_StringInsertionType type; //Only 1 is used
+    uint16 paramSz;
     if (printControlTagInfo) { Printf("</%s>", EnumToString(type)); }
 };
+
+#endif

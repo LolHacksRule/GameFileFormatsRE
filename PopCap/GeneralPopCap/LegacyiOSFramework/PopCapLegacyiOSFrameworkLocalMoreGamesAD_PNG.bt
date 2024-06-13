@@ -1,0 +1,20 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct PopCap_LegacyiOSFramework_MoreGamesAD_PNG
+{
+    LittleEndian();
+    int32 Width;
+    int32 Height;
+    byte RGBA_OR_BGRA8888TextureData[FileSize() - FTell()];
+} PNG_but_not_PNG;

@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#define NMS_TARGET_CTRDASH
+
 typedef enum <int16>
 {
     NMS_CTRDash_Tag1Type_Player,
@@ -20,7 +22,7 @@ typedef enum <int16>
     NMS_CTRDash_Tag1Type_PlayerRegion = 8,
 } NMS_CTRDash_Tag1Type;
 
-typedef struct NMS_CTRDash_TagGroup
+typedef struct NMS_Custom_TagGroup
 {
     switch (tagGroup) //Only 1 is used
     {

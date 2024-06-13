@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: PopCapRenderEffect.bt
+//      File: PopCap_Prime_RenderEffect.bt
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Gets data out of the binary.
@@ -25,7 +25,7 @@ typedef struct RenderEffectBlock
 typedef struct RenderEffectString
 {
     int32 numChars;
-    int32 format; //3: Raw Shader
+    int32 format; //3: Raw Shader (iOS, PS4)
     int32 off;
     //Save pos
     FPos = FTell();
@@ -48,11 +48,11 @@ typedef struct RenderEffectAnnotation
 
 typedef struct RenderEffectValue
 {
-    int32 unk;
-    int32 unk2;
-    int32 unk3;
-    int32 unk4;
-    int32 unk5;
+    int32 unk; //Off to Default in string table?
+    int32 unk2; //Off to shader past main in string table?
+    int32 unk3; //Off to tex name str?
+    int32 unk4; //Timestamp?
+    int32 unk5; //Timestamp?
     //Vector3_F32 unkv3f;
 };
 
@@ -225,4 +225,4 @@ struct
         FSeek(Header.RenderEffectBlocks.UnknownDataBlock.off);
         byte UnknownData[Header.RenderEffectBlocks.UnknownDataBlock.size*Header.RenderEffectBlocks.UnknownDataBlock.count]<bgcolor=cRed>;
     }
-} PopCapRenderEffect_PCFX;
+} PopCap_Prime_RenderEffect_PCFX;

@@ -1,0 +1,305 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+#include "PopCap_PrimeCommon.bt"
+local uint printRawXML <hidden=true> = 0; //WIP
+
+typedef enum <uint32>
+{
+    Image,
+    Sound,
+    Font,
+    PopAnim,
+    PIEffect,
+    RenderEffect,
+    GenericResFile,
+} ResourceType;
+
+typedef struct XMLAttribute
+{
+    UByte_StringEntry Path;
+    UByte_StringEntry ResType;
+};
+
+typedef struct BaseRes
+{
+    UByte_StringEntry ID;
+    UByte_StringEntry ResGroup;
+    UByte_StringEntry CompositeResGroup;
+    int32 artRes;
+    uint32 locSet;
+    UByte_StringEntry Path;
+    Byte_Bool FromProgram;
+    uint32 XMLAttributes;
+    if (XMLAttributes)
+    {
+        XMLAttribute xmlAttrib[XMLAttributes]<optimize=false>;
+    }
+};
+
+typedef struct ImageRes
+{
+    Byte_Bool Palletize;
+    Byte_Bool A4R4G4B4;
+    Byte_Bool DDSurface;
+    Byte_Bool PurgeBits;
+    Byte_Bool A8R8G8B8;
+    Byte_Bool Dither16;
+    Byte_Bool MinimizeSubDivisions;
+    Byte_Bool AutoFindAlpha;
+    Byte_Bool CubeMap;
+    Byte_Bool VolumeMap;
+    Byte_Bool NoTriMap;
+    Byte_Bool _2DBig;
+    Byte_Bool IsAtlas;
+    UByte_StringEntry AlphaImage;
+    RGBA_UByte AlphaColor;
+    uint32 ImageX;
+    uint32 ImageY;
+    UByte_StringEntry Variant;
+    UByte_StringEntry AlphaGridImage;
+    uint32 Rows;
+    uint32 Columns;
+    UByte_StringEntry AtlasName;
+    uint32 AtlasX;
+    uint32 AtlasY;
+    uint32 AtlasW;
+    uint32 AtlasH;
+    uint32 AnimType;
+    uint32 FrameDelay;
+    uint32 BeginDelay;
+    uint32 EndDelay;
+    uint32 unk;
+    if (printRawXML)
+    {
+        if (ImageX)
+        {
+            Printf(" x=\"%i\"", ImageX);
+        }
+        if (ImageY)
+        {
+            Printf(" y=\"%i\"", ImageY);
+        }
+        if (IsAtlas)
+        {
+            Printf(" atlas=\"true\"");
+        }
+        if (!Palletize)
+        {
+            Printf(" nopal=\"true\"");
+        }
+        if (A8R8G8B8)
+        {
+            Printf(" a8r8g8b8=\"true\"");
+        }
+        if (AtlasX)
+        {
+            Printf(" ax=\"%i\"", AtlasX);
+        }
+        if (AtlasX)
+        {
+            Printf(" ay=\"%i\"", AtlasY);
+        }
+        if (AtlasW)
+        {
+            Printf(" aw=\"%i\"", AtlasW);
+        }
+        if (AtlasH)
+        {
+            Printf(" ah=\"%i\"", AtlasH);
+        }
+        if (AtlasName.byteSize)
+        {
+            Printf(" parent=\"%s\"", AtlasName.theString);
+        }
+        if (Variant.byteSize)
+        {
+            Printf(" variant=\"%s\"", Variant.theString);
+        }
+        if (Rows)
+        {
+            Printf(" rows=\"%i\"", Rows);
+        }
+        if (Columns)
+        {
+            Printf(" cols=\"%i\"", Columns);
+        }
+    }
+    if (AnimType == 0)
+    {
+        uint32 unk2;
+    }
+};
+
+typedef struct SoundRes
+{
+    UByte_StringEntry SOUND;
+    double Volume;
+    int32 Panning;
+    if (printRawXML)
+    {
+        if (Volume)
+        {
+            Printf(" volume=\"%lf\"", Volume);
+        }
+        /*if (Panning)
+        {
+            Printf(" panning=\"%lf\"", Panning);
+        }*/
+    }
+};
+
+typedef struct FontRes
+{
+    UByte_StringEntry ImagePath;
+    UByte_StringEntry Tags;
+    int32 Size;
+    Byte_Bool Bold;
+    Byte_Bool Italic;
+    Byte_Bool Shadow;
+    Byte_Bool Underline;
+    Byte_Bool SysFont;
+    if (printRawXML)
+    {
+        if (Tags.byteSize)
+        {
+            Printf(" tags=\"%s\"", Tags.theString);
+        }
+        /*if (Panning)
+        {
+            Printf(" panning=\"%lf\"", Panning);
+        }*/
+    }
+};
+
+typedef struct RenderEffectRes
+{
+    UByte_StringEntry SrcFilePath;
+    if (printRawXML)
+    {
+        Printf(" srcpath=\"%s\"", SrcFilePath.theString);
+    }
+};
+
+typedef struct Resource
+{
+    UByte_StringEntry ResEntry;
+    ResourceType resType;
+    BaseRes theRes;
+    if (printRawXML)
+    {
+        Printf("<%s id=\"%s\" path=\"%s\"", EnumToString(resType), theRes.ID.theString, theRes.Path.theString);
+    }
+    if (resType == Image)
+    {
+        ImageRes TheImage;
+    }
+    else if (resType == Sound)
+    {
+        SoundRes TheSound;
+    }
+    else if (resType == Font)
+    {
+        FontRes TheFont;
+    }
+    else if (resType == RenderEffect)
+    {
+        RenderEffectRes TheRenderEffect<bgcolor=cGreen>;
+    }
+    if (printRawXML)
+    {
+        Printf("/>\n");
+    }
+};
+
+typedef struct SubGroup
+{
+    UByte_StringEntry SubGroupName;
+    int32 ArtRes;
+    PopCap_Prime_LocalizedLanguage LocSet;
+    if (printRawXML)
+    {
+        Printf("<Group id=\"%s", SubGroupName.theString);
+        if (ArtRes)
+        {
+            Printf(" res=\"%i\"", ArtRes);
+        }
+        if (LocSet)
+        {
+            Printf(" loc=\"%s\"", EnumToString(LocSet));
+        }
+        Printf(">\n");
+    }
+};
+
+typedef struct ResGroup
+{
+    UByte_StringEntry RESGROUP;
+    UByte_StringEntry ResGroupName;
+    int32 resEntries;
+    if (printRawXML)
+    {
+        Printf("<Resources id=\"%s\">\n", ResGroupName.theString);
+    }
+    if (resEntries)
+    {
+        Resource Resources[resEntries]<optimize=false>;
+    }
+    if (printRawXML)
+    {
+        Printf("</Resources>\n\n");
+    }
+};
+
+typedef struct
+{
+    UByte_StringEntry COMPOSITE;
+    UByte_StringEntry CompositeGroupName;
+    int32 subGroupEntries;
+    if (printRawXML)
+    {
+        Printf("<CompositeResources id=\"%s\">\n", CompositeGroupName.theString);
+    }
+    if (subGroupEntries)
+    {
+        SubGroup SubGroups[subGroupEntries]<optimize=false>;
+    }
+    if (printRawXML)
+    {
+        Printf("</CompositeResources>\n\n");
+    }
+} CompositeResGroup;
+
+struct
+{
+    FSkip(128); //Comment out if raw
+    if (printRawXML)
+    {
+        Printf("<?xml version=\"1.0\"?>\n<ResourceManifest version=\"2\">\n\n");
+    }
+    int32 compositeResGroupEntries<bgcolor=cGreen>;
+    if (compositeResGroupEntries)
+    {
+        CompositeResGroup CompositeResourceGroup[compositeResGroupEntries]<bgcolor=cGreen, optimize=false>;
+    }
+    int32 resGroupEntries<bgcolor=cGreen>;
+    if (resGroupEntries)
+    {
+        ResGroup ResourceGroup[resGroupEntries]<bgcolor=cPurple, optimize=false>;
+    }
+    if (printRawXML)
+    {
+        Printf("</ResourceManifest>\n\n");
+    }
+} PopCap_PrimeWP7_ResourcesXMLXNABin;

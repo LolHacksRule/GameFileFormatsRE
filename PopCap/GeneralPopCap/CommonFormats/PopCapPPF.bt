@@ -15,35 +15,37 @@
 
 #include "../../../LHR/Common.bt"
 
-struct Header {
+struct
+{
     LittleEndian();
-    byte ppfHdrSize;
-    int32   ppfHeader<bgcolor=cGreen>; //Should be PPF
-    int32   version<bgcolor=cBlue>;
-    byte    mainParticleSize;
-    char    mainParticleName[mainParticleSize];
-    short   ptclFileStrings;
-} header;
+    UByte_StringEntry ppfHeader<bgcolor=cGreen>; //Should be \x04PPF
+    int32   version<bgcolor=cBlue>; //Only seen 1?
+    UByte_StringEntry notes;
+    short   emitters;
+} Header;
 
-struct ParticleDataTable {
-    for (i = 0; i < header.ptclFileStrings; i++)
+struct
+{
+    for (i = 0; i < Header.emitters; i++)
     {
-        struct ParticleStringTable {
-            UByte_StringEntry ptcl;
+        struct
+        {
+            UByte_StringEntry name;
             short u[2]; //?
             Byte_Bool u2; //May be byte?
             UByte_StringEntry refPtcl;
-        } pDataStrTbl;
+        } ParticleStringTable;
     }
     short unk;
     FSkip(4); //?
-    struct ParticleLayerTable { //WIP
-            UByte_StringEntry particleLayerName;
-            FSkip(92); //?
-            UByte_StringEntry particleLayerType;
-            //I give up for now
-    } pLYRDataStrTbl;
-} pDataTbl;
+    struct //WIP
+    {
+        UByte_StringEntry particleLayerName;
+        FSkip(92); //?
+        UByte_StringEntry particleLayerType;
+        //I give up for now
+    } ParticleLayerTable;
+} ParticleDataTable;
 
 //char    header[4];
 //char    version[1];

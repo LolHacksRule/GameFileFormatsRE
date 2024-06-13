@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+struct ResourceStreamBundlePatch
+{
+    char hdr[4];
+    uint32 ver;
+    uint32 unk;
+    uint32 newBundleSz;
+    uint32 unk3;
+    uint32 headerPatchSz;
+    byte OldRsbHdrMD5[16];
+    uint32 resgroups;
+    I32_Bool patchHdr;
+    if (patchHdr)
+    {
+        byte hdrPatch[headerPatchSz];
+    }
+    struct RSGStruct
+    {
+        FPos = FTell();
+        I32_Bool patchRsg;
+        uint32 patchSz;
+        string groupName;
+        FSeek(FPos);
+        FSkip(0x88);
+        byte oldRSGMD5[16];
+        if (patchRsg)
+        {
+            byte RSGPatch[patchSz];
+        }
+    } rsg[resgroups]<optimize=false>;
+} RSBPATCH;

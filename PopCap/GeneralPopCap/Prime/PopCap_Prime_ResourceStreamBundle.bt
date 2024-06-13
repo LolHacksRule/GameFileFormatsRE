@@ -22,7 +22,7 @@ Unstripped Plants vs Zombies on Android
 */
 
 //Tested on various.
-#include "../../LHR/Common.bt"
+#include "../../../LHR/Common.bt"
 
 local int ver4Rsb <hidden=true> = 0;
 //local int i <hidden=true> = 0;
@@ -30,16 +30,6 @@ local int ver4Rsb <hidden=true> = 0;
 local int isCompressedPTXFile <hidden=true> = 0;
 //PVZ2 has a header
 local int isPVZ2CompressedPTXFile <hidden=true> = 0;
-
-typedef enum <uint32> {
-    German = 1145390149, //DEDE
-	English = 1162761555, //ENUS
-    Spanish = 1163085139, //ESES
-    French = 1179797074, //FRFR
-    Italian = 1230260564, //ITIT
-    Portuguese = 1347699282, //PTBR
-    Japanese = 1245792848 //JAJP
-} PopCap_ResStream_Lang;
 
 typedef struct ResourceStreamHeader
 {
@@ -82,7 +72,7 @@ typedef struct SubGroupInfo //Accurate?
         uint32 ratio<bgcolor = cDkBlue>;
         if (ResStreamsBundleHeader.BaseHeader.ResStreamsHeader.verMajor > 1)
         {
-            PopCap_ResStream_Lang lang<bgcolor = cDkGreen>;
+            PopCap_Prime_LocalizedLanguage lang<bgcolor = cDkGreen>;
             uint32 unk <bgcolor = cRed>;
         }
     } info_entry[64]<optimize=false>;

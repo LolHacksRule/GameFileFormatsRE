@@ -13,7 +13,7 @@
 
 #include "../../../LHR/Common.bt"
 
-struct PopCapLegacyAndroidFramework_PrimeResourceXMLBin
+struct Transmension_Prime_ResourceXMLBin
 {
     char magic[4]<bgcolor=cGreen>;
     int32 ver<bgcolor=cGreen>;

@@ -1,0 +1,22 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint32> {
+    PopCap_Prime_LocalizedLanguage_German = 1145390149, //DEDE
+	PopCap_Prime_LocalizedLanguage_English = 1162761555, //ENUS
+    PopCap_Prime_LocalizedLanguage_Spanish = 1163085139, //ESES
+    PopCap_Prime_LocalizedLanguage_French = 1179797074, //FRFR
+    PopCap_Prime_LocalizedLanguage_Italian = 1230260564, //ITIT
+    PopCap_Prime_LocalizedLanguage_Portuguese = 1347699282, //PTBR
+    PopCap_Prime_LocalizedLanguage_Japanese = 1245792848 //JAJP
+} PopCap_Prime_LocalizedLanguage;

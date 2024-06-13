@@ -1,7 +1,7 @@
 from inc_noesis import *
 
 def registerNoesisTypes():
-    handle = noesis.register("PopCap Games Legacy Android Framework SexyAppFrameworkTexture", ".tex")
+    handle = noesis.register("Tramsmension SexyAppFramework Texture", ".tex")
     noesis.setHandlerTypeCheck(handle, noepyCheckType)
     noesis.setHandlerLoadRGBA(handle, noepyLoadRGBA)
     noesis.logPopup()
