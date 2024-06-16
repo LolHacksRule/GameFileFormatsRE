@@ -1,0 +1,271 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/Haruma-VN/Sen/blob/master/Shell/Kernel/Support/PvZ2/RTON.cs#L106
+//https://plantsvszombies.wiki.gg/wiki/User_blog:1Zulu/RTON_Format
+//https://github.com/Miracle-Eagle/SexyTool/blob/main/Program/Core/Functions/SexyParsers/RealTimeObjectNotation/Definitions/RtTypeIdentifier.cs
+//https://github.com/h3x4n1um/RETON
+
+typedef enum <ubyte>
+{
+    //Bool
+    RTONDataType_Bool_False,
+    RTONDataType_Bool_True,
+    //?
+    RTONDataType_NamedNull, //Value or property name?
+    //Byte
+    RTONDataType_Byte = 8,
+    RTONDataType_Byte_Zero,
+    //UByte
+    RTONDataType_UByte,
+    RTONDataType_UByte_Zero,
+    //I16
+    RTONDataType_I16 = 16,
+    RTONDataType_I16_Zero,
+    //U16
+    RTONDataType_U16,
+    RTONDataType_U16_Zero,
+    //I32
+    RTONDataType_I32 = 32,
+    RTONDataType_I32_Zero,
+    //F32
+    RTONDataType_F32,
+    RTONDataType_F32_Zero,
+    //Special I32
+    RTONDataType_VariableI32,
+    RTONDataType_ZigZagI32,
+    //U32
+    RTONDataType_U32,
+    RTONDataType_U32_Zero,
+    //Special U32
+    RTONDataType_VariableU32,
+    //I64
+    RTONDataType_I64 = 64,
+    RTONDataType_I64_Zero,
+    //Double
+    RTONDataType_Double,
+    RTONDataType_Double_Zero,
+    //Special I64
+    RTONDataType_VariableI64,
+    RTONDataType_ZigZagI64,
+    //U64
+    RTONDataType_U64,
+    RTONDataType_U64_Zero,
+    //Special U64
+    RTONDataType_VariableU64,
+    
+    RTONDataType_NativeString = 129,
+    RTONDataType_UTF8String,
+    //RTONID
+    RTONDataType_RTONID,
+    RTONDataType_RTONID_Zero,
+    
+    RTONDataType_ObjectDeclare = 133,
+    RTONDataType_ArrayDeclare,
+    RTONDataType_CachedString = 144,
+    RTONDataType_CachedStringIndex = 145,
+    
+    RTONDataType_Object_NativeString = 176,
+    RTONDataType_Object_Native2XString,
+    RTONDataType_Object_UnicodeString,
+    RTONDataType_Object_Unicode2XString,
+    RTONDataType_Object_String,
+    RTONDataType_Object_2XString,
+    RTONDataType_Object_3XString,
+    RTONDataType_Object_4XString,
+    RTONDataType_Object_Collection,
+    RTONDataType_Object_ArraysCollection,
+    RTONDataType_Object_Native3XString,
+    RTONDataType_Object_BinaryString,
+    RTONDataType_Object_Bool,
+    
+    RTONDataType_ArrayBegin = 253,
+    RTONDataType_ArrayTerminate,
+    RTONDataType_EndObject,
+} RTONDataType;
+
+
+typedef enum <byte>
+{
+    RTONIDSubset_Null, //RTID(NULL)
+    RTONIDSubset_TwoVariableI32AndHex,
+    RTONIDSubset_TwoVariableI32AndHexAndString, //RTID({0}.{1}.{2:x8}@{3})
+    RTONIDSubset_String2AndString, //RTID({0}@{1})
+} RTONIDSubset;
+
+local uint DEBUG_DUMP_JSON <hidden=true> = 0;
+local uint isParamName <hidden=true> = 0;
+local uint isInString <hidden=true> = 0;
+
+#include "../../../LHR/Common.bt"
+
+void readVarInt()
+{
+    while (ReadUByte() > 127)
+    {
+        ubyte dmy<bgcolor=cRed>;
+    }
+    if (ReadUByte() == 1)
+    {
+        ubyte val<bgcolor=cRed>;
+    }
+}
+
+void findNextParam()
+{
+}
+
+void findNextType()
+{
+    while (ReadUInt() != 1162760004)
+    {
+        RTONDataType theNextDataType<hidden=true, bgcolor=cPurple>;
+        switch (theNextDataType)
+        {
+            //Boolean
+            case RTONDataType_Bool_False: if (DEBUG_DUMP_JSON) { Printf("true"); }
+            case RTONDataType_Bool_True: if (DEBUG_DUMP_JSON) { Printf("false"); }
+            //Null name
+            case RTONDataType_NamedNull: if (DEBUG_DUMP_JSON) { Printf("\"\""); }
+            
+            //Byte
+            case RTONDataType_Byte:
+            case RTONDataType_Byte_Zero: byte b; if (DEBUG_DUMP_JSON) { Printf("%x", b); } break;
+            
+            //UByte
+            case RTONDataType_UByte:
+            case RTONDataType_UByte_Zero: ubyte u8; if (DEBUG_DUMP_JSON) { Printf("%x", u8); } break;
+            
+            //I16
+            case RTONDataType_I16:
+            case RTONDataType_I16_Zero: int16 i16; if (DEBUG_DUMP_JSON) { Printf("%i", i16); } break;
+            
+            //U16
+            case RTONDataType_U16:
+            case RTONDataType_U16_Zero: int16 u16; if (DEBUG_DUMP_JSON) { Printf("%i", u16); } break;
+            
+            //I32
+            case RTONDataType_I32:
+            case RTONDataType_I32_Zero: int32 i32; if (DEBUG_DUMP_JSON) { Printf("%i", i32); } break;
+            
+            //U32
+            case RTONDataType_U32:
+            case RTONDataType_U32_Zero: uint32 u32; if (DEBUG_DUMP_JSON) { Printf("%i", u32); } break;
+            
+            //F32
+            case RTONDataType_F32:
+            case RTONDataType_F32_Zero: float f32; if (DEBUG_DUMP_JSON) { Printf("%f", f32); } break;
+    
+            case RTONDataType_VariableI32:
+            struct
+            {
+                while (ReadUByte() > 127)
+                {
+                    ubyte dmy<bgcolor=cRed>;
+                }
+                if (ReadByte() == 1)
+                {
+                    ubyte val<bgcolor=cRed>;
+                }
+            } VarInt32;
+            break;
+            case 134: if (DEBUG_DUMP_JSON) { Printf("["); }
+            struct
+            {
+                //findNextType();
+            } Array;
+            break;
+            case RTONDataType_CachedString:
+            struct
+            {
+                UByte_StringEntry str<bgcolor=cGreen>;
+                if (DEBUG_DUMP_JSON)
+                {
+                    Printf("\"%s\"", str.theString);
+                    if (isParamName)
+                    {
+                        Printf(":");
+                    }
+                    else
+                    {
+                        isParamName = 1;
+                    }
+                }
+                //findNextType();
+                //break;
+            } CachedString;
+            break;
+            case 145: byte stringIdx<bgcolor=cGreen>; break;
+            case 146:
+            struct
+            {
+                ubyte unk<bgcolor=cRed>;
+                UByte_StringEntry str<bgcolor=cGreen>;
+            } CachedUTF8String;
+            break;
+            case 147: ubyte idx<bgcolor=cGreen>; break;
+            case 131:
+            {
+                RTONIDSubset RTIDSubSet;
+                switch (RTIDSubSet)
+                {
+                    case RTONIDSubset_Null: if (DEBUG_DUMP_JSON) { Printf("\"RTID(NULL)\""); } break;
+                    case RTONIDSubset_TwoVariableI32AndHex: byte val<bgcolor=cLtGreen>; ubyte num2<bgcolor=cLtGreen>; uint32 id<bgcolor=cLtGreen>; if (DEBUG_DUMP_JSON) { Printf("\"RTID(%i.%i.%x)\"", num1, num2, id); } break;
+                    case RTONIDSubset_TwoVariableI32AndHexAndString: byte val<bgcolor=cLtGreen>; UByte_StringEntry str<bgcolor=cLtGreen>; ubyte num2<bgcolor=cLtGreen>; ubyte num1<bgcolor=cLtGreen>; uint32 id<bgcolor=cLtGreen>; if (DEBUG_DUMP_JSON) { Printf("\"RTID(%i.%i.%x@%s)\"", num1, num2, id, str.theString); } break;
+                    case RTONIDSubset_String2AndString: byte unk<bgcolor=cLtGreen>; UByte_StringEntry str; byte unk2<bgcolor=cLtGreen>; UByte_StringEntry str2<bgcolor=cLtGreen>; if (DEBUG_DUMP_JSON) { Printf("\"RTID(%s@%s)\"", str2.theString, str.theString); } break;
+                }
+                break;
+            }
+            case 133:
+            /*struct
+            {
+                if (DEBUG_DUMP_JSON)
+                {*/
+                    //isInObject = 1;
+                    //Printf(" {\n\t");
+            /*    }
+                //findNextType();
+                //isInObject = 0;
+            } Object;*/
+            break;
+            case 253:
+            struct
+            {
+                ubyte arrayValues<bgcolor=cBlack>;
+                for (i = 0; i < arrayValues; i++)
+                {
+                    //findNextType();
+                }
+            } ArrayEntry;
+            break;
+            case 254: if (DEBUG_DUMP_JSON) { Printf("]"); } break;
+            case 255: if (DEBUG_DUMP_JSON) { Printf("\n}"); } break;
+        }
+    }
+}
+
+struct
+{
+    char magic[4]<bgcolor=cLtBlue>;
+    LittleEndian();
+    uint32 ver<bgcolor=cBlue>; //PopCap has a tradtion to have the version right after their magic so this is probably correct
+    if (DEBUG_DUMP_JSON) 
+    {
+        Printf("{\n\t");
+    }
+    struct
+    {
+        findNextType();
+    } RTONData;
+    char end[4];
+} PopCap_Prime_ResourceTableJSON_RTON;

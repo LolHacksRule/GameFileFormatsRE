@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: WarioWareGold_Data_DAT.bt
+//      File: Wax_Data_DAT.bt
 //   Authors: LolHacksRule
 //   Version: 
 //   Purpose: 
@@ -25,7 +25,7 @@ typedef struct Header
 
 //ONLY TESTED ON ESHOP DEMO
 
-struct WarioWareGoldData_DAT
+struct WaxData_DAT
 {
     LittleEndian();
     Header DATHdr<bgcolor=cPurple>;;
