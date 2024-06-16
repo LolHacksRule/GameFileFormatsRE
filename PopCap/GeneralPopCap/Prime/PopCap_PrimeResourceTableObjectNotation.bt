@@ -15,6 +15,7 @@
 //https://plantsvszombies.wiki.gg/wiki/User_blog:1Zulu/RTON_Format
 //https://github.com/Miracle-Eagle/SexyTool/blob/main/Program/Core/Functions/SexyParsers/RealTimeObjectNotation/Definitions/RtTypeIdentifier.cs
 //https://github.com/h3x4n1um/RETON
+//https://github.com/twinstar6980/Twinning/blob/master/Script/Support/PopCap/ReflectionObjectNotation/DecodeLenient.ts
 
 typedef enum <ubyte>
 {
