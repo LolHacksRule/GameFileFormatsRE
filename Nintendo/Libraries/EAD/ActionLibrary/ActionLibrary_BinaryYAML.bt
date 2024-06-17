@@ -23,6 +23,7 @@
 
 local string stringTblIdxString <hidden=true> = "";
 local uint32 DEBUG_PRINT_YAML <hidden=true> = 0; //Write a skeleton of the BYAML, will be laggy on big ones
+
 typedef enum <uint16>
 {
     BigEndian = 22850, //BY
@@ -96,6 +97,18 @@ typedef struct Node
                     else if (NodeType == SerializedDataContainerRef)
                     {
                         int32 refi32<bgcolor=cWhite>;
+                        FPos = FTell(); //?
+                        FSeek(refi32);
+                        uint32 dSz<bgcolor=cWhite>;
+                        if (tempStrToDisp == "GUID") //Lazy
+                        {
+                            GUID data;
+                        }
+                        else
+                        {
+                            byte data[dSz]<bgcolor=cBlack>; //GUID?
+                        }
+                        FSeek(FPos);
                         if (DEBUG_PRINT_YAML)
                         {
                             Printf("%i\n", refi32);
@@ -325,7 +338,7 @@ struct
         FSeek(Header.rootNodeOff);
         if (DEBUG_PRINT_YAML)
         {
-            Printf("root:\n");
+            Printf("root:\n\t");
         }
         Node RootNode<bgcolor=cBlue>;
         if (DEBUG_PRINT_YAML)
