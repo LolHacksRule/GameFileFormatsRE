@@ -18,13 +18,20 @@
 
 //https://github.com/kinnay/Nintendo-File-Formats/wiki/XLINK-File-Format
 
-#include "../../../LHR/Common.bt"
+#include "../../../../LHR/Common.bt"
 
 typedef struct Header
 {
     char   XLINK[4];
+    //Check for endian using 0x08
+    FSkip(4);
+    if (ReadByte() >= 0)
+    {
+        LittleEndian();
+    }
+    FSkip(-4);
     uint32 fSize;
-    uint32 ver;
+    uint32 ver; //33 for Grande (Sound) / 36 for Effect
     uint32 resParams;
     uint32 resAssetParams;
     uint32 resTiggerOverwriteParams;
@@ -261,6 +268,7 @@ typedef struct TrigOverwriteParamTableEntry
 
 struct BinaryXLink2
 {
+    BigEndian();
     Header theHdr;
     UserDataTbl UserData;
     ParameterDefinitionsTable ParameterDefinitions;

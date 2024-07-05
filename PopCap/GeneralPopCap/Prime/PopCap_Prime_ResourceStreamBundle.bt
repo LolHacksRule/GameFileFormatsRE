@@ -23,6 +23,7 @@ Unstripped Plants vs Zombies on Android
 
 //Tested on various.
 #include "../../../LHR/Common.bt"
+#include "PopCap_PrimeCommon.bt"
 
 local int ver4Rsb <hidden=true> = 0;
 //local int i <hidden=true> = 0;

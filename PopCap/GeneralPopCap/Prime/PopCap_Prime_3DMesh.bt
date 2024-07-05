@@ -13,10 +13,10 @@
 
 #include "../../../../LHR/Common.bt"
 
-struct Bejeweled3PopCap3DMesh
+struct PopCap_Prime3DMesh //So this is used in the Bejeweled series yet is in engine for the platform's RenderDevice class (D3DInterface on Windows), it's still in the code to this day why
 {
     LittleEndian();
-    uint32 magic;
+    uint32 magic; //0x3DBEEF00
     uint32 ver;
     uint16 objects;
     struct Objects

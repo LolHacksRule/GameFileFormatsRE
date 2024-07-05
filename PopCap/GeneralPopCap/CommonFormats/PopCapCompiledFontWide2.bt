@@ -14,8 +14,9 @@
 //Also works with DAT files from legacy PVZ and iDevice / Marmalade SDK + Bej 2 Android ports
 
 #include "../../../LHR/Common.bt"
-local uint isUnicode = -1;
-local uint isLegacy = -1;
+local int isTransmensionUnicode = -1; //Fonts from Transmension Chinese Android TV ports
+local int isLegacy = -1; //Fonts from early PopCap mobile ports (PVZ, Peggle)
+local int isWrapper = -1; //Font from trial wrapper (PCAPBFNT)
 
 LittleEndian();
 
@@ -88,94 +89,85 @@ typedef struct
     uint32 baseOrder;
 } Layer;
 
-typedef struct
-{
-    I32_StringEntry theLayerName;
-    uint32 requiredTags;
-    I32_StringEntry reqTag[requiredTags]<optimize=false>;
-    uint32 excludedTags;
-    I32_StringEntry excTag[excludedTags]<optimize=false>;
-    uint16 kerning;
-    Kerning kerningEntry[kerning]<optimize=false>;
-    uint16 endKern;
-    uint32 fontChars;
-    FontChar fontCharEntry[fontChars]<optimize=false>;
-    Vector4_I32 mult;
-    Vector4_I32 add;
-    I32_StringEntry imgFile;
-    uint32 drawMode;
-    uint32 off[2];
-    uint32 spacing;
-    uint32 pointSz[2];
-    uint32 actPointSz;
-    uint32 ascent[2];
-    uint32 height;
-    uint32 actHeight;
-    uint32 lineSpacingOff;
-    uint32 baseOrder;
-} Header;
-
 struct CFW2
 {
-    FSkip(2);
-    byte checkForMD5<hidden=true>;
-    FSkip(-3);
-    if (checkForMD5 != 0)
+    if (ReadInt64() != 6074870197997618000) //Wrapper Font
     {
-        isLegacy = 0;
-        byte MD5[16]; //MD5 of original TXT file, legacy games for iDevices and mostly Android Marmalade SDK ports exclude this and only have the later content
-        if (ReadInt() == 3439307281) //Unicode font
+        isWrapper = 0;
+        FSkip(2);
+        byte checkForMD5<hidden=true>;
+        FSkip(-3);
+        if (checkForMD5 != 0)
         {
-            isUnicode = 1;
-            int32 unicodeMagic;
-            int32 unicodeVer;
+            isLegacy = 0;
+            byte MD5[16]; //MD5 of original TXT file, legacy games for iDevices and mostly Android Marmalade SDK ports exclude this and only have the later content
+            if (ReadInt() == 3439307281) //Transmension unicode font
+            {
+                isTransmensionUnicode = 1;
+                int32 unicodeMagic;
+                int32 unicodeVer;
+            }
+            else
+            {
+                isTransmensionUnicode = 0;
+            }
         }
         else
         {
-            isUnicode = 0;
+            isLegacy = 1;
+            uint32 legacyMobileCFW2Hdr;
+        }
+        if (!isLegacy)
+        {
+            int32 LayerSetAscent;
+            int32 LayerSetAscentPadding;
+            int32 LayerSetHeight;
+            int32 LayerSetSpacing;
+            Byte_Bool Initialized;
         }
     }
     else
     {
-        isLegacy = 1;
-        uint32 legacyMobileCFW2Hdr;
-    }
-    if (!isLegacy)
-    {
-        int32 LayerSetAscent;
-        int32 LayerSetAscentPadding;
-        int32 LayerSetHeight;
-        int32 LayerSetSpacing;
-        Byte_Bool Initialized;
+        isWrapper = 1;
+        uint64 binFontMagic;
+        uint32 encodingType;
+        uint32 SetDefaultPointSize;
     }
     int32 LayerSetPointSize;
     int32 Chars;
     if (Chars > 0)
     {
-        struct CharEntries
+        struct
         {
             for (i = 0; i < Chars; i++)
             {
-                struct Char
+                struct
                 {
-                    if (isUnicode && !isLegacy)
+                    if (isTransmensionUnicode && !isLegacy)
                     {
                         int16 unk10_unicodeval;
                         int16 unk11_unicodeval;
                     }
                     wchar_t idx;
                     wchar_t val;
-                } charInts;
+                } Char;
             }
-        } ce;
+        } CharEntries;
     }
-    if (!isLegacy)
+    if (!isLegacy && !isWrapper)
     {
         int32 Layers;
     }
-    else
+    else 
     {
-        int16 Layers;
+        if (isWrapper)
+        {
+            uint64 Layers;
+        }
+        else
+        {
+            int16 Layers;
+        }
     }
     //uint16 unk3;
     struct Layers
@@ -185,24 +177,26 @@ struct CFW2
             Layer layerEntry;
         }
     } layers;
-    
-    I32_StringEntry srcFileName;
-    I32_StringEntry error;
-    uint32 pointSz;
-    uint32 tags;
-    if (tags > 0)
+    if (!isWrapper)
     {
-        I32_StringEntry tag[tags]<optimize=false>;
-    }
-    else
-    {
-        FSkip(4);
-    }
-    float scale;
-    Byte_Bool forceWhite;
-    Byte_Bool activateAllLayers;
-    if (isLegacy)
-    {
-        uint32 EOFMagic;
+        I32_StringEntry srcFileName;
+        I32_StringEntry error;
+        uint32 pointSz;
+        uint32 tags;
+        if (tags > 0)
+        {
+            I32_StringEntry tag[tags]<optimize=false>;
+        }
+        else
+        {
+            FSkip(4);
+        }
+        float scale;
+        Byte_Bool forceWhite;
+        Byte_Bool activateAllLayers;
+        if (isLegacy)
+        {
+            uint32 EOFMagic;
+        }
     }
 } cfw2;

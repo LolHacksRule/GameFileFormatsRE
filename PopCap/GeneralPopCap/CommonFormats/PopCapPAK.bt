@@ -38,7 +38,7 @@ struct PopCapPAK
         break;
     }
     uint32 magic<bgcolor=cPurple>;
-    uint32 version<bgcolor=cYellow>;
+    uint32 version<bgcolor=cYellow>; //Why make a version number when you never update it, at this rate it's padding now
     struct FileEntries
     {
         while (terminateEntryRead == 0)
