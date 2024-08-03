@@ -11,83 +11,177 @@
 //   History: 
 //------------------------------------------------
 
+local uint DEBUG_PRINT <hidden=true> = 0;
+
 #include "JSystem_Common.bt"
 
-typedef struct JSystem_MessageGroupInfoTable
+typedef struct MessageGroupInfoTable
 {
     JSystem_Chunk INF1Chunk;
-    struct MessageGroupInfoTable
+    struct
     {
-        uint16 messages;
-        uint16 messageLength;
-        uint16 messageGroupID;
-        byte messageColorIdx;
-        byte rsrv;
-        struct MessageEntries
+        uint16 messages<bgcolor=cGreen>;
+        uint16 messageLength<bgcolor=cGreen>;
+        uint16 messageGroupID<bgcolor=cGreen>;
+        byte messageColorIdx<bgcolor=cGreen>;
+        byte rsrv<bgcolor=cRed>;
+        struct
         {
             for (i = 0; i < messages; i++)
             {
-                struct MessageEntry
+                struct
                 {
                     uint32 msgOff;
                     if (messageLength > 4)
                     {
-                        byte msgEntry[messageLength-4]<optimize=false>;
+                        byte msgEntry[messageLength-4]<optimize=false,bgcolor=cRed>;
                     }
-                } messageEntry;
+                } MessageEntry;
             }
-        } messageEntries;
-        byte pad[INF1Chunk.chunkSz - sizeof messageEntries - 16];
+        } MessageEntries;
+        byte pad[INF1Chunk.chunkSz - sizeof MessageEntries - 16]<bgcolor=cRed>;
     } MessageGroupInfoTableStruct;
 };
 
-typedef struct JSystem_MessageGroupData
+typedef enum <uint16>
 {
-    JSystem_Chunk DAT1Chunk;
-    FPos = FTell();
-    struct MessageGroupStringEntries
+    MessageGroupTagType_BuiltIn_Color,
+    MessageGroupTagType_BuiltIn_FontPercent,
+    MessageGroupTagType_BuiltIn_Ruby,
+    MessageGroupTagType_BuiltIn_FontID,
+    MessageGroupTagType_BuiltIn_JMessageStringExpansion,
+    MessageGroupTagType_BuiltIn_JMessageExtractMessageData,
+    MessageGroupTagType_BuiltIn_JMessageDataDestination,
+    MessageGroupTagType_BuiltIn_ExtendedRuby,
+} MessageGroupTagType_BuiltIn;
+
+typedef struct MessageGroupSystemControlTag
+{
+    switch (tagType)
     {
-        for (i = 0; i < INF1.MessageGroupInfoTableStruct.messages; i++)
-        {
-            struct MessageGroupStringEntry
-            {
-                FSeek(FPos);
-                FSkip(INF1.MessageGroupInfoTableStruct.messageEntries.messageEntry[i].msgOff);
-                if (JSystem_CharacterSet_UTF16)
-                {
-                    wstring msgEntry<optimize=false>;
-                }
-                else
-                {
-                    string msgEntry<optimize=false>;
-                }
-            } messageGroupStringEntry;
-        }
-    } messageGroupStringEntries;
-    byte pad[DAT1Chunk.chunkSz - sizeof messageGroupStringEntries - 8];
+        case 0: uint16 unk; ubyte colorIdx; if (DEBUG_PRINT) Printf("<BuiltInColor><Index>%i</Index></BuiltInColor>", colorIdx); break; //Color
+        //case 1: uint16 pad; ubyte colorIdx; break; //FontSize
+    }
 };
 
-typedef struct JSystem_MessageGroupMessageIDs
+typedef struct MessageGroupControlTag
+{
+    uint16 controlTagMagic;
+    ubyte tagSize;
+    ubyte tagGroupID;
+    if (tagGroupID == 0xFF)
+    {
+        MessageGroupTagType_BuiltIn tagType<bgcolor=cPurple>;
+    }
+    else
+    {
+        uint16 tagNum; //Unsupported atm, RevoKart 020017 is B button
+    }
+    //if (tagGroupID == 0xFF) //Parse builtin tag
+    {
+        //MessageGroupSystemControlTag systemTag;
+    }
+    //else
+    {
+        /*if (targetSoftware)
+        {
+             CustomControlTag customTag;
+        }*/
+        if (tagSize - 6 > 0)
+        {
+            ubyte tag[tagSize-6]<optimize=false>;
+        }
+    }
+    if (DEBUG_PRINT)
+    {
+        if (tagGroupID == 0xFF)
+        {
+            Printf("<%s></%s>", EnumToString(tagType), EnumToString(tagType));
+        }
+        else
+        {
+            Printf("<CustomTag%i num=%i></CustomTag%i>", tagGroupID, tagNum, tagGroupID);
+        }
+    }
+};
+
+typedef struct MessageGroupData
+{
+    JSystem_Chunk DAT1Chunk;
+    struct
+    {
+        FPos = FTell();
+        for (i = 0; i < INF1.MessageGroupInfoTableStruct.messages; i++)
+        {
+            if (DEBUG_PRINT)
+            {
+                Printf("%i: ", i);
+            }
+            FSeek(FPos + INF1.MessageGroupInfoTableStruct.MessageEntries.MessageEntry[i].msgOff);
+            struct
+            {
+                while ((MessageGroupHeader.characterSet == JSystem_CharacterSet_UTF8 && ReadByte() != 0 || ReadShort() == 26 || (MessageGroupHeader.characterSet == JSystem_CharacterSet_UTF16 && ReadShort() != 0))) //Todo fix the empty structure string
+                {
+                    if (ReadUShort() == 26)
+                    {
+                        MessageGroupControlTag controlTag<bgcolor=cRed>;
+                    }
+                    else
+                    {
+                        switch (MessageGroupHeader.characterSet)
+                        {
+                            case JSystem_CharacterSet_UTF16: wchar_t textChar<optimize=false,bgcolor=cGreen>; break;
+                            default: char textChar<optimize=false,bgcolor=cGreen>; break;
+                        }
+                        if (DEBUG_PRINT)
+                        {
+                            Printf("%s", WStringToString(textChar, CHARSET_UTF8));
+                            //Printf("%s\n", msgEntry);
+                        }
+                    }
+                }
+                if (DEBUG_PRINT)
+                {
+                    Printf("\n");
+                }
+            } MessageGroupStringEntry;
+        }
+    } MessageGroupStringEntries<optimize=false>;
+    FSeek(FPos+DAT1Chunk.chunkSz-8); //Temp fix, we won't read padding for strings jumping back beyond the end
+    //byte pad[DAT1Chunk.chunkSz - sizeof MessageGroupStringEntries - 8]<bgcolor=cRed>;
+};
+
+typedef struct MessageGroupMessageIDs
 {
     JSystem_Chunk MID1Chunk;
-    struct JSystem_MessageGroupMessageIDsStruct
+    struct
     {
         uint16 messages;
         byte msgFmt;
         byte info;
         byte pad[4];
-        uint32 messageID[messages];
-    } MID1_STRUCT;
-    byte pad[MID1Chunk.chunkSz - sizeof MID1_STRUCT - 8];
+        uint32 messageID[messages]<bgcolor=cGreen>;
+    } MessageGroupMessageIDsStruct;
+    byte pad[MID1Chunk.chunkSz - sizeof MessageGroupMessageIDsStruct - 8]<bgcolor=cRed>;
+};
+
+typedef struct MessageGroupBlockHeader
+{
+    JSystem_CharacterSet characterSet;
+    byte padding1;
+    uint16 padding2;
+    uint32 rsrv[2];
+    uint32 uwrk;
 };
 
 struct JSystem_BinaryMessageGroup
 {
-    JSystem_BlockHeader binBlockHdr;
-    JSystem_MessageGroupInfoTable INF1;
-    JSystem_MessageGroupData DAT1;
-    if (binBlockHdr.chunks > 2)
+    JSystem_BlockHeader BlockHeader;
+    MessageGroupBlockHeader MessageGroupHeader;
+    MessageGroupInfoTable INF1;
+    MessageGroupData DAT1;
+    if (BlockHeader.chunks > 2)
     {
-        JSystem_MessageGroupMessageIDs MID1;
+        MessageGroupMessageIDs MID1;
     }
 } BMG;

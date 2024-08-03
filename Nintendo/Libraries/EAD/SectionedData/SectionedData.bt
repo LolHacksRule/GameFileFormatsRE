@@ -15,7 +15,7 @@
 
 //https://mk3ds.com/index.php?title=KMP_(File_Format)
 //https://wiki.tockdom.com/wiki/KMP_(File_Format)
-//iirc avsys wiki had this documented at least for MK7 but it's lost media now
+//https://wiki.wexosmk.xyz/index.php/KMP_(File_Format)/Mario_Kart_7
 
 //Shoutouts to course.0
 
@@ -23,10 +23,20 @@
 
 typedef enum <uint32>
 {
+    //NitroKart
     SectionType_MK_NitroMapData = 1313557828,
+    SectionType_MK_NitroKart_MapData = 1313557828,
+    SectionType_MK_NitroKart_ObjectInformation = 1329744457,
+    SectionType_MK_NitroKart_Path = 1346458696,
+    SectionType_MK_NitroKart_KartPositionStart = 1263816787,
+    SectionType_MK_NitroKart_KartPointJugem = 1263816778,
+    SectionType_MK_NitroKart_KartPoint2D = 1263816754,
+    //RevolutionKart
     SectionType_MK_RevolutionKartMapData = 1380666692,
-    SectionType_MK_CTRDashMapData = 1128549700,
-    SectionType_MK_CTRDashDiv = 1111573571, //?
+    //CTRDash
+    SectionType_MK_CTRDash_MapData = 1128549700,
+    SectionType_MK_CTRDash_Div = 1111573571, //?
+    //MK
     SectionType_MK_KartPoint = 1263816788,
     SectionType_MK_EnemyPoint = 1162760276,
     SectionType_MK_EnemyPath = 1162760264,
@@ -218,12 +228,305 @@ typedef enum <byte>
 typedef struct SectionHeader
 {
     SectionType magic;
-    if (Header.magic != SectionType_MK_RevolutionKartMapData && Header.magic == SectionType_MK_CTRDashDiv)
+    if (Header.magic != SectionType_MK_RevolutionKartMapData && Header.magic == SectionType_MK_CTRDash_Div)
     {
         LittleEndian();
     }
     uint16 entries;
     uint16 other;
+};
+
+typedef struct MK_NitroKart_ObjectInformation
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot; 
+            Vector3_F32 scale;
+            int16 objectID;
+            int16 routeID;
+            struct
+            {
+                uint16 unk[2];
+            } Settings[4];
+            U32_Bool showInTimeTrial;
+        } MK_NitroKart_ObjectInformationEntry[h.entries];
+    }
+};
+
+typedef struct MK_NitroKart_Path
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            byte routeID;
+            Byte_Bool loop;
+            uint16 points;
+        } MK_NitroKart_PathEntry[h.entries];
+    }
+};
+
+typedef struct MK_NitroKart_KartPositionStart
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            int16 pad;
+            int16 idx;
+        } MK_NitroKart_KartPositionStartInformation[h.entries];
+    }
+};
+
+typedef struct MK_NitroKart_KartPositionJugem
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot; //Different in 30, 32, 34
+            uint16 enemyPointID;
+            uint16 itemPointID;
+            if (Header.version != 30)
+            {
+                uint32 respawnID;
+            }
+        } MK_NitroKart_KartPositionJugemEntry[h.entries];
+    }
+};
+
+typedef struct MK_NitroKart_KartPoint2D
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 dir; //or start
+            int16 pad;
+            int16 index;
+        } MK_NitroKart_KartPoint2DEntry[h.entries];
+    }
+};
+
+
+typedef struct MK_NitroKart_KartCannonPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            uint16 unk;
+            uint16 idx;
+        } MK_NitroKart_KartCannonPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_KartPointMission
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            uint16 unk;
+            uint16 idx;
+        } MK_NitroKart_KartPointMissionEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_CheckPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 pos2;
+            float sinus;
+            float cosinus;
+            float dist;
+            int16 secData1;
+            int16 secData2;
+            uint16 keyID;
+            byte respawnID;
+            byte unk;
+        } MK_NitroKart_CheckPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_CheckPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 start;
+            uint16 len;
+            byte nextGroup[3];
+            byte prevGroup[3];
+            int16 sectionOrder;
+        } MK_NitroKart_CheckPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_ItemPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            float scale;
+            uint32 unk;
+        } MK_NitroKart_ItemPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_ItemPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 start;
+            uint16 len;
+            byte nextGroup[3];
+            byte prevGroup[3];
+            int16 sectionOrder;
+        } MK_NitroKart_ItemPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_EnemyPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            float scale;
+            int16 drift;
+            uint16 unk;
+            uint32 unk2;
+        } MK_NitroKart_EnemyPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_EnemyPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            uint16 start;
+            uint16 len;
+            byte nextGroup[3];
+            byte prevGroup[3];
+        } MK_NitroKart_EnemyPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_MinigameEnemyPoint
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            float scale;
+            int32 drift;
+            uint32 unk2;
+        } MK_NitroKart_MinigameEnemyPointEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_MinigameEnemyPath
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            float scale;
+            byte nextGroup[8];
+            byte prevGroup[8];
+        } MK_NitroKart_MinigameEnemyPathEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_AreaInformation
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 length;
+            Vector3_F32 unk[3];
+            int16 unk[3];
+            byte unk2;
+            byte cameraID;
+            byte areaType;
+            byte unk3;
+            uint16 unk4;
+        } MK_NitroKart_AreaInformationEntry[h.entries]<optimize=false>;
+    }
+};
+
+typedef struct MK_NitroKart_CameraInformation
+{
+    SectionHeader h;
+    if (h.entries != 0)
+    {
+        struct
+        {
+            Vector3_F32 pos;
+            Vector3_F32 rot;
+            Vector3_F32 pos2;
+            Vector3_F32 pos3;
+            struct
+            {
+                int16 start;
+                int16 sine;
+                int16 cosine;
+            } FOV[2]; //Start + end
+            uint16 cameraZoom;
+            uint16 camType;
+            int16 linkedRoute;
+            uint16 routeSpeed;
+            uint16 pointSpeed;
+            uint16 cameraFrames;
+            int16 nextCamera;
+            byte introPanFirstCameraIndicator;
+            byte unk;
+        } MK_NitroKart_CameraInformationEntry[h.entries]<optimize=false>;
+    }
 };
 
 typedef struct MK_KartPoint
@@ -514,12 +817,39 @@ typedef struct MK_StageInfo
     {
         struct
         {
-            byte laps;
-            byte polePos;
-            byte normalDist;
-            Byte_Bool lensFlare;
-            RGBA_UByte lensFlareColor;
-            byte flareTrans;
+            if (magic == SectionType_MK_NitroKart_MapData)
+            {
+                uint16 trackID;
+                uint16 laps;
+                byte unk;
+                struct
+                {
+                    Byte_Bool enable;
+                    byte slope;
+                    uint32 unk2;
+                    uint32 unk3;
+                    float distance;
+                    RGBA_UByte color;
+                    uint16 alpha;
+                } Fog;
+                struct
+                {
+                    RGBA_UByte color1;
+                    RGBA_UByte color2;
+                    RGBA_UByte color3;
+                    RGBA_UByte color4;
+                } KinematicCollision;
+                float frustumFar;
+            }
+            else
+            {
+                byte laps;
+                byte polePos;
+                byte normalDist;
+                Byte_Bool lensFlare;
+                RGBA_UByte lensFlareColor;
+                byte flareTrans;
+            }
             uint16 pad;
             byte pad2;
         } MK_StageInfoEntry[h.entries]<optimize=false>;
@@ -1621,11 +1951,20 @@ struct
             LittleEndian();
         }
         SectionType magic;
-        uint32 fSize;
-        uint16 sections;
-        uint16 hLen;
-        uint32 version;
-        if (magic != SectionType_MK_CTRDashDiv)
+        if (magic != SectionType_MK_CTRDash_Div)
+        {
+            uint32 fSize;
+            uint16 sections;
+            uint16 hLen;
+            uint32 version;
+        }
+        else //Nitro Kart Map Data
+        {
+            uint16 version;
+            uint16 hLen;
+            uint32 sections;
+        }
+        if (magic != SectionType_MK_CTRDash_Div)
         {
             uint32 sectionOffsets[sections]; //Kart Map Data only
         }

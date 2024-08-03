@@ -35,7 +35,7 @@ typedef enum <uint32>
 
 typedef enum <ubyte>
 {
-    JSystem_CharacterSet_Latin1_Legacy, 
+    JSystem_CharacterSet_CP1252, 
     JSystem_CharacterSet_Latin1,
     JSystem_CharacterSet_UTF16,
     JSystem_CharacterSet_ShiftJIS,
@@ -60,7 +60,7 @@ typedef struct JSystem_BlockHeader
     JSystem_FileType fileType;
     uint32 blockSz;
     uint32 chunks;
-    if (subSystem == JSystem_SubSystemVersion_MessageGroup && fileType == JSystem_FileType_BinaryMessageGroupV1)
+    /*if (subSystem == JSystem_SubSystemVersion_MessageGroup && fileType == JSystem_FileType_BinaryMessageGroupV1)
     {
         JSystem_CharacterSet characterSet;
         byte padding1;
@@ -72,5 +72,5 @@ typedef struct JSystem_BlockHeader
     {
         char subVersionStr[16];
         //byte padding[12];
-    }
+    }*/
 };
