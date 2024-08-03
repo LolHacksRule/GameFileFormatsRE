@@ -1,0 +1,222 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+#include "RevolutionKartCommon.bt"
+
+//https://wiki.tockdom.com/wiki/Rksys.dat
+
+typedef struct WinLossStat
+{
+    int32 wins;
+    int32 losses;
+};
+
+typedef struct CupData
+{
+    byte unk[0x53+0x0d];
+    //byte cupFlag;
+    //byte unkFlag; //also rank
+    //byte completionFlag;
+    //byte unk2[0xD];
+};
+
+typedef struct TimeTrialLeaderboard
+{
+    byte mii[0x4A];
+    uint16 miiDataCRC16;
+    byte minAndSec;
+    uint16 msc;
+    byte vehicleIDAndUnk;
+    byte enabledAndCharID; //also charID
+    byte ctrIDAndUnk; //also unk
+    byte unk[14]; //also unk
+    CupData TimeTrialCupData[31];
+};
+
+typedef struct FriendMainData
+{
+    int32 unk;
+    uint32 profileID;
+    int32 unk2;
+    byte unk3[4];
+    uint16 unk4;
+    uint16 lossesAgainst;
+    uint16 winsAgainst;
+    uint16 raceRating;
+    uint16 battleRating;
+    byte miiData[0x4A];
+    byte unk5[4];
+    byte country;
+    byte region;
+    uint16 unk6;
+    uint16 globeCoords[2];
+    byte unk7[0x150];
+};
+
+typedef struct FriendSecondaryData
+{
+    uint16 unk;
+    byte unk2;
+    byte unk3;
+    uint32 profileID;
+    byte unk4[4];
+};
+
+typedef struct RankingTimeTrialChampionEntry
+{
+    uint32 finishTime;
+    byte hashedMii[0x4C];
+};
+
+typedef struct RankingTimeTrialChampion
+{
+    RankingTimeTrialChampionEntry regional;
+    RankingTimeTrialChampionEntry ww;
+};
+
+typedef struct RankingCompetitionChampionEntry
+{
+    uint32 finishTime;
+    uint32 unk;
+    byte hashedMii[0x4C];
+};
+
+typedef struct RankingCompetitionChampion
+{
+   RankingCompetitionChampionEntry regional;
+   RankingCompetitionChampionEntry ww;
+};
+
+typedef struct RevolutionKartGhostData
+{
+    char magic[4];
+    uint32 settings;
+    byte unk[10*0x384];
+    RankingTimeTrialChampion rankingTimeTrialChampion[32];
+    RankingCompetitionChampion rankingCompetitionChampion;
+    uint32 unk2[2*5];
+    uint16 lastGhostRace;
+    RevolutionKart_Region region;
+};
+
+typedef struct GhostDataSlot
+{
+    byte unk[2800];
+};
+
+struct
+{
+    struct
+    {
+        BigEndian();
+        char magic[4];
+        char saveRevision[4]; //Why
+    } Header;
+    struct 
+    {
+        char magic[4];
+        byte bestFlags[4];
+        byte dlGhostFlags[4];
+        byte normalStaffGhostFlags[4];
+        byte expertStaffGhostFlags[4];
+        wchar_t miiName[10];
+        byte miiAvatarID[4];
+        byte miiClientID[4];
+        struct
+        {
+            byte flag1;
+            byte flag2;
+            byte flag3;
+            byte flag4;
+            byte flag5;
+            byte flag6;
+            byte flag7;
+            byte flag8;
+            byte unk[8];
+        } CompletionFlags;
+        struct
+        {
+            uint32 sz;
+            //if (sz > 0)
+            {
+                uint64 pseudoUserID;
+                uint32 pseudoPlayerID;
+                uint64 authenticUserID;
+                uint32 authenticPlayerID;
+                uint32 profileID;
+                byte unk[4];
+                char gameID[4];
+                byte unk2[0x14];
+                uint32 crc32;
+            }
+        } DWCUserData;
+        byte singlePlayerRule[4];
+        byte multiPlayerRule[4];
+        struct
+        {
+            WinLossStat VS_Offline;
+            WinLossStat battle;
+            WinLossStat VS_WFC;
+            WinLossStat battle_WFC;
+            WinLossStat ghostRace;
+            uint16 raceRanking;
+            uint16 battleRanking;
+            int32 totalRaces;
+            int32 totalBattles;
+            int32 unk;
+            int32 wiiWheelPlays;
+            float distanceTravelled;
+            int32 ghostDataChallengesSent;
+            int32 ghostDataChallengesRecieved;
+            int32 itemHitsDelivered;
+            int32 itemHitsRecieved;
+            int32 tricks;
+            int32 firstPlaceTimes;
+            float firstPlaceDistanceTravelled;
+            float VSDistanceTravelled;
+            uint16 competitionsEntered;
+            byte flag;
+            byte unk2;
+            struct
+            {
+                uint16 racesCompleted;
+            } FavChar[25];
+            struct
+            {
+                uint16 racesCompleted;
+            } FavoriteKart[36];
+            struct
+            {
+                uint16 courseCompleted;
+            } FavoriteCourse[32];
+            struct
+            {
+                uint16 battlesCompleted;
+            } FavoriteBattleStage[10];
+            byte pad[6];
+        } Records;
+        CupData cupData[32];
+        TimeTrialLeaderboard timeTrialLeaderboard[6];
+        FSeek(0x56D0 + 8);
+        FriendMainData friendMain[30];
+        FriendSecondaryData friendSecondary[30];
+        byte pad[8];
+    } RevolutionKartProfileData[4];
+    RevolutionKartGhostData RKG;
+    FSeek(0x26B0C);
+    byte unk2[0x14f0];
+    uint32 CRC32;
+    //I give up for now
+    //GhostDataSlot ghostDataSlot[4];
+} RevolutionKartSystemData<optimize=false>;

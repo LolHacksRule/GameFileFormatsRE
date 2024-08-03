@@ -1,0 +1,80 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://wiki.tockdom.com/wiki/BMG_(File_Format)/0x1A_Escape_Sequences
+
+typedef enum <uint16>
+{
+    RevolutionKart_Region_JPN,
+    RevolutionKart_Region_USA,
+    RevolutionKart_Region_EUR,
+    RevolutionKart_Region_AUS,
+    RevolutionKart_Region_TAI,
+    RevolutionKart_Region_SKO,
+    RevolutionKart_Region_CHN,
+} RevolutionKart_Region;
+
+typedef enum <uint16>
+{
+    //RevolutionKart_Insertion_ErrorCode = 16,
+    RevolutionKart_Insertion_CupName,
+    RevolutionKart_Insertion_PlayerName,
+    RevolutionKart_Insertion_BlackQuestionBox = 21,
+    RevolutionKart_Insertion_PlusZero,
+    RevolutionKart_Insertion_PlayerController_BButton, //Displayed as WiiMote B in message boxes
+    RevolutionKart_Insertion_WiiFriend = 32,
+} RevolutionKart_InsertionType;
+
+typedef enum <uint32>
+{
+    RevolutionKart_TextModify_TextColor_Gray,
+    RevolutionKart_TextModify_TextColor_Red3Unused,
+    RevolutionKart_TextModify_TextColor_White,
+    RevolutionKart_TextModify_TextColor_Transparent,
+    RevolutionKart_TextModify_TextColor_Red2,
+    RevolutionKart_TextModify_TextColor_Blue1,
+    RevolutionKart_TextModify_TextColor_Yellow,
+    RevolutionKart_TextModify_TextColor_Blue2,
+    RevolutionKart_TextModify_TextColor_Red3,
+    RevolutionKart_TextModify_TextColor_Green,
+    RevolutionKart_TextModify_TextColor_Red1,
+} RevolutionKart_TextModify_TextColorType;
+
+typedef enum <uint16>
+{
+    RevolutionKart_TextModify_FontSizePct,  
+    RevolutionKart_TextModify_TextColor,
+} RevolutionKart_TextModifyType;
+
+//#ifdef JMS_TARGET_REVOKART
+
+typedef enum <ubyte>
+{
+    RevolutionKart_TextModify,
+    RevolutionKart_UnicodeCharacter,
+    RevolutionKart_Insertion,
+} JMS_CustomTagType;
+
+typedef struct JMS_CustomTagGroup
+{
+    JMS_CustomTagType tagType;
+    switch (tagType)
+    {
+        case RevolutionKart_TextModify: RevolutionKart_TextModifyType textModifyType; switch (textModifyType) { case 0: uint32 fontSizePct; break; case 1: uint32 textColorIdx; break; }
+        case RevolutionKart_UnicodeCharacter: uint16 dmy; wchar_t unicodeChar; if (printControlTagInfo) { Printf("<UnicodeChar%x>", unicodeChar); } break;
+        case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 unk; if (printControlTagInfo) { Printf("<%s unk=%i", EnumToString(insertionType), unk); } if (tagSize == 10) { uint16 unk2; if (printControlTagInfo) { Printf(" unk2=%i", unk2); }  } if (printControlTagInfo) { Printf(">"); } break;
+        default: break;
+    }
+};
+
+//#endif
