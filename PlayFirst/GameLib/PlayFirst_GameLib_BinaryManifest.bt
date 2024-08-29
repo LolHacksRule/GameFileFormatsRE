@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../PlayGround/PlayFirstPlaygroundCommon.bt"
+
+struct
+{
+    char BMANFEST[8];
+    uint32 ver;
+    uint32 files;
+    uint32 assetGroupRules; //?
+    PlayFirstPlayground_OffsetAndSize FilesDefine;
+    PlayFirstPlayground_OffsetAndSize unk2;
+    PlayFirstPlayground_OffsetAndSize unk3;
+    PlayFirstPlayground_OffsetAndSize unk4; //Ends at asset group rules
+    PlayFirstPlayground_OffsetAndSize AssetGroupRulesDefine; //Asset group rules
+    uint32 unk5[3];
+    struct
+    {
+        uint16 nameSz;
+        uint16 hashNameSz;
+        string name;
+        string hashName;
+        //Printf("%s\n", name);
+    } File[files]<optimize=false>;
+    byte unkData1[unk2.size];
+    byte unkData2[unk3.size];
+    byte unkData3[unk4.size];
+    struct 
+    {
+        uint32 priority;
+        uint32 unk[3];
+        string groupName;
+        string regexRule;
+    } AssetGroupRule[assetGroupRules]<optimize=false>;
+} BMANIFEST;

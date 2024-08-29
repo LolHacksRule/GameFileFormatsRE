@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v10.0.2 Binary Template
 //
-//      File: PopCapPopAnimModule.bt
+//      File: PopCap_PopAnimModule.bt
 //      Authors: LolHacksRule
 //      Version: 1
 //      Purpose: Gets data out of the binary PAM (Pop/PopCap Animation Module) files.
@@ -45,10 +45,10 @@ typedef enum <ushort> {
 typedef struct SpriteDefinition
 {
     //WIP Solution for v6, uncomment and comment below
-    if (HDR.version >= 4)
+    if (Header.version >= 4)
     {
         U16_StringEntry imageName;
-        if (HDR.version > 5)
+        if (Header.version > 5)
         {
             uint16 unk; //string end, has to be
             //Printf("%i\n", unk);
@@ -57,30 +57,30 @@ typedef struct SpriteDefinition
         local float animRateDiv = animRate / 0x10000;
     }
     ushort numOfFrames;
-    if (HDR.version >= 5)
+    if (Header.version >= 5)
     {
         ushort workAreaStart;
         ushort workAreaDuration;
     }
     //Solution for all other vers
-    /*if (HDR.version >= 4)
+    /*if (Header.version >= 4)
     {
         U16_StringEntry imageName;
         uint32 animRate;
         local float animRateDiv = animRate / 0x10000;
     }
     ushort numOfFrames;
-    if (HDR.version >= 5)
+    if (Header.version >= 5)
     {
         ushort workAreaStart;
         ushort workAreaDuration;
     }*/
     //End
-    struct AnimFrames
+    struct
     {
         for (i2 = 0; i2 < numOfFrames; i2++)
         {
-            struct AnimFrame
+            struct
             {
                 ubyte flags;
                 if (flags & PAFrameFlag_HasRemoves)
@@ -106,11 +106,11 @@ typedef struct SpriteDefinition
                     {
                         ushort adds;
                     }
-                    struct Objects
+                    struct
                     {
                         for (i3 = 0; i3 < adds; i3++)
                         {
-                            struct Object
+                            struct
                             {
                                 uint16 objNumAndType;
                                 if (objNumAndType == 0x7ff)
@@ -132,9 +132,9 @@ typedef struct SpriteDefinition
                                     local float timeScaleDiv = timeScale / 0x10000;
                                 }
                                 //ulong TransformMtx[4];
-                            } obj;
+                            } Object;
                         }
-                    } objs;
+                    } Objects;
                 }
                 if (flags & PAFrameFlag_HasMoves)
                 {
@@ -147,11 +147,11 @@ typedef struct SpriteDefinition
                     {
                         local ubyte moves = movestmp;
                     }
-                    struct MoveObjects
+                    struct
                     {
                         for (i3 = 0; i3 < moves; i3++)
                         {
-                            struct MoveObject
+                            struct
                             {
                                 uint16 flagsAndObjNum;
                                 if (flagsAndObjNum == 0x3ff)
@@ -205,9 +205,9 @@ typedef struct SpriteDefinition
                                 {
                                     ushort afn;
                                 }
-                            } mobjp;
+                            } MoveObject;
                         }
-                    } mobjs;
+                    } MoveObjects;
                 }
                 if (flags & PAFrameFlag_HasFrameName)
                 {
@@ -216,47 +216,47 @@ typedef struct SpriteDefinition
                 if (flags & PAFrameFlag_HasCommands)
                 {
                     ubyte commands;
-                    struct Commands
+                    struct
                     {
                         for (i3 = 0; i3 < commands; i3++)
                         {
-                            struct Command
+                            struct
                             {
                                 U16_StringEntry cmd;
                                 U16_StringEntry prm;
-                            } command;
+                            } Command;
                         }
-                    } cmds;
+                    } Commands;
                 }
-            } af;
+            } AnimFrame;
         }
-    } afs;
+    } AnimFrames;
 };
 
-typedef struct PopCapPopAnimModuleHeader
+typedef struct PopCap_PopAnimModuleHeader
 {
     ulong   magic;
     ulong   version;
 };
 
-struct PopCapPopAnimModule
+struct
 {
-    PopCapPopAnimModuleHeader HDR<bgcolor=cPurple>;
-    if (HDR.magic != -1158669996)
+    PopCap_PopAnimModuleHeader Header<bgcolor=cPurple>;
+    if (Header.magic != -1158669996)
     {
         Printf("Incorrect header.");
         break;
     }
-    if (HDR.version == 6)
+    if (Header.version == 6)
     {
         Printf("PopAnim version 6 is WIP!\n");
     }
-    if (HDR.version > 6)
+    if (Header.version > 6)
     {
         Printf("Unknown PopAnim version!");
         break;
     }
-    struct AnimInfo
+    struct
     {
         ubyte animRate;
         ushort animRectX; //Divide by 20
@@ -268,20 +268,20 @@ struct PopCapPopAnimModule
         ushort animRectHeight; //Divide by 20
         local ushort animRectHeightDiv = animRectHeight / 20;
         ushort numImages;
-        struct Images
+        struct
         {
             for (i = 0; i < numImages; i++)
             {
-                struct Image 
+                struct 
                 {    
                     U16_StringEntry imageName;
                     //ulong id;
-                    if (HDR.version >= 4)
+                    if (Header.version >= 4)
                     {
                         ushort origWidth;
                         ushort origHeight;
                     }
-                    if (HDR.version == 1)
+                    if (Header.version == 1)
                     {
                         ushort TransformXYZ[3];
                     }
@@ -296,24 +296,21 @@ struct PopCapPopAnimModule
                         local float TransformXDiv = TransformXY[0] / 20;
                         local float TransformYDiv = TransformXY[1] / 20;
                     }
-                } ImageInfo;
+                } Image;
             }
-        } ImageInfos;
+        } Images;
         ushort numSprites;
-        struct SpriteDefinitions
+        if (numSprites)
         {
-            for (i = 0; i < numSprites; i++)
-            {
-                SpriteDefinition spriteDef;
-            }
-        } SpriteInfo;
-        if (HDR.version > 3)
+            SpriteDefinition SpriteDefine[numSprites]<optimize=false>;
+        }
+        if (Header.version > 3)
         {
             Byte_Bool hasMainSpriteDefinition;
         }
-        if (HDR.version <= 3 || hasMainSpriteDefinition)
+        if (Header.version <= 3 || hasMainSpriteDefinition)
         {
             SpriteDefinition mainSpriteDef;
         }
-    } animInfo<bgcolor = cBlue>;
-} PAM;
+    } AnimInfo<bgcolor = cBlue>;
+} PopCap_PopAnimModule;

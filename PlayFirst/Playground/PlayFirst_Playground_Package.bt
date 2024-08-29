@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "PlayFirst_Playground_Common.bt"
+
+struct
+{
+    char magic[4];
+    uint32 files;
+    struct
+    {
+        UByte_StringEntry name;
+        Printf("%s\n", name.theString);
+        PlayFirstPlayground_OffsetAndSize off;
+        FPos = FTell();
+        FSeek(off.off);
+        byte data[off.size];
+        FSeek(FPos);
+    } File[files]<optimize=false>;
+} PlayFirstPlaygroundPackage_PFP;

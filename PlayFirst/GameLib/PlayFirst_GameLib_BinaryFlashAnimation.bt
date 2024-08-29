@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    string pffan;
+    uint32 fSize;
+    uint16 unk[2]; //is 8 a compression flag?
+    uint16 width;
+    uint16 height;
+    uint16 unk2; //fps?
+    uint16 unk3[4];
+    byte unk4;
+    uint32 size;
+} pffan_BFAN;

@@ -49,6 +49,8 @@ typedef enum <int16>
     N3DTextureFormat_D24S8
 } N3DTextureFormat;
 
+local uint BPP <hidden=true> = 0;
+
 struct
 {
     LittleEndian();
@@ -76,4 +78,5 @@ struct
     int16 flags;
     int16 userFlags;
     byte texture;
+    //byte texture[width*2*width]; //Add WIP way to calculate NTX size, works on RGB565
 } NTX;

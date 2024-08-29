@@ -1,0 +1,22 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct
+{
+    char aniF[4];
+    U16_StringEntry srcDir;
+    U16_StringEntry srcFile;
+    
+} PlayFirstPlayGround_ANI;

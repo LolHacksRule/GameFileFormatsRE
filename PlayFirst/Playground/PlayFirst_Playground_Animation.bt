@@ -1,0 +1,54 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct
+{
+    char ANIM[4];
+    uint32 unk[2];
+    I32_StringEntry srcFile;
+    I32_StringEntry srcDir;
+    struct
+    {
+        char imgn[4];
+        uint32 regx;
+        uint32 regy;
+        float w;
+        float h;
+        byte unk2[16];
+        I32_StringEntry texName;
+        uint32 end;
+    } IMGN; //28 bytes until name
+    struct
+    {
+        char frms[4];
+        uint32 frames;
+        struct
+        {
+            uint32 regX;
+            uint32 regY;
+            uint16 x;
+            uint16 y;
+            uint16 unk[2];
+            uint32 w;
+            uint32 h;
+            byte unk2[32];
+        } Frame[frames];
+    } Frames;
+    struct
+    {
+        char SCRP[4];
+        I32_StringEntry luaScript;
+    } Script;
+} PlayFirstPlayGround_ANM;

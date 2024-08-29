@@ -1,0 +1,66 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <ubyte>
+{
+    VectorCommandType_Start = 1,
+    VectorCommandType_Move = 4,
+    VectorCommandType_Line,
+    VectorCommandType_Curve,
+    VectorCommandType_Terminate = 8,
+} VectorCommandType;
+
+//No clue what HFLOAT is supposed to be
+
+#include "../../LHR/Common.bt"
+
+struct
+{
+    LittleEndian();
+    char magic[4];
+    uint16 glyphs;
+    byte special[6];
+    struct
+    {
+        ulong ucVal;
+        hfloat x;
+        hfloat xMax;
+        hfloat y;
+        hfloat yMax;
+        hfloat adv;
+        uint32 vectorCmdOff;
+        Printf("%i\n", vectorCmdOff);
+        FPos = FTell();
+        FSeek(vectorCmdOff);
+        struct
+        {
+            while (ReadUByte() != VectorCommandType_Terminate)
+            {
+                struct
+                {
+                    VectorCommandType vCmdType;
+                    switch (vCmdType)
+                    {
+                        case VectorCommandType_Start: break;
+                        case VectorCommandType_Move: hfloat moveX; hfloat moveY; break;
+                        case VectorCommandType_Line: hfloat lineX; hfloat lineY; break;
+                        case VectorCommandType_Curve: hfloat x1; hfloat y1; hfloat x2; hfloat y2; break;
+                    }
+                } Argument;
+            }
+            VectorCommandType end;
+        } VectorCommand;
+        FSeek(FPos);
+        break;
+    } GlyphTable[glyphs]<optimize=false>;
+} MVC4_MVEC;

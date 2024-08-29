@@ -1,0 +1,44 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint64> //?
+{
+    PlayFirstGameLib_Language_Portuguese = 20546,
+    PlayFirstGameLib_Language_ChineseSimplified = 5457987,
+    PlayFirstGameLib_Language_ChineseTraditional = 5523523,
+    PlayFirstGameLib_Language_German = 17732,
+    PlayFirstGameLib_Language_Spanish = 21317,
+    PlayFirstGameLib_Language_French = 21062,
+    PlayFirstGameLib_Language_Indonesian = 20041,
+    PlayFirstGameLib_Language_Italian = 21577,
+    PlayFirstGameLib_Language_Japanese = 20554,
+    PlayFirstGameLib_Language_Korean = 21067,
+    PlayFirstGameLib_Language_Russian = 21330,
+    PlayFirstGameLib_Language_Thai = 1229015124,
+    PlayFirstGameLib_Language_TK = 19284,
+    PlayFirstGameLib_Language_English = 28261,
+} PlayFirstGameLib_Language;
+
+struct
+{
+    uint64 magic;
+    uint32 ver;
+    uint32 langs;
+    uint32 strings;
+    uint32 strTblSz; //Or localized text off
+    struct
+    {
+        PlayFirstGameLib_Language lang;
+        PlayfirstPlayground_Offset off;
+    } Language[langs];
+} PlayFirst_GameLib_BSTRINGS;

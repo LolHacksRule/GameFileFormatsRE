@@ -71,9 +71,12 @@ typedef struct
     Kerning kerningEntry[kerning]<optimize=false>;
     //Check these
     uint16 endKern;
-    uint32 fontChars;
+    int32 fontChars;
     //Check these end
-    FontChar fontCharEntry[fontChars]<optimize=false>;
+    if (fontChars != -1)
+    {
+        FontChar fontCharEntry[fontChars]<optimize=false>;
+    }
     Vector4_I32 mult;
     Vector4_I32 add;
     I32_StringEntry imgFile;
@@ -89,7 +92,7 @@ typedef struct
     uint32 baseOrder;
 } Layer;
 
-struct CFW2
+struct
 {
     if (ReadInt64() != 6074870197997618000) //Wrapper Font
     {
@@ -130,7 +133,7 @@ struct CFW2
     {
         isWrapper = 1;
         uint64 binFontMagic;
-        uint32 encodingType;
+        I32_Bool utf8; //Unicode or UTF8 or encryption(?)
         uint32 SetDefaultPointSize;
     }
     int32 LayerSetPointSize;
@@ -156,27 +159,28 @@ struct CFW2
     }
     if (!isLegacy && !isWrapper)
     {
-        int32 Layers;
+        int32 layers;
     }
     else 
     {
         if (isWrapper)
         {
-            uint64 Layers;
+            I32_Bool flag;
+            uint32 layers;
         }
         else
         {
-            int16 Layers;
+            int16 layers;
         }
     }
     //uint16 unk3;
-    struct Layers
+    struct
     {
-        for (i = 0; i < Layers; i++)
+        for (i = 0; i < layers; i++)
         {
             Layer layerEntry;
         }
-    } layers;
+    } Layers;
     if (!isWrapper)
     {
         I32_StringEntry srcFileName;
@@ -199,4 +203,4 @@ struct CFW2
             uint32 EOFMagic;
         }
     }
-} cfw2;
+} PopCap_CompiledWideFont2;

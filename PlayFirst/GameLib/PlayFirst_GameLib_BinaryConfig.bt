@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct
+{
+    if (ReadUInt64() == 7451599682962417264)
+    {
+        char pfconfig[8];
+        uint32 unk; //1 is compressed, 3 is raw?
+        if (unk == 1)
+        {
+            uint32 uncSz;
+            uint32 cSz;
+            byte cFile[cSz];
+        }
+        if (unk == 3)
+        {
+            uint32 unk2;
+            uint32 plzDataSz;
+            uint32 strings;
+            uint32 unk3[10];
+            struct
+            {
+                char magic[4];
+                uint32 unk;
+                uint32 size;
+                uint32 unk2;
+                uint16 unk3;
+            } PLZ4;
+        }
+    }
+    else
+    {
+        uint32 strings;
+        uint32 strTblSz;
+        uint32 unk2;
+        FPos = 12+strings*4; //StrTable
+        struct
+        {
+            uint32 strOff;
+            FSeek(FPos+strOff);
+            string str;
+            FSeek(4+FPos-strOff-strings*4);
+        } String[strings]<optimize=false>;
+    }
+} pfconfig_BCONFIG;

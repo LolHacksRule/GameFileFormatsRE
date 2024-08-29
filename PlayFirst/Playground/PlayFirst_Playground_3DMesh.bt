@@ -1,0 +1,24 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+struct
+{
+    char magic[12];
+    char mesh[4];
+    uint32 dSz;
+    I32_StringEntry str;
+    I32_StringEntry tex;
+    //WIP
+} PlayFirstPlaygroundMesh_P3D;

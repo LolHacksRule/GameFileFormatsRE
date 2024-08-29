@@ -15,6 +15,7 @@ local uint texSize <hidden=true> = 0; //TODO
 
 struct DotMatrixFont
 {
+    LittleEndian();
     uint16 fontCharacters;
     //Guess, idk how this works, if anything is undefined, please write a PR
     FSkip(4);
