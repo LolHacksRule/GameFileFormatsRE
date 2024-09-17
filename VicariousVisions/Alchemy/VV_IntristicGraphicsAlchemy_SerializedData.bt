@@ -1,0 +1,225 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/LG-RZ/NSTLib
+//https://github.com/kishimisu/Crash-NST-Modding-Tool
+//https://github.com/NefariousTechSupport/igArchiveExtractor
+//https://github.com/KillzXGaming/Switch-Toolbox/
+//https://github.com/AdventureT/igModelConverter/
+//https://github.com/NefariousTechSupport/NoesisPlugins/
+//https://github.com/GlitchedDeveloper/STTUMM
+
+#include "VV_IntristicGraphicsAlchemy_Common.bt"
+
+typedef struct Section
+{
+	uint32 unk;
+	uint32 off;
+	uint32 len;
+	uint32 start;
+};
+
+typedef enum <uint32>
+{
+    DataType_TypeDependencies = 1346716756, //TDEP
+    DataType_TypeStringTableRef = 1381258068, //TSTR
+    DataType_TypeMeta = 1413827924, //TMET
+    
+    DataType_MetaSize = 1515410509, //MTSZ
+    
+    DataType_ExternalID = 1145657413, //EXID
+    DataType_ExternalName = 1296980037, //EXNM
+    
+    DataType_RootVTable = 1112823378, //RVTB
+    DataType_RootStringTable = 1414812498, //RTSR
+    DataType_RootOffset = 1397116754, //ROFS
+    DataType_RootPoolIndex = 1145655378, //RPID
+    DataType_RootNodeExtension = 1313361236, //REXT
+    DataType_RootHandle = 1145981010, //RHND
+    DataType_RootExternalName = 1145981010, //RHND
+    DataType_RootObject = 1414483794, //ROOT
+    
+    DataType_ObjectNamespace = 1296125519, //ONAM
+    DataType_Namespace = 1296125519, //NSPC
+    
+    DataType_ReferenceCountOffset = 1397116754,
+    DataType_ThumbnailSet = 1313361236,
+    DataType_RootHelpNode = 1313361236,
+    
+    DataType_NameSpace = 1313361236, //?
+} DataType;
+
+typedef struct FixupHeader
+{
+    DataType magic;
+    uint32 entries;
+    uint32 blockSz;
+    uint32 headerSz; //Or align
+    if (headerSz > 16)
+    {
+        byte extra[headerSz-16];
+    }
+    //byte block[blockSz-headerSz];
+};
+
+typedef struct StringTableFixup
+{
+    FixupHeader Header;
+    struct
+    {
+        string str;
+        if (ReadByte() == 0 )
+        {
+            byte pad<hidden=true, bgcolor=cRed>;
+        }
+    } Entry[Header.entries]<optimize=false>;
+    while (ReadByte() == 0 )
+    {
+        byte pad<hidden=true, bgcolor=cRed>;
+    }
+    //byte block[Header.blockSz-Header.headerSz];
+};
+
+typedef struct OffsetFixup
+{
+    FixupHeader Header;
+    if (Header.magic == DataType_RootVTable || Header.magic == DataType_RootStringTable)
+    {
+        byte value[Header.entries];
+        byte unk;
+    }
+    else
+    {
+        int32 value[Header.entries];
+    }
+};
+
+typedef struct RootVTable
+{
+    FixupHeader Header;
+    byte value[Header.entries];
+};
+
+typedef struct ObjectFixup
+{
+    FixupHeader Header;
+    int32 value[Header.entries];
+};
+
+typedef struct TypeDependenciesFixup
+{
+    FixupHeader Header;
+    struct 
+    {
+        string name;
+        string path;
+    } Entry[Header.entries]<optimize=false>;
+    while (ReadByte() == 0)
+    {
+        byte pad<hidden=true, bgcolor=cRed>;
+    }
+};
+
+typedef struct ExternalFixup
+{
+    FixupHeader Header;
+    struct 
+    {
+        if (Header.blockSz > 20)
+        {
+            uint32 type; //2: Image, 5: Effect, 6: GFX
+        }
+        uint32 unk;
+    } Entry[Header.entries]<optimize=false>;
+};
+
+typedef struct ExternalNameFixup
+{
+    FixupHeader Header;
+    struct 
+    {
+        uint32 type;
+        uint32 id : 24;
+        FSkip(-1);
+        byte handleFlag;
+        local string typeStr = Fixups.TypeStrings.Entry[type].str;
+        local string idStr = Fixups.TypeStrings.Entry[id].str;
+        
+    } Entry[Header.entries]<optimize=false>;
+    i2 = 0;
+};
+
+struct
+{
+    struct
+    {
+        uint32 magic;
+        if (magic == 0x48475A01)
+        {
+            BigEndian();
+        }
+        uint32 ver;
+        uint32 typeHash<bgcolor=cRed>; //How is this generated?
+        Platform platform<bgcolor=cPurple>;
+    } Header<bgcolor=cBlue>;
+    struct
+    {
+        uint32 fixupSections;
+        uint32 dmy;
+        uint32 fixupSectionsOff;
+        uint32 fixupSectionsLen;
+    } FixupsDefine<bgcolor=cBlack>;
+    Section section[32]<bgcolor=cRed>;
+    byte memoryPools[1504]<bgcolor=cRed>; //?
+    FSeek(FixupsDefine.fixupSectionsOff);
+    struct
+    {
+        for (i = 0; i < FixupsDefine.fixupSections; i++)
+        {
+            switch (ReadInt())
+            {
+                case DataType_TypeDependencies: TypeDependenciesFixup TypeDependencies<bgcolor=cGreen>; break;
+                case DataType_TypeStringTableRef: StringTableFixup TypeStrings<bgcolor=cGreen>; break;
+                case DataType_TypeMeta: StringTableFixup TypeMeta<bgcolor=cGreen>; break;
+                case DataType_ObjectNamespace: ExternalFixup ObjectNamespace<bgcolor=cLtRed>; break;
+                case DataType_ExternalID: ExternalFixup External<bgcolor=cPurple>; break;
+                case DataType_ExternalName: ExternalNameFixup ExternalName<bgcolor=cGreen>; break;
+                case DataType_RootObject : ObjectFixup Root<bgcolor=cLtRed>; break;
+                case DataType_Namespace:
+                case DataType_MetaSize: ObjectFixup MetaSize<bgcolor=cDkRed>; break;
+                //case DataType_RootOffset:
+                //case DataType_RootVTable:
+                //case DataType_RootPoolIndex: OffsetFixup RootPoolIndex; break;
+                //case DataType_RootStringTable:
+                //case DataType_RootHandle:
+                case DataType_RootNodeExtension: OffsetFixup Offset; break;
+                default: struct { FixupHeader Header; byte fixup[Header.blockSz - Header.headerSz]; } UnknownFixup<optimize=false, bgcolor=cRed>; break;
+            }
+        }
+        //FixupSection Fixup[FixupsDefine.fixupSections]<optimize=false>;
+    } Fixups<optimize=false>;
+    //FixupDescriptor desc[32]<optimize=false>;
+    struct
+    {
+        for (i = 0; i < Fixups.TypeMeta.Header.entries; i++)
+        {
+            //Printf("%s\n", Fixups.TypeMeta.Entry[i].str);
+            switch (Fixups.TypeMeta.Entry[i].str)
+            {
+                //case "igObjectList": ObjectList ObjectListDefine; break;
+                //case "igModelInfo": ModelInfo ModelInfoDefine;
+                default: struct { byte data[Fixups.MetaSize.value[i]]; } UnknownData; 
+            }
+        }
+    } Objects;
+} VV_IntristicGraphicsAlchemy_SerializedData; //Why is the extension IGZ it's not even something using compression, I guess they wanted not reuse IGB since that is used for models, either way confusing

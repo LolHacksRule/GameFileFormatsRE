@@ -1,0 +1,134 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://github.com/NefariousTechSupport/igArchiveExtractor/
+//https://github.com/LG-RZ/igArchiveLib/
+//https://aluigi.altervista.org/bms/marvel_ultimate_alliance_2.bms
+//https://thewarproom.com/showthread.php?tid=97
+//https://github.com/NeoKesha/NST_Explorer/
+//https://github.com/LG-RZ/archiveTool
+//https://github.com/kishimisu/Crash-NST-Modding-Tool/
+//https://github.com/LG-RZ/NSTLib/
+//https://github.com/NefariousTechSupport/igRewrite7
+
+//ONLY TESTED ON CRASH BANDICOOT NST
+
+#include "VV_IntristicGraphicsAlchemy_Common.bt"
+
+typedef enum <byte>
+{
+    CompressionType_None = -1,
+    CompressionType_LZMA = 32,
+} CompressionType;
+
+typedef struct
+{
+    if (Header.version > 10)
+    {
+        int32 off<bgcolor=cGreen>;
+        int32 entryID<bgcolor=cRed>;
+    }
+    else
+    {
+        int32 ordinal<bgcolor=cRed>;
+        int32 off;
+    }
+    int32 sz<bgcolor=cBlue>;
+    uint32 cmdIdx : 24;
+    FSkip(-1);
+    CompressionType cType<bgcolor=cRed>;
+    //FSeek(off);
+    //byte file[sz]<optimize=false>;
+    //FSeek(-(off+sz));
+} FileInfo;
+
+typedef struct NameTable
+{
+    uint32 nameOffs[Header.files];
+    struct
+    {
+        if (Header.version > 10)
+        {
+            string buildPath;
+        }
+        string path; //In v10 this is usually a game path but sometimes it's a dev path
+        uint32 unk<bgcolor=cRed>; //0 in v11
+        Printf("%s\n", path);
+    } NameEntry[Header.files]<optimize=false>;
+};
+
+struct
+{
+    struct
+    {
+        LittleEndian();
+        if (ReadUInt() == 0x4947411A)
+        {
+            BigEndian();
+        }
+        uint32 magic<bgcolor=cGreen>;
+        uint32 version<bgcolor=cGreen>;
+        uint32 tocSz<bgcolor=cRed>;
+        uint32 files<bgcolor=cGreen>;
+        uint32 sectorSz<bgcolor=cGreen>; //Or align
+        uint32 searchDiv<bgcolor=cRed>;
+        uint32 searchSlop<bgcolor=cRed>;
+        struct
+        {
+            uint32 u32;
+            uint32 u16;
+            uint32 s8;
+        } PaddingDefines<bgcolor=cRed>;
+        uint64 nameTblOff<bgcolor=cGreen>;
+        uint32 nameTblSz<bgcolor=cGreen>;
+        uint32 flags<bgcolor=cRed>;
+    } Header;
+    struct
+    {
+        uint32 fCRC[Header.files];
+        FileInfo FileInfoDefine[Header.files]<optimize=false>;
+        if (Header.PaddingDefines.u32 || Header.PaddingDefines.u16 || Header.PaddingDefines.s8)
+        {
+            struct
+            {
+                uint32 u32[Header.PaddingDefines.u32];
+                uint16 u16[Header.PaddingDefines.u16];
+                byte s8[Header.PaddingDefines.s8];
+            } Padding;
+        }
+        //No clue what happens after
+    } TOC<bgcolor=cRed>;
+    /*struct
+    {
+        FSeek(TOC.FileInfoDefine[i].off);
+        if (TOC.FileInfoDefine[i].cType == CompressionType_LZMA)
+        {
+            struct
+            {
+                uint16 sz;
+                byte cmd[sz];
+            } LZMACommand[TOC.FileInfoDefine[i].cmdIdx]<optimize=false>;
+        }
+        if (TOC.FileInfoDefine[i].cType == CompressionType_None)
+        {
+            byte data[TOC.FileInfoDefine[i].sz]<optimize=false>;
+        }
+        else
+        {
+            byte data;
+        }
+        i++;
+    } FileData[Header.files]<optimize=false>;*/
+    FSeek(Header.nameTblOff);
+    NameTable NameTbl<bgcolor=cGreen>;
+} VV_IntristicGraphicsAlchemy_Archive;

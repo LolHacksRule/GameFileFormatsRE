@@ -1,0 +1,110 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct MemoryConfigurationList
+{
+    
+};
+
+typedef enum <uint32> //Heavily based off NST fork
+{
+    Platform_Win32 = 1,
+    Platform_NX, //Or Wii
+    Platform_Durango,
+    Platform_Aspen, //iOS 32-bit Or Xenon
+    Platform_OSX,
+    Platform_Windows64, //
+    Platform_Aspen64, //iOS 64-bit Or LGTV
+    Platform_Orbis,
+    Platform_NXOnWin, //Or WP8
+    Platform_Linux,
+} Platform;
+
+typedef struct Font
+{
+    uint32 unk[2];
+    uint32 refs;
+    uint32 unk2;
+    int32 count;
+    int32 capacity;
+    int32 memSz;
+    byte mem[memSz];
+    uint32 unk4;
+    uint32 unk5[2];
+};
+
+typedef struct MemoryRefMetaField
+{
+    uint32 size;
+    uint32 unk;
+    uint32 vTblRef; //?
+};
+
+typedef struct ObjectList
+{
+    uint32 unk[2];
+    uint32 unk2;
+    uint32 refs;
+    int32 count;
+    int32 capacity;
+    int32 memSz;
+    byte mem[memSz];
+    uint32 unk4;
+    uint32 unk5[2];
+};
+
+typedef struct NameMetaField
+{
+    uint64 str;
+    uint64 unk;
+};
+
+typedef struct StreamingChunk
+{
+    uint64 name;
+    uint64 dir;
+    local string nameStr = Fixups.TypeStrings.Entry[name].str;
+    uint32 resolve;
+    struct Vector
+    {
+        uint64 req1;
+        uint64 req2;
+    };
+};
+
+typedef struct ImageDefinition
+{
+    uint32 refs;
+    uint32 nameRef;
+    uint16 width;
+    uint16 height;
+    uint16 depth;
+    uint16 levels;
+    uint16 images;
+    uint16 format;
+    uint32 bitField;
+    uint32 userFlags;
+    uint32 dataSz;
+    int32 handle;
+    int64 helper;
+};
+
+typedef struct LocalizedString
+{
+    uint32 refs;
+    uint32 str;
+    uint32 obj;
+    uint32 field;
+};
