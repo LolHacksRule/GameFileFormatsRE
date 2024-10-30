@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    CompressionType_MarioCompressed = 1296650032, //MIO0 [Internal], SM64
+    CompressionType_YoshiAssetCompressedZelda = 1499560240, //Yay0 [Y [Yoshi?] A [Asset] Z [Compressed/Compressed/Zip]] [Third party], Zelda 64->Luigi's Mansion (GCN)
+    CompressionType_YoshiAssetCompressedZeldaNew = 1499560496, //Yaz0 [Internal], Zelda OOT->ModuleSystem engine [ZSTD] (temporary name)
+} CompressionType;
+
+struct
+{
+    BigEndian();
+    struct
+    {
+        CompressionType magic;
+        uint32 dSz;
+        //These two are reserved in Yaz0
+        uint32 linkTableOff;
+        uint32 byteChunkOff;
+    } Header;
+    byte compressed[FSize-16];
+} YoshiAssetCompressed; //Yoshi comes from EAD's Melody Yoshi

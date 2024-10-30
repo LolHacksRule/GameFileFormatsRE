@@ -24,14 +24,114 @@ typedef enum <uint16>
     RevolutionKart_Region_CHN,
 } RevolutionKart_Region;
 
+typedef enum <uint16> //Refer to fonts
+{
+    //Kanji (kart_kanji_font.rfnt)
+    RevolutionKart_UnicodeChar_Kanji_Timer0 = 9312,
+    RevolutionKart_UnicodeChar_Kanji_Timer1,
+    RevolutionKart_UnicodeChar_Kanji_Timer2,
+    RevolutionKart_UnicodeChar_Kanji_Timer3,
+    RevolutionKart_UnicodeChar_Kanji_Timer4,
+    RevolutionKart_UnicodeChar_Kanji_Timer5,
+    RevolutionKart_UnicodeChar_Kanji_Timer6,
+    RevolutionKart_UnicodeChar_Kanji_Timer7,
+    RevolutionKart_UnicodeChar_Kanji_Timer8,
+    RevolutionKart_UnicodeChar_Kanji_TimerColon,
+    RevolutionKart_UnicodeChar_Kanji_TimerDot,
+    RevolutionKart_UnicodeChar_Kanji_TimerSlash,
+    RevolutionKart_UnicodeChar_Kanji_TimerDash,
+    RevolutionKart_UnicodeChar_Kanji_TimerCross,
+    //Rodin
+    RevolutionKart_UnicodeChar_Rodin_WhiteQuestionMarkBox = 57451,
+    //UI extensions (tt_kart_extension_font.rfnt)
+    RevolutionKart_UnicodeChar_UIX_BlackQuestionMarkBox = 61440,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_TwoButton = 61488,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_TwoButton_Small,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_AButton = 61492,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_AButton_Small,
+    RevolutionKart_UnicodeChar_UIX_Classic_AButton = 61496,
+    RevolutionKart_UnicodeChar_UIX_Classic_AButton_Small,
+    RevolutionKart_UnicodeChar_UIX_GC_AButton = 61500,
+    RevolutionKart_UnicodeChar_UIX_GC_AButton_Small,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_BButton = 61505,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_OneButton = 61507,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_PlusButton,
+    RevolutionKart_UnicodeChar_UIX_WiiMote_PlusButton_Small = 61511,
+    RevolutionKart_UnicodeChar_UIX_Classic_BButton = 61520,
+    RevolutionKart_UnicodeChar_UIX_GC_BButton = 61528,
+    RevolutionKart_UnicodeChar_UIX_GC_StartButton = 61534,
+    RevolutionKart_UnicodeChar_UIX_GC_StartButton_Small,
+    RevolutionKart_UnicodeChar_UIX_EmptyForTab, //?
+    RevolutionKart_UnicodeChar_UIX_OneStar,
+    RevolutionKart_UnicodeChar_UIX_TwoStar,
+    RevolutionKart_UnicodeChar_UIX_ThreeStar,
+    RevolutionKart_UnicodeChar_UIX_WiiWheel,
+    RevolutionKart_UnicodeChar_UIX_WiiWheelOneStar,
+    RevolutionKart_UnicodeChar_UIX_WiiWheelTwoStar,
+    RevolutionKart_UnicodeChar_UIX_WiiWheelThreeStar,
+    RevolutionKart_UnicodeChar_UIX_Coin,
+    RevolutionKart_UnicodeChar_UIX_Balloons,
+    RevolutionKart_UnicodeChar_UIX_GoldTrophy,
+    RevolutionKart_UnicodeChar_UIX_SilverTrophy,
+    RevolutionKart_UnicodeChar_UIX_BronzeTrophy,
+    RevolutionKart_UnicodeChar_UIX_LeaderboardCrown,
+    RevolutionKart_UnicodeChar_UIX_GoldWiiWheel = 61556,
+    RevolutionKart_UnicodeChar_UIX_GoldWiiWheelOneStar,
+    RevolutionKart_UnicodeChar_UIX_GoldWiiWheelTwoStar,
+    RevolutionKart_UnicodeChar_UIX_GoldWiiWheelThreeStar,
+    RevolutionKart_UnicodeChar_UIX_RankA,
+    RevolutionKart_UnicodeChar_UIX_RankB,
+    RevolutionKart_UnicodeChar_UIX_RankC,
+    RevolutionKart_UnicodeChar_UIX_RankD,
+    RevolutionKart_UnicodeChar_UIX_RankE,    
+    //Indicator lights (indicator_font.rfnt)
+    RevolutionKart_UnicodeChar_IndicatorLight_Unknown = 61696,
+    RevolutionKart_UnicodeChar_IndicatorLight_Empty = 61698,
+    RevolutionKart_UnicodeChar_IndicatorLight_WiiMote_NoController,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_WiiMote1 = 61704,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_WiiMote2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_WiiMote3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_WiiMote4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_GC1 = 61708,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_GC2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_GC3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P1_GC4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_WiiMote1 = 61712,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_WiiMote2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_WiiMote3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_WiiMote4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_GC1 = 61716,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_GC2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_GC3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P2_GC4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_WiiMote1 = 61720,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_WiiMote2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_WiiMote3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_WiiMote4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_GC1 = 61724,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_GC2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_GC3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P3_GC4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_WiiMote1 = 61728,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_WiiMote2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_WiiMote3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_WiiMote4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC1 = 61732,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC2,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC3,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC4,
+} RevolutionKart_UnicodeChar;
+
 typedef enum <uint16>
 {
-    //RevolutionKart_Insertion_ErrorCode = 16,
-    RevolutionKart_Insertion_CupName,
-    RevolutionKart_Insertion_PlayerName,
-    RevolutionKart_Insertion_BlackQuestionBox = 21,
-    RevolutionKart_Insertion_PlusZero,
-    RevolutionKart_Insertion_PlayerController_BButton, //Displayed as WiiMote B in message boxes
+    RevolutionKart_Insertion_CurrentPlayerName = 0,
+    RevolutionKart_Insertion_ContextDependentInt = 16, //Error code or MKW Channel blocks (0 if none), 1 if Wins
+    RevolutionKart_Insertion_InsertableName, //Pop in plus at WiiMote add, or ii on tournament msg or veh name in veh unlock, or timeMMSSXXX, cup name
+    RevolutionKart_Insertion_PlayerName, //Also 19, no clue why
+    RevolutionKart_Insertion_PlayerController_Indictator = 20, //Light on WiiMote/GC Controller, three red ???'s on WiiMote add
+    RevolutionKart_Insertion_BlackQuestionBox, //Other player region?
+    RevolutionKart_Insertion_PlusZero, //?
+    RevolutionKart_Insertion_PlayerController_BButton, //Displayed as Wii Remote B button in slide message boxes (single button, not yes/no), regardless of the controller, does not display in popup boxes
     RevolutionKart_Insertion_WiiFriend = 32,
 } RevolutionKart_InsertionType;
 
@@ -63,16 +163,31 @@ typedef enum <ubyte>
     RevolutionKart_TextModify,
     RevolutionKart_UnicodeCharacter,
     RevolutionKart_Insertion,
+    RevolutionKart_ConditionalParameter,
 } JMS_CustomTagType;
+
+typedef enum <uint32>
+{
+    RevolutionKart_FontType_CountdownFinalRace,
+    RevolutionKart_FontType_Kanji, //Common
+    RevolutionKart_FontType_FontNumbersRed = 4,
+    RevolutionKart_FontType_FontNumbersBlue,
+};
+
+typedef struct CustomMessageEntryInfo
+{
+    RevolutionKart_FontType fontType;
+};
 
 typedef struct JMS_CustomTagGroup
 {
     JMS_CustomTagType tagType;
     switch (tagType)
     {
-        case RevolutionKart_TextModify: RevolutionKart_TextModifyType textModifyType; switch (textModifyType) { case 0: uint32 fontSizePct; break; case 1: uint32 textColorIdx; break; }
-        case RevolutionKart_UnicodeCharacter: uint16 dmy; wchar_t unicodeChar; if (printControlTagInfo) { Printf("<UnicodeChar%x>", unicodeChar); } break;
-        case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 unk; if (printControlTagInfo) { Printf("<%s unk=%i", EnumToString(insertionType), unk); } if (tagSize == 10) { uint16 unk2; if (printControlTagInfo) { Printf(" unk2=%i", unk2); }  } if (printControlTagInfo) { Printf(">"); } break;
+        case RevolutionKart_TextModify: RevolutionKart_TextModifyType textModifyType; switch (textModifyType) { case 0: uint32 fontSizePct; break; case 1: RevolutionKart_TextModify_TextColorType textColorIdx; break; }
+        case RevolutionKart_UnicodeCharacter: uint16 dmy; wchar_t unicodeChar; if (printControlTagInfo) { Printf("<UnicodeChar%x>", unicodeChar); } break; //Todo, should we use RevolutionKart_UnicodeChar or wchar_t
+        case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 index; if (printControlTagInfo) { Printf("<%s index=%i", EnumToString(insertionType), index); } if (tagSize == 10) { uint16 digits; if (printControlTagInfo) { Printf(" digits=%i", digits); }  } if (printControlTagInfo) { Printf(">"); } break;
+        case RevolutionKart_ConditionalParameter: uint16 dmy; uint16 checkOppositeInstead; uint16 param1; uint16 param2; break;
         default: break;
     }
 };

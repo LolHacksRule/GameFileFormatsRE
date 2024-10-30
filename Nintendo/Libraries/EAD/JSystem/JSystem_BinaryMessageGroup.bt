@@ -12,6 +12,7 @@
 //------------------------------------------------
 
 local uint DEBUG_PRINT <hidden=true> = 0;
+//Todo how do we define target software
 
 #include "JSystem_Common.bt"
 
@@ -34,7 +35,14 @@ typedef struct MessageGroupInfoTable
                     uint32 msgOff;
                     if (messageLength > 4)
                     {
-                        byte msgEntry[messageLength-4]<optimize=false,bgcolor=cRed>;
+                        /*if (targetSoftware)
+                        {
+                            CustomMessageEntryInfo customMessageEntryParams;
+                        }
+                        else
+                        {*/
+                            byte msgEntry[messageLength-4]<optimize=false,bgcolor=cRed>; //In RevoKart, u32 for the font for the message
+                        //}
                     }
                 } MessageEntry;
             }
