@@ -21,7 +21,7 @@ typedef enum <uint16>
     RevolutionKart_Region_AUS,
     RevolutionKart_Region_TAI,
     RevolutionKart_Region_SKO,
-    RevolutionKart_Region_CHN,
+    RevolutionKart_Region_CHN
 } RevolutionKart_Region;
 
 typedef enum <uint16> //Refer to fonts
@@ -41,7 +41,7 @@ typedef enum <uint16> //Refer to fonts
     RevolutionKart_UnicodeChar_Kanji_TimerSlash,
     RevolutionKart_UnicodeChar_Kanji_TimerDash,
     RevolutionKart_UnicodeChar_Kanji_TimerCross,
-    //Rodin
+    //Rodin (tt_kart_font_rodan_ntlg_pro_b.rfnt)
     RevolutionKart_UnicodeChar_Rodin_WhiteQuestionMarkBox = 57451,
     //UI extensions (tt_kart_extension_font.rfnt)
     RevolutionKart_UnicodeChar_UIX_BlackQuestionMarkBox = 61440,
@@ -119,20 +119,20 @@ typedef enum <uint16> //Refer to fonts
     RevolutionKart_UnicodeChar_IndicatorLight_P4_GC1 = 61732,
     RevolutionKart_UnicodeChar_IndicatorLight_P4_GC2,
     RevolutionKart_UnicodeChar_IndicatorLight_P4_GC3,
-    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC4,
+    RevolutionKart_UnicodeChar_IndicatorLight_P4_GC4
 } RevolutionKart_UnicodeChar;
 
 typedef enum <uint16>
 {
     RevolutionKart_Insertion_CurrentPlayerName = 0,
-    RevolutionKart_Insertion_ContextDependentInt = 16, //Error code or MKW Channel blocks (0 if none), 1 if Wins
+    RevolutionKart_Insertion_ContextDependentInteger = 16, //Error code or MKW Channel blocks (0 if none), 1 if Wins
     RevolutionKart_Insertion_InsertableName, //Pop in plus at WiiMote add, or ii on tournament msg or veh name in veh unlock, or timeMMSSXXX, cup name
     RevolutionKart_Insertion_PlayerName, //Also 19, no clue why
     RevolutionKart_Insertion_PlayerController_Indictator = 20, //Light on WiiMote/GC Controller, three red ???'s on WiiMote add
     RevolutionKart_Insertion_BlackQuestionBox, //Other player region?
     RevolutionKart_Insertion_PlusZero, //?
     RevolutionKart_Insertion_PlayerController_BButton, //Displayed as Wii Remote B button in slide message boxes (single button, not yes/no), regardless of the controller, does not display in popup boxes
-    RevolutionKart_Insertion_WiiFriend = 32,
+    RevolutionKart_Insertion_WiiFriend = 32
 } RevolutionKart_InsertionType;
 
 typedef enum <uint32>
@@ -147,13 +147,13 @@ typedef enum <uint32>
     RevolutionKart_TextModify_TextColor_Blue2,
     RevolutionKart_TextModify_TextColor_Red3,
     RevolutionKart_TextModify_TextColor_Green,
-    RevolutionKart_TextModify_TextColor_Red1,
+    RevolutionKart_TextModify_TextColor_Red1
 } RevolutionKart_TextModify_TextColorType;
 
 typedef enum <uint16>
 {
     RevolutionKart_TextModify_FontSizePct,  
-    RevolutionKart_TextModify_TextColor,
+    RevolutionKart_TextModify_TextColor
 } RevolutionKart_TextModifyType;
 
 //#ifdef JMS_TARGET_REVOKART
@@ -163,7 +163,7 @@ typedef enum <ubyte>
     RevolutionKart_TextModify,
     RevolutionKart_UnicodeCharacter,
     RevolutionKart_Insertion,
-    RevolutionKart_ConditionalParameter,
+    RevolutionKart_ConditionalParameter
 } JMS_CustomTagType;
 
 typedef enum <uint32>
@@ -171,8 +171,8 @@ typedef enum <uint32>
     RevolutionKart_FontType_CountdownFinalRace,
     RevolutionKart_FontType_Kanji, //Common
     RevolutionKart_FontType_FontNumbersRed = 4,
-    RevolutionKart_FontType_FontNumbersBlue,
-};
+    RevolutionKart_FontType_FontNumbersBlue
+} RevolutionKart_FontType;
 
 typedef struct CustomMessageEntryInfo
 {
@@ -184,10 +184,10 @@ typedef struct JMS_CustomTagGroup
     JMS_CustomTagType tagType;
     switch (tagType)
     {
-        case RevolutionKart_TextModify: RevolutionKart_TextModifyType textModifyType; switch (textModifyType) { case 0: uint32 fontSizePct; break; case 1: RevolutionKart_TextModify_TextColorType textColorIdx; break; }
+        case RevolutionKart_TextModify: RevolutionKart_TextModifyType textModifyType; switch (textModifyType) { case 0: uint32 fontSizePct; if (printControlTagInfo) { Printf("<FontSizePercent%i>", fontSizePct); } break; case 1: RevolutionKart_TextModify_TextColorType textColorIdx; if (printControlTagInfo) { Printf("<%s>", EnumToString(textColorIdx)); } break; }
         case RevolutionKart_UnicodeCharacter: uint16 dmy; wchar_t unicodeChar; if (printControlTagInfo) { Printf("<UnicodeChar%x>", unicodeChar); } break; //Todo, should we use RevolutionKart_UnicodeChar or wchar_t
-        case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 index; if (printControlTagInfo) { Printf("<%s index=%i", EnumToString(insertionType), index); } if (tagSize == 10) { uint16 digits; if (printControlTagInfo) { Printf(" digits=%i", digits); }  } if (printControlTagInfo) { Printf(">"); } break;
-        case RevolutionKart_ConditionalParameter: uint16 dmy; uint16 checkOppositeInstead; uint16 param1; uint16 param2; break;
+        case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 index; if (printControlTagInfo) { Printf("<%s index=%i", EnumToString(insertionType), index); } if (insertionType == RevolutionKart_Insertion_ContextDependentInteger) { uint16 digits; if (printControlTagInfo) { Printf("<ContextDependentInteger digits=\"%i\">", digits); } } if (printControlTagInfo) { Printf(">"); } break;
+        case RevolutionKart_ConditionalParameter: uint16 dmy; uint16 checkOppositeInstead; uint16 param1; uint16 param2; if (printControlTagInfo) { Printf("<ConditionalParameter checkRightInstead=%i param1=%i param2=%i />", checkOppositeInstead, param1, param2); } break;
         default: break;
     }
 };
