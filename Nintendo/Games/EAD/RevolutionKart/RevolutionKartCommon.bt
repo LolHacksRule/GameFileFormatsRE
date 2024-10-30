@@ -12,6 +12,10 @@
 //------------------------------------------------
 
 //https://wiki.tockdom.com/wiki/BMG_(File_Format)/0x1A_Escape_Sequences
+//https://wiki.tockdom.com/wiki/BMG_(File_Format)
+//https://wiki.tockdom.com/wiki/Extended_Symbols#Mario_Kart_Wii_Specific
+
+//#ifdef JMS_TARGET_REVOKART
 
 typedef enum <uint16>
 {
@@ -26,7 +30,7 @@ typedef enum <uint16>
 
 typedef enum <uint16> //Refer to fonts
 {
-    //Kanji (kart_kanji_font.rfnt)
+    //Kanji (kart_kanji_font.rfnt / kart_font_korea.rfnt in KOR)
     RevolutionKart_UnicodeChar_Kanji_Timer0 = 9312,
     RevolutionKart_UnicodeChar_Kanji_Timer1,
     RevolutionKart_UnicodeChar_Kanji_Timer2,
@@ -41,8 +45,10 @@ typedef enum <uint16> //Refer to fonts
     RevolutionKart_UnicodeChar_Kanji_TimerSlash,
     RevolutionKart_UnicodeChar_Kanji_TimerDash,
     RevolutionKart_UnicodeChar_Kanji_TimerCross,
+    
     //Rodin (tt_kart_font_rodan_ntlg_pro_b.rfnt)
     RevolutionKart_UnicodeChar_Rodin_WhiteQuestionMarkBox = 57451,
+    
     //UI extensions (tt_kart_extension_font.rfnt)
     RevolutionKart_UnicodeChar_UIX_BlackQuestionMarkBox = 61440,
     RevolutionKart_UnicodeChar_UIX_WiiMote_TwoButton = 61488,
@@ -83,7 +89,8 @@ typedef enum <uint16> //Refer to fonts
     RevolutionKart_UnicodeChar_UIX_RankB,
     RevolutionKart_UnicodeChar_UIX_RankC,
     RevolutionKart_UnicodeChar_UIX_RankD,
-    RevolutionKart_UnicodeChar_UIX_RankE,    
+    RevolutionKart_UnicodeChar_UIX_RankE,
+    
     //Indicator lights (indicator_font.rfnt)
     RevolutionKart_UnicodeChar_IndicatorLight_Unknown = 61696,
     RevolutionKart_UnicodeChar_IndicatorLight_Empty = 61698,
@@ -156,7 +163,22 @@ typedef enum <uint16>
     RevolutionKart_TextModify_TextColor
 } RevolutionKart_TextModifyType;
 
-//#ifdef JMS_TARGET_REVOKART
+typedef enum <ubyte>
+{
+    RevolutionKart_FontType_Rodan, //Final race, countdown
+    RevolutionKart_FontType_Kanji, //Common text letters
+    RevolutionKart_FontType_UIX, //UI extensions (non-letter textures [controller button, ranks etc])
+    RevolutionKart_FontType_Indicator, //Controller light, unused
+    RevolutionKart_FontType_FontNumbersRed, 
+    RevolutionKart_FontType_FontNumbersBlue
+    //Anything beyond is a crash
+} RevolutionKart_FontType;
+
+typedef struct JMS_CustomMessageEntryInfo
+{
+    RevolutionKart_FontType fontType; //Font from Font.arc
+    byte pad[3]; //I'd use I32 but these values do nothing
+};
 
 typedef enum <ubyte>
 {
@@ -165,19 +187,6 @@ typedef enum <ubyte>
     RevolutionKart_Insertion,
     RevolutionKart_ConditionalParameter
 } JMS_CustomTagType;
-
-typedef enum <uint32>
-{
-    RevolutionKart_FontType_CountdownFinalRace,
-    RevolutionKart_FontType_Kanji, //Common
-    RevolutionKart_FontType_FontNumbersRed = 4,
-    RevolutionKart_FontType_FontNumbersBlue
-} RevolutionKart_FontType;
-
-typedef struct CustomMessageEntryInfo
-{
-    RevolutionKart_FontType fontType;
-};
 
 typedef struct JMS_CustomTagGroup
 {
