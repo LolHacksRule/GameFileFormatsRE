@@ -142,7 +142,7 @@ typedef enum <uint16>
     RevolutionKart_Insertion_WiiFriend = 32
 } RevolutionKart_InsertionType;
 
-typedef enum <uint32>
+typedef enum <uint16>
 {
     RevolutionKart_TextModify_TextColor_Gray,
     RevolutionKart_TextModify_TextColor_Red3Unused,
@@ -185,6 +185,7 @@ typedef enum <ubyte>
     RevolutionKart_TextModify,
     RevolutionKart_UnicodeCharacter,
     RevolutionKart_Insertion,
+    RevolutionKart_Unknown,
     RevolutionKart_ConditionalParameter
 } JMS_CustomTagType;
 
@@ -197,7 +198,7 @@ typedef struct JMS_CustomTagGroup
         case RevolutionKart_UnicodeCharacter: uint16 dmy; wchar_t unicodeChar; if (printControlTagInfo) { Printf("<UnicodeChar%x>", unicodeChar); } break; //Todo, should we use RevolutionKart_UnicodeChar or wchar_t
         case RevolutionKart_Insertion: RevolutionKart_InsertionType insertionType; uint16 index; if (printControlTagInfo) { Printf("<%s index=%i", EnumToString(insertionType), index); } if (insertionType == RevolutionKart_Insertion_ContextDependentInteger) { uint16 digits; if (printControlTagInfo) { Printf("<ContextDependentInteger digits=\"%i\">", digits); } } if (printControlTagInfo) { Printf(">"); } break;
         case RevolutionKart_ConditionalParameter: uint16 dmy; uint16 checkOppositeInstead; uint16 param1; uint16 param2; if (printControlTagInfo) { Printf("<ConditionalParameter checkRightInstead=%i param1=%i param2=%i />", checkOppositeInstead, param1, param2); } break;
-        default: break;
+        default: byte unknownTag[tagSize-3]; break;
     }
 };
 

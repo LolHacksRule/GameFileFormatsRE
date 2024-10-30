@@ -1,0 +1,49 @@
+### RevolutionKart Function Map
+
+#Text modifiers
+[0, 0] fontSizePercent
+    u16 val
+
+[0, 1] textColor
+    {ColorIndex} index
+
+#Unicode character
+[1, 0] unicodeCharacter
+    hex index #Map?
+
+#Insertion
+[2, {InsertionMap}] insertion
+    #u16 index
+
+#No clue what 3 is
+
+#Conditional parameter
+[4, 0] conditionalParameter
+    u16 checkRightInstead
+    u16 param1
+    u16 param2
+
+map ColorIndex u16
+    0 Gray
+    1 Red3Unused
+    2 White
+    3 Transparent
+    4 Red2
+    5 Blue1
+    6 Yellow
+    7 Blue2
+    8 Red3
+    9 Green
+    10 Red1
+
+map InsertionMap u16
+    0 CurrentPlayerName
+    16 ContextDependentInt
+    17 InsertableName
+    18 PlayerName
+    #19 PlayerNameAgain
+    20 PlayerControllerIndicatorLight
+    21 BlackQuestionBox #Other player region ?
+    22 PlusZero #?
+    23 PlayerController_BButton
+    32 WiiFriend
