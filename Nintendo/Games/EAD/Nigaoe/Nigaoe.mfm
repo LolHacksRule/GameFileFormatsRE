@@ -1,0 +1,12 @@
+### Nigaoe Function Map
+
+#TODO: When text attributes are supported, byte fontIndex _ pad
+
+[1, {type}] textInsert
+
+map type u16 #0/9+ is a crash
+    1 MiiToSend
+    2 NDSUser
+    #3 FriendPlaza #?
+    #4 WiiName #?
+    9 ErrorCode
