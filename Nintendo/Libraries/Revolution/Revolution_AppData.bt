@@ -1,0 +1,79 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../LHR/Common.bt"
+
+//https://wiibrew.org/wiki/WAD_files
+
+typedef enum <uint16>
+{
+    WadType_Install = 18803,
+    WadType_Backup = 17003,
+    WadType_IrdBoot = 26978, //?
+} WadType;
+
+struct
+{
+    BigEndian();
+    struct
+    {
+        uint32 headSz;
+        WadType type;
+        uint16 ver;
+        if (type == WadType_Install)
+        {
+            uint32 certChainSz;
+            uint32 dmy;
+            uint32 ticketSz;
+        }
+        else if (type == WadType_Backup)
+        {
+            uint32 consoleID;
+            uint32 saves;
+            uint32 saveSz;
+        }
+        uint32 titleMetaDataSz;
+        uint32 encContentDataSz;
+        if (type == WadType_Install)
+        {
+            uint32 footerSz;
+        }
+        else if (type == WadType_Backup)
+        {
+            uint32 backupAreaSz;
+            byte includedContents[40];
+            uint64 titleID;
+            uint16 macAddress[3];
+            uint16 reserved;
+        }
+    } Header;
+    if (Header.type == WadType_Install)
+    {
+        byte padding[sizeof Header+LHR_Align(sizeof Header,32)];
+        byte certChain[Header.certChainSz];
+        byte certChainPad[LHR_Align(Header.certChainSz,64)]; //I'd include this but wad tools exclude it
+        byte ticket[Header.ticketSz];
+        byte ticketPad[LHR_Align(Header.ticketSz,64)]; //I'd include this but wad tools exclude it
+    }
+    else
+    {
+        byte padding[0x40];
+    }
+    byte titleMetaData[Header.titleMetaDataSz];
+    byte titleMetaDataPad[LHR_Align(Header.titleMetaDataSz,64)]; //I'd include this but wad tools exclude it
+    byte encryptedContentData[Header.encContentDataSz+LHR_Align(Header.encContentDataSz,64)]; //Does not match 100% on WiiShop, PhotoChannel, MiiChannel, MKChannel or RabbidsChannel
+    if (Header.type == WadType_Install)
+    {
+        byte footer[Header.footerSz];
+    }
+} Revolution_WiiAppData;
