@@ -1,0 +1,114 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+#include "AppSignCommon.bt"
+
+//Wii, 3DS and WiiU
+
+//https://wiibrew.org/wiki/Ticket
+//https://3dbrew.org/wiki/Ticket
+//https://wiiubrew.org/wiki/Ticket
+
+struct
+{
+    BigEndian(); //Everywhere why
+    N_AppSign_SignedBlobHeader SignedBlobHeader;
+    struct
+    {
+        char issuer[0x40];
+        char eccPubKey[0x3c];
+        byte ver; //3ds and U is 1
+    } MainHeader;
+    if (MainHeader.ver == 0) //Parse RVL/legacy CTR (Untested) ticket
+    {
+        struct
+        {
+            byte caCRLVer;
+            byte signerCRLVer;
+            byte encryptedTitleKey[16];
+            byte reserved;
+            uint64 ticketID;
+            uint32 consoleID;
+            uint64 titleID; //Also used as IV
+            uint16 sysAccessMask;
+            uint16 ticketTitleVer;
+            uint32 permittedTitlesMask;
+            uint32 permitMask;
+            byte exportEnabled;
+            byte commonKeyIdx;
+            byte unk2[0x30];
+            byte contentAccess[0x40];
+            byte pad[2];
+            uint32 limitType;
+            uint32 maxUsages;
+            byte unk3[0x38];
+        } TicketV1;
+    }
+    else
+    {
+        /*struct //CTR
+        {
+            byte caCRLVer;
+            byte signerCRLVer;
+            byte encryptedTitleKey[16];
+            byte reserved;
+            uint64 ticketID;
+            uint32 consoleID;
+            uint64 titleID; //Also used as IV
+            uint16 reserved2;
+            uint16 ticketTitleVer;
+            uint64 reserved3;
+            byte licenseType;
+            byte keyIdx;
+            byte reserved4[0x2A];
+            uint32 accId;
+            byte reserved5;
+            byte audit;
+            byte reserved6[0x42];
+            byte limits[0x40];
+            N_AppSign_Type contentIdx;
+            uint32 edSz;
+            byte ed[edSz-8];
+        } TicketV2;
+        struct
+        {
+            N_AppSign_SignedBlobHeader SignedBlobHeader;
+            char issuer[0x40];
+            uint32 keyType; //3ds and U is 1
+            char name[0x40];
+            time_t expire;
+            switch (SignedBlobHeader.signType) //There's probably a better way to do this but for now
+            {
+                case N_AppSign_Type_RSA4096SHA1:   byte pubKey[0x200]; break;
+                case N_AppSign_Type_RSA2048SHA1:   byte pubKey[0x238]; break;
+                case N_AppSign_Type_ElipCurveSHA1: byte pubKey[0x3C];  break;
+                case N_AppSign_Type_RSA4096SHA256: byte pubKey[0x200]; break;
+                case N_AppSign_Type_RSA2048SHA256: byte pubKey[0x100]; break;
+                case N_AppSign_Type_ECDSASHA256:   byte pubKey[0x3C];  break;
+                default: break;
+            }
+        } CertChain[9]<optimize=false>;*/
+        Printf("Wii NAND/Nintendo 3DS and Wii U tickets are unsupported.");
+    }
+    /*struct
+    {
+        byte sha256[32];
+        struct
+        {
+            uint16 off;
+            uint16 cmds;
+            byte sha256[32];
+        } CMDGroup[64];
+    } V1Header;*/
+} NinTicket;
