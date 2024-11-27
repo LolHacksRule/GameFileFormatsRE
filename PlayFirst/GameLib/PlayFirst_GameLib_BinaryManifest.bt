@@ -24,11 +24,18 @@ struct
         byte unk[36]; //Hash?
     }
     PlayFirstPlayground_OffsetAndSize FilesDefine;
+    PlayFirstPlayground_OffsetAndSize unk;
     PlayFirstPlayground_OffsetAndSize unk2;
-    PlayFirstPlayground_OffsetAndSize unk3;
-    PlayFirstPlayground_OffsetAndSize unk4; //Ends at asset group rules
+    if (ver == 1) //WIP
+    {
+        PlayFirstPlayground_OffsetAndSize unk3; //Ends at asset group rules
+    }
     PlayFirstPlayground_OffsetAndSize AssetGroupRulesDefine; //Asset group rules
-    uint32 unk5[3]; //Placeholder timestamps?
+    if (ver == 2) //WIP
+    {
+        PlayFirstPlayground_OffsetAndSize unk3; //Ends at asset group rules
+    }
+    uint32 unk4[3]; //Placeholder timestamps?
     struct //All offsets begin here
     {
         uint16 fullPathSz;
@@ -37,11 +44,11 @@ struct
         string hashName;
         //Printf("%s\n", fullPath);
     } File[files]<optimize=false>;
-    byte unkData1[unk2.size];
-    byte unkData2[unk3.size];
+    byte unkData1[unk.size];
+    byte unkData2[unk2.size];
     if (ver == 1) //One of these are moved in V2
     {
-        byte unkData3[unk4.size];
+        byte unkData3[unk3.size];
     }
     struct
     {
@@ -52,6 +59,6 @@ struct
     } AssetGroupRule[assetGroupRules]<optimize=false>;
     if (ver == 2) //Kinda bad but whatever
     {
-        byte unkData3[unk4.size];
+        byte unkData3[unk3.size];
     }
 } PlayFirst_GameLib_BMANIFEST;
