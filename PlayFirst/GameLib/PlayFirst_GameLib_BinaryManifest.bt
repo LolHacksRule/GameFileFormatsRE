@@ -11,36 +11,47 @@
 //   History: 
 //------------------------------------------------
 
-#include "../PlayGround/PlayFirstPlaygroundCommon.bt"
+#include "../PlayGround/PlayFirst_Playground_Common.bt"
 
 struct
 {
     char BMANFEST[8];
     uint32 ver;
     uint32 files;
-    uint32 assetGroupRules; //?
+    uint32 assetGroupRules;
+    if (ver == 2) //WIP
+    {
+        byte unk[36]; //Hash?
+    }
     PlayFirstPlayground_OffsetAndSize FilesDefine;
     PlayFirstPlayground_OffsetAndSize unk2;
     PlayFirstPlayground_OffsetAndSize unk3;
     PlayFirstPlayground_OffsetAndSize unk4; //Ends at asset group rules
     PlayFirstPlayground_OffsetAndSize AssetGroupRulesDefine; //Asset group rules
-    uint32 unk5[3];
-    struct
+    uint32 unk5[3]; //Placeholder timestamps?
+    struct //All offsets begin here
     {
-        uint16 nameSz;
+        uint16 fullPathSz;
         uint16 hashNameSz;
-        string name;
+        string fullPath;
         string hashName;
-        //Printf("%s\n", name);
+        //Printf("%s\n", fullPath);
     } File[files]<optimize=false>;
     byte unkData1[unk2.size];
     byte unkData2[unk3.size];
-    byte unkData3[unk4.size];
-    struct 
+    if (ver == 1) //One of these are moved in V2
+    {
+        byte unkData3[unk4.size];
+    }
+    struct
     {
         uint32 priority;
         uint32 unk[3];
         string groupName;
         string regexRule;
     } AssetGroupRule[assetGroupRules]<optimize=false>;
-} BMANIFEST;
+    if (ver == 2) //Kinda bad but whatever
+    {
+        byte unkData3[unk4.size];
+    }
+} PlayFirst_GameLib_BMANIFEST;
