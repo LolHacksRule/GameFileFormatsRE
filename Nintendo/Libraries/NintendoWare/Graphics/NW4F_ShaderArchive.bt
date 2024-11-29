@@ -1,0 +1,250 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://wiki.wexosmk.xyz/index.php/BFSHA_(File_Format)
+//https://github.com/KillzXGaming/Switch-Toolbox/blob/master/File_Format_Library/FileFormats/Shader/BFSHA.cs
+//https://github.com/Project-Rito/BfshaLibrary/blob/main/Switch
+//https://github.com/KillzXGaming/ShaderLibrary/blob/main/ShaderLibrary/BfshaFile.cs
+//https://github.com/KillzXGaming/BFRES-Viewer/blob/master/BFRES/FES/Switch/BFSHA.cs
+//https://github.com/Makiah/BFRES-Animation-Extractor/blob/master/Animation%20Extractor/Assets/Scripts/Libraries/NintenTools.Bfres/other/010_editor/bfres_bfsha.bt
+
+#include "../NW_CommonBin.bt"
+
+typedef struct Cafe_ShaderArchiveHdr
+{
+    char FSHA[4];
+    N_BinVersion ver;
+    Printf("Cafe Shader Archive Version: %i.%i.%i\n", ver.major, ver.minor, ver.micro);
+    U16_EndianEnum endian;
+    ushort hdrSz;
+    uint32 fileSize;
+};
+
+typedef struct NX_AttributeVariable
+{
+    ubyte shadingModelIdx;
+    ubyte shaderLocation;
+};
+
+typedef struct NX_SamplerVariable
+{
+    //N_NX_Dictionary dict;
+    uint64 altNameOff;
+    uint64 idx;
+    //byte pad[7]; //nah
+};
+
+typedef struct NX_UniformBlockVariable
+{
+    //N_NX_Dictionary dict;
+    uint64 variableArrayOff;
+    uint64 variableDictOff;
+    uint64 defaultValueOff;
+    ubyte shadingModelIdx;
+    ubyte type;
+    uint16 size;
+    uint32 variables;
+    //uint16 pad;//nah
+};
+
+typedef struct NX_UniformVariable
+{
+    //N_NX_Dictionary dict;
+    uint64 convFunNameOff;
+    uint32 idxIntoShader;
+    uint16 dataOff;
+    uint16 owningUBVIdx;
+    //ubyte pad; //nah
+};
+
+typedef struct NX_ShaderProgram
+{
+    //N_NX_Dictionary dict;
+    uint64 samplerTableOff;
+    uint64 uniformBlockTableOff;
+    uint32 shaderVariationOff;
+    uint32 owningShadingModelOff;
+    uint32 attrActiveFlag;
+    uint16 flag;
+    uint16 samplers;
+    uint64 uniformBlocks;
+    //ubyte pad[6]; //nah
+    struct
+    {
+        uint64 samplerTableOff;
+        uint64 uniformBlockTableOff;
+        uint64 streamOutOff;
+        uint64 streamOuts;
+        //byte pad[4]; //nah
+    } NX_ShaderVariation;
+};
+
+typedef struct NX_ShaderOption
+{
+    //N_NX_Dictionary dict;
+    uint64 nameOff;
+    uint64 choiceDictOff;
+    uint64 choiceValueArrayOff;
+    ubyte choices;
+    ubyte idx;
+    uint16 branchOff;
+    ubyte flag;
+    ubyte keyOff;
+    ubyte idx;
+    ubyte shift;
+    uint32 mask;
+    uint32 pad;
+};
+
+typedef struct NX_ShadingModelBlock
+{
+    uint64 modelNameOff;
+    uint64 shaderOptionArrayOff;
+    uint64 shaderOptionDicOff;
+    uint64 dynShaderOptionArrayOff;
+    uint64 dynShaderOptionDicOff;
+    uint64 attrVarArrayOff;
+    uint64 attrVarArrayDicOff;
+    uint64 samplerVarArrayOff;
+    uint64 samplerVarArrayDicOff;
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 8)
+    {
+        uint64 imagesArrayOff;
+        uint64 imagesDictOff;
+    }
+    uint64 uniformBlockVarArrayOff;
+    uint64 uniformBlockVarArrayDicOff;
+    uint64 uniformVarArrayOff;
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 7)
+    {
+        uint64 storageBufferOff;
+        uint64 storageBufferDicOff;
+        uint64 unk;
+    }
+    uint64 shaderProgArrayOff;
+    uint64 keyTableOff;
+    uint64 owningShaderArcOff;
+    uint64 shaderInfoOff;
+    uint64 nxShaderBlockOff;
+    uint64 mutexTypeOff;
+    uint64 userPtr;
+    uint64 callPtr;
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 7)
+    {
+        uint64 ver7pad[2];
+    }
+    uint32 uniformVars;
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 7)
+    {
+        uint32 shaderStorages;
+    }
+    uint32 defaultIdx;
+    uint16 staticShaderOptions;
+    uint16 dynShaderOptions;
+    uint16 shaderPrograms;
+    if (BFSHA_NX_CommonBinaryHeader.version.major < 7)
+    {
+        uint16 maxGeomShaderRBOutput;
+    }
+    ubyte staticKeyLen;
+    ubyte dynKeyLen;
+    ubyte attributeVars;
+    ubyte samplerVars;
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 8)
+    {
+        ubyte images;
+    }
+    ubyte uniformBlockVars;
+    ubyte maxVtxShaderRBOutput;
+    ubyte sysBlockIndices[4];
+    if (BFSHA_NX_CommonBinaryHeader.version.major >= 8)
+    {
+        ubyte unk2[11];
+    }
+    else if (BFSHA_NX_CommonBinaryHeader.version.major >= 7)
+    {
+        ubyte pad[4];
+    }
+    else
+    {
+        ubyte pad[6];
+    }
+    //TODO
+    /*N_NX_Dictionary dict;
+    NX_ShaderOption SSO[staticShaderOptions];
+    NX_ShaderOption DSO[dynShaderOptions];
+    NX_AttributeVariable AV[attributeVars];
+    uint32 dmy;
+    NX_SamplerVariable SV[samplerVars];
+    NX_UniformBlockVariable UBV[uniformBlockVars];
+    NX_UniformVariable UV[uniformVars];
+    NX_ShaderProgram SP[shaderPrograms];*/
+};
+
+typedef struct NX_ShaderArchiveBlock
+{
+    uint64 arcNameOff;
+    uint64 origPathOff;
+    uint64 modelArrayOff;
+    uint64 modelArrayDicOff;
+    uint64 dmy; //Comment if less 7
+    uint64 userPtr;
+    uint64 callPtr;
+    uint64 wMemPtr;
+    uint16 models;
+    uint16 flag;
+    uint32 pad;
+    NX_ShadingModelBlock ShadingModel[models];
+};
+
+struct
+{
+    FSkip(4);
+    if (ReadByte() != 32) //Read Cafe shader
+    {
+        BigEndian();
+        FSkip(-4);
+        Cafe_ShaderArchiveHdr BFSHA_CafeHeader<bgcolor = cRed>;
+        struct
+        {
+            uint32 align;
+            uint32 nameOff;
+            uint32 strPoolSz;
+            ushort shadingModel;
+            ushort flags;
+            uint32 apiVer;
+            uint32 shadingModelDictOff;
+            uint32 userPtr;
+            uint32 updCallback;
+        } CafeShaderArchive;
+        //byte BFSHA[BFSHAHdr.fileSize-16]<bgcolor = cRed>;
+    }
+    else //Read NX Shader
+    {
+        LittleEndian();
+        FSkip(-4);
+        N_NX_CommonBinHdr BFSHA_NX_CommonBinaryHeader<bgcolor = cRed>;
+        struct
+        {
+            struct
+            {
+                uint64 shaderArcOff;
+                uint64 strTblOff;
+                uint32 strTblSz;
+                uint32 pad;
+            } NXShaderHeader;
+            NX_ShaderArchiveBlock NXShaderArchive;
+        } NXShader;
+        //byte BFSHA[BFSHAHdr.fileSize-32]<bgcolor = cRed>;
+    }
+} NW4F_ShaderArchive_BFSHA;

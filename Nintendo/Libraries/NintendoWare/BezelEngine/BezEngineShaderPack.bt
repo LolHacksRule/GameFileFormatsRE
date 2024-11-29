@@ -13,37 +13,6 @@
 
 #include "../NW_CommonBin.bt"
 
-/*typedef struct RelocTable
-    {
-        char RLTHdr[4];
-        int32 memAddress;
-        int32 sections;
-        int32 pad;
-        if (sections >= 1)
-        {
-            struct Section
-            {
-                int64 memAddress;
-                int32 fOff;
-                int32 fSize;
-                int32 idxfirst;
-                int32 relocs;
-            } section[sections];
-            struct Reclocations
-            {
-                int32 fOff;
-                int16 chunks;
-                byte relocwords;
-                byte nonrelocwords;
-            } reloc[section.relocs];
-        }
-        else
-        {
-            byte d[52];
-        }
-        //int64 dmy;
-    };*/
-
 typedef struct StringPoolWIP
     {
         //FSkip(-4);
@@ -115,7 +84,6 @@ struct ShaderPack
                 CafeShader theBFSHA;
             }
         } shdrs;
-        
         StringPoolWIP theStr;
         N_NX_RelocationTable theRlt;
     } content<comment="Bezel Shader Pack Content">;
