@@ -520,8 +520,10 @@ typedef struct ExpressionBinary
             EXBSource LHSSource;
             EXBSource RHSSource;
             uint16 HSIdx[2]; //L and R
-            //struct Parameter
-            //FPos = FTell();*/
+            struct Parameter
+            {
+                FPos = FTell();
+            }*/
         } CommandInstruction[commandInstructions];
     } CommandInstructions;
     FSeek(ASBHeader.expressionBinarySectionOff+EXBHeader.signTableOff);

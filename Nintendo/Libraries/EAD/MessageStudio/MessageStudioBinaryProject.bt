@@ -24,11 +24,11 @@ local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
 local uint printDebugLogs <hidden=true> = 0; //Prints debug logs (WIP)
 local uint dumpAeonSakeNMSFunctionMap <hidden=true> = 0; //Dump a function map (MFM) for AeonSake's MSBT editor (WIP)
 
-//Perfectly reads all V2-V4 MSBP
+//Perfectly reads nearly all V2-V4 MSBP
 
 typedef struct NMS_ProjectTagGroup
 {
-    if (ReadShort() == i2 || BlockHeader.version == 4) //Fix MP10
+    if (ReadShort() == i2 || BlockHeader.version == 4) //Fix MP10, this breaks Wagon fsr
     {
         uint16 idx;
     }
