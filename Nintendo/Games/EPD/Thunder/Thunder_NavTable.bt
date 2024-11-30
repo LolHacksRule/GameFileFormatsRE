@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../../../LHR/Common.bt"
+
+struct FloatArray
+{
+    float dmy;
+    float values[inits];
+};
+
+struct
+{
+    uint32 unk;
+    uint32 inits; //or i16? Prob not
+    uint16 init16Array[inits]; //Def correct
+    FloatArray floatArray[inits-1]<optimize=false>; //?
+} Thunder_NavTable_NVT;
