@@ -13,16 +13,71 @@
 
 //https://epd.zeldamods.org/wiki/ASB
 //https://docs.google.com/document/d/1iAgTwK0otUaDvb_0Si0TJYiQa7BeI4qNWAX54WUiXTo
+//https://github.com/dt-12345/asb/blob/main/asb.py
 
 #include "../../../../LHR/Common.bt"
 
 //local uint i<hidden=true> = 0;
 
+
+typedef enum <uint16>
+{
+    NodeType_FloatSelector,
+    NodeType_StringSelector,
+    NodeType_SkeletalAnimation,
+    NodeType_State,
+    //0x05 5
+    NodeType_OneDimensionalBlender = 6,
+    NodeType_Sequential,
+    NodeType_IntSelector,
+    NodeType_Simultaneous,
+    NodeType_Event,
+    NodeType_MaterialAnimation,
+    NodeType_FrameController,
+    NodeType_DummyAnimation,
+    NodeType_RandomSelector,
+    //0x0F	15
+    NodeType_PreviousTagSelector = 16,
+    NodeType_BonePositionSelector,
+    NodeType_BoneVisibilityAnimation,
+    NodeType_InitialFrame,
+    NodeType_BoneBlender,
+    NodeType_BoolSelector,
+    NodeType_Alert,
+    NodeType_SubtractAnimation,
+    NodeType_ShapeAnimation
+    //0x19	25
+} NodeType;
+
+typedef enum <uint32>
+{
+    InterpolationType_None,
+    InterpolationType_NoModelMorph,
+    InterpolationType_LocalBoneMorph,
+    InterpolationType_InertialBlend
+} InterpolationType;
+
+typedef struct ParamEntry
+{
+    int32 idx;
+    if (idx)
+        byte val; //depends
+};
+
+typedef struct StringReference16
+{
+    uint16 strOff;
+    FPos = FTell();
+    FSeek(ASBHeader.strTblOff+strOff);
+    string str;
+    FSeek(FPos);
+};
+
 typedef struct StringReference
 {
     uint32 strOff;
     FPos = FTell();
-    FSeek(theHdr.strTblOff+strOff);
+    FSeek(ASBHeader.strTblOff+strOff);
     string str;
     FSeek(FPos);
 };
@@ -30,74 +85,84 @@ typedef struct StringReference
 typedef struct Header
 {
     char   ASB[4];
-    uint32 ver; //0x0304: Billy, 0x0417: TOK, 0x40F: NSS/Thunder
-    uint32 fNameOff;
-    uint32 AnimationSequenceCommands;
-    uint32 elements;
-    uint32 eventInfos;
-    uint32 sec13Count; 
-    uint32 sec7Count;
-    uint32 globalParamsOff;
+    uint32 ver; //0x0304: Billy, 0x0417: TOK, 0x40F: NSS/Thunder, 0x0418: Secred (No actual header change)
+    uint32 fNameOff; //From strtbl
+    uint32 animationSequenceCommands;
+    uint32 elements; //Nodes in reverse documentation
+    uint32 events;
+    uint32 partials;
+    uint32 syncDataEntries;
+    uint32 blackBoardParamsOff;
     uint32 strTblOff;
-    uint32 sec21Off; //?b before StrTbl, mostly 4
-    uint32 sec8Off;
-    uint32 eventInfoOffArrayOff;
-    uint32 unkOff4[2];
-    uint32 unkSectionIndicesOff;
-    uint32 unkSection;
-    uint32 unkSectionEntries;
-    uint32 boneGroupsSectionOff;
-    uint32 boneGroupsSectionCount;
+    uint32 enumResolveTableOff; //?b before StrTbl, mostly 4
+    uint32 stateTransitionsOff;
+    uint32 eventEntriesOffArrayOff;
+    uint32 partialsOff;
+    uint32 syncDataOff;
+    uint32 syncDataIndicesOff;
+    uint32 calcPresetsOff;
+    uint32 calcPresets;
+    uint32 boneGroupsOff;
+    uint32 boneGroups;
     uint32 stringTblSz;
-    uint32 xitionTargetsSectionOff;
+    uint32 transitionTargetsOff;
     uint32 tagListOff;
-    uint32 stringTripletsSectionOff;
+    uint32 stringTripletsOff;
     uint32 expressionBinarySectionOff; //Section 17
-    uint32 sec11Off;
-    if (ver < 1039)
-    {
-        uint32 sec20OffOld;
-    }
+    uint32 commandGroupsOff;
+    if (ver >= 1047)
+        uint32 materialBlendSettingsOff;
 };
 
 typedef struct Command
 {
     StringReference name;
-    FSeek(FPos);
-    if (theHdr.ver > 1027)
+    if (ASBHeader.ver > 1027)
     {
         uint32 tagsOff;
-    }
-    float unk2;
-    if (theHdr.ver > 1027)
-    {
-        uint32 unk[3];
-    }
-    else
-    {
-        uint32 unk[2];
-    }
+        /*if (tagsOff)
+        {
+            struct
+            {
+                FSeek(ASBHeader.tagListOff);
+                uint32 entries;
+                StringReference tag[entries]<optimize=false>;
+            } Tags<optimize=false>;
+            FSeek(-(FPos+tagsOff+sizeof Tags));
+        }*/
+    }   
+    uint32 param1dmy; //F32 Type?
+    float param1;
+    uint32 param2dmy; //Bool type?
+    uint32 param2;
+    InterpolationType interPolationType;
     GUID commandGUID;
     uint16 nodeIdx[2];
 };
 
-typedef struct Element
-{
-    uint16 type;
-    ubyte unkCount;
-    ubyte unk;
-    uint32 tagsOff;
-    uint32 elementBodyOff;
-    uint16 sec15BaseIdx;
-    uint16 sec15UnkCount2;
-    uint16 sec6BaseIdx;
-    uint16 sec6BaseIdx;
-    GUID elementGUID;
-};
-
 typedef struct ElementBody
 {
-    
+    uint32 unk;
+    StringReference anim;
+    uint32 unk2[4];
+};
+
+typedef struct Element
+{
+    NodeType type;
+    ubyte syncDatas;
+    Byte_Bool stateTransitionDisable;
+    uint32 tagEntryOff;
+    uint32 elementBodyOff;
+    /*FPos = FTell();
+    FSeek(elementBodyOff);
+    ElementBody body;
+    FSeek(FPos);*/
+    uint16 calcPresetIdx;
+    uint16 calcPresets;
+    uint16 syndDataIdxArrayIdx;
+    uint16 markingsIdx;
+    GUID elementGUID;
 };
 
 typedef struct TriggerEvent
@@ -124,7 +189,7 @@ typedef struct ValueEntry
     uint32 unk[2];
 };
 
-typedef struct EventInfo
+typedef struct Event
 {
     uint32 triggerEvents;
     uint32 holdEvents;
@@ -134,11 +199,26 @@ typedef struct EventInfo
     ValueEntry HoldEventValueEntry[triggerEvents];
 };
 
-typedef struct TransitionTargets
+typedef struct Transition
+{
+    /*uint32 command[2];
+    ubyte type;
+    ubyte flag;
+    uint16 idx;
+    uint32 paramName;
+    int32 unk;*/
+    //uint32 entries;
+    //int32 unk;
+    //uint32 off;
+    //uin
+    //switch
+};
+
+typedef struct TransitionTarget
 {
     uint32 transitions;
     int32 unk;
-    uint32 entryOff;
+    Transition transition[transitions];
 };
 
 typedef struct BoneList
@@ -153,46 +233,423 @@ typedef struct BoneGroup
     StringReference maskName;
     uint32 bones;
     uint32 unk;
+    /*struct
+    {
+        StringReference name;
+        float unk;
+    } Bone<optimize=false>;*/
+};
+
+typedef struct SyncData
+{
+    uint32 type;
+    uint32 off;
+    GUID guid;
+    FPos = FTell();
+    FSeek(off);
+    switch (type)
+    {
+        case 0: uint32 dmy; float fadeInFrame; uint32 unk; break;
+        case 1: uint32 dmy2; float syncStartFrame; uint32 dmy2; float normalizedSyncStartFrame; uint32 dmy3; float unk2;
+        case 3: break;
+        default: Printf("Unknown type."); break;
+    }
+    FSeek(FPos);
+};
+
+typedef struct StateTransition
+{
+    uint32 count;
+    //UNFINISHED
+    /*struct
+    {
+        uint16 currentNode;
+        uint16 targetNode;
+        uint32 checkType;
+        //?
+        ubyte bool;
+        ubyte bool2;
+        //? ends
+        ubyte pad[2];
+        uint32 unk;
+        struct
+        {
+            uint16 type;
+            uint16 compareType;
+            if (type == 0)
+            {
+                byte pad[16];
+            }
+            else
+            {
+                switch (type)
+                {
+                    
+                }
+            }
+        } Param[4];
+    } Node[count]<optimize=false>;*/
+};
+
+typedef struct BlackboardParameter
+{
+    struct
+    {
+        uint16 count;
+        uint16 idx;
+        uint16 off;
+        byte unk[2];
+    } TypeHeader[6]; //6 types, str, int, float, bool, v3f, ptr
+    struct
+    {
+        for (i = 0; i < 6; i++) //Doing it like this so i can be incremented
+        {
+            struct
+            {
+                StringReference16 name;
+                int16 flags;
+            } Entry[TypeHeader[i].count]<optimize=false>;
+        }
+    } Entries;
+    //FPos = FTell();
+    struct
+    {
+        for (i = 0; i < 6; i++) //Doing it like this so i can be incremented
+        {
+            //FSeek(FPos+TypeHeader[i].off);
+            struct
+            {
+                switch (i)
+                {
+                    case 0: StringReference str; break;
+                    case 1: uint32 u32; break;
+                    case 2: float f32; break;
+                    case 3: U32_Bool u32; break;
+                    case 4: Vector3_F32 vec3f; break;
+                }
+            } InitValueEntry[TypeHeader[i].count]<optimize=false>;
+        }
+    } InitValues;
+    /*struct //BROKEN
+    {
+        for (i = 0; i < 3; i++) //Doing it like this so i can be incremented
+        {
+            struct
+            {
+                StringReference eFile;
+                uint32 hash[3];
+            } ExternalFile[TypeHeader[i].count]<optimize=false>;
+        }
+    } ExternalFiles;*/
+};
+
+typedef struct CommandGroup
+{
+    uint32 entries;
+    StringReference name[entries]<optimize=false>;
+};
+
+typedef struct Partial
+{
+    uint16 bones;
+    U16_Bool materialSlot;
+    StringReference name;
+    StringReference unk;
+    struct
+    {
+        StringReference name;
+        uint16 unk[2];
+    } Bones[bones]<optimize=false>;
+};
+
+typedef struct CalculationPreset
+{
+    int index;
+    float adjust;
+    uint32 calcMode;
+    float defaultValue;
+    float adjustRate;
+    float baseDefault;
+    float min;
+    float max;
+};
+
+typedef struct TagList
+{
+    uint32 entries;
+    StringReference tagListString[entries]<optimize=false>;
+};
+
+typedef struct ASMarking
+{
+    uint32 entries;
+    struct
+    {
+        StringReference text<optimize=false>;
+        StringReference JP<optimize=false>;
+        StringReference name<optimize=false>;
+    } Entry[entries]<optimize=false>;
+};
+
+typedef struct MaterialBlendSetting
+{
+    uint32 entries;
+    struct
+    {
+        StringReference name;
+        float blendStart;
+    } Entry[entries]<optimize=false>;
+};
+
+typedef struct EnumResolveTable
+{
+    uint32 entries;
+    struct
+    {
+        //No samples I've seen use this.
+    } Entry[entries]<optimize=false>;
+};
+
+typedef enum <ubyte>
+{
+    EXBCommand_Terminator,
+    EXBCommand_Store,
+    EXBCommand_Negate,
+    EXBCommand_NegateBool,
+    EXBCommand_Add,
+    EXBCommand_Subtract,
+    EXBCommand_Multiply,
+    EXBCommand_Divide,
+    EXBCommand_Modulus,
+    EXBCommand_Increment,
+    EXBCommand_Decrement,
+    EXBCommand_ScalarMultiplyVec3f,
+    EXBCommand_ScalarDivideVec3f,
+    EXBCommand_LeftShift,
+    EXBCommand_RightShift,
+    EXBCommand_LessThan,
+    EXBCommand_LessThanEqual,
+    EXBCommand_GreaterThan,
+    EXBCommand_GreaterThanEqual,
+    EXBCommand_Equal,
+    EXBCommand_NotEqual,
+    EXBCommand_And,
+    EXBCommand_Xor,
+    EXBCommand_Or,
+    EXBCommand_LogicalAnd,
+    EXBCommand_LogicalOr,
+    EXBCommand_UserFunction,
+    EXBCommand_JumpIfLhsZero,
+    EXBCommand_Jump
+} EXBCommand;
+
+typedef enum <ubyte>
+{
+    EXBDataType_None,
+    EXBDataType_ImmediateOrUser,
+    EXBDataType_Bool,
+    EXBDataType_S32,
+    EXBDataType_F32,
+    EXBDataType_Str,
+    EXBDataType_V3F
+} EXBDataType;
+
+typedef enum <ubyte>
+{
+    EXBSource_Imm,
+    EXBSource_ImmStrRef,
+    EXBSource_StaticMemory,
+    EXBSource_ParameterTable,
+    EXBSource_ParameterTableStrRef,
+    EXBSource_Out,
+    EXBSource_In,
+    EXBSource_Scratch32,
+    EXBSource_Scratch64,
+    EXBSource_UserOut,
+    EXBSource_UserIn
+} EXBSource;
+                        
+typedef struct ExpressionBinary
+{
+    struct
+    {
+        char   EXB[4];
+        uint32 ver;
+        uint32 staticSz;
+        uint32 fieldEntries;
+        uint32 scratch32Sz;
+        uint32 scratch64Sz;
+        uint32 commandInfoOff;
+        uint32 commandTblOff;
+        uint32 signTableOff;
+        uint32 paramRegionOff;
+        uint32 strOff;
+    } EXBHeader;
+    struct
+    {
+        uint32 commandInfos;
+        struct
+        {
+            int32 baseIdxPreCommandEntry;
+            if (EXBHeader.ver == 2)
+                uint32 preEntryStaticMemUsage;
+            uint32 instBaseIdx;
+            if (EXBHeader.ver == 2)
+                uint32 instructions;
+            uint32 staticMemSz;
+            uint16 scratch32MemSz;
+            uint16 scratch64MemSz;
+            uint16 outDataType;
+            uint16 inDataType;
+        } CommandInfo[commandInfos];
+    } CommandInfos;
+    struct
+    {
+        uint32 commandInstructions;
+        struct
+        {
+            /*EXBCommand commandType;
+            if (commandType == EXBCommand_Terminator)
+            {
+                FSkip(7);
+                break;
+            }
+            EXBDataType dataType;
+            if (commandType == EXBCommand_UserFunction)
+                break;
+            EXBSource LHSSource;
+            EXBSource RHSSource;
+            uint16 HSIdx[2]; //L and R
+            //struct Parameter
+            //FPos = FTell();*/
+        } CommandInstruction[commandInstructions];
+    } CommandInstructions;
+    FSeek(ASBHeader.expressionBinarySectionOff+EXBHeader.signTableOff);
+    struct
+    {
+        uint32 count;
+        StringReference Signature[count];
+    } Signatures;
 };
 
 struct AnimationSequenceBinary
 {
-    Header theHdr;
-    Command CommandEntry[theHdr.AnimationSequenceCommands]<optimize=false>;
-    Element ElementEntry[theHdr.elements]<optimize=false>;
-    //Section 5 (Element Bodies) here
+    LittleEndian();
+    
+    Header ASBHeader;
+    
+    Command Commands[ASBHeader.animationSequenceCommands]<optimize=false>;
+    
+    Element Elements[ASBHeader.elements]<optimize=false>;
+    
+    uint32 EventEntryOffset[ASBHeader.events]<optimize=false>;
+    
+    //Section 5 (Element Bodies) here (or implement in elements)
+    
+    FSeek(ASBHeader.syncDataIndicesOff);
+    uint32 SyncDataIndices[ASBHeader.syncDataEntries];
+    
+    FSeek(ASBHeader.syncDataOff);
+    SyncData SynData[ASBHeader.syncDataEntries];
+    
+    FSeek(ASBHeader.stateTransitionsOff);
+    StateTransition STAT_Transitions;
+    
+    //FSeek(ASBHeader.eventEntriesOffArrayOff);
+    //Event EventData[ASBHeader.events]<optimize=false>;
+    
+    FSeek(ASBHeader.transitionTargetsOff);
+    TransitionTarget TransitionTargets;
+    
+    if (ASBHeader.commandGroupsOff)
+    {
+        FSeek(ASBHeader.commandGroupsOff);
+        CommandGroup CommandGroups;
+    }
+    
+    if (ASBHeader.blackBoardParamsOff)
+    {
+        FSeek(ASBHeader.blackBoardParamsOff);
+        BlackboardParameter BlackboardParameters;
+    }
+    
+    if (ASBHeader.partialsOff)
+    {
+        FSeek(ASBHeader.partialsOff);
+        Partial Partials[ASBHeader.partials]<optimize=false>;
+    }
+    
+    if (ASBHeader.boneGroupsOff)
+    {
+        FSeek(ASBHeader.boneGroupsOff);
+        BoneGroup BoneGroups[ASBHeader.boneGroups]<optimize=false>;
+    }
+    
+    if (ASBHeader.calcPresetsOff)
+    {
+        FSeek(ASBHeader.calcPresetsOff);
+        CalculationPreset CalculationPresets[ASBHeader.calcPresets]<optimize=false>;
+    }
+    
+    if (ASBHeader.tagListOff) //Section 16
+    {
+        FSeek(ASBHeader.tagListOff);
+        TagList TagLists;
+    }
+    
+    //Tag Groups here
+    
+    if (ASBHeader.expressionBinarySectionOff) //Section 17
+    {
+        FSeek(ASBHeader.expressionBinarySectionOff);
+        ExpressionBinary EXB;
+    }
+    
+    //AS Markings
+    
+    if (ASBHeader.stringTripletsOff)
+    {
+        FSeek(ASBHeader.stringTripletsOff);
+        ASMarking ASMarkings;
+    }
+    
+    if (ASBHeader.materialBlendSettingsOff)
+    {
+        FSeek(ASBHeader.materialBlendSettingsOff);
+        MaterialBlendSetting MaterialBlendSettings;
+    }
+    
+    if (ASBHeader.enumResolveTableOff)
+    {
+        FSeek(ASBHeader.enumResolveTableOff);
+        EnumResolveTable EnumResolveTables;
+    }
+    
+    //uint32 unk[5];
     //Section 6 here
     //Section 7 here
     //Section 8 here
     //Section 9 (Event Info)
-    if (theHdr.eventInfos)
+    //if (ASBHeader.events)
     {
-        uint32 eventInfoOffset[theHdr.eventInfos]<optimize=false>;
-        FSeek(eventInfoOffset[0]);
-        EventInfo e;
+        //uint32 EventOffset[ASBHeader.events]<optimize=false>;
+        //FSeek(EventOffset[0]);
+        //Event e[ASBHeader.events]<optimize=false>;
     }
-    TransitionTargets targets;
+    //ElementBody a[5979];
+    //TransitionTargets TRAN_Targets;
     //Section 11 here
     //Section 12 (Global Parameters)
     //Section 13 here
-    //FSeek(theHdr.boneGroupsSectionOff);
+    //FSeek(ASBHeader.boneGroupsSectionOff);
     //BoneGroup boneGroups;
     //Section 15 here
-    if (theHdr.tagListOff) //Section 16
-    {
-        FSeek(theHdr.tagListOff);
-        uint32 entries;
-        StringReference tagListString[entries];
-    }
-    if (theHdr.expressionBinarySectionOff) //Section 17
-    {
-        FSeek(theHdr.exbSectionOff);
-        byte test;
-    }
+    
     //Section 18 here
     //Section 19 here
     //Section 20 here
-    byte strTblSz[theHdr.strTblSz]; 
-    FSeek(theHdr.strTblOff);
-    string fileName;
+    FSeek(ASBHeader.strTblOff);
+    byte strTblSz[ASBHeader.stringTblSz];
+    //FSeek(ASBHeader.strTblOff);
+    //string fileName;
 } ASB;
