@@ -14,7 +14,7 @@
 #include "../NW_CommonBin.bt"
 #include "../../GCADPCM.bt"
 
-//https://web.archive.org/web/20220922235351/https://avsys.xyz/wiki/BFSTM_(File_Format)
+//https://wiki.wexosmk.xyz/index.php/BFSTM_(File_Format)
 
 typedef enum <byte>
 {
@@ -49,9 +49,7 @@ typedef struct InfoSection
         uint32 seekInfoSize;
         uint32 seekSampleInterval;
         if (BlockHeader.signature == "CSTM")
-        {
             NW2011_BlockDefinitionWithoutSize sampleDataRef;
-        }
         else
         {
             NW2011_BlockTypeID sampleDataFlag;
@@ -68,9 +66,7 @@ typedef struct InfoSection
                 uint32 origLoopEnd;
             }
             if (BlockHeader.version.major >= 5)
-            {
                 uint32 crc;
-            }
         }
     } StreamInfo;
     if (trackInfo.typeID != 0) //I need a sample
@@ -84,11 +80,23 @@ typedef struct InfoSection
             {
                 byte vol;
                 byte pan;
-                byte span;
-                byte flags;
-                uint16 globalChannelIndexTableFlag;
-                uint16 pad;
-                int32 globalChannelIndexTableOff;
+                if (BlockHeader.signature == "FSTM")
+                {
+                    byte span;
+                    byte flags;
+                    uint16 globalChannelIndexTableFlag;
+                    uint16 pad;
+                    int32 globalChannelIndexTableOff;
+                }
+                else //TODO
+                {
+                    uint16 pad;
+                    NW2011_BlockDefinitionWithoutSize byteTableRef[2];
+                    /*struct
+                    {
+                        uint32 count;
+                    } ByteTable;*/
+                }
             } TrackInfo[entries];
             struct
             {
@@ -152,4 +160,4 @@ struct
     InfoSection INFO;
     SeekSection SEEK;
     DataSection DATA;
-} NW4F_Stream_BFSTM;
+} NW2011_Stream_BFSTM_BCSTM;

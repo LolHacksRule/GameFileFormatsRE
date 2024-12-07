@@ -16,16 +16,16 @@
 typedef struct DataTable
 {
     FPos = FTell();
-    NW_SubChunk DATA;
+    NW_SubChunk DataChunk;
     uint32 waveInfoDataEntries;
     NW_DataReference waveInfoDataEntriesRef[waveInfoDataEntries];
-    struct WaveInfoDataTable
+    struct
     {
         NW_DataReference waveSoundInfoDataRef;
         NW_DataReference trackTableRef;
         NW_DataReference noteTable;
-    } WIDT;
-    struct WaveSoundInformationData
+    } WaveInfoDataTable;
+    struct
     {
         float pitch;
         ubyte pan;
@@ -36,33 +36,33 @@ typedef struct DataTable
         NW_DataReference graphEnvTableRef;
         NW_DataReference randomizerTableRef;
         uint32 rsrv;
-    } WSID;
-    struct TrackTable
+    } WaveSoundInformationData;
+    struct
     {
         uint32 trackInfos;
         NW_DataReference trackInfoRef[trackInfos];
-        struct TrackInfoEntry
+        struct
         {
             NW_DataReference noteEventTableRef;
-        } TIE[trackInfos]<optimize=false>;
-        struct NoteEventTable
+        } TrackInfoEntry[trackInfos]<optimize=false>;
+        struct
         {
             uint32 noteEvents;
             NW_DataReference noteEventRef[noteEvents];
-            struct NodeEvent
+            struct
             {
                 float pos;
                 float len;
                 uint32 idx;
                 uint32 rsrv;
-            } NE[noteEvents]<optimize=false>;
-        } NET[trackInfos]<optimize=false>;
-    } TT;
-    struct NoteTable
+            } NodeEvent[noteEvents]<optimize=false>;
+        } NoteEventTable[trackInfos]<optimize=false>;
+    } TrackTable;
+    struct
     {
         uint32 noteInfoEntries;
         NW_DataReference nodeIntroEntryRef[noteInfoEntries];
-        struct NodeInfoEntry
+        struct
         {
             int32 waveIdx;
             byte atk;
@@ -80,13 +80,15 @@ typedef struct DataTable
             NW_DataReference graphEnvTableRef;
             NW_DataReference randomizerTableRef;
             uint32 rsrv;
-        } NIE[noteInfoEntries]<optimize=false>;
-    } NT;
+        } NodeInfoEntry[noteInfoEntries]<optimize=false>;
+    } NoteTable;
+    while (ReadByte() == 0x0)
+        FSkip(1);
 };
 
 typedef struct WaveTable
 {
-    NW_SubChunk WAVE;
+    NW_SubChunk WaveChunk;
     /*FPos = FTell();
     uint32 waveInfoOffsets;
     uint32 waveInfoOffset[waveInfoOffsets];*/
@@ -96,11 +98,17 @@ typedef struct WaveTable
 
 struct NW4R_WaveSound
 {
-    struct WaveSoundStruct
+    BigEndian();
+    if (ReadUInt() != 1381454660)
     {
-        NW_CommonBinHeader RWSDHdr;
-        DataTable DATAChunk;
+        Printf("This is not a NW4R Wave Sound file (BRWSD).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    DataTable DATA;
+    if (RWSDHdr.blocks > 1)
+    {
         FSeek(FPos+DATAChunk.DATA.blockSize);
-        WaveTable WAVEChunk;
-    } RWSD_STRUCT;
-} RWSD;
+        WaveTable WAVE;
+    }
+} NW4R_WaveSound_BRWSD;

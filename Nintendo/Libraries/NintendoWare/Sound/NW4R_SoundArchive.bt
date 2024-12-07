@@ -13,6 +13,35 @@
 
 #include "../NW_CommonBin.bt"
 
+typedef struct SequenceData
+{
+    uint32 labelEntry;
+    uint32 soundBankIdx;
+    uint32 allocTrack;
+    byte channelPriority;
+    byte releasePriorityFixFlag;
+    byte pad[2];
+    uint32 rsrv;
+};
+
+typedef struct StreamData
+{
+    uint32 startPos;
+    uint16 allocChannels;
+    uint16 allocTrackFlag;
+    uint32 rsrv;
+};
+
+typedef struct WaveData
+{
+    uint32 soundDataNode;
+    uint32 allocTrack;
+    byte channelPriority;
+    byte releasePriorityFixFlag;
+    byte pad[2];
+    uint32 rsrv;
+};
+
 typedef struct SoundDataEntry
 {
     uint32 nameIdx;
@@ -29,42 +58,13 @@ typedef struct SoundDataEntry
     NW_PanCurve panCurve;
     byte actorPlayerID;
     byte rsrv;
-    if (soundType == NW_SoundType_Sequence)
+    switch (soundType)
     {
-        struct SequenceSubsection
-        {
-            uint32 labelEntry;
-            uint32 soundBankIdx;
-            uint32 allocTrack;
-            byte channelPriority;
-            byte releasePriorityFixFlag;
-            byte pad[2];
-            uint32 rsrv;
-        } RSEQ_SUBSECTION;
+    case NW_SoundType_Sequence: SequenceData Sequence; break;
+    case NW_SoundType_Stream: StreamData Stream; break;
+    case NW_SoundType_Wave: WaveData Wave; break;
     }
-    else if (soundType == NW_SoundType_Stream)
-    {
-        struct StreamSubsection
-        {
-            uint32 startPos;
-            uint16 allocChannels;
-            uint16 allocTrackFlag;
-            uint32 rsrv;
-        } RSTM_SUBSECTION;
-    }
-    else if (soundType == NW_SoundType_Wave)
-    {
-        struct WaveSubsection
-        {
-            uint32 soundDataNode;
-            uint32 allocTrack;
-            byte channelPriority;
-            byte releasePriorityFixFlag;
-            byte pad[2];
-            uint32 rsrv;
-        } RSWD_SUBSECTION;
-    }
-    struct Sound3DParams
+    struct
     {
         uint32 flags;
         byte decayCurve;
@@ -72,7 +72,7 @@ typedef struct SoundDataEntry
         byte dopplerFactor;
         byte pad;
         uint32 rsrv;
-    } S3D_PARAMS;
+    } Sound3DParams;
 };
 
 typedef struct SoundBankEntry
@@ -116,9 +116,7 @@ typedef struct CollectionEntry
     NW_DataReference externalFileNameRef;
     NW_DataReference collectionPosTableRef;
     if (externalFileNameRef.value != 0)
-    {
         string externalFileName;
-    }
     FSeek(FPos+collectionPosTableRef.value);
     CollectionPositionTable CPT<optimize=false>;
 };
@@ -173,17 +171,17 @@ typedef struct TreeNode
 {
     uint16 flags;
     uint16 unkBitFlag;
-    uint32 leftIdx;
-    uint32 rightIdx;
-    uint32 strIdx;
-    uint32 idx;
+    int32 leftIdx;
+    int32 rightIdx;
+    int32 strIdx;
+    int32 idx;
 };
 
 typedef struct Tree
 {
     uint32 rootIdx;
     uint32 treeNodes;
-    TreeNode t[treeNodes];
+    TreeNode treeNode[treeNodes];
 };
 
 typedef struct SymbolTable
@@ -198,22 +196,22 @@ typedef struct SymbolTable
         uint32 groupTreeOff;
         uint32 bankTreeOff;
     }
-    struct FileNameTable
+    struct
     {
         uint32 fileNameEntries;
         uint32 fileNameEntryOff[fileNameEntries];
-        struct FileNameEntries
+        struct
         {
             for (i = 0; i < fileNameEntries; i++)
             {
-                struct FileNameEntry
+                struct
                 {
                     FSeek(FPos+fileNameEntryOff[i]);
                     string FName;
-                } FNE;
+                } FileNameEntry;
             }
-        } FNEs;
-    } FNT;
+        } FileNameEntries;
+    } FileNameTable;
     if (BlockHeader.ver > 7) //BBA
     {
         Tree SoundTree;
@@ -221,6 +219,8 @@ typedef struct SymbolTable
         Tree GroupTree;
         Tree BankTree;
     }
+    while (ReadByte() == 0x0)
+        FSkip(1);
 };
 
 typedef struct INFOTable
@@ -229,7 +229,7 @@ typedef struct INFOTable
     FPos = FTell();
     if (BlockHeader.ver > 7)
     {
-        struct DataReferences
+        struct
         {
             NW_DataReference SoundDataTableRef;
             NW_DataReference SoundBankTableRef;
@@ -237,45 +237,47 @@ typedef struct INFOTable
             NW_DataReference CollectionTableRef;
             NW_DataReference GroupTableRef;
             NW_DataReference SoundCountTableRef;
-        } INFO_REFs;
-        struct SoundDataTable
+        } DataReferences;
+        struct
         {
             uint32 entries;
             NW_DataReference sdeRefs[entries];
             SoundDataEntry sde[entries]<optimize=false>;
-        } SDT;
-        struct SoundBankTable
+        } SoundDataTable;
+        struct
         {
             uint32 entries;
             NW_DataReference sbeRefs[entries];
             SoundBankEntry sbe[entries]<optimize=false>;
-        } SBT;
-        struct PlayerInfoTable
+        } SoundBankTable;
+        struct
         {
             uint32 entries;
             NW_DataReference pieRefs[entries];
             PlayerInfoEntry pie[entries]<optimize=false>;
-        } PIT;
-        struct CollectionTable
+        } PlayerInfoTable;
+        struct
         {
             uint32 entries;
             NW_DataReference ceRefs[entries];
             CollectionEntry ce[entries]<optimize=false>;
-        } CT;
-        struct GroupTable
+        } CollectionTable;
+        struct
         {
             uint32 entries;
             NW_DataReference geRefs[entries];
             GroupEntry ge[entries]<optimize=false>;
-        } GT;
-        SoundCountTable SCT;
+        } GroupTable;
+        SoundCountTable SoundCounts;
     }
     else
     {
         uint32 entries;
-        SoundDataEntry sde[entries]<optimize=false>;
+        SoundDataEntry SoundData[entries]<optimize=false>;
         Printf("BRSAR V7 INFO is UNSUPPORTED!\n");
     }
+    while (ReadByte() == 0x0)
+        FSkip(1);
     //uint32 entries;
     //uint32
     //NW_DataReference sndDataEntryRef[entries];
@@ -283,15 +285,18 @@ typedef struct INFOTable
 
 //Perfectly reads MKW and BBA minus file chunks and V7 info atm
 
-struct NW4R_SoundArchive
+struct
 {
-    struct SoundArchiveStruct
+    BigEndian();
+    if (ReadUInt() != 1381187922)
     {
-        NW_CommonBinHeader BlockHeader;
-        SymbolTable SYMB;
-        FSeek(BlockHeader.block[1].off);
-        INFOTable INFO;
-        FSeek(BlockHeader.block[2].off);
-        NW_FileDataTable FILE;
-    } BRSAR_STRUCT;
-} BRSAR;
+        Printf("This is not a NW4R Sound Archive file (BRSAR).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader<bgcolor=cBlue>;
+    SymbolTable SYMB<bgcolor=cGreen>;
+    FSeek(BlockHeader.block[1].off);
+    INFOTable INFO<bgcolor=cPurple>;
+    FSeek(BlockHeader.block[2].off);
+    NW_FileDataTable FILE<bgcolor=cLtBlue>; //Todo read this by data and not just the chunk
+} NW4R_SoundArchive_BRSAR;

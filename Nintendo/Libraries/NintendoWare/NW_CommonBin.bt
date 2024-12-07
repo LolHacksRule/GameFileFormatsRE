@@ -15,6 +15,9 @@ local string stringTblIdxToTempString <hidden=true> = "";
 
 #include "../../../CommonBin.bt"
 
+//NW: Revolution
+//NW2011: CTR + Cafe + NX
+
 typedef enum <uint16>
 {
     NW_BlockTypeID_WaveIDTable = 256,
@@ -59,8 +62,22 @@ typedef enum <uint16>
     NW2011_BlockTypeID_TrackChannelInfo = 8719,
     NW2011_BlockTypeID_StringTable = 9216,
     NW2011_BlockTypeID_SearchTree,
-    NW2011_BlockTypeID_ChannelInfo = 16642,
+    NW2011_BlockTypeID_CStreamInfo = 16384, //BCSTM
+    NW2011_BlockTypeID_StreamSeek, //BCSTM
+    NW2011_BlockTypeID_StreamData, //BCSTM
+    NW2011_BlockTypeID_StreamInfo = 16640,
+    NW2011_BlockTypeID_TrackInfoRef,
+    NW2011_BlockTypeID_ChannelInfo,
     NW2011_BlockTypeID_Information = 22528,
+    NW2011_BlockTypeID_FWaveArchiveInfo = 26624,
+    NW2011_BlockTypeID_FWaveArchiveFile,
+    NW2011_BlockTypeID_Instrument = 22784,
+    NW2011_BlockTypeID_KeyRegion,
+    NW2011_BlockTypeID_VelocityRegion = 22786,
+    NW2011_BlockTypeID_Null,
+    NW2011_BlockTypeID_Direct = 24576,
+    NW2011_BlockTypeID_Range,
+    NW2011_BlockTypeID_Index,
 } NW2011_BlockTypeID;
 
 typedef enum <byte>
@@ -153,17 +170,17 @@ typedef struct NW_BlockDefinition
 typedef struct NW2011_BlockDefinition
 {
     NW2011_BlockTypeID typeID;
-    uint16 pad;
+    uint16 pad; //Should we really have to do this
     uint32 off;
     uint32 size;
 };
 
 typedef struct NW_DataReference
 {
-    NW_ReferenceType referenceType;
-    byte dataType;
+    NW_ReferenceType referenceType; //1 is offset
+    byte dataType; //0 is raw
     uint16 rsrv;
-    uint32 value;
+    uint32 value; //Usually offset
 };
 
 typedef struct NW2011_BlockDefinitionWithoutSize
@@ -177,9 +194,7 @@ typedef struct NW2011_InfoReferenceTable
 {
     uint32 entries;
     if (entries)
-    {
         NW2011_BlockDefinitionWithoutSize ref[entries];
-    }
 };
 
 typedef struct NW_SubChunk
@@ -200,7 +215,51 @@ typedef struct NW_FileDataTable
 {
     NW_SubChunk FILE;
     byte pad[24];
-    byte EmbeddedFileData[FILE.blockSize-32];
+    if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "FGRP")
+        byte cafePad[32];
+    if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "CSAR" || BlockHeader.signature == "FWAR" || BlockHeader.signature == "FGRP")
+    {
+        while (FPos < EOF) //Lazily read the chunks until EOF, I'll probably come up with something better at some point
+        {
+            struct
+            {
+                FSkip(12);
+                uint32 sz;
+                FSkip(-16);
+                byte chunk[sz];
+            } NW2011SoundArchiveStruct;
+            while (ReadByte() == 0x0) //This errors here, not sure why
+                FSkip(1);
+            FPos = FTell();
+        }
+    }
+    else if (BlockHeader.signature == "RWAR") //Cleanly read the waves
+    {
+        for (i = 0; i < TABL.entries; i++) //Like this!
+        {
+            FSeek(sizeof TABL+32+TABL.Entry[i].refType.value);
+            struct
+            {
+                byte RWAV[TABL.Entry[i].size];
+            } FileStruct;
+        }
+    }
+    else if (BlockHeader.signature == "RSAR")
+    {
+        while (FPos < EOF) //Lazily read the chunks until EOF, I'll probably come up with something better at some point
+        {
+            struct
+            {
+                FSkip(8);
+                uint32 sz;
+                FSkip(-12);
+                byte chunk[sz];
+            } BRSARFileStruct;
+            FPos = FTell();
+        }
+    }
+    else
+        byte EmbeddedFileData[FILE.blockSize-32]; //For now
 };
 
 typedef struct NW2011_SearchTreeNode
@@ -212,17 +271,13 @@ typedef struct NW2011_SearchTreeNode
     uint32 strTblIdx;
     if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
     {
-        stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+        stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
         local string tempStrToDisp = stringTblIdxString;
     }
     if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
-    {
         NW2011_ItemID_BE itemId;
-    }
     else
-    {
         NW2011_ItemID itemId;
-    }
 };
 
 typedef struct NW2011_StringSection
@@ -232,34 +287,25 @@ typedef struct NW2011_StringSection
     NW2011_BlockDefinitionWithoutSize stringTblRef;
     NW2011_BlockDefinitionWithoutSize searchTreeRef;
     uint32 stringEntries;
-    struct StringEntryDefs
+    NW2011_BlockDefinition StringEntryDef[stringEntries];
+    struct
     {
         for (i = 0; i < stringEntries; i++)
         {
-            struct StringEntryDef
+            struct
             {
-                NW2011_BlockDefinition stringEntryDef;
-            } sed;
+                char stringEntry[StringEntryDef[i].size];
+            } StringEntry;
         }
-    } seds;
-    struct StringEntries
-    {
-        for (i = 0; i < stringEntries; i++)
-        {
-            struct StringEntry
-            {
-                char stringEntry[seds.sed[i].stringEntryDef.size];
-            } se;
-        }
-    } ses;
+    } StringEntries;
     FSeek(FPos+searchTreeRef.off+8);
-    struct StringSearchTree
+    struct
     {
         //NW2011_BlockDefinitionWithoutSize wiiu;
         uint32 rootIdx;
         uint32 nodes;
         NW2011_SearchTreeNode SearchTreeNode[nodes]<optimize=false>;
-    } sst;
+    } StringSearchTree;
     FSeek(BlockHeader.block[1].off);
 };
 
@@ -278,9 +324,7 @@ typedef struct NW2011_TrackChannelInfo
     uint32 entries;
     byte channelIdx[entries];
     while (ReadByte() == 0x0)
-    {
         FSkip(1);
-    }
     byte sendMain;  
     byte sendA;
     byte sendB;
@@ -321,12 +365,12 @@ typedef struct NW2011_StreamSoundInfo
     byte pad[4];
     if (soundExtRef.typeID)
     {
-        struct StreamSoundConfig
+        struct
         {
             uint32 typeInfo;
             uint32 loopStartFrm;
             uint32 loopEndFrm;
-        } ssc;
+        } StreamSoundConfig;
     }
 };
 
@@ -348,13 +392,9 @@ typedef struct NW2011_WaveArchiveTable
     if (entries)
     {
         if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
-        {
             NW2011_ItemID_BE waveArchiveItemID[entries]<optimize=false>;
-        }
         else
-        {
             NW2011_ItemID waveArchiveItemID[entries]<optimize=false>;
-        }
     }
 };
 
@@ -364,9 +404,7 @@ typedef struct NW2011_SequenceSoundInfo
     uint32 validityBitMask;
     uint32 flags;
     if (flags && 0x01)
-    {
         uint32 startOff;
-    }
     if (flags && 0x02)
     {
         uint16 relPrioFix;
@@ -381,17 +419,13 @@ typedef struct NW2011_SoundFileInfo
     uint32 strTblIdx;
     if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
     {
-        stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+        stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
         local string tempStrToDisp = stringTblIdxString;
     }
     if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
-    {
         NW2011_ItemID_BE playerItemId;
-    }
     else
-    {
         NW2011_ItemID playerItemId;
-    }
     byte volume;
     byte remoteFilter;
     byte pad[2];
@@ -402,7 +436,7 @@ typedef struct NW2011_SoundFileInfo
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
             local string tempStrToDisp2 = stringTblIdxString;
         }
     }
@@ -425,46 +459,28 @@ typedef struct NW2011_SoundFileInfo
         }
     }
     if (flags & 0x100) //Enable Sound 3D Info
-    {
         uint32 threeDInfoOff;
-    }
     if (flags & 0x20000) //Enable Front Bypass
-    {
         U32_Bool frontByp;
-    }
     if (flags & 0x10000000)
-    {
         uint32 userParam1;
-    }
     if (flags & 0x20000000)
-    {
         uint32 userParam2;
-    }
     if (flags & 0x40000000)
-    {
         uint32 userParam3;
-    }
     if (flags & 0x80000000)
-    {
         uint32 userParam4;
-    }
     if (flags & 0x100)
     {
         FSeek(FPos+threeDInfoOff);
         NW2011_Sound3DInfo sthreedi;
     }
     FSeek(FPos+ref.off);
-    if (ref.typeID == NW2011_BlockTypeID_StreamSoundInfo)
+    switch (ref.typeID)
     {
-        NW2011_StreamSoundInfo ssi;
-    }
-    else if (ref.typeID == NW2011_BlockTypeID_WaveSoundInfo)
-    {
-        NW2011_WaveSoundInfo wsi;
-    }
-    else if (ref.typeID == NW2011_BlockTypeID_SequenceSoundInfo)
-    {
-        NW2011_SequenceSoundInfo seqsi;
+        case NW2011_BlockTypeID_StreamSoundInfo: NW2011_StreamSoundInfo ssi; break;
+        case NW2011_BlockTypeID_WaveSoundInfo: NW2011_WaveSoundInfo wsi; break;
+        case NW2011_BlockTypeID_SequenceSoundInfo: NW2011_SequenceSoundInfo seqsi; break;
     }
 };
 
@@ -472,27 +488,25 @@ typedef struct NW2011_SoundInfo
 {
     NW2011_InfoReferenceTable soundInfoRefTbl;
     Printf("Sound Info Table is WIP!\n");
-    NW2011_SoundFileInfo si[soundInfoRefTbl.entries]<optimize=false>;
+    NW2011_SoundFileInfo SoundFileInfo[soundInfoRefTbl.entries]<optimize=false>;
 };
 
 typedef struct NW2011_FileTable
 {
     uint32 entries;
     if (entries != 0)
-    {
         uint32 off[entries];
-    }
 };
 
 typedef struct NW2011_WaveArchiveInfo
 {
     NW2011_InfoReferenceTable waveArchiveInfoRefTbl;
-    struct WaveArchiveInfoEntry
+    struct
     {
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
             local string tempStrToDisp = stringTblIdxString;
         }
         byte unk;
@@ -503,56 +517,51 @@ typedef struct NW2011_WaveArchiveInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
                 local string tempStrToDisp2 = stringTblIdxString;
             }
         }
         if (flags & 0x2)
-        {
             uint32 waves;
-        }
-    } waie[waveArchiveInfoRefTbl.entries]<optimize=false>;
+    } WaveArchiveInfoEntry[waveArchiveInfoRefTbl.entries]<optimize=false>;
 };
 
 typedef struct NW2011_SoundGroupInfo
 {
     NW2011_InfoReferenceTable soundGroupInfoRefTbl;
-    struct SoundGroupInfoTable
+    struct
     {
-        struct SoundGroupInfoTableEntry
+        if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
         {
-            if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
+            NW2011_ItemID_BE firstSound;
+            NW2011_ItemID_BE lastSound;
+        }
+        else
+        {
+            NW2011_ItemID firstSound;
+            NW2011_ItemID lastSound;
+        }
+        NW2011_BlockDefinitionWithoutSize fileTableRef;
+        NW2011_BlockDefinitionWithoutSize waveArchiveTableRefReference;
+        uint32 flags;
+        if (flags & 0x1)
+        {
+            uint32 strTblIdx;
+            if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                NW2011_ItemID_BE firstSound;
-                NW2011_ItemID_BE lastSound;
+                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp = stringTblIdxString;
             }
-            else
-            {
-                NW2011_ItemID firstSound;
-                NW2011_ItemID lastSound;
-            }
-            NW2011_BlockDefinitionWithoutSize fileTableRef;
-            NW2011_BlockDefinitionWithoutSize waveArchiveTableRefReference;
-            uint32 flags;
-            if (flags & 0x1)
-            {
-                uint32 strTblIdx;
-                if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
-                {
-                    stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
-                    local string tempStrToDisp = stringTblIdxString;
-                }
-            }
-            NW2011_FileTable ft;
-            //uint32 pad;
-            if (waveArchiveTableRefReference.off != -1) //temp solution
-            {
-                NW2011_BlockDefinitionWithoutSize waveArchiveTableReference;
-                FSkip(waveArchiveTableReference.off-8);
-                NW2011_WaveArchiveTable waveArchiveTable;
-            }
-        } sgite[soundGroupInfoRefTbl.entries]<optimize=false>;
-    } sgit;
+        }
+        NW2011_FileTable ft;
+        //uint32 pad;
+        if (waveArchiveTableRefReference.off != -1) //temp solution
+        {
+            NW2011_BlockDefinitionWithoutSize waveArchiveTableReference;
+            FSkip(waveArchiveTableReference.off-8);
+            NW2011_WaveArchiveTable waveArchiveTable;
+        }
+    } SoundGroupInfoTable[soundGroupInfoRefTbl.entries]<optimize=false>;
 };
 
 typedef struct NW2011_BankInfo
@@ -561,12 +570,12 @@ typedef struct NW2011_BankInfo
     if (bankInfoRefTbl.entries != 0)
     {
         //Printf("Bank Info is UNSUPPORTED!\n");
-        struct BankInfoTable
+        struct
         {
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
                 local string tempStrToDisp = stringTblIdxString;
             }
             NW2011_BlockDefinitionWithoutSize waveArchiveTableReference;
@@ -576,24 +585,24 @@ typedef struct NW2011_BankInfo
                 uint32 strTblIdx;
                 if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
                 {
-                    stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+                    stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
                     local string tempStrToDisp2 = stringTblIdxString;
                 }
             }
-            FSkip(4); //¯\_(ツ)_/¯ temp fix may break
-        } bie[bankInfoRefTbl.entries]<optimize=false>;
+            FSkip(4); //¯\_(ツ)_/¯ temp fix may break [todo on CTR is this needed]
+        } BankInfoTable[bankInfoRefTbl.entries]<optimize=false>;
     }
 };
 
 typedef struct NW2011_GroupInfo
 {
     NW2011_InfoReferenceTable groupInfoRefTbl;
-    struct GroupInfoTable
+    struct
     {
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
             local string tempStrToDisp = stringTblIdxString;
         }
         uint32 flags;
@@ -602,17 +611,17 @@ typedef struct NW2011_GroupInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
                 local string tempStrToDisp2 = stringTblIdxString;
             }
         }
-    } git[groupInfoRefTbl.entries]<optimize=false>;
+    } GroupInfoTable[groupInfoRefTbl.entries]<optimize=false>;
 };
 
 typedef struct NW2011_PlayerInfo
 {
     NW2011_InfoReferenceTable playerInfoRefTbl;
-    struct PlayerInfoTable
+    struct
     {
         uint32 playableSoundLimit;
         uint32 flags;
@@ -621,23 +630,21 @@ typedef struct NW2011_PlayerInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.ses.se[strTblIdx].stringEntry;
+                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
                 local string tempStrToDisp = stringTblIdxString;
             }
         }
         if (flags & 0x2)
-        {
             uint32 playerHeapSz;
-        }
-    } pit[playerInfoRefTbl.entries]<optimize=false>;
+    } NW2011_PlayerInfoTable[playerInfoRefTbl.entries]<optimize=false>;
 };
 
-local uint terminateFileInfoDetect <hidden=true> = 0;
+//local uint terminateFileInfoDetect <hidden=true> = 0; //Don't remember what I used this for but keeping
 
 typedef struct NW2011_FileInfo
 {
     NW2011_InfoReferenceTable fileInfoRefTbl;
-    struct FileInfoTable
+    struct
     {
         for (i = 0; i < fileInfoRefTbl.entries; i++)
         {
@@ -645,7 +652,7 @@ typedef struct NW2011_FileInfo
             FSkip(-8);
             if (fileInfoRef.typeID == NW2011_BlockTypeID_InternalFileInfo)
             {
-                struct InternalFileInfo
+                struct
                 {
                     NW2011_BlockDefinitionWithoutSize internalFileInfoRef;
                     FSkip(4);
@@ -653,23 +660,21 @@ typedef struct NW2011_FileInfo
                     uint32 fsz;
                     NW2011_BlockDefinitionWithoutSize internalWaveArchiveTableRef;
                     NW2011_WaveArchiveTable iwat;
-                } ifi;
+                } InternalFileInfo;
             }
             else
             {
-                struct ExternalFileInfo
+                struct
                 {
                     NW2011_BlockDefinitionWithoutSize externalFileInfoRef;
                     FSkip(4);
                     string externalFName;
                     while (ReadByte() == 0x0 && i != fileInfoRefTbl.entries)
-                    {
                         FSkip(1);
-                    }
-                } efi;
+                } ExternalFileInfo;
             }
         }
-    } fit;
+    } FileInfoTable;
 };
 
 typedef struct NW2011_SoundArchivePlayerInfo
@@ -684,17 +689,15 @@ typedef struct NW2011_SoundArchivePlayerInfo
     LittleEndian(); //Lol
     uint16 streamBufferTimes;
     if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
-    {
         BigEndian();
-    }
     uint16 unk;
 };
 
 typedef struct NW2011_InfoSection //Needs help on 3DS
 {
     NW_SubChunk INFOChunk;
-    FPos = FTell();
-    struct References
+    FPos = FTell();    
+    struct
     {
         NW2011_BlockDefinitionWithoutSize soundInfoRefTableRef;
         NW2011_BlockDefinitionWithoutSize soundGroupInfoRefTableRef;
@@ -704,26 +707,24 @@ typedef struct NW2011_InfoSection //Needs help on 3DS
         NW2011_BlockDefinitionWithoutSize playerInfoRefTableRef;
         NW2011_BlockDefinitionWithoutSize fileInfoRefTableRef;
         NW2011_BlockDefinitionWithoutSize soundArchivePlayerInfoRef;
-    } refs;
-    NW2011_SoundInfo sid;
-    //FSeek(FPos+refs.soundGroupInfoRefTableRef.off);
-    NW2011_SoundGroupInfo sgi;
-    //FSeek(FPos+refs.bankInfoRefTableRef.off);
-    NW2011_BankInfo bi;
-    //FSeek(FPos+refs.waveArchiveInfoRefTableRef.off);
-    NW2011_WaveArchiveInfo wai;
-    //FSeek(FPos+refs.groupInfoRefTableRef.off);
-    NW2011_GroupInfo gi;
-    //FSeek(FPos+refs.playerInfoRefTableRef.off);
-    NW2011_PlayerInfo pi;
-    //FSeek(FPos+refs.fileInfoRefTableRef.off);
-    NW2011_FileInfo fi;
-    //FSeek(FPos+refs.soundArchivePlayerInfoRef.off);
-    NW2011_SoundArchivePlayerInfo sapi;
+    } References;
+    NW2011_SoundInfo SoundInfo; //Broken on CTR
+    //FSeek(FPos+References.soundGroupInfoRefTableRef.off);
+    NW2011_SoundGroupInfo SoundGroupInfo;
+    //FSeek(FPos+References.bankInfoRefTableRef.off);
+    NW2011_BankInfo BankInfo; //Broken on CTR
+    //FSeek(FPos+References.waveArchiveInfoRefTableRef.off);
+    NW2011_WaveArchiveInfo WaveArchiveInfo;
+    //FSeek(FPos+References.groupInfoRefTableRef.off);
+    NW2011_GroupInfo GroupInfo;
+    //FSeek(FPos+References.playerInfoRefTableRef.off);
+    NW2011_PlayerInfo PlayerInfo;
+    //FSeek(FPos+References.fileInfoRefTableRef.off);
+    NW2011_FileInfo FileInfo; //Kinda broken on CTR
+    //FSeek(FPos+References.soundArchivePlayerInfoRef.off);
+    NW2011_SoundArchivePlayerInfo SoundArchivePlayerInfo;
     while (ReadByte() == 0x0)
-    {
         FSkip(1);
-    }
 };
 
 typedef struct NW_CommonBinHeader
@@ -732,25 +733,19 @@ typedef struct NW_CommonBinHeader
     LittleEndian(); //Do this so the BOM in the header output is correct
     U16_EndianEnum   byteOrderMark;
     if (byteOrderMark == U16_Big)
-    {
         BigEndian();
-    }
-    if (signature == "RSAR" || signature == "RWSD" || signature == "RBNK" || signature == "RSEQ" || signature == "SDAT" || signature == "SSEQ") 
+    if (signature == "RSAR" || signature == "RWAR" || signature == "RWSD" || signature == "RBNK" || signature == "RSEQ" || signature == "SDAT" || signature == "SSEQ") 
     {
         uint16 ver;
         uint32 fileSize;
     }
     uint16           headerSize;
-    if (signature != "RSAR" && signature != "RWSD" && signature != "RBNK" && signature != "RSEQ" && signature != "SDAT" && signature != "SSEQ")
+    if (signature != "RSAR" && signature != "RWAR" && signature != "RWSD" && signature != "RBNK" && signature != "RSEQ" && signature != "SDAT" && signature != "SSEQ")
     {
-        if (byteOrderMark == U16_Big || signature == "CSAR")
-        {
+        if (byteOrderMark == U16_Big || signature == "CSAR" || signature == "CBNK" || signature == "CWSD")
             N_BinVersion_Big version;
-        }
         else
-        {
             N_BinVersion version;
-        }
         Printf("Version: %i.%i.%i\n", version.major, version.minor, version.micro);
         uint32           fileSize;
         if (byteOrderMark == U16_Big) //Fix Wii U
@@ -759,29 +754,15 @@ typedef struct NW_CommonBinHeader
             uint16 pad2;
         }
         else
-        {
             uint32           blocks;
-        }
         NW2011_BlockDefinition block[blocks]<optimize=false>;
-        if (signature != "FBNK" && signature != "RWSD")
-        {
-            byte pad[8];
-        }
     }
     else
     {
         uint16 blocks;
         if (headerSize > 16)
-        {
             NW_BlockDefinition block[blocks]<optimize=false>;
-        }
-        if (signature == "SDAT")
-        {
-            byte pad[16];
-        }
-        else if (signature != "RWSD" && signature != "RBNK" && signature != "RSEQ" && signature != "SSEQ")
-        {
-            byte pad[24];
-        }
     }
+    while (ReadByte() == 0x0)
+        FSkip(1);
 };

@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://wiki.tockdom.com/wiki/BRWAR_(File_Format)
+//https://github.com/NintendoWare/nw-snd
+
+#include "../NW_CommonBin.bt"
+
+struct 
+{
+    BigEndian();
+    if (ReadUInt() != 1180123474 && ReadUInt() != 1129791826)
+    {
+        Printf("This is not a NW2011 (Cafe, Citrus) Wave Archive file (BFWAR/BCSAR).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    //NW2011_InfoSection INFO;
+} NW2011_WaveArchive_BFWAR_BCWAR;

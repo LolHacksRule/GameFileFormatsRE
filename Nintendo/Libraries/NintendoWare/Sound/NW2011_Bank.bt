@@ -1,0 +1,130 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+typedef enum <uint32>
+{
+    NW2011_BankFlags_OriginalKey = 1,
+    NW2011_BankFlags_Volume,
+    NW2011_BankFlags_Pan = 4,
+    NW2011_BankFlags_Pitch = 8,
+    NW2011_BankFlags_VelocityInfo = 15,
+    NW2011_BankFlags_ADSR = 512,
+} NW2011_BankFlags;
+
+typedef struct IndexInstrument
+{
+    byte firstNote;
+    byte lastNote;
+    uint16 pad;
+    NW2011_BlockDefinitionWithoutSize keyRegionReference[lastNote-firstNote+1];
+};
+
+typedef struct IndexRegion
+{
+    byte firstRegion;
+    byte lastRegion;
+    uint16 pad;
+    NW2011_BlockDefinitionWithoutSize veloRegionRef[lastRegion-firstRegion+1];
+};
+
+typedef struct RangeRegion
+{
+    uint32 indices;
+    ubyte indiceData[indices];
+    while (ReadByte() == 0x0)
+        FSkip(1);
+    NW2011_BlockDefinitionWithoutSize veloRegionRef[indices];
+};
+
+typedef struct VelocityRegion
+{
+    NW2011_BlockDefinitionWithoutSize ref;
+    uint32 idx;
+    NW2011_BankFlags flags;
+    if (flags & NW2011_BankFlags_OriginalKey)
+        uint32 origKey;
+    if (flags & NW2011_BankFlags_Volume)
+        uint32 vol;
+    if (flags & NW2011_BankFlags_Pan)
+        uint32 pan;
+    if (flags & NW2011_BankFlags_Pitch)
+        float pitch;
+    if (flags & NW2011_BankFlags_VelocityInfo)
+    {
+        ubyte interpolationType; 
+        ubyte keyGroup;
+        uint16 ignoreNoteOff;
+    }
+    if (flags & NW2011_BankFlags_ADSR)
+    {
+        uint32 ADSRRefOff;
+        NW2011_BlockDefinitionWithoutSize ADSRRef;
+        struct
+        {
+            byte atk;
+            byte dcy;
+            byte sus;
+            byte hld;
+            byte rel;
+            byte pad[3];
+        } ADSR;
+    }
+};
+
+struct
+{
+    NW_CommonBinHeader BlockHeader;
+    struct //Todo merge with NWCommon
+    {
+        NW_SubChunk INFOChunk;
+        NW2011_BlockDefinitionWithoutSize waveIdTblDef;
+        NW2011_BlockDefinitionWithoutSize instrRefTblDef;
+        /*struct
+        {
+            NW2011_InfoReferenceTable InstrumentRefTableDef;
+            struct
+            {
+                NW2011_BlockDefinitionWithoutSize instrumentDef;
+                switch (instrumentDef.typeID)
+                {
+                    case NW2011_BlockTypeID_Index: IndexInstrument InstrumentIndex; break;
+                }
+            } Instruments;
+            struct
+            {
+                NW2011_BlockDefinitionWithoutSize keyRegionDef;
+                switch (keyRegionDef.typeID)
+                {
+                    case NW2011_BlockTypeID_Index: IndexRegion Index_Region; break;
+                    case NW2011_BlockTypeID_Range: RangeRegion Range_Region; break;
+                    case NW2011_BlockTypeID_Direct: VelocityRegion Velocity_Region; break;
+                }
+            } KeyRegion[InstrumentRefTableDef.entries]<optimize=false>;
+        } InstrumentRefTable;*/
+        FSeek(40+waveIdTblDef.off);
+        struct
+        {
+            uint32 entries;
+            struct
+            {
+                if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
+                    NW2011_ItemID_BE waveArchiveItemID<optimize=false>;
+                else
+                    NW2011_ItemID waveArchiveItemID<optimize=false>;
+                uint32 waveIdx;
+            } WaveIDEntry[entries];
+        } WaveID;
+    } INFO;
+} NW2011_Bank_BFBNK_BCBNK;

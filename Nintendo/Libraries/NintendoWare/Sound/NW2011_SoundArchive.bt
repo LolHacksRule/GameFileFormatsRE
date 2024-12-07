@@ -29,9 +29,9 @@ local string stringTblIdxString <hidden=true> = "";
 
 struct
 {
-    NW_CommonBinHeader BlockHeader;
-    NW2011_StringSection STRG; //1:1 to CTR, call NWCommon to save space
-    NW2011_InfoSection INFO;
-    //Not sure how loading FILE chunks will be programmed, for now, load the entire chunk
-    NW_FileDataTable FILE;
+    NW_CommonBinHeader BlockHeader<bgcolor=cBlue>;
+    NW2011_StringSection STRG<bgcolor=cGreen>; //1:1 to CTR, call NWCommon to save space
+    NW2011_InfoSection INFO<bgcolor=cPurple>;
+    //Not sure how loading FILE chunks will be programmed, for now, just load the entire chunk
+    NW_FileDataTable FILE<bgcolor=cLtBlue>;
 } NW2011_SoundArchive_BFSAR_BCSAR;

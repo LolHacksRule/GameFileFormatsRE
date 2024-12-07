@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//http://nintendo-formats.com/libs/nw/bfgrp.html
+
+#include "../NW_CommonBin.bt"
+
+struct
+{
+    BigEndian();
+    if (ReadUInt() != 1179079248 && ReadUInt() != 1128747600)
+    {
+        Printf("This is not a NW2011 (Cafe, Citrus) Group file (BFGRP/BCGRP).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    //NW2011_InfoSection INFO;
+    //NW_FileDataTable FILE;
+} NW2011_WaveSound_BFGRP_BCGRP;

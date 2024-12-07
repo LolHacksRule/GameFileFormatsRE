@@ -11,13 +11,18 @@
 //   History: 
 //------------------------------------------------
 
+//https://github.com/AtlasOmegaAlpha/brbnkdec
+//https://github.com/yell0wsuit/brbnkdec
+//https://github.com/NintendoWare/nw-snd
+//https://wiki.tockdom.com/wiki/BRBNK_(File_Format)
+
 #include "../NW_CommonBin.bt"
 
 typedef struct DataTable
 {
-    NW_SubChunk DATA;
+    NW_SubChunk DataChunk;
     FPos = FTell();
-    if (BRBNKHdr.ver == 1)
+    if (BlockHeader.ver == 1)
     {
         Printf("Version 1 bank DATA is currently UNSUPPORTED!\n");
         byte unknownData[DATA.blockSize-8];
@@ -25,48 +30,36 @@ typedef struct DataTable
     else
     {
         uint32 bankDataEntries;
-        struct BankDataEntryRef
+        NW_DataReference bankDataRef[bankDataEntries];
+        struct
         {
-            ubyte unk[4]; //0x01010000
-            uint32 offToFirstBankDataEntry;
-            //ubyte unk2[4]; //0x01010000
-            //uint32 offToSecondBankDataEntry;
-        } BDER[bankDataEntries];
-        struct BankDataEntries
-        {
-            for (i = 0; i < bankDataEntries; i++)
+            uint32 waveNum;
+            struct
             {
-                struct BankDataEntry
-                {
-                    uint32 waveNum;
-                    byte atk;
-                    byte decay;
-                    byte sustain;
-                    byte release;
-                    byte hold;
-                    ubyte waveDataLocType;
-                    ubyte noteOffType;
-                    ubyte altAssign;
-                    ubyte origKey;
-                    ubyte vol;
-                    ubyte pan;
-                    ubyte surroundPan;
-                    float pitch;
-                    byte pad[28];
-                    if (ReadInt() > waveNum+1 && ReadInt() != 1463899717)
-                    {
-                        byte unk[20];
-                    }
-                } BDE;
-            }
-        } bdes;
+                byte atk;
+                byte decay;
+                byte sustain;
+                byte release;
+                byte hold;
+            } ADSREnvelope;
+            ubyte waveDataLocType;
+            ubyte noteOffType;
+            ubyte altAssign;
+            ubyte origKey;
+            ubyte vol;
+            ubyte pan;
+            ubyte surroundPan;
+            float pitch;
+            byte pad[28]; //28
+        } BankDataEntry[bankDataEntries]<optimize=false>;
     }
+    //byte endPad[18];
 };
 
 typedef struct WaveTable
 {
-    NW_SubChunk WAVE;
-    //if (BRBNKHdr.ver == 1)
+    NW_SubChunk WaveChunk;
+    //if (BlockHeader.ver == 1)
     {
         //Printf("Version 1 bank WAVE is currently UNSUPPORTED!\n");
         Printf("WAVE Chunk is currently UNSUPPORTED!\n");
@@ -82,18 +75,18 @@ typedef struct WaveTable
     }*/
 };
 
-struct NW4R_Bank
+struct 
 {
-    struct BankStruct
+    BigEndian();
+    if (ReadUInt() != 1380077131)
     {
-        BigEndian();
-        NW_CommonBinHeader BRBNKHdr;
-        //We'd go to the subchunk offs if v7+ but that's unnecessary
-        DataTable DATAChunk;
-        if (BRBNKHdr.ver > 1) 
-        {
-            FSeek(BRBNKHdr.block[1].off);
-        }
-        WaveTable WAVEChunk;
-    } BRBNK_STRUCT;
-} RBNK;
+        Printf("This is not a NW4R Bank file (BRBNK).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    //We'd go to the subchunk offs if v7+ but that's unnecessary
+    DataTable DATA;
+    if (BRBNKHdr.ver > 1)
+        FSeek(BRBNKHdr.block[1].off);
+    WaveTable WAVE;
+} NW4R_Bank_BRBNK;

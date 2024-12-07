@@ -1,0 +1,57 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://wiki.tockdom.com/wiki/BRWAR_(File_Format)
+//https://github.com/NintendoWare/nw-snd
+
+#include "../NW_CommonBin.bt"
+
+typedef struct Table
+{
+    NW_SubChunk TableChunk;
+    uint32 entries;
+    struct
+    {    
+        NW_DataReference refType;
+        uint32 size;
+    } Entry[entries];
+    while (ReadByte() == 0x0)
+        FSkip(1);
+};
+
+typedef struct FileDataTable
+{
+    NW_SubChunk DataChunk;
+    byte headPad[24];
+    for (i = 0; i < TABLChunk.entries; i++)
+    {
+        FSeek(sizeof TABLChunk+32+TABLChunk.Entry[i].refType.value);
+        struct
+        {
+            byte RWAV[TABLChunk.Entry[i].size];
+        } FileStruct;
+    }
+};
+
+struct 
+{
+    BigEndian();
+    if (ReadUInt() != 1381450066)
+    {
+        Printf("This is not a NW4R Wave Archive file (BRWAR).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    Table TABL;
+    NW_FileDataTable DATA;
+} NW4R_WaveArchive_BRWAR;

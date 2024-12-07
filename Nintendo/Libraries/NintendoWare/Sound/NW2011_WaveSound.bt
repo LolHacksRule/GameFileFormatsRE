@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+struct
+{
+    BigEndian();
+    if (ReadUInt() != 1180128068 && ReadUInt() != 1129796420)
+    {
+        Printf("This is not a NW2011 (Cafe, Citrus) Wave Sound file (BRWSD/BCWSD).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    //NW2011_InfoSection INFO;
+} NW2011_WaveSound_BFWSD_BCWSD;
