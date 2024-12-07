@@ -1,0 +1,75 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LHR/Common.bt"
+#include "3DGrooveCommon.bt"
+
+typedef enum <uint32>
+{
+    FDot = 1178890100,
+    TextureNumber = 1417170541,
+    SoNL = 1936674380,
+} ModelChunkMagic;
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct
+{
+    BigEndian();
+    uint32 magic<bgcolor=cLtBlue>;
+    uint32 ver<bgcolor=cLtGreen>;
+    uint16 unk[2]<bgcolor=cRed>;
+    struct Chunks
+    {
+        while (FPos != EOF - 12)
+        {
+            struct Chunk
+            {
+                ModelChunkMagic magic<bgcolor=cLtBlue>;
+                uint32 dSz<bgcolor=cBlue>;
+                if (magic == FDot)
+                {
+                    if (DEBUG_PRINT)
+                        Printf("FDot Chunk:\n");
+                    for (i = 0; i < dSz/12; i++)
+                    {
+                        Vector3_F32 vec3<bgcolor=cPurple>;
+                        if (DEBUG_PRINT)
+                            Printf("[%i]: %f %f %f\n", i, vec3.X, vec3.Y, vec3.Z);
+                    }
+                }
+                else if (magic == TextureNumber)
+                {
+                    if (DEBUG_PRINT)
+                        Printf("TextureNumber Chunk:\n");
+                    uint16 textures;
+                    for (i = 0; i < textures; i++)
+                    {
+                        struct TextureEntry
+                        {
+                            uint16 unk<bgcolor=cRed>;
+                            string name<bgcolor=cGreen>;
+                            if (DEBUG_PRINT)
+                                Printf("[%i]: %i %s\n", i, unk, name);
+                        } tx;
+                    }
+                }
+                else
+                    byte d[dSz]<bgcolor=cRed>;
+                FPos = FTell();
+            } chunk<optimize=false>;
+        }
+    } chunks;
+    uint32 end<bgcolor=cGreen>;
+    GrooveCRC CRC;
+} ThreeDGrooveModel_ThreeGM;

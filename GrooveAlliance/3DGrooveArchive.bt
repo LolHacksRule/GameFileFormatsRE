@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://forum.xentax.com/viewtopic.php?t=10932
+
+#include "../LHR/Common.bt"
+#include "3DGrooveCommon.bt"
+
+struct
+{
+    BigEndian();
+    uint32 metaSz<bgcolor=cBlue>;
+    struct
+    {
+        uint32 ver<bgcolor=cRed>;
+        uint32 dataOffFromHere<bgcolor=cGreen>;
+        string rootdir<bgcolor=cDkBlue>;
+        uint32 files<bgcolor=cLtGreen>;
+        struct
+        {
+            uint32 unk<bgcolor=cRed>;
+            uint32 off<bgcolor=cLtGreen>;
+            uint32 csz<bgcolor=cBlack>;
+            string name;
+        } MetaEntry[files]<optimize=false>;
+    } Meta<bgcolor=cLtBlue>;
+    struct
+    {
+        if (ReadInt() != 2303741511 && ReadInt() != 1464421703)
+        {
+            uint32 unccsz<bgcolor=cLtBlue>;
+            byte file[Meta.MetaEntry[i].csz-12]<bgcolor=cGreen>;
+        }
+        else
+            byte file[Meta.MetaEntry[i].csz-8]<bgcolor=cGreen>;
+        GrooveCRC crc;
+        i++;
+    } FileEntry[Meta.files]<optimize=false>;
+    GrooveCRC archiveCRC;
+} GrooveArchive_GRV;
