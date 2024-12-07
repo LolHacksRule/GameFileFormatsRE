@@ -15,6 +15,7 @@
 //Citric Composer
 //https://github.com/Kinnay/Nintendo-File-Formats/wiki
 //https://mk8.tockdom.com/wiki/BFSAR_(File_Format)
+//https://github.com/julianpoelmann/3DSUSoundArchiveTool/tree/master
 
 local string stringTblIdxString <hidden=true> = "";
 

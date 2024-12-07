@@ -12,6 +12,7 @@
 //------------------------------------------------
 
 local string stringTblIdxToTempString <hidden=true> = "";
+local uint32 internalFiles <hidden=true> = 0;
 
 #include "../../../CommonBin.bt"
 
@@ -214,35 +215,39 @@ typedef struct NW2011_SubChunk
 typedef struct NW_FileDataTable
 {
     NW_SubChunk FILE;
+    FPos = FTell();
     byte pad[24];
     if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "FGRP")
         byte cafePad[32];
-    if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "CSAR" || BlockHeader.signature == "FWAR" || BlockHeader.signature == "FGRP")
+    if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "CSAR" || BlockHeader.signature == "FWAR" || BlockHeader.signature == "FGRP") //Cleanly read the file
     {
-        while (FPos < EOF) //Lazily read the chunks until EOF, I'll probably come up with something better at some point
+        i = 0;
+        struct //Like this!
         {
-            struct
+            FSeek(FPos+INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fileBlockRef.off);
+            byte chunk[INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fsz];
+            i++;
+            if (i != internalFiles) //Temp fix to EOF error
             {
-                FSkip(12);
-                uint32 sz;
-                FSkip(-16);
-                byte chunk[sz];
-            } NW2011SoundArchiveStruct;
-            while (ReadByte() == 0x0) //This errors here, not sure why
-                FSkip(1);
-            FPos = FTell();
-        }
+                while (ReadByte() == 0x0)
+                    FSkip(1);
+            }
+        } NW2011InternalFile[internalFiles]<optimize=false>;
     }
     else if (BlockHeader.signature == "RWAR") //Cleanly read the waves
     {
-        for (i = 0; i < TABL.entries; i++) //Like this!
+        i = 0;
+        struct //Like this!
         {
             FSeek(sizeof TABL+32+TABL.Entry[i].refType.value);
-            struct
+            byte RWAV[TABL.Entry[i].size];
+            i++;
+            if (i != internalFiles) //Temp fix to EOF error
             {
-                byte RWAV[TABL.Entry[i].size];
-            } FileStruct;
-        }
+                while (ReadByte() == 0x0)
+                    FSkip(1);
+            }
+        } WARFile[TABL.entries]<optimize=false>;
     }
     else if (BlockHeader.signature == "RSAR")
     {
@@ -254,7 +259,7 @@ typedef struct NW_FileDataTable
                 uint32 sz;
                 FSkip(-12);
                 byte chunk[sz];
-            } BRSARFileStruct;
+            } BRSARInternalFile;
             FPos = FTell();
         }
     }
@@ -265,10 +270,9 @@ typedef struct NW_FileDataTable
 typedef struct NW2011_SearchTreeNode
 {
     U16_Bool isLeaf;
-    uint16 strBitIdx;
-    uint32 leftChildIdx;
-    uint32 rightChildIdx;
-    uint32 strTblIdx;
+    int16 strBitIdx;
+    int32 childIdx[2];
+    int32 strTblIdx;
     if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
     {
         stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
@@ -355,7 +359,7 @@ typedef struct NW2011_StreamSoundInfo
     float pitch;
     NW2011_BlockDefinitionWithoutSize trackChannelInfoRef;
     NW2011_BlockDefinitionWithoutSize soundExtRef;
-    uint32 prefetchID;
+    int32 prefetchID;
     NW2011_InfoReferenceTable trackInfoTbl;
     NW2011_TrackInfo ti[trackInfoTbl.entries]<optimize=false>;
     byte sendMain;  
@@ -652,6 +656,7 @@ typedef struct NW2011_FileInfo
             FSkip(-8);
             if (fileInfoRef.typeID == NW2011_BlockTypeID_InternalFileInfo)
             {
+                internalFiles++;
                 struct
                 {
                     NW2011_BlockDefinitionWithoutSize internalFileInfoRef;

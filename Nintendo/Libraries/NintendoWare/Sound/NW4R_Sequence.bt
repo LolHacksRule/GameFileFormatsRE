@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+typedef struct DataTable
+{
+    NW_SubChunk DataChunk;
+    FPos = FTell();
+    uint32 off;
+    byte unk[DataChunk.blockSize-12]; //TODO
+};
+
+typedef struct Label
+{
+    NW_SubChunk LABLChunk;
+    FPos = FTell();
+    uint32 labels;
+    uint32 labelOff[labels];
+    struct
+    {
+        FSeek(FPos+labelOff[i]);
+        i++;
+        uint32 off;
+        uint32 strLen;
+        string name;
+    } LabelDefine[labels]<optimize=false>;
+    while (ReadByte() == 0x0) //errors idk why
+        FSkip(1);
+};
+
+struct
+{
+    BigEndian();
+    if (ReadUInt() != 1381188945)
+    {
+        Printf("This is not a NW4R Sequence file (BRSEQ).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    DataTable DATA;
+    Label LABL;
+} NW4R_Sequence_BRSEQ;

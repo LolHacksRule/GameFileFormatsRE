@@ -86,7 +86,7 @@ struct
     NW_CommonBinHeader BlockHeader;
     //We'd go to the subchunk offs if v7+ but that's unnecessary
     DataTable DATA;
-    if (BRBNKHdr.ver > 1)
-        FSeek(BRBNKHdr.block[1].off);
+    if (BlockHeader.ver > 1)
+        FSeek(BlockHeader.block[1].off);
     WaveTable WAVE;
 } NW4R_Bank_BRBNK;
