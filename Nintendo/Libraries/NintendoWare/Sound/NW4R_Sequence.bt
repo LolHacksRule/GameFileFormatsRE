@@ -21,24 +21,6 @@ typedef struct DataTable
     byte unk[DataChunk.blockSize-12]; //TODO
 };
 
-typedef struct Label
-{
-    NW_SubChunk LABLChunk;
-    FPos = FTell();
-    uint32 labels;
-    uint32 labelOff[labels];
-    struct
-    {
-        FSeek(FPos+labelOff[i]);
-        i++;
-        uint32 off;
-        uint32 strLen;
-        string name;
-    } LabelDefine[labels]<optimize=false>;
-    while (ReadByte() == 0x0) //errors idk why
-        FSkip(1);
-};
-
 struct
 {
     BigEndian();
@@ -49,5 +31,5 @@ struct
     }
     NW_CommonBinHeader BlockHeader;
     DataTable DATA;
-    Label LABL;
+    NW_Label LABL;
 } NW4R_Sequence_BRSEQ;

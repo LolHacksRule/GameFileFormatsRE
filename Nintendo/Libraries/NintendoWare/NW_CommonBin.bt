@@ -204,6 +204,24 @@ typedef struct NW_SubChunk
     uint32     blockSize;
 };
 
+typedef struct NW_Label //Only used in sequences but also used from BRWSD export through BrawlCrate so it's here
+{
+    NW_SubChunk LABLChunk;
+    FPos = FTell();
+    uint32 labels;
+    uint32 labelOff[labels];
+    struct
+    {
+        FSeek(FPos+labelOff[i]);
+        i++;
+        uint32 off;
+        uint32 strLen;
+        string name;
+    } LabelDefine[labels]<optimize=false>;
+    while (ReadByte() == 0x0) //errors idk why
+        FSkip(1);
+};
+
 typedef struct NW2011_SubChunk
 {
     char       signature[4];
