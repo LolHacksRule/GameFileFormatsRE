@@ -17,69 +17,77 @@ typedef struct DataTable
 {
     FPos = FTell();
     NW_SubChunk DataChunk;
-    uint32 waveInfoDataEntries;
-    NW_DataReference waveInfoDataEntriesRef[waveInfoDataEntries];
-    struct
+    if (BlockHeader.ver == 1)
     {
-        NW_DataReference waveSoundInfoDataRef;
-        NW_DataReference trackTableRef;
-        NW_DataReference noteTableRef;
+        Printf("Version 1 wave sound DATA is currently UNSUPPORTED!\n");
+        byte unknownData[DataChunk.blockSize-8];
+    }
+    else
+    {
+        uint32 waveInfoDataEntries;
+        NW_DataReference waveInfoDataEntriesRef[waveInfoDataEntries];
         struct
         {
-            float pitch;
-            ubyte pan;
-            ubyte surroundPan;
-            ubyte fxSend[3];
-            byte mainSend;
-            byte pad[2];
-            NW_DataReference graphEnvTableRef;
-            NW_DataReference randomizerTableRef;
-            uint32 rsrv;
-        } WaveSoundInformationData;
-        struct
-        {
-            uint32 trackInfos;
-            NW_DataReference trackInfoRef[trackInfos];
-            NW_DataReference noteEventTblRef[trackInfos];
+            NW_DataReference waveSoundInfoDataRef;
+            NW_DataReference trackTableRef;
+            NW_DataReference noteTableRef;
             struct
             {
-                uint32 noteEvents;
-                NW_DataReference noteEventRef[noteEvents];
-                struct
-                {
-                    float pos;
-                    float len;
-                    uint32 idx;
-                    uint32 rsrv;
-                } NodeEvent[noteEvents]<optimize=false>;
-            } NoteEventTable[trackInfos]<optimize=false>;
-        } TrackTable;
-        struct
-        {
-            uint32 noteInfoEntries;
-            NW_DataReference nodeIntroEntryRef[noteInfoEntries];
-            struct
-            {
-                int32 waveIdx;
-                byte atk;
-                byte infoDelay;
-                byte sustain;
-                byte release;
-                byte hold;
-                byte pad[3];
-                byte originalKey;
-                byte vol;
-                float infoPan;
-                byte infoSurroundPan;
-                byte infoPitch;
-                NW_DataReference LFOTableRef;
+                float pitch;
+                ubyte pan;
+                ubyte surroundPan;
+                ubyte fxSend[3];
+                byte mainSend;
+                byte pad[2];
                 NW_DataReference graphEnvTableRef;
                 NW_DataReference randomizerTableRef;
                 uint32 rsrv;
-            } NodeInfoEntry[noteInfoEntries]<optimize=false>;
-        } NoteTable;
-    } WaveInfoDataTable[waveInfoDataEntries]<optimize=false>;
-    while (ReadByte() == 0x0)
+            } WaveSoundInformationData;
+            struct
+            {
+                uint32 trackInfos;
+                NW_DataReference trackInfoRef[trackInfos];
+                NW_DataReference noteEventTblRef[trackInfos];
+                struct
+                {
+                    uint32 noteEvents;
+                    NW_DataReference noteEventRef[noteEvents];
+                    struct
+                    {
+                        float pos;
+                        float len;
+                        uint32 idx;
+                        uint32 rsrv;
+                    } NodeEvent[noteEvents]<optimize=false>;
+                } NoteEventTable[trackInfos]<optimize=false>;
+            } TrackTable;
+            struct
+            {
+                uint32 noteInfoEntries;
+                NW_DataReference nodeIntroEntryRef[noteInfoEntries];
+                struct
+                {
+                    int32 waveIdx;
+                    byte atk;
+                    byte infoDelay;
+                    byte sustain;
+                    byte release;
+                    byte hold;
+                    byte pad[3];
+                    byte originalKey;
+                    byte vol;
+                    float infoPan;
+                    byte infoSurroundPan;
+                    byte infoPitch;
+                    NW_DataReference LFOTableRef;
+                    NW_DataReference graphEnvTableRef;
+                    NW_DataReference randomizerTableRef;
+                    uint32 rsrv;
+                } NodeInfoEntry[noteInfoEntries]<optimize=false>;
+            } NoteTable;
+        } WaveInfoDataTable[waveInfoDataEntries]<optimize=false>;
+    }
+    while (ReadByte() == 0x0) //The padding here in v1 is disgusting gross
         FSkip(1);
 };
 
@@ -90,7 +98,10 @@ typedef struct WaveTable
     uint32 waveInfoOffsets;
     uint32 waveInfoOffset[waveInfoOffsets];*/
     Printf("WAVE Chunk is currently UNSUPPORTED!\n");
-    byte unknownData[WAVE.blockSize-8];
+    //uint32 unk;
+    //uint32 off[16];
+    //byte unk[200*entries];
+    byte unknownData[WaveChunk.blockSize-8];
 };
 
 struct NW4R_WaveSound
@@ -103,12 +114,12 @@ struct NW4R_WaveSound
     }
     NW_CommonBinHeader BlockHeader;
     DataTable DATA;
-    if (BlockHeader.blocks > 1) //Idk if this is ever seen
+    if (BlockHeader.blocks > 1) //Idk if this is ever seen, not in RevoKart
     {
-        FSeek(FPos+DATAChunk.DATA.blockSize);
+        FSeek(FPos+DATA.DataChunk.blockSize);
         WaveTable WAVE;
     }
-    /*else //Unofficial custom struct generated by brawlcrate, doesn't exist in the official format as the filesize chunk in the block header never matches nor defines the extra block.
+    else if (ReadInt() == 1279345228) //Unofficial custom struct generated by brawlcrate to aid with repacking. It doesn't exist in the official format as the filesize chunk in the block header does not include the extra blocks nor even defines it in the block count.
     {
         struct
         {
@@ -125,5 +136,5 @@ struct NW4R_WaveSound
                 FPos = FTell();
             }
         } BrawlCrateDefineStruct;
-    }*/
+    }
 } NW4R_WaveSound_BRWSD;

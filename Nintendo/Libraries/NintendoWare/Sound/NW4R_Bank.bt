@@ -25,7 +25,7 @@ typedef struct DataTable
     if (BlockHeader.ver == 1)
     {
         Printf("Version 1 bank DATA is currently UNSUPPORTED!\n");
-        byte unknownData[DATA.blockSize-8];
+        byte unknownData[DataChunk.blockSize-8];
     }
     else
     {
@@ -63,7 +63,7 @@ typedef struct WaveTable
     {
         //Printf("Version 1 bank WAVE is currently UNSUPPORTED!\n");
         Printf("WAVE Chunk is currently UNSUPPORTED!\n");
-        byte unknownData[WAVE.blockSize-8];
+        byte unknownData[WaveChunk.blockSize-8];
     }
     /*else
     {

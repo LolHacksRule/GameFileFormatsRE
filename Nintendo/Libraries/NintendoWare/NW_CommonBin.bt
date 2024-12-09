@@ -277,6 +277,11 @@ typedef struct NW_FileDataTable
                 uint32 sz;
                 FSkip(-12);
                 byte chunk[sz];
+                if (BlockHeader.ver == 7) //In v7, chunks are padded, breaks on chunks starting with non RVL magic like raw DSP audio, in v7 and BBA
+                {
+                    while (ReadByte() == 0x0)
+                        FSkip(1);
+                }
             } BRSARInternalFile;
             FPos = FTell();
         }

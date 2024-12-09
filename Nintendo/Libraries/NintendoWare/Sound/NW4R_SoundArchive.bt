@@ -11,6 +11,11 @@
 //   History: 
 //------------------------------------------------
 
+//RevoSampleSound: 7 (UNSUPPORTED)
+//RevoYawaraka: 259 (Almost)
+//RevoKart: 260 (Perfect)
+
+
 #include "../NW_CommonBin.bt"
 
 typedef struct SequenceData
@@ -42,22 +47,31 @@ typedef struct WaveData
     uint32 rsrv;
 };
 
-typedef struct SoundDataEntry
+typedef struct SoundDataEntry //TODO V7 SOUNDDATA
 {
     uint32 nameIdx;
-    uint32 fcIdx;
+    uint32 collectionIdx;
     uint32 playerID;
-    NW_DataReference sound3DParamRef;
+    //if (BlockHeader.ver > 7)
+        NW_DataReference sound3DParamRef;
+    //else
+        //uint32 dmy;
     byte volume;
     byte playerPriority;
-    NW_SoundType soundType;
+    //if (BlockHeader.ver > 7)
+        //NW_SoundType soundType;
     byte remoteFilter;
-    NW_DataReference soundInfoRef;
+    //if (BlockHeader.ver > 7)
+        NW_DataReference soundInfoRef;
+    //else
+        //uint32 dmy2;
     uint32 userParam[2];
     NW_PanMode panMode;
     NW_PanCurve panCurve;
     byte actorPlayerID;
     byte rsrv;
+    //if (BlockHeader.ver > 7)
+    {
     switch (soundType)
     {
     case NW_SoundType_Sequence: SequenceData Sequence; break;
@@ -73,13 +87,15 @@ typedef struct SoundDataEntry
         byte pad;
         uint32 rsrv;
     } Sound3DParams;
+    }
 };
 
 typedef struct SoundBankEntry
 {
     uint32 nameIdx;
     uint32 fcIdx;
-    uint32 bankIdx;
+    if (BlockHeader.ver > 7)
+        uint32 bankIdx;
 };
 
 typedef struct PlayerInfoEntry
@@ -89,7 +105,8 @@ typedef struct PlayerInfoEntry
     byte pad;
     uint16 pad2;
     uint32 heapSz;
-    uint32 rsrv;
+    if (BlockHeader.ver > 7)
+        uint32 rsrv;
 };
 
 typedef struct CollectionPositionEntry
@@ -128,7 +145,8 @@ typedef struct GroupItemInfoEntry
     uint32 fSz;
     uint32 audioDataOff;
     uint32 audioDataSz;
-    uint32 rsrv;
+    if (BlockHeader.ver > 7)
+        uint32 rsrv;
 };
 
 typedef struct GroupItemReferenceTable
@@ -136,7 +154,8 @@ typedef struct GroupItemReferenceTable
     uint32 entries;
     if (entries > 0)
     {
-        NW_DataReference giiRefs[entries];
+        if (BlockHeader.ver > 7)
+            NW_DataReference giiRefs[entries];
         GroupItemInfoEntry gii[entries]<optimize=false>;
     }
 };
@@ -144,14 +163,16 @@ typedef struct GroupItemReferenceTable
 typedef struct GroupEntry
 {
     uint32 nameIdx;
-    uint32 entryNum;
-    NW_DataReference externalFilePathRef;
+    int32 entryNum;
+    if (BlockHeader.ver > 7)
+        NW_DataReference externalFilePathRef;
     uint32 audioChunkOff;
     uint32 audioChunkSz;
     uint32 waveOrDSPOff;
     uint32 waveOrDSPSz;
+    if (BlockHeader.ver > 7)
     NW_DataReference groupItemRefTableRef;
-    GroupItemReferenceTable girt;
+    GroupItemReferenceTable GroupItemRefTable;
 };
 
 typedef struct SoundCountTable
@@ -238,44 +259,92 @@ typedef struct INFOTable
             NW_DataReference GroupTableRef;
             NW_DataReference SoundCountTableRef;
         } DataReferences;
-        struct
-        {
-            uint32 entries;
-            NW_DataReference sdeRefs[entries];
-            SoundDataEntry sde[entries]<optimize=false>;
-        } SoundDataTable;
-        struct
-        {
-            uint32 entries;
-            NW_DataReference sbeRefs[entries];
-            SoundBankEntry sbe[entries]<optimize=false>;
-        } SoundBankTable;
-        struct
-        {
-            uint32 entries;
-            NW_DataReference pieRefs[entries];
-            PlayerInfoEntry pie[entries]<optimize=false>;
-        } PlayerInfoTable;
-        struct
-        {
-            uint32 entries;
-            NW_DataReference ceRefs[entries];
-            CollectionEntry ce[entries]<optimize=false>;
-        } CollectionTable;
-        struct
-        {
-            uint32 entries;
-            NW_DataReference geRefs[entries];
-            GroupEntry ge[entries]<optimize=false>;
-        } GroupTable;
-        SoundCountTable SoundCounts;
     }
     else
     {
-        uint32 entries;
-        SoundDataEntry SoundData[entries]<optimize=false>;
-        Printf("BRSAR V7 INFO is UNSUPPORTED!\n");
+        Printf("Version 7 sound archive INFO is currently UNSUPPORTED!\n");
+        struct
+        {
+            uint32 soundDataTableOff;
+            uint32 soundBankTableOff;
+            uint32 playerInfoTableOff;
+            uint32 collectionTableOff;
+            uint32 groupTableOff;
+        } OffsetDefine;
     }
+    if (BlockHeader.ver > 7) //Idk what this is on v7, it's not offsets ¯\_(ツ)_/¯
+    {
+        struct
+        {
+            uint32 entries;
+            //if (BlockHeader.ver > 7)
+                NW_DataReference sdeRefs[entries];
+            SoundDataEntry SoundData[entries]<optimize=false>;
+        } SoundDataTable;
+    }
+    else
+    {
+        uint32 entriesDefine1;
+        uint32 unk[entriesDefine1]; //Looks like an init table
+        //SoundDataEntry SoundData[entriesDefine1]; //For now skip it and read the stuff we know
+        FSeek(FPos+OffsetDefine.soundBankTableOff);
+    }
+    struct
+    {
+        uint32 entries;
+        if (BlockHeader.ver > 7)
+            NW_DataReference sbeRefs[entries];
+        else
+            uint32 sbeOff[entries];
+        SoundBankEntry SoundBank[entries]<optimize=false>;
+    } SoundBankTable;
+    struct
+    {
+        uint32 entries;
+        if (BlockHeader.ver > 7)
+            NW_DataReference pieRefs[entries];
+        else
+            uint32 pieOffs[entries]; //This seems accurate on v7
+        PlayerInfoEntry PlayerInfo[entries]<optimize=false>;
+    } PlayerInfoTable;
+    struct
+    {
+        uint32 entries;
+        if (BlockHeader.ver > 7)
+        {
+            NW_DataReference ceRefs[entries];
+            CollectionEntry Collection[entries]<optimize=false>;
+        }
+        else
+        {
+            uint32 ceOffs[entries]; //12 bytes
+            byte raw[12*entries];
+        }
+        //CollectionEntry Collection[entries]<optimize=false>;
+    } CollectionTable;
+    struct
+    {
+        uint32 entries;
+        if (BlockHeader.ver > 7)
+            NW_DataReference geRefs[entries];
+        else
+            uint32 geOffs[entries]; //This seems accurate on v7
+        GroupEntry Group[entries]<optimize=false>;
+    } GroupTable;
+    if (BlockHeader.ver > 7)
+        SoundCountTable SoundCounts;
+    /*else
+    {
+        uint32 rootOff;
+        uint32 unkOffs[4];
+        uint32 rootEntries;
+        FSeek(FPos+unkOffs[1]);
+        uint32 entries2;
+        uint32 entries2Offs[entries2]; //SoundBanks define? Each entry is 16 bytes
+        byte e2[16*entries2];
+        //SoundDataEntry SoundData[entries]<optimize=false>;
+        Printf("BRSAR V7 INFO is UNSUPPORTED!\n");
+    }*/
     while (ReadByte() == 0x0)
         FSkip(1);
     //uint32 entries;
