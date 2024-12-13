@@ -54,7 +54,7 @@ local uint BPP <hidden=true> = 0;
 struct
 {
     LittleEndian();
-    int16 version; //0x0104 = Bounce (private)
+    int16 version; //0x0103 = Public KA3D | 0x0104 = Bounce (private)
     int16 width;
     int16 height;
     N3DTextureFormat format; //15: RGBA4444, 7: RGB565, 8: R5G5B5
