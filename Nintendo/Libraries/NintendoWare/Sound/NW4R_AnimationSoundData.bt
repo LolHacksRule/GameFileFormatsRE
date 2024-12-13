@@ -1,0 +1,75 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../NW_CommonBin.bt"
+
+typedef struct SoundEvent
+{
+    uint32 optionFlag;
+    int32 id; //0xFF
+    NW_DataReference soundStrRef;
+    byte vol;
+    byte dmy[3];
+    float pitch;
+    uint32 dmy2;
+    uint32 userPrm; //unk
+    string soundStr;
+};
+
+typedef struct FrameInfo
+{
+    int32 startFrame;
+    int32 endFrame;
+    byte flags;
+    byte loopOff;
+    byte loopInt;
+    byte dmy;
+    NW_DataReference soundEventRef;
+};
+
+typedef struct EventTable
+{
+    uint32 events;
+    FrameInfo Frame_Info[events];
+};
+
+typedef struct DataTable
+{
+    NW_SubChunk DataChunk;
+    FPos = FTell();
+    uint32 frames;
+    NW_DataReference eventTableRef;
+    EventTable Event_Table;
+    struct
+    {
+        for (i = 0; i < Event_Table.events; i++)
+        {
+            FSeek(FPos + Event_Table.Frame_Info[i].soundEventRef.value);
+            SoundEvent Sound_Event;
+        }
+    } SoundEvents;
+    while (FTell() != EOF && ReadByte() == 0x0) //errors unless you flag to EOF idk why
+        FSkip(1);
+};
+
+struct
+{
+    BigEndian();
+    if (ReadUInt() != 1380012868)
+    {
+        Printf("This is not a NW4R Animated Sound file (BRASD).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    DataTable DATA;
+} NW4R_Sequence_BRSEQ;

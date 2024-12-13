@@ -11,6 +11,9 @@
 //   History: 
 //------------------------------------------------
 
+//https://github.com/killaketa/diSEQt
+//https://wiki.tockdom.com/wiki/BRSEQ_(File_Format)
+
 #include "../NW_CommonBin.bt"
 
 typedef enum <byte>
@@ -90,7 +93,7 @@ typedef struct DataTable
         while (ReadUByte() != 0x00) //TEMPORARY, IF THERE'S AN ISSUE LMK
             Command CMD;
     } Commands;
-    while (ReadByte() == 0x0) //errors unless you flag to EOF idk why
+    while (ReadByte() == 0x0)
         FSkip(1);
 };
 
