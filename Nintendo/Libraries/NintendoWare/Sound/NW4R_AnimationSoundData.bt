@@ -72,4 +72,4 @@ struct
     }
     NW_CommonBinHeader BlockHeader;
     DataTable DATA;
-} NW4R_Sequence_BRSEQ;
+} NW4R_AnimatedSoundData_BRASD;

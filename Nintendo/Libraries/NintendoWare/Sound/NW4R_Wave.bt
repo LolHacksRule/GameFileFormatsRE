@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://horizon.miraheze.org/wiki/.brwav
+//https://wiki.tockdom.com/wiki/BRWAV_(File_Format)
+
+#include "../NW_CommonBin.bt"
+
+typedef enum <ubyte>
+{
+    EncodingType_PCM8Bit,
+    EncodingType_PCM16Bit,
+    EncodingType_ADPCM,
+} EncodingType;
+
+typedef struct ChannelInfoTable
+{
+    uint32 channelInfos[INFO.channels];
+    struct
+    {
+        uint32 dataBlockOff;
+        uint32 adpcmInfoOff;
+        uint32 volFront[2]; //LR
+        uint32 volBack[2]; //LR
+        uint32 dmy; //LR
+    } ChannelInfoSection[INFO.channels];
+};
+
+typedef struct ADPCMParametersSet
+{
+    uint16 coef[16];
+    uint16 gain;
+    uint16 predScale;
+    uint16 yn[2];
+    uint16 loopPredScale;
+    uint16 loopYn[2];
+};
+
+typedef struct InfoSection
+{
+    NW_SubChunk INFOChunk;
+    FPos = FTell();
+    EncodingType encoding;
+    Byte_Bool loop;
+    ubyte channels;
+    ubyte sampleRate; //?
+    uint16 sampleRateHz;
+    NW_ReferenceType loopRef;
+    byte dmy;
+    int32 loopSamples;
+    int32 samples;
+    int32 channelInfoTableOff;
+    uint32 someOff;
+    uint32 dmy2;
+    ChannelInfoTable ChannelInfo;
+    if (encoding == EncodingType_ADPCM)
+        ADPCMParametersSet ADPCMParamSet;
+    while (ReadByte() == 0x0)
+        FSkip(1);
+};
+
+typedef struct DataSection
+{
+    NW_SubChunk DataChunk;
+    byte data[DataChunk.blockSize-8];
+};
+
+struct
+{
+    BigEndian();
+    if (ReadUInt() != 1381450070)
+    {
+        Printf("This is not a NW4R Wave file (BRWAV).\n");
+        break;
+    }
+    NW_CommonBinHeader BlockHeader;
+    InfoSection INFO;
+    DataSection DATA;
+} NW2011_Wave_BRWAV;

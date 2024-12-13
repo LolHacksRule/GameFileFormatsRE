@@ -763,13 +763,13 @@ typedef struct NW_CommonBinHeader
     U16_EndianEnum   byteOrderMark;
     if (byteOrderMark == U16_Big)
         BigEndian();
-    if (signature == "RSAR" || signature == "RWAR" || signature == "RWSD" || signature == "RBNK" || signature == "RSEQ" || signature == "SDAT" || signature == "SSEQ" || signature == "RASD") 
+    if (signature == "RSAR" || signature == "RWAR" || signature == "RWSD" || signature == "RBNK" || signature == "RSEQ" || signature == "SDAT" || signature == "SSEQ" || signature == "RASD" || signature == "RWAV") 
     {
         uint16 ver;
         uint32 fileSize;
     }
     uint16           headerSize;
-    if (signature != "RSAR" && signature != "RWAR" && signature != "RWSD" && signature != "RBNK" && signature != "RSEQ" && signature != "SDAT" && signature != "SSEQ" && signature != "RASD")
+    if (signature != "RSAR" && signature != "RWAR" && signature != "RWSD" && signature != "RBNK" && signature != "RSEQ" && signature != "SDAT" && signature != "SSEQ" && signature != "RASD" && signature != "RWAV")
     {
         if (byteOrderMark == U16_Big || signature == "CSAR" || signature == "CBNK" || signature == "CWSD")
             N_BinVersion_Big version;
