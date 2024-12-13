@@ -218,7 +218,7 @@ typedef struct NW_Label //Only used in sequences but also used from BRWSD export
         uint32 strLen;
         string name;
     } LabelDefine[labels]<optimize=false>;
-    while (ReadByte() == 0x0) //errors idk why
+    while (FTell() != EOF && ReadByte() == 0x0) //errors unless you flag to EOF idk why
         FSkip(1);
 };
 
@@ -235,14 +235,15 @@ typedef struct NW_FileDataTable
     NW_SubChunk FILE;
     FPos = FTell();
     byte pad[24];
-    if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "FGRP")
+    if ((BlockHeader.signature == "FSAR" || BlockHeader.signature == "FGRP") && ReadUInt() == 0) //Do we detect this by endian?
         byte cafePad[32];
     if (BlockHeader.signature == "FSAR" || BlockHeader.signature == "CSAR" || BlockHeader.signature == "FWAR" || BlockHeader.signature == "FGRP") //Cleanly read the file
     {
         i = 0;
+        //FSeek(FPos+INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fileBlockRef.off);
         struct //Like this!
         {
-            FSeek(FPos+INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fileBlockRef.off);
+            FSeek(FPos+INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fileBlockRef.off); //This breaks in MK8 but the file is read perfectly
             byte chunk[INFO.FileInfo.FileInfoTable.InternalFileInfo[i].fsz];
             i++;
             if (i != internalFiles) //Temp fix to EOF error
@@ -298,8 +299,8 @@ typedef struct NW2011_SearchTreeNode
     int32 strTblIdx;
     if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
     {
-        stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-        local string tempStrToDisp = stringTblIdxString;
+        stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+        local string tempStrToDisp = stringTblIdxToTempString;
     }
     if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
         NW2011_ItemID_BE itemId;
@@ -446,8 +447,8 @@ typedef struct NW2011_SoundFileInfo
     uint32 strTblIdx;
     if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
     {
-        stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-        local string tempStrToDisp = stringTblIdxString;
+        stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+        local string tempStrToDisp = stringTblIdxToTempString;
     }
     if (BlockHeader.byteOrderMark == U16_Big) //Here's a fix
         NW2011_ItemID_BE playerItemId;
@@ -463,8 +464,8 @@ typedef struct NW2011_SoundFileInfo
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-            local string tempStrToDisp2 = stringTblIdxString;
+            stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+            local string tempStrToDisp2 = stringTblIdxToTempString;
         }
     }
     if (flags & 0x2)
@@ -533,8 +534,8 @@ typedef struct NW2011_WaveArchiveInfo
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-            local string tempStrToDisp = stringTblIdxString;
+            stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+            local string tempStrToDisp = stringTblIdxToTempString;
         }
         byte unk;
         byte pad[3];
@@ -544,8 +545,8 @@ typedef struct NW2011_WaveArchiveInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                local string tempStrToDisp2 = stringTblIdxString;
+                stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp2 = stringTblIdxToTempString;
             }
         }
         if (flags & 0x2)
@@ -576,8 +577,8 @@ typedef struct NW2011_SoundGroupInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                local string tempStrToDisp = stringTblIdxString;
+                stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp = stringTblIdxToTempString;
             }
         }
         NW2011_FileTable ft;
@@ -602,8 +603,8 @@ typedef struct NW2011_BankInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                local string tempStrToDisp = stringTblIdxString;
+                stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp = stringTblIdxToTempString;
             }
             NW2011_BlockDefinitionWithoutSize waveArchiveTableReference;
             uint32 flags;
@@ -612,8 +613,8 @@ typedef struct NW2011_BankInfo
                 uint32 strTblIdx;
                 if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
                 {
-                    stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                    local string tempStrToDisp2 = stringTblIdxString;
+                    stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                    local string tempStrToDisp2 = stringTblIdxToTempString;
                 }
             }
             FSkip(4); //¯\_(ツ)_/¯ temp fix may break [todo on CTR is this needed]
@@ -629,8 +630,8 @@ typedef struct NW2011_GroupInfo
         uint32 strTblIdx;
         if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
         {
-            stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-            local string tempStrToDisp = stringTblIdxString;
+            stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+            local string tempStrToDisp = stringTblIdxToTempString;
         }
         uint32 flags;
         if (flags & 0x1)
@@ -638,8 +639,8 @@ typedef struct NW2011_GroupInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                local string tempStrToDisp2 = stringTblIdxString;
+                stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp2 = stringTblIdxToTempString;
             }
         }
     } GroupInfoTable[groupInfoRefTbl.entries]<optimize=false>;
@@ -657,8 +658,8 @@ typedef struct NW2011_PlayerInfo
             uint32 strTblIdx;
             if (strTblIdx != 4294967295 && strTblIdx <= STRG.stringEntries-1)
             {
-                stringTblIdxString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
-                local string tempStrToDisp = stringTblIdxString;
+                stringTblIdxToTempString = STRG.StringEntries.StringEntry[strTblIdx].stringEntry;
+                local string tempStrToDisp = stringTblIdxToTempString;
             }
         }
         if (flags & 0x2)

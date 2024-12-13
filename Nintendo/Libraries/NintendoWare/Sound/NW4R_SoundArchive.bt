@@ -15,7 +15,6 @@
 //RevoYawaraka: 259 (Almost)
 //RevoKart: 260 (Perfect)
 
-
 #include "../NW_CommonBin.bt"
 
 typedef struct SequenceData
@@ -50,18 +49,19 @@ typedef struct WaveData
 typedef struct SoundDataEntry //TODO V7 SOUNDDATA
 {
     uint32 nameIdx;
+    //NW_GetStringFromTable("SYMB", nameIdx); //Todo something like this
     uint32 collectionIdx;
     uint32 playerID;
-    //if (BlockHeader.ver > 7)
+    if (BlockHeader.ver > 7)
         NW_DataReference sound3DParamRef;
     //else
         //uint32 dmy;
     byte volume;
     byte playerPriority;
-    //if (BlockHeader.ver > 7)
-        //NW_SoundType soundType;
+    if (BlockHeader.ver > 7)
+        NW_SoundType soundType;
     byte remoteFilter;
-    //if (BlockHeader.ver > 7)
+    if (BlockHeader.ver > 7)
         NW_DataReference soundInfoRef;
     //else
         //uint32 dmy2;
@@ -70,7 +70,7 @@ typedef struct SoundDataEntry //TODO V7 SOUNDDATA
     NW_PanCurve panCurve;
     byte actorPlayerID;
     byte rsrv;
-    //if (BlockHeader.ver > 7)
+    if (BlockHeader.ver > 7)
     {
     switch (soundType)
     {
@@ -93,6 +93,7 @@ typedef struct SoundDataEntry //TODO V7 SOUNDDATA
 typedef struct SoundBankEntry
 {
     uint32 nameIdx;
+    //Todo display the string
     uint32 fcIdx;
     if (BlockHeader.ver > 7)
         uint32 bankIdx;
@@ -162,7 +163,7 @@ typedef struct GroupItemReferenceTable
 
 typedef struct GroupEntry
 {
-    uint32 nameIdx;
+    int32 nameIdx;
     int32 entryNum;
     if (BlockHeader.ver > 7)
         NW_DataReference externalFilePathRef;
@@ -223,15 +224,9 @@ typedef struct SymbolTable
         uint32 fileNameEntryOff[fileNameEntries];
         struct
         {
-            for (i = 0; i < fileNameEntries; i++)
-            {
-                struct
-                {
-                    FSeek(FPos+fileNameEntryOff[i]);
-                    string FName;
-                } FileNameEntry;
-            }
-        } FileNameEntries;
+            //FSeek(FPos+fileNameEntryOff[i]); //These are ordered no point
+            string FName;
+        } FileNameEntry[fileNameEntries]<optimize=false>;
     } FileNameTable;
     if (BlockHeader.ver > 7) //BBA
     {

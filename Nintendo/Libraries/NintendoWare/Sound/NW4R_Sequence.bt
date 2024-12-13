@@ -13,12 +13,85 @@
 
 #include "../NW_CommonBin.bt"
 
+typedef enum <byte>
+{
+    CommandType_Wait = 0x80,
+    CommandType_Program,
+    CommandType_OpenTrack = 0x88,
+    CommandType_Jump,
+    CommandType_Call,
+    CommandType_TimeBase = 0xB0,
+    CommandType_EnvelopeHold,
+    CommandType_MonophonicBool,
+    CommandType_VelocityRange = 0xB3,
+    CommandType_Pan = 0xC0,
+    CommandType_Volume,
+    CommandType_MainVolume,
+    CommandType_Transpose,
+    CommandType_PitchBend,
+    CommandType_BendRange,
+    CommandType_Priority,
+    CommandType_NoteWait,
+    CommandType_TieBool,
+    CommandType_Portamento,
+    CommandType_ModulationDepth,
+    CommandType_ModulationSpeed,
+    CommandType_ModulationType,
+    CommandType_ModulationRange,
+    CommandType_PortamentoBool,
+    CommandType_PortamentoTime,
+    CommandType_Attack,
+    CommandType_Decay,
+    CommandType_Sustain,
+    CommandType_Release,
+    CommandType_LoopStart,
+    CommandType_Volume2,
+    CommandType_PrintVar,
+    CommandType_SurroundPan,
+    CommandType_LpfCutOff,
+    CommandType_FXSendA,
+    CommandType_FXSendB,
+    CommandType_MainSend,
+    CommandType_InitPan,
+    CommandType_Mute,
+    CommandType_FXSendC,
+    CommandType_Damper,
+    CommandType_ModDelay,
+    CommandType_Tempo,
+    CommandType_SweepPitch = 0xE3,
+    CommandType_ExtendedCommand = 0xF0,
+    CommandType_LoopEnd = 0xFC,
+    CommandType_Return,
+    CommandType_AllocateTrack,
+    CommandType_Finish
+} CommandType;
+
+typedef struct Command
+{
+    CommandType ct;
+    switch (ct)
+    {
+        case CommandType_Program: byte Program; break; //Program
+        case CommandType_Wait: byte Wait; break; //Wait
+        case CommandType_Tempo: int16 Tempo; break; //Wait
+        case CommandType_Finish: break; //Finish
+        case CommandType_NoteWait: byte NoteWait; break; //NoteWait
+        default: struct { byte n; byte unk; } Note; break; //Note
+    }
+};
+
 typedef struct DataTable
 {
     NW_SubChunk DataChunk;
     FPos = FTell();
     uint32 off;
-    byte unk[DataChunk.blockSize-12]; //TODO
+    struct
+    {
+        while (ReadUByte() != 0x00) //TEMPORARY, IF THERE'S AN ISSUE LMK
+            Command CMD;
+    } Commands;
+    while (ReadByte() == 0x0) //errors unless you flag to EOF idk why
+        FSkip(1);
 };
 
 struct

@@ -17,8 +17,6 @@
 //https://mk8.tockdom.com/wiki/BFSAR_(File_Format)
 //https://github.com/julianpoelmann/3DSUSoundArchiveTool/tree/master
 
-local string stringTblIdxString <hidden=true> = "";
-
 #include "../NW_CommonBin.bt"
 
 //Perfectly reads:
