@@ -71,16 +71,36 @@ typedef enum <byte>
 
 typedef struct Command
 {
-    CommandType ct;
-    switch (ct)
+    /*while (ReadUByte() != 0xFF)
+        byte var;
+    byte end;*/
+    while (ReadUByte() != 0xFF)
     {
-        case CommandType_Program: byte Program; break; //Program
-        case CommandType_Wait: byte Wait; break; //Wait
-        case CommandType_Tempo: int16 Tempo; break; //Wait
-        case CommandType_Finish: break; //Finish
-        case CommandType_NoteWait: byte NoteWait; break; //NoteWait
-        default: struct { byte n; byte unk; } Note; break; //Note
+        //For now
+        struct
+        {
+            CommandType ct;
+            switch (ct)
+            {
+                case CommandType_AllocateTrack: uint16 bitMask; break; //AllocateTrack
+                case CommandType_Program: byte Program; break; //Program
+                case CommandType_Wait: ubyte Wait; break; //Wait
+                case CommandType_Tempo: int16 Tempo; break; //Wait
+                case CommandType_Finish: break; //Finish
+                case CommandType_NoteWait: byte NoteWait; break; //NoteWait
+                case CommandType_OpenTrack: ubyte trackNum; uint32 trackOffset : 24; FSkip(-1); break; //OpenTrack
+                case CommandType_ModulationDepth: ubyte modDepth; break; //ModulationDepth
+                case CommandType_Volume: ubyte vol; break; //ModulationDepth
+                case CommandType_Pan: ubyte pan; break; //Pan
+                case CommandType_FXSendA: //FXSendA
+                case CommandType_FXSendB: //FXSendB
+                case CommandType_FXSendC: ubyte fxSend; break; //FXSendC
+                case CommandType_PitchBend: ubyte pitchBend; break; //PitchBend
+                default: struct { ubyte velo; ubyte vlq[2]; } Note; break; //Note, very broken btw
+            }
+        } SubCommand;
     }
+    byte endCmd;
 };
 
 typedef struct DataTable
@@ -91,7 +111,7 @@ typedef struct DataTable
     struct
     {
         while (ReadUByte() != 0x00) //TEMPORARY, IF THERE'S AN ISSUE LMK
-            Command CMD;
+            Command CMD<optimize=false>;
     } Commands;
     while (ReadByte() == 0x0)
         FSkip(1);
