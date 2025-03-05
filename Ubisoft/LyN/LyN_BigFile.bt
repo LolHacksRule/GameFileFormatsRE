@@ -1,0 +1,155 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: LyN_BigFile.bt
+//   Authors: LolHacksRule
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint SERVER_USERS_MAX <hidden=true> = 255;
+local uint NAME_MAX <hidden=true> = 64;
+local uint P4_CLIENT_NAME_MAX <hidden=true> = 130;
+local uint CONNECT_NAME_MAX <hidden=true> = 16;
+local uint P4_CLIENT_LASTACCESS_MAX <hidden=true> = 20;
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+#include "LyN_Common.bt"
+
+typedef struct LyN_FatDescriptor
+{
+    uint32 entries; //Officially size, dumb
+    LyN_Int64 nextFatPos;
+};
+
+typedef struct LyN_File
+{
+    struct
+    {
+        char name[NAME_MAX]; //This is a string padded but officially read as large char :shrug:
+        char owner[CONNECT_NAME_MAX];
+        long handleParentDirectory;
+        long handleNextFile;
+        uint32 diskLen; //Decomp len
+        time_t time[2];
+        long handleKey;
+        LyN_Int64 position;
+        uint16 flags;
+        uint16 vFlags;
+        uint32 userLen;
+        uint16 headFlags;
+        uint16 privateRevision;
+        uint32 checksum[2];
+        uint32 rev;
+        char ownerClientName[NAME_MAX];
+    } Define;
+    if (Define.userLen)
+    {
+        FPos = FTell();
+        FSeek(Define.position.low);
+        struct
+        {
+            LyN_ArchivedFileHeader ArchivedFileHeader<bgcolor=cBlue>;
+            byte File[ArchivedFileHeader.archivedFileLen]<bgcolor=cGreen>; //Maybe
+        } LyN_FileData;
+        FSeek(FPos);
+    }
+    /*uint32 diskLen;
+    long handleKey;
+    LyN_Int64 position;
+    uint16 flags;
+    uint16 pad;*/
+    
+    //int32 localStorageIndex;
+    //byte unk[112];
+};
+
+typedef struct LyN_FileFat
+{
+    LyN_FatDescriptor FATDescriptor<bgcolor=cLtRed>;
+    LyN_File File[FATDescriptor.entries]<optimize=false, bgcolor=cGreen>;
+};
+
+typedef struct LyN_Directory
+{
+    char name[NAME_MAX]; //This is a string padded but officially read as large char :shrug:
+    long handleParentDirectory;
+    long handleFirstSubDirectory;
+    long handleNextDir;
+    long handleFirstFile;
+    uint16 flags;
+    uint16 vFlags;
+    uint32 rev;
+    uint32 pad;
+    uint32 dcRev;
+    uint32 pad2;
+};
+
+typedef struct LyN_DirectoryFat
+{
+    LyN_FatDescriptor FATDescriptor;
+    LyN_Directory Directory[FATDescriptor.entries]<optimize=false>;
+};
+
+typedef struct LyN_ConnectUser
+{
+    char name[CONNECT_NAME_MAX];
+    uint32 perms;
+};
+
+//ONLY TESTED ON RABBIDS GO HOME (PERFECT), JUST DANCE 4 AND RABBIDS LAND (MISALIGNED HEADER, 5184 bytes)
+
+struct
+{
+    LittleEndian(); //So LE on all platforms, sure why not
+    struct
+    {
+        uint32 magic; //ABE\x00
+        uint32 ver;
+        time_t tick; //Idk what this is, 32 bit timestamp? Looks like it in RGH
+        uint32 fatFiles;
+        uint32 fatDirectories;
+        LyN_Int64 firstFatFilePos;
+        LyN_Int64 firstFatDirectoryPos;
+        uint32 maxFiles;
+        uint32 maxDirectories;
+        uint32 numFiles;
+        uint32 numDirectories;
+        long handleFirstFreeFile;
+        long handleFirstFreeDirectory;
+        //In RLand this is broken
+        LyN_Int64 firstFreePos;
+        uint32 param[4]; //P4 related?
+        //These are useless but embedded for editor?
+        LyN_ConnectUser user[SERVER_USERS_MAX]<optimize=false>; //Only in main content bigfile.
+        char p4ClientName[P4_CLIENT_NAME_MAX];
+        char p4ClientLastAccess[P4_CLIENT_LASTACCESS_MAX];
+        if (DEBUG_PRINT)
+        {
+            Printf("Perforce Information:\n");
+            Printf("User Names:\n");
+            for (i = 0; i < SERVER_USERS_MAX; i++)
+                //if (user[i].name != "")
+                    Printf("Name[%i]: %s | Permissions: %LX\n", i, user[i].name, user[i].perms);
+            Printf("User Names End\n");
+            Printf("Client Name: %s\n", p4ClientName);
+            Printf("Client Last Access: %s\n", p4ClientLastAccess);
+            Printf("Perforce Information End\n");
+        }
+        byte pad[2]; //?
+    } Header<bgcolor=cRed>;
+    FSeek(Header.firstFatFilePos.low);
+    LyN_FileFat FirstFileFAT<optimize=false>;
+    //FSeek(Header.firstFatDirectoryPos.low);
+    LyN_DirectoryFat FirstDirectoryFAT<optimize=false, bgcolor=cPurple>;
+    if (FirstFileFAT.FATDescriptor.nextFatPos.high != -1 && FirstFileFAT.FATDescriptor.nextFatPos.low != 2139062143) //TEMP IDK IF THIS IS PERFECT
+    {
+        FSeek(FirstFileFAT.FATDescriptor.nextFatPos.low);
+        LyN_FileFat SubFileFAT<optimize=false>;
+    }
+} LyN_BigFile;

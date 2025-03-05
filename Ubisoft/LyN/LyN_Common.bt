@@ -1,0 +1,38 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef struct LyN_Int64
+{
+    long high;
+    long low;
+};
+
+typedef enum <uint32>
+{
+    LyN_TextureFormat_Targa,
+    LyN_TextureFormat_Targa32Bit,
+    LyN_TextureFormat_DXT //DXT1 on 4 JD Wii U
+} LyN_TextureFormat;
+
+typedef struct LyN_ArchivedFileHeader
+{
+    uint32 archivedFileLen;
+    uint32 userLen;
+    uint32 lenRef;
+    uint32 flags;
+    uint32 rawFileLen;
+    LyN_Int64 nextPosition;
+    long fileHandle;
+};
