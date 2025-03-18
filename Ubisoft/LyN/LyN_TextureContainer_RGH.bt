@@ -13,7 +13,7 @@
 
 #include "LyN_Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+local uint DEBUG_PRINT <hidden=true> = 1;
 
 struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
 {
@@ -23,7 +23,7 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
     {
         uint32 unk[2]; //Some hash or write time?
         uint32 texDefineSz;
-        uint32 texDefineChunkSz;
+        uint32 someOtherSize; //This is texDefineSize - 1-3, idk why
         LyN_TexturePixelFormat pixFmt;
         ubyte levels;
         ubyte flags;
@@ -34,8 +34,9 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
         //Def correct
         uint16 width;
         uint16 height;
+        FPos = FTell();
         byte rawTex[texDefineSz-16];
-        if (DEBUG_PRINT) Printf("[%i]\t%ix%i\t%i bytes\n", i, width, height, texDefineSz-16);
+        if (DEBUG_PRINT) Printf("[%i]\t%ix%i\t0x%LX\t%i bytes\n", i, width, height, FPos, texDefineSz-16);
         i++;
     } TexDefine[textures]<optimize=false>;
 } LyN_TextureContainer_RGH;
