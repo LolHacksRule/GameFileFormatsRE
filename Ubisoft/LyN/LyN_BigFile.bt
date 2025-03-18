@@ -18,6 +18,9 @@ local uint CONNECT_NAME_MAX <hidden=true> = 16;
 local uint P4_CLIENT_LASTACCESS_MAX <hidden=true> = 20;
 
 local uint DEBUG_PRINT <hidden=true> = 0;
+local uint isZombiU <hidden=true> = 0;
+
+//https://github.com/RetingencyPlan/le_quickbms_script_compendium/blob/master/sally_bf.bms
 
 #include "LyN_Common.bt"
 
@@ -25,75 +28,111 @@ typedef struct LyN_FatDescriptor
 {
     uint32 entries; //Officially size, dumb
     LyN_Int64 nextFatPos;
+    if (DEBUG_PRINT) Printf("\tFAT: Entries: %i\n", entries); //meh
 };
 
-typedef struct LyN_File
+typedef struct LyN_File //Doesn't match RLand but works :shrug:
 {
     struct
     {
-        char name[NAME_MAX]; //This is a string padded but officially read as large char :shrug:
-        char owner[CONNECT_NAME_MAX];
-        long handleParentDirectory;
-        long handleNextFile;
-        uint32 diskLen; //Decomp len
-        time_t time[2];
-        long handleKey;
-        LyN_Int64 position;
-        uint16 flags;
-        uint16 vFlags;
-        uint32 userLen;
-        uint16 headFlags;
-        uint16 privateRevision;
-        uint32 checksum[2];
-        uint32 rev;
-        char ownerClientName[NAME_MAX];
+        char name[NAME_MAX]; //This is a null terminated string padded but officially read as large char :shrug:, this format is dumb, incomplete file names can be here too, joy.
+        if (isZombiU)
+        {
+            uint64 diskLen;
+            uint64 dmy;
+            uint64 userLen;
+            LyN_Int64 index;
+        }
+        else
+        {
+            char owner[CONNECT_NAME_MAX];
+            long handleParentDirectory;
+            long handleNextFile;
+            uint32 diskLen; //(?) arch file header + file compressed
+            time_t time[2];
+            long handleKey;
+            LyN_Int64 position;
+            uint16 flags;
+            uint16 vFlags;
+            uint32 userLen; //Decomp len
+            uint16 headFlags;
+            uint16 privateRevision;
+            uint32 checksum[2];
+            uint32 rev;
+            char ownerClientName[NAME_MAX];
+        }
     } Define;
-    if (Define.userLen)
+    if (Define.name[0] > 0 && !isZombiU) //The fact the archives can contain this much padding is such a waste of space. At least someone might be able to make use of the slots to make a custom entry.
     {
         FPos = FTell();
         FSeek(Define.position.low);
         struct
         {
-            LyN_ArchivedFileHeader ArchivedFileHeader<bgcolor=cBlue>;
-            byte File[ArchivedFileHeader.archivedFileLen]<bgcolor=cGreen>; //Maybe
+            if (ReadInt() == 1766541634) //Lazy Bink file check, shadows are removed in new LyN
+            {
+                byte RawFile[Define.userLen]<bgcolor=cPurple>;
+                if (DEBUG_PRINT) Printf("\t\t%s Bink File Size: %i Directory ID: %i | Offset: 0x%lx\n", Define.name, Define.userLen, Define.handleParentDirectory, Define.position.low);
+            }
+            else
+            {
+                LyN_ArchivedFileHeader ArchivedFileHeader<bgcolor=cBlue>;
+                if (ArchivedFileHeader.archivedFileLen) byte ArchivedFile[ArchivedFileHeader.archivedFileLen]<bgcolor=cGreen>; //Maybe
+                if (ArchivedFileHeader.lenRef) byte Reference[ArchivedFileHeader.lenRef]<bgcolor=cRed>;
+                
+                if (DEBUG_PRINT) Printf("\t\t%s Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Directory ID: %i | Offset: 0x%lx\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleParentDirectory, Define.position.low);
+            }
         } LyN_FileData;
         FSeek(FPos);
     }
-    /*uint32 diskLen;
-    long handleKey;
-    LyN_Int64 position;
-    uint16 flags;
-    uint16 pad;*/
-    
-    //int32 localStorageIndex;
-    //byte unk[112];
 };
 
 typedef struct LyN_FileFat
 {
     LyN_FatDescriptor FATDescriptor<bgcolor=cLtRed>;
+    if (isZombiU)
+    {
+        struct 
+        {
+            LyN_Int64 chunkOff;
+            LyN_Int64 chunkSz;
+            LyN_Int64 unk;
+        } ChunkDefine[FATDescriptor.entries]<bgcolor=cRed>;
+        uint32 dmy;
+    }
     LyN_File File[FATDescriptor.entries]<optimize=false, bgcolor=cGreen>;
 };
 
 typedef struct LyN_Directory
 {
     char name[NAME_MAX]; //This is a string padded but officially read as large char :shrug:
+    
     long handleParentDirectory;
     long handleFirstSubDirectory;
     long handleNextDir;
     long handleFirstFile;
     uint16 flags;
     uint16 vFlags;
-    uint32 rev;
-    uint32 pad;
-    uint32 dcRev;
-    uint32 pad2;
+    if (!isZombiU) //Lazy hack
+    {
+        uint32 rev;
+        uint32 pad;
+        uint32 dcRev;
+        uint32 pad2;
+    }
+    if (DEBUG_PRINT && name[0] > 0) Printf("\t\t%s | Parent Directory ID: %i | Subdirectory ID: %i | File ID: %i\n", name, handleParentDirectory, handleFirstSubDirectory, handleFirstFile); //Don't print out padded directory slots, we can tell by the filename 
 };
 
 typedef struct LyN_DirectoryFat
 {
     LyN_FatDescriptor FATDescriptor;
+    if (isZombiU) uint32 dmy;
     LyN_Directory Directory[FATDescriptor.entries]<optimize=false>;
+};
+
+typedef struct LyN_ChunkFat
+{
+    LyN_FatDescriptor FATDescriptor;
+    //LyN_Directory Directory[FATDescriptor.entries]<optimize=false>;
 };
 
 typedef struct LyN_ConnectUser
@@ -102,7 +141,7 @@ typedef struct LyN_ConnectUser
     uint32 perms;
 };
 
-//ONLY TESTED ON RABBIDS GO HOME (PERFECT), JUST DANCE 4 AND RABBIDS LAND (MISALIGNED HEADER, 5184 bytes)
+//ONLY TESTED ON RABBIDS GO HOME (PERFECT), ZOMBIU, JUST DANCE 4 (BROKEN) AND RABBIDS LAND (MISALIGNED HEADER, 5184 bytes)
 
 struct
 {
@@ -111,45 +150,92 @@ struct
     {
         uint32 magic; //ABE\x00
         uint32 ver;
-        time_t tick; //Idk what this is, 32 bit timestamp? Looks like it in RGH
-        uint32 fatFiles;
-        uint32 fatDirectories;
-        LyN_Int64 firstFatFilePos;
-        LyN_Int64 firstFatDirectoryPos;
-        uint32 maxFiles;
-        uint32 maxDirectories;
-        uint32 numFiles;
-        uint32 numDirectories;
-        long handleFirstFreeFile;
-        long handleFirstFreeDirectory;
-        //In RLand this is broken
-        LyN_Int64 firstFreePos;
-        uint32 param[4]; //P4 related?
-        //These are useless but embedded for editor?
-        LyN_ConnectUser user[SERVER_USERS_MAX]<optimize=false>; //Only in main content bigfile.
-        char p4ClientName[P4_CLIENT_NAME_MAX];
-        char p4ClientLastAccess[P4_CLIENT_LASTACCESS_MAX];
-        if (DEBUG_PRINT)
+        //Comment this for JD4 with 0x01 after the second 5
+        if (ReadInt() == 5) //ZU huh
         {
-            Printf("Perforce Information:\n");
-            Printf("User Names:\n");
-            for (i = 0; i < SERVER_USERS_MAX; i++)
-                //if (user[i].name != "")
-                    Printf("Name[%i]: %s | Permissions: %LX\n", i, user[i].name, user[i].perms);
-            Printf("User Names End\n");
-            Printf("Client Name: %s\n", p4ClientName);
-            Printf("Client Last Access: %s\n", p4ClientLastAccess);
-            Printf("Perforce Information End\n");
+            isZombiU = 1;
+            uint32 zuflag;
+            uint32 ten;
+            uint32 maxBlockSz;
+            uint32 flags;
+            uint32 fatFiles;
+            uint32 fatDirectories;
+            uint32 chunks;
+            LyN_Int64 firstFatFilePos;
+            LyN_Int64 firstFatDirectoryPos;
+            LyN_Int64 firstChunkPos;
+            uint32 unk;
+            uint32 maxFiles;
+            uint32 maxDirectories;
+            uint32 maxChunks;
+            uint64 dmy[2];
+            uint32 config;
         }
-        byte pad[2]; //?
+        else
+        {
+            time_t tick; //Idk what this is, 32 bit timestamp? Looks like it in RGH
+            uint32 fatFiles;
+            uint32 fatDirectories;
+            LyN_Int64 firstFatFilePos;
+            LyN_Int64 firstFatDirectoryPos;
+            uint32 maxFiles;
+            uint32 maxDirectories;
+            uint32 numFiles;
+            uint32 numDirectories;
+            long handleFirstFreeFile;
+            long handleFirstFreeDirectory;
+            //In RLand this is broken
+            LyN_Int64 firstFreePos;
+            uint32 param[4]; //P4 related?
+            //These are useless but embedded for editor?
+            LyN_ConnectUser user[SERVER_USERS_MAX]<optimize=false>; //Only in main content bigfile.
+            //These three are not in RLand
+            char p4ClientName[P4_CLIENT_NAME_MAX];
+            char p4ClientLastAccess[P4_CLIENT_LASTACCESS_MAX];
+            if (DEBUG_PRINT)
+            {
+                Printf("Perforce Information:\n");
+                Printf("\tUser Names:\n");
+                for (i = 0; i < SERVER_USERS_MAX; i++)
+                    if (user[i].name != "")
+                        Printf("\t\t%s | Permissions: 0x%lx\n", user[i].name, user[i].perms);
+                Printf("\tUser Names End\n");
+                Printf("\tClient Name: %s\n", p4ClientName);
+                Printf("\tClient Last Access: %s\n", p4ClientLastAccess);
+                Printf("Perforce Information End\n");
+            }
+            byte pad[2]; //?
+        }
     } Header<bgcolor=cRed>;
+    //Keeping these seeks for now
     FSeek(Header.firstFatFilePos.low);
+    if (DEBUG_PRINT) Printf("Files:\n");
     LyN_FileFat FirstFileFAT<optimize=false>;
-    //FSeek(Header.firstFatDirectoryPos.low);
+    if (DEBUG_PRINT) Printf("Files End\n");
+    FSeek(Header.firstFatDirectoryPos.low);
+    if (DEBUG_PRINT) Printf("Directories:\n");
     LyN_DirectoryFat FirstDirectoryFAT<optimize=false, bgcolor=cPurple>;
-    if (FirstFileFAT.FATDescriptor.nextFatPos.high != -1 && FirstFileFAT.FATDescriptor.nextFatPos.low != 2139062143) //TEMP IDK IF THIS IS PERFECT
+    if (DEBUG_PRINT) Printf("Directories End\n");
+    /*if (FirstDirectoryFAT.FATDescriptor.nextFatPos.high != -1 && FirstDirectoryFAT.FATDescriptor.nextFatPos.low != 2139062143) //TEMP IDK IF THIS IS PERFECT
     {
+        if (DEBUG_PRINT) Printf("SubDirectories:\n");
+        FSeek(FirstDirectoryFAT.FATDescriptor.nextFatPos.low);
+        LyN_DirectoryFat SubDirectoryFAT<optimize=false>;
+        if (DEBUG_PRINT) Printf("SubDirectories End\n");
+    }*/
+    if (isZombiU)
+    {
+        if (DEBUG_PRINT) Printf("Chunks:\n");
+        FSeek(Header.firstChunkPos.low);
+        LyN_ChunkFat ChunkFAT<optimize=false>;
+        //I give up for now
+        if (DEBUG_PRINT) Printf("Chunks End\n");
+    }
+    if (FirstFileFAT.FATDescriptor.nextFatPos.high != -1 && FirstFileFAT.FATDescriptor.nextFatPos.low != 2139062143 && FirstFileFAT.FATDescriptor.nextFatPos.low != -1) //TEMP IDK IF THIS IS PERFECT
+    {
+        if (DEBUG_PRINT) Printf("SubFiles:\n");
         FSeek(FirstFileFAT.FATDescriptor.nextFatPos.low);
         LyN_FileFat SubFileFAT<optimize=false>;
+        if (DEBUG_PRINT) Printf("SubFiles End\n");
     }
 } LyN_BigFile;

@@ -11,6 +11,10 @@
 //   History: 
 //------------------------------------------------
 
+//https://forum.zoneofgames.ru/topic/23644-from-dust/?page=6
+//https://github.com/RetingencyPlan/le_quickbms_script_compendium/blob/master/sally_bf.bms
+//https://autoit-script.ru/threads/pomogite-rasparsit-tekstovyj-fajl.6525/
+
 #include "../../LHR/Common.bt"
 
 typedef struct LyN_Int64
@@ -26,6 +30,11 @@ typedef enum <uint32>
     LyN_TextureFormat_DXT //DXT1 on 4 JD Wii U
 } LyN_TextureFormat;
 
+typedef enum <ubyte>
+{
+    LyN_TexturePixelFormat_DXT1 = 9, //CMPR on Wii (and RGH PC)
+} LyN_TexturePixelFormat;
+
 typedef struct LyN_ArchivedFileHeader
 {
     uint32 archivedFileLen;
@@ -36,3 +45,35 @@ typedef struct LyN_ArchivedFileHeader
     LyN_Int64 nextPosition;
     long fileHandle;
 };
+
+typedef struct LyN_NewArchivedFileHeader
+{
+    uint32 unk[5];
+    uint32 contentType;
+    uint64 unk2;
+};
+
+/*
+Notes (RGH + JD4):
+
+RLab: Not defined as Wii Channel, no wog loading
+
+Bin:
+    A0: 
+    1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR)
+    F1: Text
+    FB: MAGMA
+    FC: ?
+    FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
+    FE: Texture
+    FF: Serialized (can reference text)
+    
+    NewLyN Formats:
+        AI: AI
+        FEU: Fire UI (SWF)
+        FFD: Fire Font Data (SWF)
+        GEO: ?
+        LIG: Light
+        MAT: Material
+        MTA: Metal
+*/
