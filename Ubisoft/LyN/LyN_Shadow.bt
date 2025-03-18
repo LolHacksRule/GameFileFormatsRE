@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct //RGH or legacy LyN
+{
+    BigEndian();
+    string shadowPath;
+    string unk; //$hd$ on BIK
+    uint32 fileCRC32;
+    byte padding[1024-(sizeof shadowPath+sizeof unk + 4)]; //The rest is just padding.
+} LyN_Shadow;

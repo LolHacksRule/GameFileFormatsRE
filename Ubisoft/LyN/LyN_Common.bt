@@ -17,10 +17,10 @@
 
 #include "../../LHR/Common.bt"
 
-typedef struct LyN_Int64
+typedef struct LyN_Int64 //Officially I32 but really it's unsigned
 {
-    long high;
-    long low;
+    ulong high;
+    ulong low;
 };
 
 typedef enum <uint32>
@@ -32,8 +32,35 @@ typedef enum <uint32>
 
 typedef enum <ubyte>
 {
-    LyN_TexturePixelFormat_DXT1 = 9, //CMPR on Wii (and RGH PC)
-} LyN_TexturePixelFormat;
+    LyN_TexPixelFormatTex_ARGB8888,
+    LyN_TexPixelFormatTex_R16F,
+    LyN_TexPixelFormatTex_RG16F,
+    LyN_TexPixelFormatTex_ABGR16F,
+    LyN_TexPixelFormatTex_R32F,
+    LyN_TexPixelFormatTex_GR32F,
+    LyN_TexPixelFormatTex_ABGR32F,
+    LyN_TexPixelFormatTex_D16,
+    LyN_TexPixelFormatTex_D24S8,
+    LyN_TexPixelFormatTex_DXT1, //CMPR on Wii
+    LyN_TexPixelFormatTex_DXT3,
+    LyN_TexPixelFormatTex_DXT5,
+    LyN_TexPixelFormatTex_D16Tex,
+    LyN_TexPixelFormatTex_D24S8Tex,
+    LyN_TexPixelFormatTex_RGB565,
+    LyN_TexPixelFormatTex_A2RGB10,
+    LyN_TexPixelFormatTex_XRGB8888,
+    LyN_TexPixelFormatTex_A8,
+    LyN_TexPixelFormatTex_L8,
+    LyN_TexPixelFormatTex_AL88,
+    LyN_TexPixelFormatTex_ARGB4444,
+    LyN_TexPixelFormatTex_AL44,
+    LyN_TexPixelFormatTex_NONE,
+    LyN_TexPixelFormatTex_RawDepth, //No clue, 8 channel
+    LyN_TexPixelFormatTex_ABGR16, //No clue, 8 channel
+    LyN_TexPixelFormatTex_L16, //No clue, 8 channel
+    LyN_TexPixelFormatTex_GR16, //No clue, 8 channel
+    LyN_TexPixelFormatTex_ACPR, //No clue, DXT1?
+} LyN_TexPixelFormat;
 
 typedef struct LyN_ArchivedFileHeader
 {
@@ -60,7 +87,7 @@ RLab: Not defined as Wii Channel, no wog loading
 
 Bin:
     A0: 
-    1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR)
+    1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR), on PC OGG files
     F1: Text
     FB: MAGMA
     FC: ?

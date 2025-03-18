@@ -15,7 +15,7 @@
 
 local uint DEBUG_PRINT <hidden=true> = 0;
 
-struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
+struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N64_I8 in imageheat)
 {
     LittleEndian();
     uint16 textures;
@@ -24,11 +24,11 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
         uint32 unk[2]; //Some hash or write time?
         uint32 texDefineSz;
         uint32 someOtherSize; //This is texDefineSize - 1-3, idk why
-        LyN_TexturePixelFormat pixFmt;
+        ubyte pixFmt; //Tends to be 1, atm UByte
         ubyte levels;
         ubyte flags;
         ubyte type;
-        ubyte pixFmtTex;
+        LyN_TexPixelFormat texPixFmt;
         ubyte dmy;
         uint16 dmy16;
         //Def correct
@@ -36,7 +36,7 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat)
         uint16 height;
         FPos = FTell();
         byte rawTex[texDefineSz-16];
-        if (DEBUG_PRINT) Printf("[%i]\t%ix%i\t0x%LX\t%i bytes\n", i, width, height, FPos, texDefineSz-16);
+        if (DEBUG_PRINT) Printf("[%i]\t%ix%i\t%s\t0x%LX\t%i bytes\n", i, width, height, EnumToString(texPixFmt), FPos, texDefineSz-16);
         i++;
     } TexDefine[textures]<optimize=false>;
 } LyN_TextureContainer_RGH;
