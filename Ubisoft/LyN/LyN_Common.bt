@@ -32,34 +32,34 @@ typedef enum <uint32>
 
 typedef enum <ubyte>
 {
-    LyN_TexPixelFormatTex_ARGB8888,
-    LyN_TexPixelFormatTex_R16F,
-    LyN_TexPixelFormatTex_RG16F,
-    LyN_TexPixelFormatTex_ABGR16F,
-    LyN_TexPixelFormatTex_R32F,
-    LyN_TexPixelFormatTex_GR32F,
-    LyN_TexPixelFormatTex_ABGR32F,
-    LyN_TexPixelFormatTex_D16,
-    LyN_TexPixelFormatTex_D24S8,
-    LyN_TexPixelFormatTex_DXT1, //CMPR on Wii
-    LyN_TexPixelFormatTex_DXT3,
-    LyN_TexPixelFormatTex_DXT5,
-    LyN_TexPixelFormatTex_D16Tex,
-    LyN_TexPixelFormatTex_D24S8Tex,
-    LyN_TexPixelFormatTex_RGB565,
-    LyN_TexPixelFormatTex_A2RGB10,
-    LyN_TexPixelFormatTex_XRGB8888,
-    LyN_TexPixelFormatTex_A8,
-    LyN_TexPixelFormatTex_L8,
-    LyN_TexPixelFormatTex_AL88,
-    LyN_TexPixelFormatTex_ARGB4444,
-    LyN_TexPixelFormatTex_AL44,
-    LyN_TexPixelFormatTex_NONE,
-    LyN_TexPixelFormatTex_RawDepth, //No clue, 8 channel
-    LyN_TexPixelFormatTex_ABGR16, //No clue, 8 channel
-    LyN_TexPixelFormatTex_L16, //No clue, 8 channel
-    LyN_TexPixelFormatTex_GR16, //No clue, 8 channel
-    LyN_TexPixelFormatTex_ACPR, //No clue, DXT1?
+    LyN_TexPixelFormat_ARGB8888,
+    LyN_TexPixelFormat_R16F,
+    LyN_TexPixelFormat_RG16F,
+    LyN_TexPixelFormat_ABGR16F,
+    LyN_TexPixelFormat_R32F,
+    LyN_TexPixelFormat_GR32F,
+    LyN_TexPixelFormat_ABGR32F,
+    LyN_TexPixelFormat_D16,
+    LyN_TexPixelFormat_D24S8,
+    LyN_TexPixelFormat_DXT1, //CMPR on Wii
+    LyN_TexPixelFormat_DXT3,
+    LyN_TexPixelFormat_DXT5,
+    LyN_TexPixelFormat_D16Tex,
+    LyN_TexPixelFormat_D24S8Tex,
+    LyN_TexPixelFormat_RGB565,
+    LyN_TexPixelFormat_A2RGB10,
+    LyN_TexPixelFormat_XRGB8888,
+    LyN_TexPixelFormat_A8, //On Wii, some Wii swizzled 8 channel format
+    LyN_TexPixelFormat_L8,
+    LyN_TexPixelFormat_AL88,
+    LyN_TexPixelFormat_ARGB4444,
+    LyN_TexPixelFormat_AL44,
+    LyN_TexPixelFormat_NONE,
+    LyN_TexPixelFormat_RawDepth, //No clue, 8 channel
+    LyN_TexPixelFormat_ABGR16,
+    LyN_TexPixelFormat_L16,
+    LyN_TexPixelFormat_GR16,
+    LyN_TexPixelFormat_ACPR, //No clue, distance-based DXT1?
 } LyN_TexPixelFormat;
 
 typedef struct LyN_ArchivedFileHeader
@@ -89,7 +89,7 @@ Bin:
     A0: 
     1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR), on PC OGG files
     F1: Text
-    FB: MAGMA
+    FB: MAGMA [Universal serialization lib, mentions texture names]
     FC: ?
     FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
     FE: Texture
