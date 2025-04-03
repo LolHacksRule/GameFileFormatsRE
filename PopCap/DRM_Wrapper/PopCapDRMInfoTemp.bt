@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct PopCapDRMInfoTemp
+{
+    LittleEndian();
+    while (FPos != EOF)
+    {
+        struct
+        {
+            U16_StringEntry productName;
+            int16 minutesUsed; //Not actually read from here.
+            uint16 executions;
+            time_t lastPlayTime;
+            if (DEBUG_PRINT) Printf("%s: \t Minutes: %i \t Executions: %i \t Last Play Time: %s\n", productName.theString, minutesUsed, executions, TimeTToString(lastPlayTime));
+        } Product;
+        FPos = FTell();
+    }
+} POPCINFOT_DAT;

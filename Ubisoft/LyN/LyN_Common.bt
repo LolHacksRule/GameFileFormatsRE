@@ -15,6 +15,10 @@
 //https://github.com/RetingencyPlan/le_quickbms_script_compendium/blob/master/sally_bf.bms
 //https://autoit-script.ru/threads/pomogite-rasparsit-tekstovyj-fajl.6525/
 
+//NOTE: This documentation and all templates here is based off content extracted with sally_bf.bms. This may be different if you use a different tool.
+
+//Content here referencing hexes is byteswapped
+
 #include "../../LHR/Common.bt"
 
 typedef struct LyN_Int64 //Officially I32 but really it's unsigned
@@ -83,17 +87,25 @@ typedef struct LyN_NewArchivedFileHeader
 /*
 Notes (RGH + JD4):
 
-RLab: Not defined as Wii Channel, no wog loading
+Channel: Wii Channel, wog loading
+RLab: Not defined as Wii Channel, wog loading
+PC: Not defined as Wii Channel, wog loading, FF003C8 mentions B4141025 as the preload wog from default.cfg
+
+Reference:
+    0x00: BigFileRef (in WOG, 25100DD8 (PC) = _basic_ForMaps_GPP.wog, in GRP, 3 u32s, the last two being padding, in)
+    
+Mdl Ref:
+    
 
 Bin:
     A0: 
-    1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR), on PC OGG files
+    1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR), on PC can contain OGG files, referenced in FC files
     F1: Text
     FB: MAGMA [Universal serialization lib, mentions texture names]
-    FC: ?
+    FC: These usually contain 76 bytes of handles? References?
     FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
-    FE: Texture
-    FF: Serialized (can reference text)
+    FE: Texture container
+    FF: Serialized (can reference text and FE+FD files[?]) [?] Can be referenced in 93, FF and FD?
     
     NewLyN Formats:
         AI: AI

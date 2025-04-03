@@ -17,7 +17,7 @@ local uint P4_CLIENT_NAME_MAX <hidden=true> = 130;
 local uint CONNECT_NAME_MAX <hidden=true> = 16;
 local uint P4_CLIENT_LASTACCESS_MAX <hidden=true> = 20;
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+local uint DEBUG_PRINT <hidden=true> = 1;
 local uint isZombiU <hidden=true> = 0;
 
 //https://github.com/RetingencyPlan/le_quickbms_script_compendium/blob/master/sally_bf.bms
@@ -78,8 +78,8 @@ typedef struct LyN_File //Doesn't match RLand but works :shrug:
                 LyN_ArchivedFileHeader ArchivedFileHeader<bgcolor=cBlue>;
                 if (ArchivedFileHeader.archivedFileLen) byte ArchivedFile[ArchivedFileHeader.archivedFileLen]<bgcolor=cGreen>; //Maybe
                 if (ArchivedFileHeader.lenRef) byte Reference[ArchivedFileHeader.lenRef]<bgcolor=cRed>;
-                
-                if (DEBUG_PRINT) Printf("\t\t%s Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Directory ID: %i | Offset: 0x%lx\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleParentDirectory, Define.position.low);
+                if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle ID: 0x%LX | Directory ID: %i | Offset: 0x%lx\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.handleParentDirectory, Define.position.low);
+                //if (DEBUG_PRINT) Printf("%s = 0x%lX\n", Define.name, Define.handleKey); //Dump handlekeys
             }
         } LyN_FileData;
         FSeek(FPos);
