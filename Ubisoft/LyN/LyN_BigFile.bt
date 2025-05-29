@@ -81,6 +81,7 @@ typedef struct LyN_File //Doesn't match RLand but works :shrug:
                 if (ArchivedFileHeader.lenRef) byte Reference[ArchivedFileHeader.lenRef]<bgcolor=cRed>;
                 if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle ID: 0x%LX | Directory ID: %i | Offset: 0x%lx | Owner: %s | Write Time: %s\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.handleParentDirectory, Define.position.low, Define.owner, FileTimeToString(Define.time));
                 //if (DEBUG_PRINT) Printf("%s = 0x%lX\n", Define.name, Define.handleKey); //Dump handlekeys
+                //if (DEBUG_PRINT) Printf("%s = %s\n", Define.name, FileTimeToString(Define.time)); //Dump dates
             }
         } LyN_FileData;
         FSeek(FPos);
@@ -150,7 +151,7 @@ struct
     struct
     {
         uint32 magic; //ABE\x00
-        uint32 ver; //RGH: 4 (less is also supported)
+        uint32 ver; //RGH: 4 (any is also supported)
         //Comment this for JD4 with 0x01 after the second 5
         if (ReadInt() == 5) //ZU huh
         {
@@ -192,7 +193,7 @@ struct
             uint32 param[4]; //P4 related?
             LyN_ConnectUser user[SERVER_USERS_MAX]<optimize=false>; //Only in main content bigfile.
             //These three are not in RLand
-            char p4ClientName[P4_CLIENT_NAME_MAX];
+            char p4ClientName[P4_CLIENT_NAME_MAX]; //If you remove one byte the engine will still load it
             //Ok you can delete these if you want
             
             if (maxFiles == 0 && maxDirectories == 0 && numFiles == 0 && numDirectories == 0 && handleFirstFreeFile == 0 && handleFirstFreeFile == 0)
@@ -205,6 +206,9 @@ struct
             if (DEBUG_PRINT)
             {
                 Printf("Perforce Information:\n");
+                Printf("\tParams:\n");
+                Printf("%\t\ti,%i,%i,%i\n", param[0], param[1], param[2], param[3]);
+                Printf("\tParams End\n");
                 Printf("\tUser Names:\n");
                 for (i = 0; i < SERVER_USERS_MAX; i++)
                     if (user[i].name != "")
