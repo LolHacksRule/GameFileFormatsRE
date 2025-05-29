@@ -1,0 +1,82 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct
+{
+    LittleEndian();
+    struct
+    {
+        uint16 unk;
+        uint16 ver;
+        if (DEBUG_PRINT) Printf("Header: Unknown: %i, Version: %i\n", unk, ver);
+    } Header;
+    while (ReadUInt() != 0x10005)
+    {
+        switch (ReadUInt())
+        {
+            case 0x10000:
+                struct
+                {
+                    uint32 micDefineIdent;
+                    int32 idx;
+                    int32 microphoneID;
+                    uint32 microphoneLevel;
+                    if (DEBUG_PRINT) Printf("Microphone Define: Index: %i\t|ID: %i\tMicrophone Level:%i\t", idx, microphoneID, microphoneLevel);
+                    if (Header.ver == 0x0110)
+                    {
+                        uint32 unk;
+                        if (DEBUG_PRINT) Printf("Unknown (v4097): %i\t", unk);
+                    }
+                    else if (Header.ver >= 0x0310)
+                    {
+                        float panCosine[4];
+                        if (DEBUG_PRINT) Printf("Pan Cosines (v4099) [%f,%f,%f,%f]\t", panCosine[0], panCosine[1], panCosine[2], panCosine[3]);
+                        if (Header.ver >= 0x0410)
+                        {
+                            uint32 insertType;
+                            if (DEBUG_PRINT) Printf("Insert Type(v4100): %i\t", insertType);
+                            if ((insertType & 1) != 0)
+                            {
+                                //uint32 a; //TODO RGH doesn't use this
+                            }
+                        }
+                    }
+                } MicDefine;
+            break;
+           case 0x10002: struct { uint32 InCurveIdent; uint32 InCurve; if (DEBUG_PRINT) Printf("In Curve: %i\n", inCurve); } InCurveDefine; break;
+           case 0x10003: struct { uint32 OutCurveIdent; uint32 OutCurve; if (DEBUG_PRINT) Printf("Out Curve: %i\n", outCurve); } OutCurveDefine; break;
+           case 0x10004: struct { uint32 MicPrioIdent; uint32 MicPriority; if (DEBUG_PRINT) Printf("Mic Priority: %i\n", MicPriority); } MicPriorityDefine; break;
+           case 0x10006:
+           struct
+           {
+               uint32 micNameStringIdent;
+               uint32 unk3[2];
+               /*while (i = 0 < unk3[0]) //So read the whole string byte by byte, why
+               {
+                   ubyte unk4[4];
+                   i++;
+               }*/
+               char MicName[unk3[0] * unk3[1]]; //This is better
+               if (DEBUG_PRINT) Printf("Mic Name: %s\n", MicName);
+           } MicNameStringDefine;
+           break;
+           case 0x10007: struct { uint32 doeIdent; uint32 unk4; uint32 DOE[unk4]; } DOEDefine; break; //what is doe
+           case 0x10008: struct { uint32 soundFileFlagIdent; uint16 SoundFileFlags; if (DEBUG_PRINT) Printf("Sound File Flags: %i\n", SoundFileFlags); } SoundFileFlagsDefine; break; //no clue what these are
+        }
+    }
+    uint32 end;    
+} MIC_MicroConfig;

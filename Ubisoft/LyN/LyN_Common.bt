@@ -27,6 +27,18 @@ typedef struct LyN_Int64 //Officially I32 but really it's unsigned
     ulong low;
 };
 
+typedef struct LyN_MathCurve
+{
+    float minX;
+    float maxX;
+    float minY;
+    float maxY;
+    uint32 samplesCnt;
+    float samples;
+    uint32 type;
+    uint32 colors;
+};
+
 typedef enum <uint32>
 {
     LyN_TextureFormat_Targa,
@@ -104,8 +116,10 @@ Bin:
     FB: MAGMA [Universal serialization lib, mentions texture names]
     FC: These usually contain 76 bytes of handles? References?
     FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
+        RefTable (U32, 12 byte refs):
     FE: Texture container
     FF: Serialized (can reference text and FE+FD files[?]) [?] Can be referenced in 93, FF and FD?
+        uint32 handlekey; //?
     
     NewLyN Formats:
         AI: AI
