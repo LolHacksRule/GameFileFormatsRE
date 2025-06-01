@@ -21,10 +21,18 @@
 
 #include "../../LHR/Common.bt"
 
-typedef struct LyN_Int64 //Officially I32 but really it's unsigned
+typedef uint32 LyN_HandleKey;
+
+typedef struct LyN_Int64 //Officially I64 but really it's two ints.
 {
-    ulong high;
-    ulong low;
+    int high;
+    int low;
+};
+
+typedef struct LyN_NestedInt64
+{
+    LyN_Int64 nestedI64;
+    quad quadVal;
 };
 
 typedef struct LyN_MathCurve
@@ -34,7 +42,7 @@ typedef struct LyN_MathCurve
     float minY;
     float maxY;
     uint32 samplesCnt;
-    float samples;
+    float samples[samplesCnt];
     uint32 type;
     uint32 colors;
 };
@@ -89,12 +97,124 @@ typedef struct LyN_ArchivedFileHeader
     long fileHandle;
 };
 
+typedef struct LyN_SerializeHeader
+{
+    uint32 unk; //handle?
+    uint32 chunkSz;
+    uint32 serializeDataSz;
+};
+
 typedef struct LyN_NewArchivedFileHeader
 {
     uint32 unk[5];
     uint32 contentType;
     uint64 unk2;
 };
+
+typedef struct LyN_ThreeDShadowTexture
+{
+    uint32 ver; //0x0A: RGH
+    Vector2_F32 sizeFactor;
+    float zAttFactor;
+    float zSzFactor;
+    float zStartFactor;
+    if (ver >= 5) float opacFactor;
+    uint32 shadowTextureUsedHandle;
+    Vector3_F32 unk;
+    if (ver < 2) uint16 unk2;
+    uint32 flags;
+    if (ver == 3)
+    {
+        uint32 unk3;
+    }
+    uint32 projMeth;
+    uint32 shadowColor;
+    ubyte renderGroup;
+};
+
+typedef struct LyN_Stock
+{
+    int32 magic; //0xC0DEC0DE
+    if (magic == 0xC0DEC0DE)
+    {
+        int32 ver;
+        int32 firstInt;
+    }
+    int32 unk[4];
+    float unk[5];
+    uint32 obj[5];
+    if (magic == 0xC0DEC0DE) uint32 modifier[5];
+    Vector3_F32 vec[5];
+};
+
+typedef struct LyN_Matrix44
+{
+    Vector3_F32 I;
+    float SX;
+    Vector3_F32 J;
+    float SY;
+    Vector3_F32 K;
+    float SZ;
+    Vector3_F32 T;
+    float W;
+};
+
+typedef struct LyN_TRMatrix
+{
+    LyN_Matrix44 mtx44[2];
+    Vector3_F32 Vec3;
+    uint32 unk;
+};
+
+typedef struct LyN_RenderParam
+{
+    uint32 ver; //9 in RGH. 16 in RLand.
+    if (ver)
+    {
+        ubyte flags;
+        ubyte prio;
+        ubyte viewport;
+        ubyte viewpoint;
+        RGBA_UByte colorBack;
+        RGBA_UByte colorAmb[2]<optimize=false>;
+        if (ver > 5 && ver != 7) RGBA_UByte colorSHV;
+        if (ver >= 5)
+        {
+            ubyte lightMaskNandLGCY;
+            ubyte lightMaskOrLGCY;
+        }
+        if (ver >= 9) float lightCoef[8];
+        //if (ver >= 5) CullParam;
+        //if (ver >= 5) CullParam;
+    }
+    else //Legacy params
+    {
+        uint32 unk[8];
+        uint32 lgcyVer;
+        if (lgcyVer >= 2)
+        {
+            uint32 unk2[2];
+            if (ver >= 3) uint32 unk3;
+            if (ver >= 6) uint32 unk4;
+            if (ver >= 7) uint32 unk5;
+            if (ver >= 5) uint32 unk6;
+            if (ver >= 12) uint32 unk7;
+            if (ver >= 15) uint32 unk8;
+            if (ver >= 10)
+            {
+                uint32 unk9[7];
+                if (ver >= 11) uint32 unk10[3];
+                uint32 unk11[3];
+            }
+        }
+        if (lgcyVer >= 4)
+        {
+            uint32 magic;
+            uint32 newVer;
+        }
+    }
+};
+
 
 /*
 Notes (RGH + JD4):
@@ -103,6 +223,23 @@ Channel: Wii Channel, wog loading
 RLab: Not defined as Wii Channel, wog loading
 PC: Not defined as Wii Channel, wog loading, FF003C8 mentions B4141025 as the preload wog from default.cfg
 
+GrpRef: Refs to libs (FCG+EFG)
+    MathLib
+    DebugLib
+    DynamicLib
+    DynamicLib
+    EventLib
+    GameLib
+    MappingLib
+    CommonLib
+    TriggerLib
+    ModifierLib
+    GraphicsLib
+    ActionsLib
+    BunniesLib
+    EventLibBunnies
+    TriggerBunnyLib
+
 Reference:
     0x00: BigFileRef (in WOG, 25100DD8 (PC) = _basic_ForMaps_GPP.wog, in GRP, 3 u32s, the last two being padding, in)
     
@@ -110,11 +247,17 @@ Mdl Ref:
     
 
 Bin:
-    A0: 
+    16/A0: Text, may contain RIFF headers and other stuff idk
     1D****LL/93: Text (A: EN, B: FR, C: SP D: EN, E: ES, F: SP, 0: EN, 3: EN, 9 FR), on PC can contain OGG files, referenced in FC files
     F1: Text
     FB: MAGMA [Universal serialization lib, mentions texture names]
-    FC: These usually contain 76 bytes of handles? References?
+    FC: These usually contain 76 bytes of handles? Text references?
+        uint32 refs;
+        struct
+        {
+            uint32 hKey; //a0 ref
+            uint32 unk[2];
+        } Ref[refs];
     FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
         RefTable (U32, 12 byte refs):
     FE: Texture container

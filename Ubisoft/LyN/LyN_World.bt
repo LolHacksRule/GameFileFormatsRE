@@ -1,0 +1,55 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+typedef struct LyN_WorldView
+{
+    uint32 ver; //5 (RGH)
+    if (ver < 5)
+        LyN_TRMatrix TRM;
+    LyN_Matrix44 camMTX44;
+    float isoZoom;
+    float FOV;
+    if (ver == 1) Vector4_F32 unk;
+    uint32 perspective;
+    uint32 flags;
+};
+
+struct //WIP!
+{
+    //For NewLyn just add LyN_ArchivedFileHeader and comment everything up to WorldView.
+    //LyN_ArchivedFileHeader afh;
+    
+    //RGH way:
+    
+    LyN_SerializeHeader serializeHead;
+    if (ReadUInt() != 0xC0DEC0DE)
+    {
+        Printf("Not a LyN serialized world define.");
+        break;
+    }
+    struct
+    {
+        uint32 magic;
+        uint32 ver; //2 (RGH), 6 (RLand)
+        uint32 flags;
+    } WorldDefineHead<optimize=false>;
+    LyN_WorldView WorldView[4]<optimize=false>;
+    /*LyN_RenderParam RenderParam<optimize=false>;
+    struct
+    {
+        uint32 ver; //Max 13 in RGH
+        if (ver >= 12) uint32 sectors;
+    } Section;*/
+} LyN_World<optimize=false>;
