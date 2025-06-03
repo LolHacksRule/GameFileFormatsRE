@@ -15,7 +15,7 @@
 
 local uint DEBUG_PRINT <hidden=true> = 0;
 
-struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N64_I8 in imageheat)
+struct //30 bytes, RGH and JD4 (Wii) textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N64_I8 in imageheat)
 {
     LittleEndian();
     uint16 textures;
@@ -28,7 +28,7 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N6
         ubyte levels;
         ubyte flags;
         ubyte type;
-        LyN_TexPixelFormat texPixFmt;
+        LyN_TexPixelFormat texPixFmt; //There's no way to tell what platform is used.
         ubyte dmy;
         uint16 dmy16;
         //Def correct
@@ -39,4 +39,4 @@ struct //30 bytes, RGH textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N6
         if (DEBUG_PRINT) Printf("[%i]\t%ix%i\t%s\t0x%LX\t%i bytes\n", i, width, height, EnumToString(texPixFmt), FPos, texDefineSz-16);
         i++;
     } TexDefine[textures]<optimize=false>;
-} LyN_TextureContainer_RGH;
+} LyN_TextureContainer;

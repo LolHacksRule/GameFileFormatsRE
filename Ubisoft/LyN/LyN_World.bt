@@ -32,13 +32,14 @@ struct //WIP!
     //LyN_ArchivedFileHeader afh;
     
     //RGH way:
+    //LyN_SerializeHeader serializeHead;
     
-    LyN_SerializeHeader serializeHead;
     if (ReadUInt() != 0xC0DEC0DE)
     {
         Printf("Not a LyN serialized world define.");
         break;
     }
+    LittleEndian();
     struct
     {
         uint32 magic;
@@ -46,8 +47,8 @@ struct //WIP!
         uint32 flags;
     } WorldDefineHead<optimize=false>;
     LyN_WorldView WorldView[4]<optimize=false>;
-    /*LyN_RenderParam RenderParam<optimize=false>;
-    struct
+    LyN_RenderParams RenderParam<optimize=false>;
+    /*struct
     {
         uint32 ver; //Max 13 in RGH
         if (ver >= 12) uint32 sectors;
