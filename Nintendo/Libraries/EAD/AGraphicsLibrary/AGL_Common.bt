@@ -1,0 +1,92 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://nintendo-formats.com/libs/agl/sharcfb.html
+//https://github.com/KillzXGaming/Switch-Toolbox/blob/master/File_Format_Library/FileFormats/Shader/SHARC/SHARCFB.cs
+
+#include "../../../../LHR/Common.bt"
+
+typedef struct AGL_SectionDefine
+{
+    uint32 size;
+    uint32 num;
+};
+
+typedef enum <uint32> 
+{
+    Vertex = 1,
+    Pixel,
+    Geometry,
+    Compute
+} AGL_ShaderType;
+
+typedef struct AGL_VariationData
+{
+    uint32 size;
+    uint32 nameLen;
+    uint32 values;
+    uint32 id;
+};
+
+typedef struct AGL_VariationMacro
+{
+    AGL_SectionDefine VM_SectionDefine;
+    struct
+    {
+        uint32 size;
+        uint32 macroNameLen;
+        uint32 valArraySz;
+        if (Header.ver <= 10 || Header.ver == 12) //This sucks
+        {
+            uint32 symNameLen;
+        }
+        char macroName[macroNameLen];
+        if (Header.ver <= 11 || Header.ver == 13) //This too
+        {
+            char valArray[valArraySz];
+        }
+        else
+        {
+            struct
+            {
+                string str;
+            } String[valArraySz]<optimize=false>;
+        }
+        if (Header.ver <= 10 || Header.ver == 12) //and this why
+        {
+            char symName[symNameLen];
+        }
+        byte data[size-4];
+    } VariationMacroSection[VM_SectionDefine.num]<optimize=false>;
+};
+
+typedef struct AGL_VariationSymbol
+{
+    AGL_SectionDefine VS_SectionDefine;
+    struct
+    {
+        uint32 size;
+        uint32 macroNameLen;
+        uint32 valLen;
+        uint32 symNameLen;
+        char macroName[macroNameLen];
+        struct
+        {
+            string str;
+        } ValArray[valLen]<optimize=false>;
+        //uint16 val[valLen];
+        char symName[symNameLen];
+        byte data[size-4];
+    } VariationSymbolSection[VS_SectionDefine.num]<optimize=false>;
+    //byte data[VS_SectionDefine.size-8];
+}; //Correct don't change

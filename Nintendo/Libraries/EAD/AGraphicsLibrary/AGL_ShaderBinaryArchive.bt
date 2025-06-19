@@ -1,0 +1,154 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "AGL_Common.bt"
+
+typedef struct CommonDefine
+{
+    uint32 num;
+    uint64 off;
+};
+
+//What a mess.
+
+//Only tested on NX.
+
+local uint applyNXFixes = 0;
+
+//https://github.com/KillzXGaming/Switch-Toolbox/blob/master/File_Format_Library/FileFormats/Shader/SHARC/SHARCFBNX.cs
+
+struct
+{
+    struct
+    {
+        char magic[4];
+        if (magic == "SHAB")
+        {
+            BigEndian();
+        }
+        uint32 ver;
+        uint32 dSz;
+        uint32 bom; //This is 5 on NX, temp check, may not be the case all the time, why
+        if (bom == 5) applyNXFixes = 1; //Read NX
+    } Header; //Assert suggests it's 16 bytes
+    
+    struct
+    {
+        uint32 dmy; //Don't like this for the header being inconsistent on Cafe, following the assert
+        if (applyNXFixes)
+        {
+            uint32 align;
+            uint32 binArrSz;
+            uint32 binArrOff;
+            local uint stringPoolOff = 336;
+            FSeek(stringPoolOff + align);
+            local uint rootOffAfterStrTbl = FTell();
+            uint32 progArrOff;
+            uint32 variations;
+            struct
+            {
+                local uint SV_Root = FTell();
+                uint32 sz;
+                AGL_ShaderType type;
+                uint32 dmy;
+                uint32 nextSecSz;
+                local uint SV_Later = FTell();
+                uint64 binDataOff;
+                uint32 shaderASz;
+                uint32 shaderAOff;
+                uint32 dmy2;
+                CommonDefine uniformBlocks;
+                CommonDefine attributes;
+                CommonDefine uniforms;
+                CommonDefine samplers;
+                if (uniformBlocks.num)
+                {
+                    FSeek(SV_Later + uniformBlocks.off);
+                    struct
+                    {
+                        uint32 off;
+                        uint32 sz;
+                    } UniformBlock[uniformBlocks.num];
+                }
+                if (attributes.num)
+                {
+                    FSeek(SV_Later + attributes.off);
+                    struct
+                    {
+                        uint32 off;
+                        uint32 sz;
+                    } Attribute[attributes.num];
+                }
+                
+                //buffer offset
+                
+                if (uniforms.num)
+                {
+                    FSeek(SV_Later + uniforms.off);
+                    struct
+                    {
+                        uint32 off;
+                        uint32 sz;
+                    } Uniform[uniforms.num];
+                }
+                if (samplers.num)
+                {
+                    //FSeek(SV_Later + samplers.off);
+                    struct
+                    {
+                        uint32 off;
+                        uint32 sz;
+                    } Sampler[samplers.num];
+                }
+                FSeek(SV_Later + shaderAOff);
+                byte shaderA[shaderASz];
+                FSeek(SV_Root + sz);
+            } ShaderVariation[variations]<optimize=false>;
+            FSeek(rootOffAfterStrTbl + progArrOff);
+        }
+        else
+        {
+            U32_StringEntry fileName;
+            local uint rootPos = FTell();
+            struct
+            {
+                AGL_SectionDefine ShaderBinaryDefine;
+                struct
+                {
+                    uint32 sz;
+                    AGL_ShaderType type;
+                    int32 dataOff;
+                    uint32 dataSz;
+                    byte data[dataSz];
+                } ShaderBinary[ShaderBinaryDefine.num]<optimize=false>;
+                //FSeek(ShaderBinaryDefine.size + rootPos); //Unnecessary, only uncomment if needed, the Cafe version is way more clean.
+            } ShaderBinarySection;
+        }
+        struct
+        {
+            AGL_SectionDefine programs;
+            struct
+            {
+                local uint rootOfProgram = FTell();
+                uint32 secSz;
+                uint32 nameLen;
+                uint32 sections;
+                uint32 baseIdx;
+                char name[nameLen];
+                //AGL_VariationMacro vm;
+                //AGL_VariationSymbol vs[4]<optimize=false>;
+                FSeek(rootOfProgram + secSz);
+            } Program[programs.num]<optimize=false>;
+        } ProgramArray;
+    } Content;
+} ShaderBinaryArchive_SHAB;

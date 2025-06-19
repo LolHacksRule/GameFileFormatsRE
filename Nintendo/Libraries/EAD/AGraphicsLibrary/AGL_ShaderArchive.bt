@@ -1,0 +1,188 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//https://gist.github.com/aboood40091/e7a9fa20e57a33a985d6131af7d7b9fe
+//https://github.com/KillzXGaming/Switch-Toolbox/blob/master/File_Format_Library/FileFormats/Shader/SHARC/SHARC.cs
+//https://github.com/aboood40091/SharcCompiler/blob/master/sharc.py
+//https://github.com/open-ead/agl/blob/master/include/common/aglResShaderArchive.h
+
+#include "AGL_Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+//Perfectly reads Secred (v13), ARMS (Pilot) (v12), TurboS (Pilot) (v12), RedStar (Kiosk) (v13), Blitz (v13), Kinopio (v13)
+
+//Breaks on Lunch (v11), Pik3 (v12) (try 4 and 3 to get closer), RedCarpet (v12) (try 4 and 3 to get closer), Kinopio (v12), Turbo (Kiosk) (v12), WWHD (v12), anything from cafe
+
+//Tbh why is there an inconsistency
+
+struct
+{
+    struct
+    {
+        char magic[4];
+        if (magic == "SHAA") //Why is this always LE
+        {
+            BigEndian();
+        }
+        uint32 ver; //Only seen 0x0D- 0x0B
+        local uint MAX_VTX_MACROS = ver >= 11 ? 4 : 3; //Whether to include compute macro data, 4 in 11 and up
+        local uint MAX_VARIATION_SYMBOLS = ver <= 12 ? 1 : 2; //<=12 and up has 1, >=12+ has 2
+        local uint MAX_SHADER_SYMBOLS = 1; //For now one, 12 has 1
+        uint32 dSz;
+        uint32 bom; //1: LE, 0: BE
+        //uint32 nameSz; //Yeah this is dumb
+    } Header; //11 suggests 20 bytes
+    U32_StringEntry name;
+    /*if (ReadByte() == 0x00) //lazy hack
+        FSkip(1);*/
+    uint32 srcArrayOff;
+    uint32 programs;
+    struct
+    {
+        uint32 secSz;
+        /*uint32 nameLen;
+        if (Header.ver >= 13)
+        {
+            int16 vtxShaderIdx;
+            int16 fgmShaderIdx;
+            int16 geoShaderIdx;
+            
+            int16 computeUnk;
+            int16 vtxUnk;
+            int16 fgmUnk;
+            int16 geoUnk;
+            int16 computeUnk2;
+        }
+        else
+        {
+            int32 vtxShaderIdx;
+            int32 fgmShaderIdx;
+            int32 geoShaderIdx;
+        }
+        char name[nameLen];
+        
+        //Keeping for reference
+        struct
+        {
+            AGL_SectionDefine VM_SectionDefine;
+            struct
+            {
+                uint32 size;
+                uint32 macroNameLen;
+                uint32 valArraySz;
+                if (Header.ver <= 10 || Header.ver == 12) //This sucks
+                {
+                    uint32 symNameLen;
+                }
+                char macroName[macroNameLen];
+                if (Header.ver <= 11 || Header.ver == 13) //This too
+                {
+                    char valArray[valArraySz];
+                }
+                else
+                {
+                    struct
+                    {
+                        string str;
+                    } String[valArraySz]<optimize=false>;
+                }
+                if (Header.ver <= 10 || Header.ver == 12) //and this why
+                {
+                    char symName[symNameLen];
+                }
+                byte data[size-4];
+            } VariationMacroSection[VM_SectionDefine.num]<optimize=false>;
+            //byte data[VM_SectionDefine.size-8];
+        } VariationMacro[Header.MAX_VTX_MACROS]<optimize=false>;
+        
+        AGL_VariationMacro VariationMacro[Header.MAX_VTX_MACROS]<optimize=false>;
+        
+        struct
+        {
+            AGL_SectionDefine VS_SectionDefine;
+            struct
+            {
+                uint32 size;
+                uint32 macroNameLen;
+                uint32 valLen;
+                uint32 symNameLen;
+                char macroName[macroNameLen];
+                struct
+                {
+                    string str;
+                } ValArray[valLen]<optimize=false>;
+                //uint16 val[valLen];
+                char symName[symNameLen];
+                byte data[size-4];
+            } VariationSymbolSection[VS_SectionDefine.num]<optimize=false>;
+            //byte data[VS_SectionDefine.size-8];
+        } VariationSymbol[Header.MAX_VARIATION_SYMBOLS]<optimize=false>; //Correct don't change
+        
+        AGL_VariationSymbol VariationSymbol[Header.MAX_VARIATION_SYMBOLS]<optimize=false>; //Correct don't change
+        
+        struct //Breaks on NX and v12, todo
+        {
+            AGL_SectionDefine SS_SectionDefine;
+            struct
+            {
+                uint32 size;
+                uint32 shaderVarSz;
+                uint32 varNameLen;
+                if (Header.ver <= 13) //On 12 this works
+                {
+                    char varName[varNameLen];
+                    uint32 valSecSz;
+                    uint32 vals;
+                    struct
+                    {
+                        uint32 sz;
+                        uint32 unk;
+                        U32_StringEntry valName;
+                    } Value[vals]<optimize=false>;
+                }
+                else
+                {
+                    uint32 symNameLen;
+                    uint32 defValLen;
+                    uint32 variations;
+                    char varName[varNameLen];
+                    char symName[symNameLen];
+                    char defVal[defValLen];
+                    Byte_Bool useBy[variations];
+                }
+                byte unk[size-4];
+            } ShaderSymbolSection[SS_SectionDefine.num]<optimize=false>;
+            //byte data[SS_SectionDefine.size-8];
+        } ShaderSymbol[Header.MAX_SHADER_SYMBOLS]<optimize=false>;
+        
+        AGL_ShaderSymbol ShaderSymbol[Header.MAX_SHADER_SYMBOLS]<optimize=false>; */
+        
+        byte sec[secSz-4];
+    } ShaderProgram[programs]<optimize=false>;
+    struct
+    {
+        AGL_SectionDefine SRC_SectionDefine;
+        struct
+        {
+            uint32 sectionSz;
+            uint32 nameLen;
+            uint32 codeLen[2]; //Why is this repeated
+            char name[nameLen];
+            char text[codeLen[0]];
+            if (DEBUG_PRINT) Printf("-----SHADER %s START (%i bytes, unk: %i bytes)-----\n%s\n-----SHADER %s END-----\n\n", name, codeLen[0] - 1, codeLen[1], text, name);
+        } SourceFile[SRC_SectionDefine.num]<optimize=false>;
+    } ShaderSource;
+    if (Header.ver > 11)
+        AGL_SectionDefine unkSecDef; //08 and 00? Suggests it is a section define.
+} ShaderArchive_SHAA;
