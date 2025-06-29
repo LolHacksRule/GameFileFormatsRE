@@ -19,6 +19,7 @@ local uint hasControlTagGroups <hidden=true> = 0;
 local uint currentTagGroup <hidden=true> = 0;
 local uint currentTagParam <hidden=true> = 0;
 
+//Dump YAML data (Syntax YAML in NP++)
 local uint printLabels <hidden=true> = 0; //Print text labels (WIP)
 local uint printTextStrings <hidden=true> = 0; //Will lag on lengthy messages
 local uint printDebugLogs <hidden=true> = 0; //Prints debug logs (WIP)
@@ -56,7 +57,8 @@ typedef struct NMS_ProjectTag
             Printf(" [");
             for (i = 0; i < params; i++)
             {
-                Printf("%i,", paramIdx[i]);
+                Printf("%i", paramIdx[i]);
+                if (i != params-1) Printf(",");
             }
             Printf("]");
         }
@@ -162,10 +164,6 @@ typedef struct NMS_ProjectColorInfoBlockV1
             }*/
         }
     } NMS_ProjectColorInfo;
-    /*if (printDebugLogs)
-    {
-        Printf("Color Info End\n");
-    }*/
 };
 
 typedef struct NMS_ProjectColorLabelsBlockV1
@@ -191,7 +189,6 @@ typedef struct NMS_ProjectColorLabelsBlockV1
         {
             Printf("\t%i: %s (0x%X%X%X%X)\n", NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx, NMS_ProjectColorLabelsHashTable.TextLabel[i2].label.theString, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].R, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].G, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].B, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[NMS_ProjectColorLabelsHashTable.TextLabel[i2].labelIdx].A);
         }
-        Printf("Color Info End\n");
     }
 };
 
@@ -231,7 +228,6 @@ typedef struct NMS_ProjectAttributeLabelsBlockV1
         {
             Printf("\t%i: %s (Type: %s, List Index: %i, Offset: %i)\n", NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx, NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].label.theString, EnumToString(ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].type), ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].listIdx, ProjectAttributeInfoBlockV2.NMS_ProjectAttributeInfo.ProjectAttribute[NMS_ProjectAttributeLabelsHashTable.TextLabel[i2].labelIdx].off);
         }
-        Printf("Attribute Info End\n");
     }
 };
 
@@ -256,10 +252,6 @@ typedef struct NMS_ProjectAttributeListsBlockV2
             }
         }
     } NMS_ProjectAttributeLists;
-    if (printTextStrings)
-    {
-        Printf("Attribute Lists End\n");
-    }
 };
 
 typedef struct NMS_ProjectTagGroupsBlockV2
@@ -297,17 +289,13 @@ typedef struct NMS_ProjectTagInfoBlockV2
             FSeek(FPos+tagOffset[i2]);
             if (printDebugLogs && !alreadyPrintedTagGroupName)
             {
-                Printf("\t%s\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].tagGroupName);
+                Printf("\t%s (%i)\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].tagGroupName, ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].idx);
                 alreadyPrintedTagGroupName = 1;
             }
             NMS_ProjectTag ProjectTagInfo;
         }
         currentTagGroup = 0;
     } NMS_ProjectTagInfo;
-    if (printDebugLogs)
-    {
-        Printf("Tag Group Information End\n");
-    }
 };
 
 typedef struct NMS_ProjectTagParameterInfoBlockV2
@@ -329,10 +317,6 @@ typedef struct NMS_ProjectTagParameterInfoBlockV2
             NMS_ProjectTagParam ProjectTagParam;
         }
     } NMS_ProjectTagParameterInfo;
-    if (printDebugLogs)
-    {
-        Printf("Tag Parameters End\n");
-    }
 };
 
 typedef struct NMS_ProjectTagListItemDefBlockV2
@@ -354,10 +338,6 @@ typedef struct NMS_ProjectTagListItemDefBlockV2
             {
                 FSeek(FPos+taglistItemOff[i2]);
                 NMS_ProjectTagListItem name;
-            }
-            if (printDebugLogs)
-            {
-                Printf("Tag List Items End\n");
             }
         }
     } NMS_ProjectTagListItemDef;
@@ -399,7 +379,6 @@ typedef struct NMS_ProjectStyleLabelsBlockV1
         {
             Printf("\t%i: %s (Region Width: %i, Lines: %i, Font Index: %i, Color Index: %i)\n", ProjectStyleLabelsHashTable.TextLabel[i2].labelIdx, ProjectStyleLabelsHashTable.TextLabel[i2].label.theString, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].rgnWidth, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].lines, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].fontIdx, ProjectStylesBlockV3.NMS_ProjectStyles.Style[i2].colrIdx);
         }
-        Printf("Styles End\n");
     }
 };
 
@@ -421,10 +400,6 @@ typedef struct NMS_ProjectContentInfoBlockV1
             NMS_ProjectContentInfoFileName FileName<optimize=false>;
         }
     } ProjectContentInfo;
-    if (printTextStrings)
-    {
-        Printf("Content Info End\n");
-    }
 };
 
 struct
@@ -458,47 +433,52 @@ struct
             byte pad<bgcolor=cRed, hidden=true>;
         }
     }
+    //Maybe print everything here in the future
     if (dumpAeonSakeNMSFunctionMap)
     {
-        if (BlockHeader.theBinType == "MsgPrjBn")
+        Printf("-----MFM-----\n### Function Map\n\n"); //So GCF is used now, lazy won't convert it to that yet, there's a native converter so prob won't fix
+        if (BlockHeader.blocks && hasControlTagGroups)
         {
-            Printf("-----MFM-----\n### Function Map\n\n");
-            if (BlockHeader.blocks && hasControlTagGroups)
+            for (i = 0; i < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.tagGroups; i++) //Print tag groups, correct
             {
-                for (i = 0; i < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.tagGroups; i++) //Print tag groups, correct
+                Printf("#%s group\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tagGroupName);
+                for (i2 = 0; i2 < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tags; i2++) //Print tag info, correct
                 {
-                    Printf("#%s group\n", ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tagGroupName);
-                    for (i2 = 0; i2 < ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tags; i2++) //Print tag info, correct
+                    currentTagGroup = ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[i].tagIndex[i2];
+                    //ProjectTagGroupsBlockV2.NMS_ProjectTagGroups.ProjectTagGroup[currentTagGroup].idx
+                    Printf("[%i, %i] %s\n", i, i2, ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[currentTagGroup].name);
+                    for (i3 = 0; i3 < ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[currentTagGroup].params; i3++) //Print tag params
                     {
-                        Printf("[%i, %i] %s\n", i, i2, ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[i2].name);
-                        for (i3 = 0; i3 < ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[i2].params; i3++) //Print tag params
+                        currentTagParam = ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[currentTagGroup].paramIdx[i3];
+                        switch (ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[currentTagParam].paramType)
                         {
-                            switch (ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[i3].paramType)
-                            {
-                                case 0: Printf("  u8"); break;
-                                case 1: Printf("  u16"); break;
-                                case 2: Printf("  u32"); break;
-                                case 3: Printf("  s8"); break;
-                                case 4: Printf("  s16"); break;
-                                case 5: Printf("  s32"); break;
-                                case 6: Printf("  f32"); break;
-                                case 7: Printf("  f64"); break;
-                                case 8: Printf("  str"); break;
-                                case 9: Printf("  nstr"); break;
-                                default: Printf("#Failed to convert tag."); break;
-                            }
-                            Printf(" %s\n", ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[i2].name);
+                            case NMS_TextAttributeType_UByte:   Printf("  u8"); break;
+                            case NMS_TextAttributeType_UShort:  Printf("  u16"); break;
+                            case NMS_TextAttributeType_UInt32:  Printf("  u32"); break;
+                            case NMS_TextAttributeType_SByte:   Printf("  s8"); break;
+                            case NMS_TextAttributeType_Int32:   Printf("  s32"); break;
+                            case NMS_TextAttributeType_Int16:   Printf("  s16"); break;
+                            case NMS_TextAttributeType_Float:   Printf("  f32"); break;
+                            case NMS_TextAttributeType_Float64: Printf("  f64"); break;
+                            case NMS_TextAttributeType_String:  Printf("  str"); break;
+                            case NMS_TextAttributeType_List:    Printf("  nstr"); break;
+                            default:                            Printf("  hex"); break; //Shoudn't get here
                         }
+                        Printf(" %s\n", ProjectTagParameterInfoBlockV2.NMS_ProjectTagParameterInfo.ProjectTagParam[currentTagParam].name); //Correct
                     }
                 }
+                Printf("\n");
             }
-            else
+        }
+        else
+        {
+            Printf("#Project does not have tag groups or parameters.\n\n");
+        }
+        if (ProjectColorInfoBlockV1.NMS_ProjectColorInfo.colors) //if (ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[3].params <= 1) //Blitz uses RGBA colors
+        {
+            Printf("map CustomTextColor u32\n");
+            if (totalTextLabels && ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[3].params <= 1)
             {
-                Printf("#Project does not have tag groups.\n\n");
-            }
-            if (ProjectTagInfoBlockV2.NMS_ProjectTagInfo.ProjectTagInfo[3].params <= 1)
-            {
-                Printf("map CustomTextColor u32\n");
                 for (i = 0; i < ProjectColorInfoBlockV1.NMS_ProjectColorInfo.colors; i++) //Print colors
                 {
                     Printf("  %i %s #0x%X%X%X%X\n", ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx, ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].label.theString, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].R, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].G, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].B, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[ProjectColorLabelsBlockV1.NMS_ProjectColorLabelsHashTable.TextLabel[i].labelIdx].A);
@@ -506,14 +486,16 @@ struct
             }
             else
             {
-                Printf("#The software probably uses 4-byte RGBA colors. Skipped dumping color hexes.\n");
+                for (i = 0; i < ProjectColorInfoBlockV1.NMS_ProjectColorInfo.colors; i++) //Print colors
+                {
+                    Printf("  %i 0x%X%X%X%X\n", i, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[i].R, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[i].G, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[i].B, ProjectColorInfoBlockV1.NMS_ProjectColorInfo.RGBAColor[i].A);
+                }
             }
-            Printf("#End MFM dump.\n");
         }
         else
         {
-            Printf("MFM dump only works on MSBP files.\n");
+            Printf("#The software probably uses 4-byte RGBA colors. Skipped dumping color hexes.\n");
         }
+        Printf("#End MFM dump.\n");
     }
-    Printf("Successfully read MSB* file.");
 } NMS_BinaryProject;
