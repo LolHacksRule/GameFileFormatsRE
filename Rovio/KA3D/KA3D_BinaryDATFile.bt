@@ -16,8 +16,6 @@
 //Viewing of data files from Rovio's proprietary version of the KA3D Engine (Later named Fusion).
 
 local string theLabelID <hidden=true> = "";
-//local uint i <hidden = true> = 0;
-//local uint i2 <hidden = true> = 0;
 local uint DEBUG_PRINT <hidden = true> = 0;
 
 //MANUAL FIXES FOR HEADERLESS BINARIES, ONLY SET 1, ONLY TESTED ON DARKEST FEAR iOS AND ANGRY BIRDS 1.2.2!
@@ -27,7 +25,7 @@ local uint forceHeaderlessSprite <hidden = true> = 0;
 
 typedef enum <DWORD>
 {
-    KA3D_BlockType_KA3D = 1262564164,
+    KA3D_BlockType_KA3D = 1262564164, //ABC v1.4.2
     KA3D_BlockType_KA3D_RVIO = 1381386575,
     KA3D_BlockType_CompoSprite = 1129270608,
     KA3D_BlockType_Text = 1413830740,
@@ -42,7 +40,7 @@ typedef struct
 {
     KA3D_BlockType contentBlockType;
     DWORD blockSize; //-4
-    //SHORT ver;
+    //SHORT ver; //We exclude this here as chunks have it and it counts towards blockSize
 } KA3DBlockHeader;
 
 /*typedef struct
@@ -61,39 +59,52 @@ typedef struct
 
 typedef struct
 {
-    KA3DBlockHeader BaseCompositeHdr;
-    struct COMPData
+    KA3DBlockHeader BaseCompositeBlockHdr;
+    struct
     {
         SHORT ver;
         SHORT texCnt;
-        struct TextureData
+        struct 
         {
-            for (i; i < texCnt; i++)
+            I16_StringEntry texNameStr;
+            short subTexCnt;
+            struct
             {
-                I16_StringEntry texNameStr;
-                short subTexCnt;
-                for (i2 = 0; i2 < subTexCnt; i2++)
+                I16_StringEntry subTexNameStr;
+                Vector2_I16 pos; //First one is width?
+                if (DEBUG_PRINT)
                 {
-                    I16_StringEntry subTexNameStr;
-                    struct SubTexParam
+                    Printf("--------TEXTURE %i START--------\n", i);
+                    Printf("Name: %s\n", subTexNameStr.theString);
+                    Printf("X Offset: %d\n", pos.X);
+                    Printf("Y Offset: %d\n", pos.Y);
+                }
+                if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
+                {
+                    short unk;
+                    float unk2[3];
+                    int16 unk3;
+                    if (DEBUG_PRINT)
                     {
-                        short unk[2]; //First one is width?
-                        if (hdr == KA3D_RVIO)
-                        {
-                            short unk2;
-                            float unk3[3];
-                            int16 unk4;
-                        }
-                    } prm;
+                        Printf("Unknown: %i\n", unk);
+                        Printf("Unknown2: %d,%d,%d\n", unk2[0], unk2[1], unk2[2]);
+                        Printf("Unknown3: %d\n", unk3);
+                    }
                 }
-                if (hdr != KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
+                if (DEBUG_PRINT)
                 {
-                    FSkip(2);
+                    Printf("--------TEXTURE %i END--------\n", i);
+                    i++;
                 }
+            } SubTexDefine[subTexCnt]<optimize=false>;
+            i = 0;
+            if (BaseHeader.contentBlockType != KA3D_BlockType_KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
+            {
+                FSkip(2);
             }
-        } tdata;
-        FSkip(2);
-    } compD;
+        } TextureData[texCnt]<optimize=false>;
+        //FSkip(2);
+    } CompoSpriteBlockBinary;
 } COMPBlock;
 
 typedef struct
@@ -133,16 +144,7 @@ typedef struct
                     byte languageCount;
                     //byte dmy;
                 }
-                struct
-                {
-                    for (i; i < languageCount; i++)
-                    {
-                        //struct Language
-                        //{
-                            I16_StringEntry theLanguageStr;
-                        //} ldat_lang;
-                    }
-                } Languages;
+                I16_StringEntry Language[languageCount]<optimize=false>;
             } LanguageDataStruct;
         } LanguageData;
         struct
@@ -154,27 +156,12 @@ typedef struct
             struct
             {
                 SHORT labels;
-                struct
-                {
-                    for (i = 0; i < labels; i++)
-                    {
-                        //struct LabelIDString
-                        //{
-                            I16_StringEntry theLabelIDStr;
-                        //} lid_str;
-                    }
-                } LabelIDStrings;
+                I16_StringEntry LabelID[labels]<optimize=false>;
             } LabelIDsStruct;
         } LabelIDs;
         if (forceHeaderlessText == 1)
         {
-            struct OffsetTable
-            {
-                for (i2; i2 < LanguageData.LanguageDataStruct.languageCount; i2++)
-                {
-                    int32 offset; //from the current pos, this is the offset
-                }
-            } offtbl;
+            int32 offset_legacy[LanguageData.LanguageDataStruct.languageCount]; //from the current pos, this is the offset
         }
         struct
         {
@@ -182,7 +169,7 @@ typedef struct
             {
                 struct
                 {
-                    local string theLanguage = LanguageData.LanguageDataStruct.Languages.theLanguageStr[i2].theString;
+                    local string theLanguage = LanguageData.LanguageDataStruct.Language[i2].theString;
                     if (forceHeaderlessText != 1)
                     {
                         KA3DBlockHeader textGroupBlockHdr;
@@ -191,18 +178,18 @@ typedef struct
                     {
                         if (DEBUG_PRINT)
                         {
-                            Printf("-----%s LANGUAGE START-----\n", LanguageData.LanguageDataStruct.Languages.theLanguageStr[i2].theString); //Remove to print string IDs
+                            Printf("-----%s LANGUAGE START-----\n", LanguageData.LanguageDataStruct.Language[i2].theString); //Remove to print string IDs
                         }
                         for (i = 0; i < LabelIDs.LabelIDsStruct.labels; i++)
                         {
                             //struct TextGroupString
                             //{
                                 //local string theLabelID = LabelIDs.LabelIDsStruct.LabelIDStrings.lid_str[i].theStr.theString;
-                                theLabelID = LabelIDs.LabelIDsStruct.LabelIDStrings.theLabelIDStr[i].theString;
+                                theLabelID = LabelIDs.LabelIDsStruct.LabelID[i].theString;
                                 I16_StringEntry TextGroupString;
                                 if (DEBUG_PRINT)
                                 {
-                                    Printf("%s", LabelIDs.LabelIDsStruct.LabelIDStrings.theLabelIDStr[i].theString);
+                                    Printf("%s", LabelIDs.LabelIDsStruct.LabelID[i].theString);
                                     if (sizeof TextGroupString[i] > 2)
                                     {
                                         Printf("\t%s", TextGroupString[i].theString);
@@ -213,7 +200,7 @@ typedef struct
                         }
                         if (DEBUG_PRINT)
                         {
-                            Printf("-----%s LANGUAGE END-----\n", LanguageData.LanguageDataStruct.Languages.theLanguageStr[i2].theString);
+                            Printf("-----%s LANGUAGE END-----\n", LanguageData.LanguageDataStruct.Language[i2].theString);
                         }
                     } TextGroupData;
                 } TextGroup;
@@ -228,7 +215,7 @@ typedef struct
     {
         KA3DBlockHeader BaseSpriteBlockHdr;
     }
-    struct SpriteBlockBin
+    struct
     {
         if (forceHeaderlessSprite != 1)
         {
@@ -236,41 +223,34 @@ typedef struct
         }
         I16_StringEntry txtrFNameStr;
         SHORT maxTextures;
-        struct Textures
+        if (DEBUG_PRINT)
         {
+            Printf("Texture Param:\n");
+        }  
+        struct
+        {
+            I16_StringEntry theTexNameStr;
+            SHORT xOff;
+            SHORT yOff;
+            SHORT width;
+            SHORT height;
+            SHORT widthHalved;
+            SHORT heightHalved;
             if (DEBUG_PRINT)
             {
-                Printf("Texture Param:\n");
+                Printf("--------TEXTURE %i START--------\n", i);
+                Printf("Name: %s\n", theTexNameStr.theString);
+                Printf("X Offset: %d\n", xOff);
+                Printf("Y Offset: %d\n", yOff);
+                Printf("Width: %d\n", width);
+                Printf("Height: %d\n", height);
+                Printf("Width Halved: %d\n", widthHalved);
+                Printf("Height Halved: %d\n", heightHalved);
+                Printf("--------TEXTURE %i END--------\n", i);
+                i++;
             }
-            for (i = 0; i < maxTextures; i++)
-            {
-                struct Texture
-                {
-                    I16_StringEntry theTexNameStr;
-                    struct Param
-                    {
-                        SHORT xOff;
-                        SHORT yOff;
-                        SHORT width;
-                        SHORT height;
-                        SHORT widthHalved;
-                        SHORT heightHalved;
-                        if (DEBUG_PRINT)
-                        {
-                            Printf("--------TEXTURE %i START--------\n", i);
-                            Printf("Name: %s\n", theTexNameStr.theString);
-                            Printf("X Offset: %d\n", xOff);
-                            Printf("Y Offset: %d\n", yOff);
-                            Printf("Width: %d\n", width);
-                            Printf("Height: %d\n", height);
-                            Printf("Width Halved: %d\n", widthHalved);
-                            Printf("Height Halved: %d\n", heightHalved);
-                            Printf("--------TEXTURE %i END--------\n", i);
-                        }
-                    } prm;
-                } txtr;
-            }
-        } txtrs;
+        } Texture[maxTextures]<optimize=false>;
+        i = 0;
     } SpriteBlockBinary;
 } SPRTBlock;
 
@@ -280,7 +260,7 @@ typedef struct
     {
         KA3DBlockHeader BaseFontBlockHdr;
     }
-    struct FontBlockBin
+    struct
     {
         if (forceHeaderlessFont != 1)
         {
@@ -292,27 +272,22 @@ typedef struct
         SHORT fontChars;
         struct
         {
-            for (i = 0; i < fontChars; i++)
-            {
-                //I16_StringEntry theTexNameStr;
-                struct //As of a new format, this changed I think
-                {
-                    /*
-                    SHORT xOff;
-                    SHORT yOff;
-                    SHORT width;
-                    SHORT height;
-                    SHORT unk2[2];
-                    */
-                    SHORT characterShort;
-                    SHORT x;
-                    SHORT y;
-                    SHORT width;
-                    SHORT height;
-                    SHORT vpivot;
-                } FontChar;
-            }
-        } FontChars;
+            //As of a new format, this changed I think
+            /*
+            SHORT xOff;
+            SHORT yOff;
+            SHORT width;
+            SHORT height;
+            SHORT unk2[2];
+            */
+            
+            SHORT characterShort; //I32 in v1
+            SHORT x;
+            SHORT y;
+            SHORT width;
+            SHORT height;
+            SHORT vpivot;
+        } FontCharacter[fontChars]<optimize=false>;
     } FontBlockBinary;
 } FONTBlock;
 
@@ -320,32 +295,37 @@ struct KA3DBinary
 {
     BigEndian();
     //Check for headerless file
-    byte headerlessChk<hidden=true>; //if you find 0, it's the old headerless format
-    FSkip(-1);
-    if (headerlessChk == 0)
+    if (ReadUByte() == 0) //if you find 0, it's the old headerless format
     {
         if (forceHeaderlessText == 1)
         {
             Printf("Forcing headerless Text block detection!\n");
             TEXTBlock HeaderlessTextBlock;
+            break;
         }
         else if (forceHeaderlessSprite == 1)
         {
             Printf("Forcing headerless Sprite block detection!\n");
             SPRTBlock HeaderlessSpriteBlock;
+            break;
         }
         else if (forceHeaderlessFont == 1)
         {
             Printf("Forcing headerless Font block detection!\n");
             FONTBlock HeaderlessFontBlock;
+            break;
         }
         else
         {
             Printf("Headerless file detected! Please modify the manual flags to detect its data.\n");
+            break;
         }
     }
     else
     //Detect newer KA3D format
+    forceHeaderlessText = 0; //A bit redundant but
+    forceHeaderlessFont = 0;
+    forceHeaderlessSprite = 0;
     {
         KA3DBlockHeader BaseHeader;
         switch (ReadString(FTell(),4))

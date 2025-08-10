@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 typedef enum <int16>
 {
     N3DTextureFormat_R8G8B8 = 1,
@@ -77,6 +79,7 @@ struct
     }
     int16 flags;
     int16 userFlags;
-    byte texture;
-    //byte texture[width*2*width]; //Add WIP way to calculate NTX size, works on RGB565
+    FPos = FTell();
+    byte texture[FSize-FPos]; //Lazy way to get the size
+    //byte texture[width*2*width]; //Old WIP way to calculate NTX size, works on RGB565
 } NTX;
