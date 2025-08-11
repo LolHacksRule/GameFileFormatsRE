@@ -34,6 +34,7 @@ typedef enum <DWORD>
     KA3D_BlockType_TextGroup = 1415071568,
     KA3D_BlockType_Sprite = 1397772884,
     KA3D_BlockType_Font = 1179602516,
+    KA3D_BlockType_Anim = 1095649613, //ABC v2.1.0 (Unused?) / ABR INGAME_ANIMATIONS
 } KA3D_BlockType;
 
 typedef struct
@@ -62,47 +63,58 @@ typedef struct
     KA3DBlockHeader BaseCompositeBlockHdr;
     struct
     {
-        SHORT ver;
+        SHORT ver; //Always 1, even on RVIO, that's why we use it to tell the version.
         SHORT texCnt;
+        if (DEBUG_PRINT)
+        {
+            Printf("Textures: %i\n", texCnt);
+        }
         struct 
         {
-            I16_StringEntry texNameStr;
-            short subTexCnt;
+            I16_StringEntry compoName;
+            short sprites;
+            if (DEBUG_PRINT) Printf("--------COMPOSITE \"%s\" (%i) START--------\n", compoName.theString, i);
+            if (DEBUG_PRINT) Printf("\tSprites: %i\n", sprites);
             struct
             {
-                I16_StringEntry subTexNameStr;
-                Vector2_I16 pos; //First one is width?
-                if (DEBUG_PRINT)
-                {
-                    Printf("--------TEXTURE %i START--------\n", i);
-                    Printf("Name: %s\n", subTexNameStr.theString);
-                    Printf("X Offset: %d\n", pos.X);
-                    Printf("Y Offset: %d\n", pos.Y);
-                }
+                I16_StringEntry name;
                 if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
                 {
-                    short unk;
-                    float unk2[3];
-                    int16 unk3;
-                    if (DEBUG_PRINT)
-                    {
-                        Printf("Unknown: %i\n", unk);
-                        Printf("Unknown2: %d,%d,%d\n", unk2[0], unk2[1], unk2[2]);
-                        Printf("Unknown3: %d\n", unk3);
-                    }
+                    FPos = FTell();
+                    I16_StringEntry sheetName;
+                }
+                Vector2_I16 pos;
+                if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
+                {
+                    Vector2_F32 scale;
+                    float angle;
+                    Byte_Bool flip[2];
                 }
                 if (DEBUG_PRINT)
                 {
-                    Printf("--------TEXTURE %i END--------\n", i);
-                    i++;
+                    Printf("\t\t--------SPRITE \"%s\" (%i) START --------\n", name.theString, i2);
+                    Printf("\t\tX Offset: %d\n", pos.X);
+                    Printf("\t\tY Offset: %d\n", pos.Y);
+                    if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
+                    {
+                        Printf("\t\tSheet Name: \"%s\"\n", ReadShort(FPos) > 0 ? sheetName.theString : "");
+                        Printf("\t\tScale: (%f,%f)\n", scale.X, scale.Y);
+                        Printf("\t\tAngle: %f\n", angle);
+                        Printf("\t\tFlip: (%s,%s)\n", EnumToString(flip[0]), EnumToString(flip[1]));
+                    }
+                    Printf("\t\t--------SPRITE \"%s\" (%i) END--------\n", name.theString, i2);
+                    i2++;
                 }
-            } SubTexDefine[subTexCnt]<optimize=false>;
-            i = 0;
+            } Sprite[sprites]<optimize=false>;
+            i2 = 0;
+            if (DEBUG_PRINT) Printf("--------COMPOSITE \"%s\" (%i) END--------\n", compoName.theString, i);
             if (BaseHeader.contentBlockType != KA3D_BlockType_KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
             {
                 FSkip(2);
             }
+            i++;
         } TextureData[texCnt]<optimize=false>;
+        i = 0;
         //FSkip(2);
     } CompoSpriteBlockBinary;
 } COMPBlock;
@@ -221,36 +233,28 @@ typedef struct
         {
             SHORT ver;
         }
-        I16_StringEntry txtrFNameStr;
+        I16_StringEntry textureFileName;
         SHORT maxTextures;
         if (DEBUG_PRINT)
         {
-            Printf("Texture Param:\n");
+            Printf("Texture (%s) Param:\n", textureFileName.theString);
         }  
         struct
         {
-            I16_StringEntry theTexNameStr;
-            SHORT xOff;
-            SHORT yOff;
+            I16_StringEntry name;
+            Vector2_I16 pos;
             SHORT width;
             SHORT height;
-            SHORT widthHalved;
-            SHORT heightHalved;
+            Vector2_I16 pivot;
             if (DEBUG_PRINT)
             {
-                Printf("--------TEXTURE %i START--------\n", i);
-                Printf("Name: %s\n", theTexNameStr.theString);
-                Printf("X Offset: %d\n", xOff);
-                Printf("Y Offset: %d\n", yOff);
-                Printf("Width: %d\n", width);
-                Printf("Height: %d\n", height);
-                Printf("Width Halved: %d\n", widthHalved);
-                Printf("Height Halved: %d\n", heightHalved);
-                Printf("--------TEXTURE %i END--------\n", i);
-                i++;
+                Printf("\t--------TEXTURE %s START--------\n", name.theString);
+                Printf("\tPosition: (%d,%d)\n", pos.X, pos.Y);
+                Printf("\tResolution: %dx%d\n", width, height);
+                Printf("\tPivot: (%d,%d)\n", pivot.X, pivot.Y);
+                Printf("\t--------TEXTURE %s END--------\n", name.theString);
             }
         } Texture[maxTextures]<optimize=false>;
-        i = 0;
     } SpriteBlockBinary;
 } SPRTBlock;
 
@@ -266,9 +270,13 @@ typedef struct
         {
             SHORT ver;
         }
-        I16_StringEntry txtrFNameStr;
-        SHORT leading;
-        SHORT tracking;
+        I16_StringEntry textureFileName;
+        if (DEBUG_PRINT)
+        {
+            Printf("Font (%s) Param:\n", textureFileName.theString);
+        } 
+        SHORT leading; //or spacing
+        SHORT tracking; //or leading
         SHORT fontChars;
         struct
         {
@@ -281,15 +289,47 @@ typedef struct
             SHORT unk2[2];
             */
             
-            SHORT characterShort; //I32 in v1
-            SHORT x;
-            SHORT y;
+            wchar_t charCode; //I32 in v1 //or code
+            Vector2_I16 pos;
             SHORT width;
             SHORT height;
-            SHORT vpivot;
+            SHORT vpivot; //or baseline
+            if (DEBUG_PRINT)
+            {
+                Printf("\t--------CHARACTER %s START--------\n", WStringToString(charCode, CHARSET_UTF8));
+                Printf("\tPosition: (%d,%d)\n", pos.X, pos.Y);
+                Printf("\tResolution: %dx%d\n", width, height);
+                Printf("\tBaseline: %d\n", vpivot);
+                Printf("\t--------CHARACTER %s END--------\n", WStringToString(charCode, CHARSET_UTF8));
+            }
         } FontCharacter[fontChars]<optimize=false>;
     } FontBlockBinary;
 } FONTBlock;
+
+typedef struct
+{
+    KA3DBlockHeader BaseAnimBlockHdr;
+    struct
+    {
+        SHORT ver;
+        SHORT anims;
+        struct
+        {
+            I16_StringEntry animName;
+            SHORT frames;
+            struct //?
+            {
+                I16_StringEntry name; //ANIM is the default name it seems
+                DWORD count; //?
+                struct //?
+                {
+                    I16_StringEntry name; //?
+                    byte unk[12]; //? Ok this is stupid bcz this is 10 on legacy while it's 12 on the latest revision
+                } Anim[count]<optimize=false>;
+            } Frame[frames]<optimize=false>;
+        } Anim[anims]<optimize=false>;
+    } AnimBlockBinary;
+} ANIMBlock;
 
 struct KA3DBinary
 {
@@ -334,6 +374,7 @@ struct KA3DBinary
             case "TEXT": TEXTBlock TextBlock<bgcolor=cGreen>; break;
             case "SPRT": SPRTBlock SpriteBlock<bgcolor=cBlue>; break;
             case "FONT": FONTBlock FontBlock<bgcolor=cPurple>; break;
+            //case "ANIM": ANIMBlock AnimBlock<bgcolor=cYellow>; break; //WIP
         }
     }
 } KA3D_DAT<bgcolor=cYellow>;
