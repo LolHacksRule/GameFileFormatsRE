@@ -44,20 +44,6 @@ typedef struct
     //SHORT ver; //We exclude this here as chunks have it and it counts towards blockSize
 } KA3DBlockHeader;
 
-/*typedef struct
-{
-    local string theLabelIDString = LabelIDs.LabelIDsStruct.LabelIDStrings.theLabelIDStr[i].theString;
-    short textStringSize<hidden=true>;
-    if (textStringSize >= 1)
-    {
-        char theTextString[textStringSize];
-    }
-    else
-    {
-        Printf("TextString %i is empty!\n", i);
-    }
-} textString;*/
-
 typedef struct
 {
     KA3DBlockHeader BaseCompositeBlockHdr;
@@ -74,7 +60,6 @@ typedef struct
             I16_StringEntry compoName;
             short sprites;
             if (DEBUG_PRINT) Printf("--------COMPOSITE \"%s\" (%i) START--------\n", compoName.theString, i);
-            if (DEBUG_PRINT) Printf("\tSprites: %i\n", sprites);
             struct
             {
                 I16_StringEntry name;
@@ -92,10 +77,10 @@ typedef struct
                 }
                 if (DEBUG_PRINT)
                 {
-                    Printf("\t\t\"%s\" (%i): X Offset: %d, Y Offset: %d", name.theString, i2, pos.X, pos.Y);
+                    Printf("\t\"%s\" (%i): X Offset: %d, Y Offset: %d", name.theString, i2, pos.X, pos.Y);
                     if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
                     {
-                        Printf("\t\tSheet Name: \"%s\", Scale: (%f,%f), Angle: %f, Flip: (%f,%f)", ReadShort(FPos) > 0 ? sheetName.theString : "", scale.X, scale.Y, angle, flip[0] ? -1.0 : 1.0, flip[1] ? -1.0 : 1.0);
+                        Printf(", Sheet Name: \"%s\", Scale: (%f,%f), Angle: %f, Flip: (%f,%f)", ReadShort(FPos) > 0 ? sheetName.theString : "", scale.X, scale.Y, angle, flip[0] ? -1.0 : 1.0, flip[1] ? -1.0 : 1.0);
                     }
                     Printf("\n");
                     i2++;
