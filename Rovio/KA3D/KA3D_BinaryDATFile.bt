@@ -39,8 +39,8 @@ typedef enum <DWORD>
 
 typedef struct
 {
-    KA3D_BlockType contentBlockType;
-    DWORD blockSize; //-4
+    /*if (!(forceHeaderlessText && forceHeaderlessFont && forceHeaderlessSprite)*/ KA3D_BlockType contentBlockType;
+    DWORD blockSize; //-4, if left or right mismatches engine dies
     //SHORT ver; //We exclude this here as chunks have it and it counts towards blockSize
 } KA3DBlockHeader;
 
@@ -63,7 +63,7 @@ typedef struct
     KA3DBlockHeader BaseCompositeBlockHdr;
     struct
     {
-        SHORT ver; //Always 1, even on RVIO, that's why we use it to tell the version.
+        SHORT ver; //1 and 2 which is seen in Rio but RVIO is always 1 so we use it to tell the version
         SHORT texCnt;
         if (DEBUG_PRINT)
         {
@@ -92,30 +92,32 @@ typedef struct
                 }
                 if (DEBUG_PRINT)
                 {
-                    Printf("\t\t--------SPRITE \"%s\" (%i) START --------\n", name.theString, i2);
-                    Printf("\t\tX Offset: %d\n", pos.X);
-                    Printf("\t\tY Offset: %d\n", pos.Y);
+                    Printf("\t\t\"%s\" (%i): X Offset: %d, Y Offset: %d", name.theString, i2, pos.X, pos.Y);
                     if (BaseHeader.contentBlockType == KA3D_BlockType_KA3D_RVIO)
                     {
-                        Printf("\t\tSheet Name: \"%s\"\n", ReadShort(FPos) > 0 ? sheetName.theString : "");
-                        Printf("\t\tScale: (%f,%f)\n", scale.X, scale.Y);
-                        Printf("\t\tAngle: %f\n", angle);
-                        Printf("\t\tFlip: (%s,%s)\n", EnumToString(flip[0]), EnumToString(flip[1]));
+                        Printf("\t\tSheet Name: \"%s\", Scale: (%f,%f), Angle: %f, Flip: (%f,%f)", ReadShort(FPos) > 0 ? sheetName.theString : "", scale.X, scale.Y, angle, flip[0] ? -1.0 : 1.0, flip[1] ? -1.0 : 1.0);
                     }
-                    Printf("\t\t--------SPRITE \"%s\" (%i) END--------\n", name.theString, i2);
+                    Printf("\n");
                     i2++;
                 }
             } Sprite[sprites]<optimize=false>;
+            if (ver == 2)
+            {
+                SHORT refPoints; //Always 0? Unused?
+                if (!refPoints) break;
+                struct
+                {
+                    I16_StringEntry unk;
+                    SHORT unk2;
+                    SHORT unk3;
+                } ReferencePoint[refPoints]<optimize=false>;
+                if (refPoints > 0) Printf("%i\n", refPoints);
+            }
             i2 = 0;
             if (DEBUG_PRINT) Printf("--------COMPOSITE \"%s\" (%i) END--------\n", compoName.theString, i);
-            if (BaseHeader.contentBlockType != KA3D_BlockType_KA3D_RVIO && ver != 1) //Ver 1 doesn't use padding so here's a fix for legacy DAT
-            {
-                FSkip(2);
-            }
             i++;
         } TextureData[texCnt]<optimize=false>;
         i = 0;
-        //FSkip(2);
     } CompoSpriteBlockBinary;
 } COMPBlock;
 
@@ -165,11 +167,8 @@ typedef struct
             {
                 KA3DBlockHeader labelIDDataBlockHeader;
             }
-            struct
-            {
-                SHORT labels;
-                I16_StringEntry LabelID[labels]<optimize=false>;
-            } LabelIDsStruct;
+            SHORT labels;
+            I16_StringEntry LabelID[labels]<optimize=false>;
         } LabelIDs;
         if (forceHeaderlessText == 1)
         {
@@ -177,47 +176,33 @@ typedef struct
         }
         struct
         {
-            for (i2 = 0; i2 < LanguageData.LanguageDataStruct.languageCount; i2++)
+            local string theLanguage = LanguageData.LanguageDataStruct.Language[i].theString;
+            if (forceHeaderlessText != 1)
             {
-                struct
-                {
-                    local string theLanguage = LanguageData.LanguageDataStruct.Language[i2].theString;
-                    if (forceHeaderlessText != 1)
-                    {
-                        KA3DBlockHeader textGroupBlockHdr;
-                    }
-                    struct
-                    {
-                        if (DEBUG_PRINT)
-                        {
-                            Printf("-----%s LANGUAGE START-----\n", LanguageData.LanguageDataStruct.Language[i2].theString); //Remove to print string IDs
-                        }
-                        for (i = 0; i < LabelIDs.LabelIDsStruct.labels; i++)
-                        {
-                            //struct TextGroupString
-                            //{
-                                //local string theLabelID = LabelIDs.LabelIDsStruct.LabelIDStrings.lid_str[i].theStr.theString;
-                                theLabelID = LabelIDs.LabelIDsStruct.LabelID[i].theString;
-                                I16_StringEntry TextGroupString;
-                                if (DEBUG_PRINT)
-                                {
-                                    Printf("%s", LabelIDs.LabelIDsStruct.LabelID[i].theString);
-                                    if (sizeof TextGroupString[i] > 2)
-                                    {
-                                        Printf("\t%s", TextGroupString[i].theString);
-                                    }
-                                    Printf("\n");
-                                }
-                            //} txgp_str;
-                        }
-                        if (DEBUG_PRINT)
-                        {
-                            Printf("-----%s LANGUAGE END-----\n", LanguageData.LanguageDataStruct.Language[i2].theString);
-                        }
-                    } TextGroupData;
-                } TextGroup;
+                KA3DBlockHeader textGroupBlockHdr;
             }
-        } TextGroupSet;
+            if (DEBUG_PRINT)
+            {
+                Printf("-----%s LANGUAGE START-----\n", LanguageData.LanguageDataStruct.Language[i].theString); //Remove to print string IDs
+            }
+            //theLabelID = LabelIDs.LabelID[i2].theString; //Temporarily hide
+            I16_StringEntry TextGroupString[LabelIDs.labels]<optimize=false>;
+            if (DEBUG_PRINT) //TODO dump this as a CSV
+            {
+                for (i2 = 0; i2 < LabelIDs.labels; i2++)
+                {
+                    Printf("%s", LabelIDs.LabelID[i2].theString);
+                    if (TextGroupString[i2].byteSize)
+                    {
+                        Printf("\t%s", TextGroupString[i2].theString);
+                    }
+                    Printf("\n");
+                }
+                Printf("-----%s LANGUAGE END-----\n", LanguageData.LanguageDataStruct.Language[i].theString);
+            }
+            i++;
+        } TextGroupSet[LanguageData.LanguageDataStruct.languageCount]<optimize=false>;
+        i = 0;
     } TextBlockBinary;
 } TEXTBlock<bgcolor=cGreen>;
 
@@ -237,7 +222,7 @@ typedef struct
         SHORT maxTextures;
         if (DEBUG_PRINT)
         {
-            Printf("Texture (%s) Param:\n", textureFileName.theString);
+            Printf("-----TEXTURE FILE (%s) PARAM START-----\n", textureFileName.theString);
         }  
         struct
         {
@@ -248,13 +233,15 @@ typedef struct
             Vector2_I16 pivot;
             if (DEBUG_PRINT)
             {
-                Printf("\t--------TEXTURE %s START--------\n", name.theString);
-                Printf("\tPosition: (%d,%d)\n", pos.X, pos.Y);
-                Printf("\tResolution: %dx%d\n", width, height);
-                Printf("\tPivot: (%d,%d)\n", pivot.X, pivot.Y);
-                Printf("\t--------TEXTURE %s END--------\n", name.theString);
+                Printf("\t%s (%i): Position: (%d,%d), Resolution: (%dx%d), Pivot: (%d,%d)\n", name.theString, i, pos.X, pos.Y, width, height, pivot.X, pivot.Y);
+                i++;
             }
         } Texture[maxTextures]<optimize=false>;
+        if (DEBUG_PRINT)
+        {
+            Printf("----TEXTURE FILE (%s) PARAM END----\n", textureFileName.theString);
+        }
+        i = 0;
     } SpriteBlockBinary;
 } SPRTBlock;
 
@@ -273,7 +260,7 @@ typedef struct
         I16_StringEntry textureFileName;
         if (DEBUG_PRINT)
         {
-            Printf("Font (%s) Param:\n", textureFileName.theString);
+            Printf("FONT FILE (%s) CHARACTER PARAM START:\n", textureFileName.theString);
         } 
         SHORT leading; //or spacing
         SHORT tracking; //or leading
@@ -296,13 +283,14 @@ typedef struct
             SHORT vpivot; //or baseline
             if (DEBUG_PRINT)
             {
-                Printf("\t--------CHARACTER %s START--------\n", WStringToString(charCode, CHARSET_UTF8));
-                Printf("\tPosition: (%d,%d)\n", pos.X, pos.Y);
-                Printf("\tResolution: %dx%d\n", width, height);
-                Printf("\tBaseline: %d\n", vpivot);
-                Printf("\t--------CHARACTER %s END--------\n", WStringToString(charCode, CHARSET_UTF8));
+                Printf("\t%s (%i): Position: (%d,%d), Resolution: (%dx%d), Baseline: %d\n", WStringToString(charCode, CHARSET_UTF8), i, pos.X, pos.Y, width, height, vpivot);
+                i++;
             }
         } FontCharacter[fontChars]<optimize=false>;
+        if (DEBUG_PRINT)
+        {
+            Printf("FONT FILE (%s) CHARACTER PARAM END\n", textureFileName.theString);
+        }
     } FontBlockBinary;
 } FONTBlock;
 
@@ -341,19 +329,16 @@ struct KA3DBinary
         {
             Printf("Forcing headerless Text block detection!\n");
             TEXTBlock HeaderlessTextBlock;
-            break;
         }
         else if (forceHeaderlessSprite == 1)
         {
             Printf("Forcing headerless Sprite block detection!\n");
             SPRTBlock HeaderlessSpriteBlock;
-            break;
         }
         else if (forceHeaderlessFont == 1)
         {
             Printf("Forcing headerless Font block detection!\n");
             FONTBlock HeaderlessFontBlock;
-            break;
         }
         else
         {
@@ -362,19 +347,24 @@ struct KA3DBinary
         }
     }
     else
-    //Detect newer KA3D format
-    forceHeaderlessText = 0; //A bit redundant but
-    forceHeaderlessFont = 0;
-    forceHeaderlessSprite = 0;
     {
-        KA3DBlockHeader BaseHeader;
-        switch (ReadString(FTell(),4))
+        //Detect newer KA3D format
+        forceHeaderlessText = 0; //A bit redundant but
+        forceHeaderlessFont = 0;
+        forceHeaderlessSprite = 0;
         {
-            case "COMP": COMPBlock CompoSpriteBlock<bgcolor=cRed>; break;
-            case "TEXT": TEXTBlock TextBlock<bgcolor=cGreen>; break;
-            case "SPRT": SPRTBlock SpriteBlock<bgcolor=cBlue>; break;
-            case "FONT": FONTBlock FontBlock<bgcolor=cPurple>; break;
-            //case "ANIM": ANIMBlock AnimBlock<bgcolor=cYellow>; break; //WIP
+            KA3DBlockHeader BaseHeader;
+            while (FTell() != EOF) //Unused behavior, files normally consist of one of these chunks.
+            {
+                switch (ReadString(FTell(),4))
+                {
+                    case "COMP": COMPBlock CompoSpriteBlock<bgcolor=cRed>; break;
+                    case "TEXT": TEXTBlock TextBlock<bgcolor=cGreen>; break;
+                    case "SPRT": SPRTBlock SpriteBlock<bgcolor=cBlue>; break;
+                    case "FONT": FONTBlock FontBlock<bgcolor=cPurple>; break;
+                    //case "ANIM": ANIMBlock AnimBlock<bgcolor=cYellow>; break; //WIP
+                }
+            }        
         }
     }
 } KA3D_DAT<bgcolor=cYellow>;
