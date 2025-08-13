@@ -152,8 +152,11 @@ typedef struct
             {
                 KA3DBlockHeader labelIDDataBlockHeader;
             }
-            SHORT labels;
-            I16_StringEntry LabelID[labels]<optimize=false>;
+            struct
+            {
+                SHORT labels;
+                I16_StringEntry LabelID[labels]<optimize=false>;
+            } LabelIDStruct;
         } LabelIDs;
         if (forceHeaderlessText == 1)
         {
@@ -171,12 +174,12 @@ typedef struct
                 Printf("-----%s LANGUAGE START-----\n", LanguageData.LanguageDataStruct.Language[i].theString); //Remove to print string IDs
             }
             //theLabelID = LabelIDs.LabelID[i2].theString; //Temporarily hide
-            I16_StringEntry TextGroupString[LabelIDs.labels]<optimize=false>;
+            I16_StringEntry TextGroupString[LabelIDs.LabelIDStruct.labels]<optimize=false>;
             if (DEBUG_PRINT) //TODO dump this as a CSV
             {
-                for (i2 = 0; i2 < LabelIDs.labels; i2++)
+                for (i2 = 0; i2 < LabelIDs.LabelIDStruct.labels; i2++)
                 {
-                    Printf("%s", LabelIDs.LabelID[i2].theString);
+                    Printf("%s", LabelIDs.LabelIDStruct.LabelID[i2].theString);
                     if (TextGroupString[i2].byteSize)
                     {
                         Printf("\t%s", TextGroupString[i2].theString);
@@ -333,7 +336,7 @@ struct KA3DBinary
     }
     else
     {
-        //Detect newer KA3D format
+        //Detect newer KA3D format, newer revisions of the engine support both strangely, you can quite easily downgrade to the legacy format
         forceHeaderlessText = 0; //A bit redundant but
         forceHeaderlessFont = 0;
         forceHeaderlessSprite = 0;
