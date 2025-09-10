@@ -11,6 +11,8 @@
 //   History: 
 //------------------------------------------------
 
+#include "../../LHR/Common.bt"
+
 typedef enum <uint16>
 {
     GLDT_EndXMLNode = -1,
@@ -26,3 +28,92 @@ typedef enum <uint32>
     GLCT_SCORE_SPEED, 
     GLCT_SCORE_MULTI, 
 } GL_ConstantType;
+
+typedef struct
+{
+    int index;
+    Byte_StringEntry baseName;
+    int arrIdx;
+    Byte_StringEntry name;
+    Byte_StringEntry signature;
+} GL_Signal;
+
+typedef struct
+{
+    int index;
+    Byte_StringEntry baseName;
+    int arrIdx;
+    Byte_StringEntry funcName;
+    Byte_StringEntry signature;
+} GL_Slot;
+
+typedef struct
+{
+    //Obj
+    //func
+    uint16 idx;
+} GL_FuncDefine; //Setter, getter
+
+typedef struct
+{
+    byte initialized;
+    int idx;
+    int idxOld;
+    uint32 verMin;
+    uint32 verMaj;
+    Byte_StringEntry name;
+    Byte_StringEntry nameFmt;
+    //createFunc
+    byte priv;
+    byte dyn;
+    byte prm;
+    //multisz
+    //types
+    //slots
+    //signals
+    //propertypairs
+    //interfacecache
+} GL_TargetDefine; //Setter, getter
+
+typedef struct
+{
+    Byte_StringEntry prop[2];
+} GL_PropertyPair;
+
+typedef struct
+{
+    Byte_Bool enabled;
+} GL_StringPool;
+
+typedef struct 
+{
+    int16 chk;
+    if (chk == -1)
+    {
+        Byte_StringEntry str;
+    }
+} GL_Dictionary;
+
+
+typedef struct
+{
+    uint16 from;
+    uint16 signal;
+    uint16 to;
+    uint16 slot;
+} ConnectionDesc;
+
+typedef struct
+{
+    int index;
+    Byte_StringEntry baseName;
+    int arrIdx;
+    Byte_StringEntry name;
+    GL_FuncDefine getFunc;
+    GL_FuncDefine setFunc;
+    //valueProvider
+    int flags;
+    Byte_StringEntry signature;
+    uint32 verMin;
+    uint32 verMaj;
+} GL_Property;
