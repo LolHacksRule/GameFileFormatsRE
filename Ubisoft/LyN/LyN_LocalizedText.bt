@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    uint32 size;
+    while (FPos != EOF) //hack
+    {
+        struct
+        {
+            uint32 unk[3];
+            uint32 ver;
+            uint32 texts;
+            struct
+            {
+                uint32 id;
+                uint32 off;
+                float delay;
+                uint32 type;
+                uint32 sfx;
+                uint32 lud[2];                
+            } Text[texts];
+            uint32 textSize; //2 * this from here is the offset to the next container.
+            FSkip(textSize*2);
+        } LyN_LocalizedTextContainer;
+    }
+} LyN_LocalizedText;
