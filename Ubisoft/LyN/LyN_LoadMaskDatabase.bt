@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct
+{
+    uint32 ver <bgcolor=cGreen>;
+    uint32 entries <bgcolor=cLtBlue>;
+    struct
+    {
+        LyN_HandleKey key<bgcolor=cDkGreen>; //Not sure where these are from.
+        uint32 id<bgcolor=cRed>; //Unknown.
+        if (DEBUG_PRINT) Printf("0x%x, %i\n", key, id);
+    } Entry[entries]<optimize=false, bgcolor=cLtBlue>;
+} LyN_LoadMaskDatabase_CFG;
