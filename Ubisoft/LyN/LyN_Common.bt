@@ -21,12 +21,19 @@
 
 #include "../../LHR/Common.bt"
 
-typedef uint32 LyN_HandleKey;
+typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
 
 typedef struct LyN_Int64 //Officially I64 but really it's two ints.
 {
     int high;
     int low;
+};
+
+typedef struct LyN_Reference
+{
+    LyN_HandleKey handle;
+    uint32 privateFlags;
+    uint32 userFlags;
 };
 
 typedef struct LyN_NestedInt64
@@ -35,16 +42,15 @@ typedef struct LyN_NestedInt64
     quad quadVal;
 };
 
-typedef struct LyN_MathCurve
+typedef struct LyN_MathCurve //CRV
 {
-    float minX;
-    float maxX;
-    float minY;
-    float maxY;
-    uint32 samplesCnt;
-    float samples[samplesCnt];
+    uint32 magic; //4 in JD4
+    Vector2_F32 min;
+    Vector2_F32 max;
+    uint32 samples;
     uint32 type;
-    uint32 colors;
+    Vector2_F32 grid;
+    uint32 sample[samples]; //?
 };
 
 typedef enum <uint32>
@@ -94,7 +100,7 @@ typedef struct LyN_ArchivedFileHeader
     uint32 flags;
     uint32 rawFileLen;
     LyN_Int64 nextPosition;
-    long fileHandle;
+    LyN_HandleKey fileHandle;
 };
 
 typedef struct LyN_SerializeHeader
@@ -147,6 +153,109 @@ typedef struct LyN_Stock
     Vector3_F32 vec[5];
 };
 
+typedef struct LyN_MathBox
+{
+    Vector3_F32 min;
+    Vector3_F32 max;
+    Vector3_F32 ctr;
+    uint32 flags;
+};
+
+typedef struct LyN_Modifier
+{
+    uint32 flags;
+    uint16 ver;
+    uint16 dmy; //0xFF
+    uint16 type;
+    uint16 id;
+    uint16 modifierVer;
+    uint16 dmy2; //0xFF
+    //LyN_HandleKey pfbOMod;
+};
+
+typedef struct LyN_ScriptVariableContainer //in MDL
+{
+    uint32 id; //0xC0DEC0DE OR 0xC0DEC0DF (Not in JD4) OR 0xC0DEC0EF (Not in RLand)
+    uint32 ver; //4
+    uint32 count;
+    if (id == 0xC0DEC0EF) //The standard one, used in EFG, EFC, FFBin and MDL
+    {
+        uint32 firstMdl;
+        uint32 firstInit;
+        uint32 firstCur;
+    }
+    else if (id == 0xC0DEC0DE) //EFC (RLand) and embedded in FFBin
+    {
+        uint32 firstMdl;
+        uint32 firstInit;
+        uint32 firstCur;
+    }
+    //else if (id == 0xC0DEC0DF) //MDL or nested in EFC, EFG and EFL in RLand
+    {
+        
+    }
+    struct
+    {
+        uint32 idx;
+        uint32 type;
+        uint32 dtype;
+        Printf("%i\n", type);
+        uint32 dsz;
+        uint32 cpos;
+        uint32 sz;
+        uint32 szd[3];
+        uint32 strLen[4];
+        uint16 flags;
+        ubyte flagByte;
+        ubyte saveStrIdx;
+        ubyte validIdx;
+        uint32 dmy;
+        char name[strLen[0]];
+        char name2[strLen[1]];
+        char sep[strLen[2]];
+        char name4[strLen[3]];
+        if (type == 3080192)
+        {
+            if (ReadInt() == 3235823855)
+                struct LyN_ScriptVariableContainer nestedVarContainer;
+            else
+                uint32 pad;
+        }
+    } Variable[count]<optimize=false>;
+    uint32 mdlSz;
+    uint32 initSz;
+    uint32 initInstSz;
+    uint32 initInstCurSz;
+    if (initSz)
+    {
+        byte mdl[mdlSz];
+        byte init[initSz];
+        byte initInst[initInstSz];
+        byte initInstCurSz[initInstCurSzSz];
+    }
+};
+
+typedef struct LyN_ScriptNodeContainer
+{
+    uint32 id;
+    uint32 tk;
+};
+
+typedef struct LyN_ProcessList //EFG, EFL and FFBin
+{
+    LittleEndian();
+    uint16 id; //0xABCD
+    uint16 ver; //1
+    uint16 count;
+    LyN_ScriptVariableContainer ScriptVariableContainer<optimize=false>;
+    U32_StringEntry name;
+    uint16 flags;
+    uint32 retn;
+    uint32 params;
+    uint32 nodes;
+    LyN_ScriptNodeContainer ScriptNodeContainer[nodes]<optimize=false>;
+};
+
 typedef struct LyN_Matrix44
 {
     Vector3_F32 I;
@@ -166,9 +275,144 @@ typedef struct LyN_TRMatrix
     uint32 unk;
 };
 
+typedef struct LyN_CullingRenderParam
+{
+    uint32 ver; //5 in JD4
+    float camFarPln;
+    float camNearPln;
+    float audoFarCullDistRef;
+    float cullDist;
+    ubyte spgCacheLod;
+    ubyte spgCutLod;
+    ubyte pad[2];
+    float spgCutLodDist;
+    float spgFarLodDist;
+    float shadowFarMin;
+    float shadowFarMax;
+};
+
+typedef struct LyN_FogRenderParam
+{
+    uint32 id; //1 in JD4 and prob RGH
+    uint32 flags;
+    uint32 clr;
+    float start;
+    float end;
+    float density;
+    float minFog;
+    float maxFog;
+    float skySlpMin;
+    float skySlpMax;
+    uint32 skyClrNear;
+    uint32 skyClrFar;
+    uint32 skyClrUp;
+    uint32 skySunClr;
+    float skySunExpo;
+    float skySunInt;
+};
+
+typedef struct LyN_WiiGlowRenderParam
+{
+    uint32 id; //2 in JD4
+    U32_Bool enable;
+    U32_Bool instantFactor;
+    float blur;
+    float glow;
+};
+
+typedef struct LyN_UVModifier
+{
+    char name[64];
+    uint32 dmy; //1
+    U32_Bool enable; //1
+};
+
+typedef struct LyN_UVParamContainer
+{
+    uint32 ver; //10 in JD4
+    ubyte src;
+    ubyte pln;
+    ubyte plg;
+    ubyte mods;
+    LyN_UVModifier UVModifier[mods];
+    LyN_HandleKey srcFile;
+    uint32 indirUVSrc;
+    Vector2_F32 displScl;
+    uint32 flags;
+    U32_Bool nrm;
+};
+
+typedef struct LyN_WiiBasicLevelDescription
+{
+    uint32 flags;
+    LyN_HandleKey texSrcFile;
+    LyN_HandleKey alphaTexSrcFile;
+    RGBA_UByte color;
+    LyN_UVParamContainer UVParamContainer;
+    ubyte blend;
+    ubyte alphaFct;
+    ubyte alphaThr;
+};
+
+typedef struct LyN_WiiMultiTexture
+{
+    uint32 ver; //11
+    uint32 levels;
+    uint32 rMask;
+    uint32 flags;
+    float zBias;
+    LyN_WiiBasicLevelDescription WiiBasicLevelDescription[levels];
+    float unlit;
+};
+
+typedef struct LyN_CartoonRenderParam
+{
+    uint32 ver; //2 in JD4
+    uint32 levels;
+    RGBA_UByte clr[6]<optimize=false>;
+    float lim[5];
+    float lightOff;
+};
+
+typedef struct LyN_WiiRenderParam
+{
+    uint32 id; //1 in JD4 and prob RGH
+    uint32 multiplier;
+};
+
+typedef struct LyN_AORenderParam
+{
+    uint32 id; //3 in JD4
+    RGBA_UByte clr;
+    float factor;
+    uint32 rays;
+    float rayLength;
+    float angleFct;
+    uint32 flags;
+};
+
+typedef struct LyN_FakeLightingRenderParam
+{
+    uint32 id; //1 in JD4 and prob RGH
+    U32_Bool enabled;
+    uint32 value;
+};
+
+typedef struct LyN_GuideList
+{
+    uint32 ver; //1
+    uint32 size;
+    /*struct
+    {
+        uint32 pointSize;
+        byte unk[12];
+        //unfinished
+    } Guide[size];*/
+};
+
 typedef struct LyN_RenderParam
 {
-    uint32 ver; //9 in RGH. 16 in RLand.
+    uint32 ver; //9 in RGH. 16 in JD4 and RLand.
     if (ver)
     {
         ubyte flags;
@@ -183,8 +427,8 @@ typedef struct LyN_RenderParam
             ubyte lightMaskNandLGCY;
             ubyte lightMaskOrLGCY;
         }
-        if (ver >= 9) float lightCoef[8];
-        //if (ver >= 5) CullParam;
+        if (ver >= 9) float lightCoef[16]; //16 in JD4, 8 in RGH? Don't remember
+        if (ver >= 5) LyN_CullingRenderParam CullParam; LyN_FogRenderParam FogParam; LyN_WiiGlowRenderParam WiiGlowParam; LyN_CartoonRenderParam CartoonParam; LyN_WiiRenderParam WiiRenderParam; LyN_AORenderParam AORenderParam; LyN_FakeLightingRenderParam FakeLightingRenderParam;
         //if (ver >= 5) CullParam;
     }
     else //Legacy params
@@ -243,8 +487,37 @@ GrpRef: Refs to libs (FCG+EFG)
 Reference:
     0x00: BigFileRef (in WOG, 25100DD8 (PC) = _basic_ForMaps_GPP.wog, in GRP, 3 u32s, the last two being padding, in)
     
-Mdl Ref:
-    
+    Mdl Ref:
+
+    JD4:
+        SoundMixer: Curve reference, unknown flags.
+        Song Wog: Base WOG reference, min WOG reference, editor WOG references
+        Preview Wog: Unknown reference, unknown flags.
+        MapsToBinarize Wog: _PLATFORM.wog references[unknown flags]
+        BackgroundList Wog: Unknown reference [unknown flags], preview WOG references
+        LobbyList Wog: Unknown reference [unknown flags], lobby WOG references[unknown flags]
+        LevelDescriptorList Wog: Unknown reference [unknown flags]
+        _PLATFORM Wog: Base _PLATFORM WOG reference [unknown flags], unknown [unknown flags], widgets _PLATFORM wog reference
+        AudioPreview_List Wog: Unknown reference [unknown flags], Unknown reference [unknown flags]
+        AudioPreview_List_PLATFORM Wog: Unknown reference [unknown flags]
+        Preview_List Wog: Unknown reference [unknown flags]
+        ProfileModule Wog: Unknown reference [unknown flags], Unknown reference [unknown flags]
+        Shop _PLATFORM wog: Common _PLATFORM reference [unknown flags], Unknown reference [unknown flags]
+        Preview *_SONG wog: Unknown reference [unknown flags]
+        UI _PLATFORM wog: Unknown reference [unknown flags]
+        Common _PLATFORM wog: _Common_PLATFORM wog reference [unknown flags], CommonLevel_PLATFORM wog reference [unknown flags], HUD_PLATFORM wog reference [unknown flags], AudioPreview_List_Common wog reference [unknown flags], AudioPreview_List_SSC wog reference [unknown flags], AudioPreview_List_PLATFORM wog reference [unknown flags], Preview_List_Common wog reference [unknown flags], Preview_List_SSC wog reference [unknown flags], Preview_List_PLATFORM wog reference [unknown flags]
+        LevelInterface_PLATFORM wog: Unknown reference [unknown flags]
+        PAGESET_Main_PLATFORM wog: Unknown references [unknown flags]
+        Common_Level_* wog: Unknown reference [unknown flags]
+        UI_P_*_PLATFORM wog: Unknown reference [unknown flags]
+        Preview_Transition*_Common wog: References to preview WOGS [unknown flags]
+        HUD_* wog: Unknown reference [unknown flags], UI_JD4_HUD_*_Common wog reference [unknown flags]
+        UI_JD4_HUD_*_Common wog: Unknown references [unknown flags]
+        UI_JD4_HUD_*_PLATFORM wog: Reference to UI_JD4_HUD_*_Common wog [unknown flags]
+        Song_GAMEPLAY_PLATFORM wog: Unknown references.
+        6902ee*.bin: Text.
+        fc*.bin: Text container references.
+        fd*.bin: Mic ref, SceneMix
 
 Bin:
     16/A0: Text, may contain RIFF headers and other stuff idk
@@ -263,10 +536,14 @@ Bin:
     FE: Texture container
     FF: Serialized (can reference text and FE+FD files[?]) [?] Can be referenced in 93, FF and FD?
         uint32 handlekey; //?
+
+    EFC: Track
+    EFL: Track
+    EFG: Global proclist
     
     NewLyN Formats:
         AI: AI
-        FEU: Fire UI (SWF)
+        FEU: Fire UI (SWF), references are .tex files.
         FFD: Fire Font Data (SWF)
         GEO: ?
         LIG: Light

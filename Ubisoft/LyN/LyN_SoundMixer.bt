@@ -1,0 +1,188 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef enum <uint32>
+{
+    AuxFXType_ECH,
+    AuxFXType_FXR,
+    AuxFXType_EQU,
+    AuxFXType_NFX,
+    AuxFXType_ACM,
+    AuxFXType_AWA,
+    AuxFXType_CHO,
+    AuxFXType_DST,
+    AuxFXType_FLA,
+    AuxFXType_FSH,
+    AuxFXType_VMO,
+    AuxFXType_PSH,
+    AuxFXType_RMO
+} AuxFXType;
+
+typedef enum <uint32>
+{
+    SMXChunkType_SoundGroupLegacyDefine,
+    SMXChunkType_SoundGroupLegacySendDefine,
+    SMXChunkType_SoundGroupLegacyInsertDefine,
+    SMXChunkType_AUX,
+    SMXChunkType_InCurve,
+    SMXChunkType_OutCurve,
+    SMXChunkType_Priority,
+    SMXChunkType_MorphCurve,
+    SMXChunkType_SoundGroupDefine,
+    SMXChunkType_Time,
+    SMXChunkType_SoundGroupName,
+    SMXChunkType_SoundGroupColor,
+    SMXChunkType_Flags,
+} SMXChunkTypeID;
+
+#include "LyN_Common.bt"
+
+struct //TODO according to the engine load this is done in split sections
+{
+    LittleEndian();
+    uint16 groups;
+    uint16 soundMixerVer; //4106 in RLand
+    struct
+    {
+        SMXChunkTypeID ver; //8
+        uint32 idx;
+        struct
+        {
+            uint32 ver; //1
+            int32 groupId;
+            int32 outId;
+            int32 lvl;
+            int32 inserts;
+            struct
+            {
+                uint32 type;
+                float apply;
+            } Insert[inserts];
+            struct
+            {
+                if (ReadInt() != 0) //This is a TERRIBLE hack.
+                {
+                    uint32 ver; //2
+                    struct
+                    {
+                        uint32 ver;
+                        uint32 flags;
+                        int32 level;
+                        LyN_HandleKey ref;
+                        if (soundMixerVer < 2)
+                            uint32 unk;
+                    } GroupAuxSendDefine;
+                }
+                else
+                    uint32 off;
+            } GroupAuxSend[4]<optimize=false>;
+            if (ver)
+                uint32 flag;
+        } GroupDefine;
+    } Group[groups]<optimize=false>;
+    struct
+    {
+        if (ReadInt() != 0)
+        {
+            SMXChunkTypeID id; //3
+            uint32 idx;
+            AuxFXType type;
+            if (ReadInt() != 0 && type != AuxFXType_NFX) //This is a TERRIBLE hack.
+            {
+                struct
+                {
+                    uint32 auxUsers;
+                    struct
+                    {
+                        if (ReadInt() != 0) //This is a TERRIBLE hack.
+                        {
+                            uint32 ver; //Only seen 1.
+                            uint32 xy;
+                            float fadeTime;
+                            float fadeVal;
+                            float scale;
+                            uint32 userID;
+                            char comment[256];
+                        }
+                    } AuxUser[auxUsers]<optimize=false>;
+                } AUXDefine;
+            }
+        }
+    } AUX[4]<optimize=false>;
+    if (ReadInt() == 4)
+    {
+        struct
+        {
+            SMXChunkTypeID id; //4
+            LyN_HandleKey hk;
+            if (soundMixerVer > 4098)
+                float inTime;
+        } InCurve;
+    }
+    if (ReadInt() == 5)
+    {
+        struct
+        {
+            uint32 id; //5
+            LyN_HandleKey hk;
+            if (soundMixerVer > 4098)
+                float out;
+        } OutCurve;
+    }
+    if (ReadInt() == 7)
+    {
+        struct
+        {
+            SMXChunkTypeID id; //7
+            LyN_HandleKey hk;
+        } AuxCurve;
+    }
+    struct
+    {
+        SMXChunkTypeID id; //6
+        uint32 val;
+    } Priority;
+    struct
+    {
+        SMXChunkTypeID id; //9
+        uint32 val;
+    } Time;
+    if (ReadInt() == 10)
+    {
+        struct
+        {
+            struct
+            {
+                SMXChunkTypeID id; //10
+                uint32 strings; //64
+                uint32 strSz; //256
+                struct
+                {
+                    char name[strSz];
+                } Name[strings]<optimize=false>;
+            } StringDefine;
+            struct
+            {
+                SMXChunkTypeID id; //11
+                uint32 colors;
+                RGBA_UByte color[colors]<optimize=false>;
+            } ColorDefine;
+        } GroupRouting;
+    }
+    struct
+    {
+        SMXChunkTypeID end; //12
+        uint16 flags;
+    } Flags;
+    uint32 EOF;
+} LyN_SoundMixer;
