@@ -107,15 +107,6 @@ typedef struct LyN_BinHeader //Appears on FF (Map) and FD (SFX) - is that right?
 {
     LyN_HandleKey file; //handle?
     uint32 chunkSz;
-    uint32 serializeDataSz;
-    byte serializedData[serializeDataSz];
-};
-
-typedef struct LyN_SerializeHeader
-{
-    uint32 unk; //handle?
-    uint32 chunkSz;
-    uint32 serializeDataSz;
 };
 
 typedef struct LyN_NewArchivedFileHeader

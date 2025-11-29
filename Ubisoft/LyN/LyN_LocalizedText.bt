@@ -15,25 +15,33 @@
 
 struct
 {
-    uint32 size;
+    LittleEndian();
+    uint32 binSize;
     while (FPos != EOF) //hack
     {
         struct
         {
-            uint32 unk[3];
-            uint32 ver;
-            uint32 texts;
-            struct
+            LyN_BinHeader hdr;
+            if (hdr.chunkSz)
             {
-                uint32 id;
-                uint32 off;
-                float delay;
-                uint32 type;
-                uint32 sfx;
-                uint32 lud[2];                
-            } Text[texts];
-            uint32 textSize; //2 * this from here is the offset to the next container.
-            FSkip(textSize*2);
+                uint32 unk;
+                uint32 ver;
+                uint32 texts;
+                struct
+                {
+                    uint32 id;
+                    uint32 off;
+                    float delay;
+                    uint32 type;
+                    LyN_HandleKey sfx;
+                    LyN_HandleKey lip;
+                    LyN_HandleKey expr;
+                    //uint32 lud[2];
+                } Text[texts];
+                uint32 textSize; //2 * this from here is the offset to the next container.
+                byte textChunk[textSize*2];
+            }
         } LyN_LocalizedTextContainer;
+        FPos = FTell();
     }
-} LyN_LocalizedText;
+} LyN_LocalizedText_69F1Bin; //69/F1

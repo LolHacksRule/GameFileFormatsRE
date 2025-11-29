@@ -18,9 +18,7 @@ struct
     uint32 entries;
     struct
     {
-        LyN_HandleKey fileKey;
-        uint32 sz;
-        //LyN_NewArchivedFileHeader afh;
-        byte data[sz]; //Comment -32 and the above var to read RGH PC OGG containers
+        LyN_BinHeader hdr;
+        byte data[hdr.chunkSz];
     } Entry[entries]<optimize=false>;
 } LyN_SoundBinary_FDBin; //Works the same way on TXT btw

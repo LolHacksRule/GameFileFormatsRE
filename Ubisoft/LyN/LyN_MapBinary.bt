@@ -15,13 +15,14 @@
 
 struct
 {
+    LittleEndian();
     while (FPos != EOF)
     {
         struct
         {
-            LyN_HandleKey file;
-            uint32 sz;
-            byte data[sz];
+            LyN_BinHeader hdr;
+            byte data[hdr.chunkSz];
         } Entry;
+        FPos = FTell();
     }
 } LyN_MapBinary_FFBin;
