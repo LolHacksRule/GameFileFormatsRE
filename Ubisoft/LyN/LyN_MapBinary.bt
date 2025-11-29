@@ -15,12 +15,13 @@
 
 struct
 {
-    uint32 entries;
-    struct
+    while (FPos != EOF)
     {
-        uint32 unk;
-        uint32 sz;
-        LyN_NewArchivedFileHeader afh;
-        byte header[sz-32]; //Comment -32 and the above var to read RGH PC OGG containers
-    } Entry[entries]<optimize=false>;
-} LyN_SoundHeadersContainer;
+        struct
+        {
+            LyN_HandleKey file;
+            uint32 sz;
+            byte data[sz];
+        } Entry;
+    }
+} LyN_MapBinary_FFBin;

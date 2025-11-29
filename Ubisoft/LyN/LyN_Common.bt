@@ -103,6 +103,14 @@ typedef struct LyN_ArchivedFileHeader
     LyN_HandleKey fileHandle;
 };
 
+typedef struct LyN_BinHeader //Appears on FF (Map) and FD (SFX) - is that right?
+{
+    LyN_HandleKey file; //handle?
+    uint32 chunkSz;
+    uint32 serializeDataSz;
+    byte serializedData[serializeDataSz];
+};
+
 typedef struct LyN_SerializeHeader
 {
     uint32 unk; //handle?
@@ -149,7 +157,7 @@ typedef struct LyN_Stock
     int32 unk[4];
     float unk[5];
     uint32 obj[5];
-    if (magic == 0xC0DEC0DE) uint32 modifier[5];
+    if (magic == 0xC0DEC0DE) LyN_Reference modifier[5];
     Vector3_F32 vec[5];
 };
 
@@ -165,12 +173,20 @@ typedef struct LyN_Modifier
 {
     uint32 flags;
     uint16 ver;
-    uint16 dmy; //0xFF
     uint16 type;
-    uint16 id;
-    uint16 modifierVer;
-    uint16 dmy2; //0xFF
-    //LyN_HandleKey pfbOMod;
+    if (type == 0xFF)
+    {
+        uint16 id;
+        uint16 modifierVer;
+        uint16 dmy2; //0xFF
+        if (modifierVer)
+        {
+            uint16 pfbOMods;
+            LyN_HandleKey pfbOMod[pfbOMods];
+            uint32 pfbOModKeys;
+            uint32 pfbOModKey[pfbOModKeys];
+        }
+    }
 };
 
 typedef struct LyN_ScriptVariableContainer //in MDL
@@ -226,7 +242,7 @@ typedef struct LyN_ScriptVariableContainer //in MDL
     uint32 initSz;
     uint32 initInstSz;
     uint32 initInstCurSz;
-    if (initSz)
+    if (initSz) //todo
     {
         byte mdl[mdlSz];
         byte init[initSz];
@@ -238,7 +254,7 @@ typedef struct LyN_ScriptVariableContainer //in MDL
 typedef struct LyN_ScriptNodeContainer
 {
     uint32 id;
-    uint32 tk;
+    uint32 tk; //todo
 };
 
 typedef struct LyN_ProcessList //EFG, EFL and FFBin
@@ -270,9 +286,10 @@ typedef struct LyN_Matrix44
 
 typedef struct LyN_TRMatrix
 {
-    LyN_Matrix44 mtx44[2];
-    Vector3_F32 Vec3;
-    uint32 unk;
+    LyN_Matrix44 T;
+    LyN_Matrix44 R;
+    Vector3_F32 T;
+    uint32 f;
 };
 
 typedef struct LyN_CullingRenderParam
@@ -401,33 +418,36 @@ typedef struct LyN_FakeLightingRenderParam
 typedef struct LyN_GuideList
 {
     uint32 ver; //1
-    uint32 size;
-    /*struct
+    uint32 entries;
+    struct
     {
-        uint32 pointSize;
-        byte unk[12];
-        //unfinished
-    } Guide[size];*/
+        uint32 points;
+        Vector3_F32 point[points];
+        RGBA_UByte color;
+        uint32 flags;
+        float width;
+        U32_Bool closed;
+    } Guide[entries];
 };
 
 typedef struct LyN_RenderParam
 {
-    uint32 ver; //9 in RGH. 16 in JD4 and RLand.
+    uint32 ver; //9 in RGH. 12 in JD4
     if (ver)
     {
         ubyte flags;
         ubyte prio;
-        ubyte viewport;
-        ubyte viewpoint;
+        ubyte viewports;
+        ubyte viewpoints;
         RGBA_UByte colorBack;
         RGBA_UByte colorAmb[2]<optimize=false>;
-        if (ver > 5 && ver != 7) RGBA_UByte colorSHV;
-        if (ver >= 5)
+        if (ver > 5 && ver != 7 && ver != 6) RGBA_UByte colorSHV;
+        if (ver > 5 && ver != 6)
         {
             ubyte lightMaskNandLGCY;
             ubyte lightMaskOrLGCY;
         }
-        if (ver >= 9) float lightCoef[16]; //16 in JD4, 8 in RGH? Don't remember
+        if (ver >= 9) float lightCoef[ver >= 12 ? 16 : 8]; //16 in JD4, 8 in RGH? Don't remember
         if (ver >= 5) LyN_CullingRenderParam CullParam; LyN_FogRenderParam FogParam; LyN_WiiGlowRenderParam WiiGlowParam; LyN_CartoonRenderParam CartoonParam; LyN_WiiRenderParam WiiRenderParam; LyN_AORenderParam AORenderParam; LyN_FakeLightingRenderParam FakeLightingRenderParam;
         //if (ver >= 5) CullParam;
     }
@@ -534,8 +554,9 @@ Bin:
     FD (BIN): All tend to reference the scenemixer and microphone, on PC OGG files
         RefTable (U32, 12 byte refs):
     FE: Texture container
-    FF: Serialized (can reference text and FE+FD files[?]) [?] Can be referenced in 93, FF and FD?
+    FF: Map (can reference text and FE+FD files[?], worlds) [?] Can be referenced in 93, FF and FD?
         uint32 handlekey; //?
+        uint32 fSize;
 
     EFC: Track
     EFL: Track
