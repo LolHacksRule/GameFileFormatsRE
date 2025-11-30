@@ -15,15 +15,86 @@
 
 typedef struct LyN_WorldView
 {
-    uint32 ver; //5 (RGH)
+    uint32 ver; //5 (RGH), 6 in JD4
     if (ver < 5)
         LyN_TRMatrix TRM;
     LyN_Matrix44 camMTX44;
     float isoZoom;
     float FOV;
-    if (ver == 1) Vector4_F32 unk;
-    uint32 perspective;
+    if (ver == 1) Vector4_F32 unk; //This is left in the retail engine.
     uint32 flags;
+    if (ver > 4) uint32 drawGlobalMask; //This is left in the retail engine.
+    if (ver >= 6) uint32 device;
+    if (ver <= 5)
+    {
+        LyN_Matrix44 mtx44_legacy[2];
+    }
+    if (ver == 1) //This is left in the retail engine.
+    {
+        LyN_Matrix44 mtx44_veryLegacy[4];
+        uint32 unk[4];
+    }
+};
+
+typedef struct LyN_SectorContainer
+{
+    uint32 id;
+    uint32 usedSectors;
+    struct
+    {
+        uint16 idx;
+        char name[64];
+        uint32 flags;
+        ubyte level;
+        ubyte hie;
+        ubyte volType;
+        float meshHeight;
+        if (hie == 1)
+        {
+            struct
+            {
+                Vector2_F32 subSectorSize;
+                uint32 worldAlign;
+            } GridHierarchy;
+        }
+        else if (hie == 2)
+        {
+            float kdMinWidth;
+        }
+        uint32 visibles;
+        uint32 visible[visibles];
+        uint32 aFrms;
+        uint32 aFrm[aFrms];
+        if (volType)
+        {
+            if (volType == 1)
+                Vector3_F32 volV3f[8];
+            else if (volType == 2)
+            {
+                LyN_MathBox box;
+                LyN_Matrix44 mtx44;
+            }
+        }
+        else
+        {
+            LyN_MathBox box;
+        }
+    } UsedSector[usedSectors];
+    uint32 portals;
+    struct
+    {
+        char name[64];        
+        uint32 sector[2];
+        uint32 flags;
+        Vector3_F32 vertex[4];
+    } Portal[portals];
+};
+
+typedef struct LyN_WorldDefineHead
+{
+    uint32 magic; //0xC0DEC0DE
+    uint32 ver; //2 (RGH), 4 (JD4), 6 (RLand)
+    LyN_HandleKey srcFile; //?
 };
 
 struct //WIP!
@@ -34,20 +105,45 @@ struct //WIP!
     //RGH way:
     //LyN_SerializeHeader serializeHead;
     
-    if (ReadUInt() != 0xC0DEC0DE)
+    LittleEndian();
+    if (ReadUInt() != 0xC0DEC0DE && ReadUInt() != 6)
     {
         Printf("Not a LyN serialized world define.");
         break;
     }
-    LittleEndian();
+    if (ReadUInt() != 6)
+        LyN_WorldDefineHead WorldDefineHead<optimize=false>; //84 bytes in RLand
+    LyN_WorldView WorldView[4]<optimize=false>;
+    LyN_RenderParam RenderParam<optimize=false>;
+    LyN_SectorContainer SectorContainer<optimize=false>;
+    if (WorldDefineHead.ver > 3) LyN_GuideList GuideList<optimize=false>; //v3+ only
+    //Idk, according to BIN these end with handle references
+    //LyN_HandleKey modifier<optimize=false>;
+
+    //LyN_HandleKey refs[someCount]<optimize=false>;
+
+    //while (ReadInt() != 0xC0DEC0EF)
+        //FSkip(4);
+    
+    //LyN_ScriptVariableContainer svt;
+
+    /*
     struct
     {
-        uint32 magic;
-        uint32 ver; //2 (RGH), 6 (RLand)
+        uint32 ver;
+        uint16 entries;
+        struct
+        {
+            ubyte unk[64];
+            uint32 flags;
+            RGBA_UByte color;
+            uint32 id;
+        } Layer[entries]<optimize=false>;
+        ubyte layer[64];
         uint32 flags;
-    } WorldDefineHead<optimize=false>;
-    LyN_WorldView WorldView[4]<optimize=false>;
-    LyN_RenderParams RenderParam<optimize=false>;
+        uint32 color;
+        uint32 id;
+    } LayerDefine;*/
     /*struct
     {
         uint32 ver; //Max 13 in RGH

@@ -25,4 +25,4 @@ struct
         } Entry;
         FPos = FTell();
     }
-} LyN_MapBinary_FFBin;
+} LyN_MapBinary_FFBin; //Can also contain WAV headers
