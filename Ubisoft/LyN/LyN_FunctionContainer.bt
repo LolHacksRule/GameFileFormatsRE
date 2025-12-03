@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct //VERY WIP
+{
+    LittleEndian();
+    uint32 magic; //0xC0DEC0DE
+    uint32 ver; //1
+    uint32 flags;
+    U32_StringEntry name;
+    uint64 pad;
+    LyN_ScriptVariableContainer ScriptingVariableContainer; //TODO
+} LyN_FunctionContainer_EFC;

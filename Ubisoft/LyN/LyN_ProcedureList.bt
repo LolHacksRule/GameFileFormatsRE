@@ -1,0 +1,48 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct //VERY WIP, READS:
+//ACT_LIB (RGH)
+//DBG_LIB (RGH)
+//DYN_LIB (RGH)
+//EVENT_LIB (RGH)
+//GAM_LIB (RGH)
+//GFX_LIB (RGH)
+//MAPPING_LIB (RGH)
+//MDF_LIB (RGH)
+//MTH_LIB (RGH)
+//MTH_LIB (RGH)
+//TRIGGER_BUNNY_LIB (RGH)
+//TRIGGER_LIB (RGH)
+//UniverseTitle (JD4)
+//UniverseMedley (JD4)
+//UniverseOrganizer (JD4)
+{
+    LittleEndian();
+    uint32 magic; //If C0DEC0DF do the RGH way, else the JD4 way
+    if (magic == 0xC0DEC0DF)
+    {
+        uint32 unk[4];
+        
+    }
+    else
+    {
+        uint32 ver;
+        uint32 dmy[8];
+    }
+    LyN_ScriptProcessList ScriptProcessList<optimize=false>;
+    if (FTell() != EOF) //At EOF of EFG the handle key of this file is here.
+        LyN_HandleKey globalFileRef;
+} LyN_ProcedureList_EFG_EFL;

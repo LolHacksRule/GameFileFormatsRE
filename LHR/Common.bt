@@ -63,6 +63,17 @@ typedef enum <byte> {
     Byte_True,
 } Byte_Bool;
 
+typedef struct SYSTEMTIME {
+    WORD wYear;
+    WORD wMonth;
+    WORD wDayOfWeek;
+    WORD wDay;
+    WORD wHour;
+    WORD wMinute;
+    WORD wSecond;
+    WORD wMilliseconds;
+};
+
 typedef struct I16_StringEntry {
 	int16 byteSize<hidden=true>;
     if (byteSize == 0)

@@ -13,7 +13,7 @@
 
 #include "LyN_Common.bt"
 
-struct //Appears in EFC and FFBin
+struct //Appears in MDL and FFBin, VERY WIP
 {
     LittleEndian();
     LyN_HandleKey baseObj; //In RLand this is a reference to a MDL file.
@@ -24,4 +24,4 @@ struct //Appears in EFC and FFBin
     char mdlFactory[128];
     char headerVariables[128];
     char structName[128];
-} LyN_ScriptModel;
+} LyN_ScriptModel_MDL;

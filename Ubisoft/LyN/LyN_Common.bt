@@ -44,13 +44,19 @@ typedef struct LyN_NestedInt64
 
 typedef struct LyN_MathCurve //CRV
 {
-    uint32 magic; //4 in JD4
+    uint32 ver; //4 in JD4
     Vector2_F32 min;
     Vector2_F32 max;
     uint32 samples;
-    uint32 type;
-    Vector2_F32 grid;
-    uint32 sample[samples]; //?
+    if (ver > 2)
+        uint32 type;
+    if (ver)
+        Vector2_F32 grid;
+    //float markers[8];
+    struct
+    {
+    } Sample[samples];
+    //uint32 sample[samples/2]; //?
 };
 
 typedef enum <uint32>
@@ -165,7 +171,7 @@ typedef struct LyN_Modifier
     uint32 flags;
     uint16 ver;
     uint16 type;
-    if (type == 0xFF)
+    if (type == 0xFFFF)
     {
         uint16 id;
         uint16 modifierVer;
@@ -180,12 +186,12 @@ typedef struct LyN_Modifier
     }
 };
 
-typedef struct LyN_ScriptVariableContainer //in MDL
+typedef struct LyN_ScriptVariableContainer //in MDL, VERY WI
 {
     uint32 id; //0xC0DEC0DE OR 0xC0DEC0DF (Not in JD4) OR 0xC0DEC0EF (Not in RLand)
-    uint32 ver; //4
+    uint32 ver;
     uint32 count;
-    if (id == 0xC0DEC0EF) //The standard one, used in EFG, EFC, FFBin and MDL
+    if (id == 0xC0DEC0EF) //The standard one, used in EFG, EFC, EFL (Embedded), FFBin and MDL
     {
         uint32 firstMdl;
         uint32 firstInit;
@@ -199,14 +205,13 @@ typedef struct LyN_ScriptVariableContainer //in MDL
     }
     //else if (id == 0xC0DEC0DF) //MDL or nested in EFC, EFG and EFL in RLand
     {
-        
+        uint32 dmy; //Atm hack this
     }
     struct
     {
         uint32 idx;
         uint32 type;
         uint32 dtype;
-        Printf("%i\n", type);
         uint32 dsz;
         uint32 cpos;
         uint32 sz;
@@ -231,14 +236,20 @@ typedef struct LyN_ScriptVariableContainer //in MDL
     } Variable[count]<optimize=false>;
     uint32 mdlSz;
     uint32 initSz;
-    uint32 initInstSz;
-    uint32 initInstCurSz;
+    if (id != 3235823839 && ver != 0)
+    {
+        uint32 initInstSz;
+        uint32 initInstCurSz;
+    }
     if (initSz) //todo
     {
         byte mdl[mdlSz];
         byte init[initSz];
-        byte initInst[initInstSz];
-        byte initInstCurSz[initInstCurSzSz];
+        if (id != 3235823839 && ver != 0) //Dumb
+        {
+            byte initInst[initInstSz];
+            byte initInstCurSz[initInstCurSzSz];
+        }
     }
 };
 
@@ -248,19 +259,21 @@ typedef struct LyN_ScriptNodeContainer
     uint32 tk; //todo
 };
 
-typedef struct LyN_ProcessList //EFG, EFL and FFBin
+typedef struct LyN_ScriptProcessList //EFG, EFL and FFBin
 {
-    LittleEndian();
-    uint16 id; //0xABCD
+    uint16 id; //0xABCD, in RGH no magic
     uint16 ver; //1
     uint16 count;
-    LyN_ScriptVariableContainer ScriptVariableContainer<optimize=false>;
-    U32_StringEntry name;
-    uint16 flags;
-    uint32 retn;
-    uint32 params;
-    uint32 nodes;
-    LyN_ScriptNodeContainer ScriptNodeContainer[nodes]<optimize=false>;
+    struct
+    {
+        LyN_ScriptVariableContainer ScriptVariableContainer<optimize=false>;
+        U32_StringEntry name;
+        uint16 flags;
+        uint32 returnType;
+        //uint32 params;
+        uint32 nodes;
+        LyN_ScriptNodeContainer ScriptNodeContainer[nodes]<optimize=false>; //The first two def aren't correct.
+    } Process[count]<optimize=false>;
 };
 
 typedef struct LyN_Matrix44
@@ -551,7 +564,7 @@ Bin:
 
     EFC: Track
     EFL: Track
-    EFG: Global proclist
+    EFG: Global proclist, ends with this handlekey.
     
     NewLyN Formats:
         AI: AI
