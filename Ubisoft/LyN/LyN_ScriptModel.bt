@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct //Appears in EFC and FFBin
+{
+    LittleEndian();
+    LyN_HandleKey baseObj; //In RLand this is a reference to a MDL file.
+    LyN_ScriptVariableContainer ScriptVariableContainer; //TODO
+    uint32 ver;
+    LyN_HandleKey initFunc[5];
+    char filename[128];
+    char mdlFactory[128];
+    char headerVariables[128];
+    char structName[128];
+} LyN_ScriptModel;
