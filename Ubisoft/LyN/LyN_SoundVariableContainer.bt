@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint32 ver; //1
+    uint16 vars;
+    struct
+    {
+        uint32 ver;
+        U16_Bool keyVar;
+        U32_Bool global;
+        ubyte values;
+        char name[64];
+        RGBA_UByte color;
+        struct
+        {
+            ubyte idx;
+            char name[64];
+        } Value[values];
+    } SoundVariable[vars]<optimize=false>;
+    LyN_HandleKey scriptHeaderKey;
+} LyN_SoundVariableContainer_SVA;
