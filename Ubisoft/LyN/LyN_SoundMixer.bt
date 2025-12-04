@@ -47,7 +47,7 @@ typedef enum <uint32>
 
 #include "LyN_Common.bt"
 
-struct //TODO according to the engine load this is done in split sections
+struct //TODO according to the engine load this is done in split sections, MOVE THEM TO LYN_CMN
 {
     LittleEndian();
     uint16 groups;
@@ -72,16 +72,7 @@ struct //TODO according to the engine load this is done in split sections
             {
                 if (ReadInt() != 0) //This is a TERRIBLE hack.
                 {
-                    uint32 ver; //2
-                    struct
-                    {
-                        uint32 ver;
-                        uint32 flags;
-                        int32 level;
-                        LyN_HandleKey ref;
-                        if (soundMixerVer < 2)
-                            uint32 unk;
-                    } GroupAuxSendDefine;
+                    LyN_AuxSendDefine GroupAuxSendDefine;
                 }
                 else
                     uint32 off;

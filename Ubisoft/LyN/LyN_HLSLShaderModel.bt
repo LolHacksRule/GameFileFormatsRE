@@ -1,0 +1,60 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint16 ver;
+    LyN_HandleKey srcFile;
+    LyN_HandleKey compiledFile;
+    if (ReadUShort() == 1) //We'll detect ShaderLists by version
+    {
+        struct
+        {
+            uint16 ver;
+            uint16 techs;
+            //WIP
+            while (ReadUInt16() > 65535)
+            struct
+            {
+                U16_StringEntry name;
+                byte namePad;
+                uint16 vtxShaderBools;
+                uint16 pxlShaderBools;
+                struct
+                {
+                    uint16 size;
+                    byte shader[size];
+                } PixelShader[2]<optimize=false>; //ONLY TESTED ON RGH PC, atm idk how to detect this.
+            } Technique[techs]<optimize=false>;
+            uint16 params;
+            struct
+            {
+                U16_StringEntry name;
+                byte namePad;
+                if (ReadUShort() != 0) { U16_StringEntry name; byte pad; } else uint16 pad;
+                uint16 rgstrIdx;
+            } Param[params]<optimize=false>;
+        } ShaderList;
+    }
+    Byte_Bool weights;
+    Byte_Bool indices;
+    Byte_Bool nrms;
+    Byte_Bool tangent;
+    Byte_Bool bitangent;
+    Byte_Bool diffuse;
+    Byte_Bool spec;
+    uint32 textureCoords;
+} LyN_HLSLShaderModel_FXM;

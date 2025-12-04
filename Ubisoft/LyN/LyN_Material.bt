@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint16 ver; //1
+    uint16 pad;
+    uint16 unk; //4
+    if (ver <= 4)
+    {
+        uint16 subRefs;
+        LyN_HandleKey ref[subRefs];
+    }
+    //Ok RLand doesn't end here? Uhhhhh
+    while (FTell() != EOF)
+        LyN_Reference ref;
+} LyN_Material;

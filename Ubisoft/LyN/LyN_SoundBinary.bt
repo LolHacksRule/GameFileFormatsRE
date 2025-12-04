@@ -15,10 +15,17 @@
 
 struct
 {
+    LittleEndian();
     uint32 entries;
     struct
     {
         LyN_BinHeader hdr;
+        //uint32 outChunkSz; //In RChannel this is not used
         byte data[hdr.chunkSz];
+        //if (outChunkSz) //In RGH this is here
+        {
+            //uint32 audioDataSz; //Dumb!
+            //byte audioData[audioDataSz];
+        }
     } Entry[entries]<optimize=false>;
-} LyN_SoundBinary_FDBin; //Works the same way on TXT btw
+} LyN_SoundBinary_FD93Bin;

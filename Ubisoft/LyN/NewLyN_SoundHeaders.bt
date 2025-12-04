@@ -1,0 +1,23 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    uint32 sounds;
+    struct
+    {
+        uint32 unk;
+        uint32 size;
+        byte unk2[size];
+    } Define[sounds]<optimize=false>;
+} NewLyN_SoundHeaders_BIN;

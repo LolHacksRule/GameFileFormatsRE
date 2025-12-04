@@ -1,0 +1,136 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct Field
+{
+    uint16 type;
+    switch (type) //What a mess
+    {
+        //I32s
+        case 2:
+        case 12:
+        case 13: int32 value; break;
+        //U32s
+        case 1:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+        case 23:
+        case 24: uint32 value; break;
+        //F32s
+        case 14:
+        case 25:
+        case 26: float value; break;
+        //I16s
+        case 15: short value; break;
+        //U16s
+        case 16:
+        case 22: uint16 value; break;
+    }
+};
+
+typedef struct FileDescriptor
+{
+    float blank;
+    float chance;
+    float delay;
+    float deltaDelay;
+    float volume;
+    uint32 flags;
+};
+
+typedef struct InsertSet
+{
+    Field insert;
+    //if ((insert.value : 24) == 1)) //EXTREMELY WIP, COPIED FROM INSERTPAN NO CLUE IF IT'S CONSISTENT
+    uint32 flags;
+    float staticpan[2*8];
+    float factor[2];
+    float minPan[2];
+    float maxPan[2];
+    float scale[2];
+    float margeNear;
+    float margeFar;
+    uint32 channels[8];
+    float random[4];
+};
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint32 ver; //10 in JD4, 15 in RLand
+    //TODO V1 parse
+    Field saveCode;
+    if (ReadUShort() == 22) Field soundFileFlags;
+    Field playMode;
+    Field files;
+    Field loopBegin;
+    Field loopEnd;
+    Field loops;
+    Field modeFlags;
+    Field volume;
+    Field volumeRandMax;
+    Field volumeRandMin;
+    Field prioScale;
+    Field prio;
+    Field playingMax;
+    Field playingLimit;
+    Field group;
+    Field categID;
+    if (ReadUShort() == 25)
+    {
+        Field crossfade;
+        if (ReadShort == 26)
+        {
+            Field crossfadeRefField;
+        }
+    }
+    //TODO
+    if (ReadUShort() == 18) InsertSet insertSet;
+    if (ReadUShort() == 19) Field insertField;
+    if (ReadUShort() == 18)
+    {
+        struct
+        {
+            Field auxSend;
+            if (auxSend.value == 20) LyN_AuxSendDefine AuxSendDefine; 
+        } AuxSendDefineSet[4]<optimize=false>;
+    }
+    if (ReadUShort() == 23 || ReadUShort() == 1)
+    {
+        struct
+        {
+            Field fileField;
+            FileDescriptor fileDesc;
+        } FileDescriptorSet[files.value]<optimize=false>;
+    }
+    uint16 dmy;
+    if (ver >= 4)
+    {
+        uint32 eChannel;
+        uint32 eChannelMask;
+    }
+    LyN_HandleKey fileRef[files.value];
+} LyN_SoundSet;

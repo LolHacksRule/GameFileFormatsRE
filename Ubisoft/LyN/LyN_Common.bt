@@ -19,6 +19,14 @@
 
 //Content here referencing hexes is byteswapped
 
+//TERMINOLOGY:
+/*
+ma*: Array
+mi: Int
+msb: u32 bool
+masz/msaz: char array
+*/
+
 #include "../../LHR/Common.bt"
 
 typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
@@ -57,6 +65,23 @@ typedef struct LyN_MathCurve //CRV
     {
     } Sample[samples];
     //uint32 sample[samples/2]; //?
+};
+
+typedef struct LyN_AuxSendDefine
+{
+    uint32 ver; //2
+    uint32 flags;
+    int32 level;
+    LyN_HandleKey ref;
+    if (ver < 2)
+        uint32 unk;
+};
+
+typedef struct LyN_SoundInsert
+{
+    uint16 ver;
+    uint16 type;
+    uint32 flag;
 };
 
 typedef enum <uint32>
