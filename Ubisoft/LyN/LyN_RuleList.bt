@@ -1,0 +1,56 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint16 magic; //0xC0DE
+    uint16 ver; //2 in TMNT
+    uint16 count;
+    struct
+    {
+        if (ver >= 3)
+        {
+            uint16 flags;
+            uint16 group;
+            uint16 rank;
+        }
+        LyN_ScriptVariableContainer container;
+        U32_StringEntry name;
+        if (ver < 3)
+        {
+            uint16 flags_legacy;
+            uint16 group_legacy;
+            uint16 rank_legacy;
+        }
+        uint32 inNodes;
+        LyN_ScriptNodeContainer inNode[inNodes];
+        uint32 debugInNodes[inNodes];
+        uint32 outNodes;
+        LyN_ScriptNodeContainer outNode[outNodes];
+        uint32 debugOutNodes[outNodes];
+        uint32 executableNodes;
+        LyN_ScriptNodeContainer executableNode[executableNodes];
+        uint32 debugExecutableNodes[executableNodes];
+        if (ver >= 2)
+        {
+            uint16 apply;
+            uint16 render;
+        }
+    } Rule[count]<optimize=false>;
+    uint32 ruleGroups;
+    uint32 ruleGroupFlag[ruleGroups];
+    LyN_HandleKey ruleFile;
+} LyN_ScriptRuleList_ERU;

@@ -29,6 +29,16 @@ masz/msaz: char array
 
 #include "../../LHR/Common.bt"
 
+typedef enum <uint32>
+{
+   LyN_ScriptVarType_Text = 65544,
+   LyN_ScriptVarType_Dialog = 131080,
+   LyN_ScriptVarType_Int32 = 1310720,
+   LyN_ScriptVarType_F32 = 1376256,
+   LyN_ScriptVarType_Vector = 1441792,
+   LyN_ScriptVarType_Modifier = 1703936,
+} LyN_ScriptVarType;
+
 typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
 
 typedef struct LyN_Int64 //Officially I64 but really it's two ints.
@@ -123,6 +133,10 @@ typedef enum <ubyte>
     LyN_TexPixelFormat_ACPR, //No clue, distance-based DXT1?
 } LyN_TexPixelFormat;
 
+typedef struct LyN_LoadingReference
+{
+};
+
 typedef struct LyN_ArchivedFileHeader
 {
     uint32 archivedFileLen;
@@ -142,7 +156,10 @@ typedef struct LyN_BinHeader //Appears on FF (Map) and FD (SFX) - is that right?
 
 typedef struct LyN_NewArchivedFileHeader
 {
-    uint32 unk[5];
+    uint32 fileSize;
+    uint32 refContainerSz;
+    uint32 unk; //Ver?
+    uint32 unk2;
     uint32 contentType;
     uint64 unk2;
 };
@@ -177,10 +194,24 @@ typedef struct LyN_Stock
         int32 firstInt;
     }
     int32 unk[4];
-    float unk[5];
-    uint32 obj[5];
-    if (magic == 0xC0DEC0DE) LyN_Reference modifier[5];
+    float unk2[5];
+    LyN_HandleKey obj[5];
+    if (magic == 0xC0DEC0DE) LyN_HandleKey modifier[5];
     Vector3_F32 vec[5];
+};
+
+typedef struct LyN_ScriptingSignal
+{
+    LyN_HandleKey functionList;
+    char name[64];
+    LyN_HandleKey object;
+    uint32 modifierRank;
+};
+
+typedef struct LyN_ScriptingTrigger
+{
+    LyN_ScriptingSignal scriptingSignal;
+    LyN_Stock stock;
 };
 
 typedef struct LyN_MathBox
@@ -191,6 +222,13 @@ typedef struct LyN_MathBox
     uint32 flags;
 };
 
+typedef struct LyN_ParticleConstraint
+{
+    uint32 type;
+    float f32Params[16];
+    //uint32 u32Params[16]; //Unused
+};
+
 typedef struct LyN_Modifier
 {
     uint32 flags;
@@ -198,46 +236,57 @@ typedef struct LyN_Modifier
     uint16 type;
     if (type == 0xFFFF)
     {
+        uint16 unk;
         uint16 id;
         uint16 modifierVer;
-        uint16 dmy2; //0xFF
         if (modifierVer)
         {
-            uint16 pfbOMods;
-            LyN_HandleKey pfbOMod[pfbOMods];
+            int16 pfbOMods;
+            //LyN_HandleKey prebOMod[pfbOMods]; //?
             uint32 pfbOModKeys;
-            uint32 pfbOModKey[pfbOModKeys];
+            //LyN_HandleKey prebOMod[pfbOModKeys];
         }
     }
 };
 
-typedef struct LyN_ScriptVariableContainer //in MDL, VERY WI
+typedef struct LyN_ScriptVariableContainer //VERY WIP
 {
     uint32 id; //0xC0DEC0DE OR 0xC0DEC0DF (Not in JD4) OR 0xC0DEC0EF (Not in RLand)
-    uint32 ver;
-    uint32 count;
+    
+    //This is the worst format.
+    //uint32 ver; //0 in TMNT?
+    //uint32 count;
+    
     if (id == 0xC0DEC0EF) //The standard one, used in EFG, EFC, EFL (Embedded), FFBin and MDL
     {
-        uint32 firstMdl;
-        uint32 firstInit;
-        uint32 firstCur;
+        uint32 ver;
+        uint32 count;
+        uint32 firstMdlOff;
+        uint32 firstInitOff;
+        uint32 firstCurOff;
     }
     else if (id == 0xC0DEC0DE) //EFC (RLand) and embedded in FFBin
     {
+        local uint ver = 0;
         uint32 firstMdl;
         uint32 firstInit;
         uint32 firstCur;
     }
-    //else if (id == 0xC0DEC0DF) //MDL or nested in EFC, EFG and EFL in RLand
+    else if (id == 0xC0DEC0DF) //MDL or nested in EFC, EFG and EFL in RLand, TMNT EFL
     {
-        uint32 dmy; //Atm hack this
+        uint32 firstPosInit;
+        uint32 count;
+        uint32 ver; //2 in TMNT
     }
     struct
     {
         uint32 idx;
-        uint32 type;
-        uint32 dtype;
-        uint32 dsz;
+        LyN_ScriptVarType type;
+        if (ver > 1)
+        {
+            uint32 dtype;
+            uint32 dsz;
+        }
         uint32 cpos;
         uint32 sz;
         uint32 szd[3];
@@ -245,60 +294,36 @@ typedef struct LyN_ScriptVariableContainer //in MDL, VERY WI
         uint16 flags;
         ubyte flagByte;
         ubyte saveStrIdx;
-        ubyte validIdx;
+        if (ver > 2) ubyte validIdx;
         uint32 dmy;
         char name[strLen[0]];
         char name2[strLen[1]];
         char sep[strLen[2]];
-        char name4[strLen[3]];
-        if (type == 3080192)
+        char comment[strLen[3]];
+        if (type == 3080192 || (ver > 1 && type == 5046272))
         {
-            if (ReadInt() == 3235823855)
+            if (ReadUInt() == 3235823855 || ReadUInt() == 3235823839)
                 struct LyN_ScriptVariableContainer nestedVarContainer;
             else
-                uint32 pad;
+                uint32 pad; //0xABCD6666
         }
     } Variable[count]<optimize=false>;
     uint32 mdlSz;
     uint32 initSz;
-    if (id != 3235823839 && ver != 0)
+    if (ver > 3)
     {
         uint32 initInstSz;
         uint32 initInstCurSz;
     }
-    if (initSz) //todo
+    else
+    {
+        local uint32 initInstSz = initSz;
+        local uint32 initInstCurSz = initSz;
+    }
+    if (mdlSz && initSz) //todo parse of this data, FOR EDA, MDL (MAYBE) YOU CAN UNCOMMENT, THE NESTED ONES DO NOT USE THIS IN MDL, engine officially checks for either of these but both work so :shrug:
     {
         byte mdl[mdlSz];
-        byte init[initSz];
-        if (id != 3235823839 && ver != 0) //Dumb
-        {
-            byte initInst[initInstSz];
-            byte initInstCurSz[initInstCurSzSz];
-        }
     }
-};
-
-typedef struct LyN_ScriptNodeContainer
-{
-    uint32 id;
-    uint32 tk; //todo
-};
-
-typedef struct LyN_ScriptProcessList //EFG, EFL and FFBin
-{
-    uint16 id; //0xABCD, in RGH no magic
-    uint16 ver; //1
-    uint16 count;
-    struct
-    {
-        LyN_ScriptVariableContainer ScriptVariableContainer<optimize=false>;
-        U32_StringEntry name;
-        uint16 flags;
-        uint32 returnType;
-        //uint32 params;
-        uint32 nodes;
-        LyN_ScriptNodeContainer ScriptNodeContainer[nodes]<optimize=false>; //The first two def aren't correct.
-    } Process[count]<optimize=false>;
 };
 
 typedef struct LyN_Matrix44
@@ -319,6 +344,21 @@ typedef struct LyN_TRMatrix
     LyN_Matrix44 R;
     Vector3_F32 T;
     uint32 f;
+};
+
+typedef struct LyN_MathSphere
+{
+    Vector3_F32 ctr;
+    float rad;
+    uint32 flags;
+};
+
+typedef struct LyN_MathCylinder
+{
+    float rad;
+    float height;
+    Vector3_F32 ctr;
+    uint32 flags;
 };
 
 typedef struct LyN_CullingRenderParam
@@ -381,11 +421,36 @@ typedef struct LyN_UVParamContainer
     ubyte plg;
     ubyte mods;
     LyN_UVModifier UVModifier[mods];
-    LyN_HandleKey srcFile;
+    LyN_HandleKey srcIndirTex;
     uint32 indirUVSrc;
+    if (ver > 9) uint32 indirUVAdd;
     Vector2_F32 displScl;
-    uint32 flags;
-    U32_Bool nrm;
+    if (ver >= 8) uint32 flags;
+    if (ver > 9) U32_Bool nrm;
+};
+
+typedef struct LyN_WiiRefraction
+{
+    uint32 ver; //7
+    LyN_HandleKey srcFile;
+    U32_Bool use;
+    if (ver >= 3) U32_Bool afterTrans;
+    if (ver >= 6) U32_Bool once;
+    Vector4_F32 refraction;
+    LyN_UVParamContainer uvParams;
+    U32_Bool constantAlpha;
+    if (ver >= 4)
+    {
+        uint32 alphaTestFct;
+        float alphaTestVal;
+        if (ver >= 5) U32_Bool blueAlpha;
+    }
+    if (ver >= 7)
+    {
+        U32_Bool attenuationDepth;
+        float attenuationDepthStart;
+        float attenuationDepthEnd;
+    }
 };
 
 typedef struct LyN_WiiBasicLevelDescription

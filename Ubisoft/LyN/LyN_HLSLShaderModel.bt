@@ -26,7 +26,7 @@ struct
             uint16 ver;
             uint16 techs;
             //WIP
-            while (ReadUInt16() > 65535)
+            while (ReadUShort() > 65535)
             struct
             {
                 U16_StringEntry name;

@@ -16,13 +16,22 @@
 struct
 {
     LittleEndian();
-    uint32 ver; //4
+    uint32 ver; //4, 2 in TMNT
     uint16 flags;
     uint32 constant;
     float shadowBias;
     uint32 rMsk;
-    uint32 mtrlType;
-    uint32 soundType;
+    if (ver > 1)
+    {
+        uint32 mtrlType;
+        uint32 soundType;
+    }
     uint16 templates;
-    U32_StringEntry template[templates]<optimize=false>;
+    struct
+    {
+        char class[64];
+        uint32 flags;
+        //TODO
+        if (class == "K3D_material_VertexLitTransparency") byte unk[152];// TMNT
+    } Template[templates]<optimize=false>;
 } LyN_AtomicMaterial;

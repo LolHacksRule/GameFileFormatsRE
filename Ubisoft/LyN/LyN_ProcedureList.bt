@@ -13,7 +13,34 @@
 
 #include "LyN_Common.bt"
 
-struct //VERY WIP, READS:
+typedef struct LyN_ScriptNodeContainer
+{
+    uint32 id;
+    uint32 tk; //todo
+};
+
+typedef struct LyN_ScriptProcessList
+{
+    if (ReadUShort() == 0xABCD)
+    {
+        uint16 id; //0xABCD
+        uint16 ver; //1
+    }
+    else local uint ver = 0; //in RGH and TMNT no magic
+    uint16 count;
+    struct
+    {
+        LyN_ScriptVariableContainer localVars<optimize=false>;
+        U32_StringEntry name;
+        uint16 flags;
+        LyN_ScriptVarType returnType;
+        if (ver == 1) uint32 params;
+        uint32 nodes;
+        LyN_ScriptNodeContainer scriptNodeContainer[nodes]<optimize=false>; //The first two def aren't correct.
+    } Process[count]<optimize=false>;
+};
+
+//VERY WIP, READS:
 //ACT_LIB (RGH)
 //DBG_LIB (RGH)
 //DYN_LIB (RGH)
@@ -29,20 +56,25 @@ struct //VERY WIP, READS:
 //UniverseTitle (JD4)
 //UniverseMedley (JD4)
 //UniverseOrganizer (JD4)
+
+struct
 {
     LittleEndian();
-    uint32 magic; //If C0DEC0DF do the RGH way, else the JD4 way
+    /*uint32 magic; //If C0DEC0DF do the RGH way, else the JD4 way
     if (magic == 0xC0DEC0DF)
     {
         uint32 unk[4];
-        
     }
     else
     {
         uint32 ver;
         uint32 dmy[8];
-    }
+    }*/
+    LyN_ScriptVariableContainer procVars;
     LyN_ScriptProcessList ScriptProcessList<optimize=false>;
     if (FTell() != EOF) //At EOF of EFG the handle key of this file is here.
         LyN_HandleKey globalFileRef;
-} LyN_ProcedureList_EFG_EFL;
+    
+    if (FTell() != EOF) LyN_Reference ref; //For RLand
+    if (FTell() != EOF) LyN_Reference eflRef[4]; //For RLand
+} LyN_ProcedureList_EFG_EFL; //Also in FFBin
