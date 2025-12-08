@@ -15,16 +15,18 @@
 
 struct
 {
-    LittleEndian();
-    uint16 flags; //1
-    uint16 pad;
-    uint16 ver; //4
-    if (ver <= 4)
+    uint32 magic;
+    uint32 strings;
+    struct
     {
-        uint16 subRefs;
-        LyN_HandleKey ref[subRefs];
-    }
-    //Ok RLand doesn't end here? Uhhhhh
-    while (FTell() != EOF)
-        LyN_Reference ref2;
-} LyN_Material;
+        char str[64];
+    } StringTable[strings];
+    uint32 specFlags;
+    struct
+    {
+        char name[64];
+        char unk[252];
+        uint32 unk2;
+        uint32 unk3;
+    } SpecFlag[specFlags]<optimize=false>;
+} LyN_SpecFlags_CFG;

@@ -1,0 +1,54 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../LyN/LyN_Common.bt"
+
+typedef struct LyN_MagmaElementIndex
+{
+    int32 id;
+    uint32 tableIndex;
+};
+
+typedef struct LyN_MagmaDependency
+{
+    LyN_HandleKey key;
+    char name[64];
+};
+
+struct
+{
+    LittleEndian();
+    uint16 ver; //4
+    uint32 plats; //2
+    uint32 langs; //10
+    char name[64]; //MGB file
+    LyN_MagmaElementIndex platformIdx[plats];
+    LyN_MagmaElementIndex languageIdx[langs];
+    LyN_HandleKey tableHandleKey[plats*langs];
+    uint32 depTextures;
+    LyN_MagmaDependency depTexture[depTextures];
+    uint32 depFonts;
+    LyN_MagmaDependency depFont[depFonts];
+    uint32 depPackages;
+    LyN_MagmaDependency depPackage[depPackages];
+    uint32 depAlphaTextures;
+    LyN_MagmaDependency depAlphaTexture[depAlphaTextures];
+    /*struct
+    {
+        int32 idx;
+        uint32 unk2;
+    } Element[plats];
+    LyN_HandleKey element[elements+unk3];*/
+    
+    if (ver >= 3) U32_Bool localize;
+} RGH_MagmaFile_FFBin_MGF;

@@ -1,0 +1,44 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct
+{
+    LittleEndian();
+    uint16 magic; //0xC0DE
+    uint16 ver; //3 in RGH, 4 in JD4
+    Vector2_F32 scale; //Normally 1x1
+    uint16 letters;
+    uint16 hashChars;
+    struct
+    {
+        uint16 key; //Are these wchar_t?
+        uint16 val;
+    } HashChar[hashChars];
+    struct
+    {
+        uint16 idx;
+        float u[2];
+        float v[2];
+        if (ver >= 3)
+        {
+            float paddingLeft;
+            float paddingTop;
+            float paddingRight;
+            float paddingBottom;
+        }
+    } Letter[letters]<optimize=false>;
+} LyN_FontDescriptor;

@@ -1,0 +1,74 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+local uint isGTX <hidden=true> = 0;
+
+#include "LyN_Common.bt"
+
+struct
+{
+    LittleEndian();
+    uint32 ver;
+    LyN_TexPixelFormat pixelFormat;
+    ubyte levels;
+    ubyte flags; //Would flags & 8 be GTX?
+    ubyte type;
+    //In BIN fsr the hk and padding is excluded, the version makes no difference either
+    if (ver >= 2 && ReadUShort() == 0 || flags & 8) //Would flags & 8 be GTX? It seems to be consistent in TDT samples from RLand patch?
+    {
+        FSkip(6); //Check for GTX
+        if (ReadUInt() == 846751303)
+        {
+            isGTX = 1;
+            FSkip(-6);
+            uint16 unk;
+        }
+        else
+        {
+            FSkip(-6);
+            LyN_HandleKey thisKey;
+        }
+    }
+    else
+    {
+        if (ReadUShort() == 0) //Hack for texture in bin, DO NOT EXPECT IT TO ALWAYS WORK
+            ubyte pad;
+    }
+    if (isGTX)
+    {
+        BigEndian();
+        uint32 size;
+        byte gtx[size];
+        break;
+    }
+    else
+    {
+        struct
+        {
+            struct
+            {
+                //ubyte pad;
+                uint16 width;
+                uint16 height;
+                //uint16 tex[8*(width*height/2)];
+                //switch (pixelFormat)
+                {
+                    //case 0:
+                    //case 4:
+                    //case 5:
+                    //case 6: uint32 texData
+                }
+            } Level[levels];
+        } Texture[(flags & 1) ? 6 : 1]<optimize=false>;
+    }
+} LyN_TextureData_TDT;

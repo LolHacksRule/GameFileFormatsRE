@@ -25,76 +25,110 @@ typedef struct LyN_WorldView
     uint32 flags;
     if (ver > 4) uint32 drawGlobalMask; //This is left in the retail engine.
     if (ver >= 6) uint32 device;
-    if (ver <= 5)
+    if (ver < 5)
     {
         LyN_Matrix44 mtx44_legacy[2];
     }
     if (ver == 1) //This is left in the retail engine.
     {
-        LyN_Matrix44 mtx44_veryLegacy[4];
+        LyN_Matrix44 mtx44_veryLegacy[3];
         uint32 unk[4];
     }
 };
 
-typedef struct LyN_SectorContainer
+typedef struct LyN_SectorWorldPortal
 {
-    uint32 id;
-    uint32 usedSectors;
-    struct
+    char name[64];
+    if (ver >= 12) uint32 nameId;
+    uint32 sector[2];
+    uint32 flags;
+    Vector3_F32 vertex[4];
+};
+
+typedef struct LyN_Sector
+{
+    char name[64];
+    uint32 flags;
+    if ((isLegacySector && ver > 7) || !isLegacySector)
     {
-        uint16 idx;
-        char name[64];
-        uint32 flags;
         ubyte level;
         ubyte hie;
-        ubyte volType;
-        float meshHeight;
-        if (hie == 1)
+    }
+    if ((isLegacySector && ver > 8) || !isLegacySector) ubyte volType;
+    else local uint volType = 0;
+    if ((isLegacySector && ver > 11) || !isLegacySector) float meshHeight;
+    if ((ver > 9 && hie == 1) || !isLegacySector)
+    {
+        struct
         {
-            struct
-            {
-                Vector2_F32 subSectorSize;
-                uint32 worldAlign;
-            } GridHierarchy;
-        }
-        else if (hie == 2)
-        {
-            float kdMinWidth;
-        }
-        uint32 visibles;
-        uint32 visible[visibles];
-        uint32 aFrms;
-        uint32 aFrm[aFrms];
-        if (volType)
-        {
-            if (volType == 1)
-                Vector3_F32 volV3f[8];
-            else if (volType == 2)
-            {
-                LyN_MathBox box;
-                LyN_Matrix44 mtx44;
-            }
-        }
-        else
+            Vector2_F32 subSectorSize;
+            uint32 worldAlign;
+        } GridHierarchy;
+    }
+    else if ((ver >= 10 && hie == 2) || !isLegacySector) float kdMinWidth;
+    uint32 visibles;
+    uint32 visible[visibles];
+    uint32 aFrms;
+    uint32 aFrm[aFrms];
+    //if (isLegacySector) uint32 unk //TODO
+    if (volType)
+    {
+        if (volType == 1)
+            Vector3_F32 volV3f[8];
+        else if (volType == 2)
         {
             LyN_MathBox box;
+            LyN_Matrix44 mtx44;
         }
-    } UsedSector[usedSectors];
-    uint32 portals;
-    struct
+    }
+    else LyN_MathBox box;
+};
+
+typedef struct LyN_SectorContainer
+{
+    local uint isLegacySector = -1;
+    uint32 ver; //13 in RGH
+    if (ver >= 12)
     {
-        char name[64];        
-        uint32 sector[2];
-        uint32 flags;
-        Vector3_F32 vertex[4];
-    } Portal[portals];
+        isLegacySector = 0;
+        uint32 usedSectors;
+        struct UsedSector
+        {
+            uint16 idx;
+            LyN_Sector sector;
+        } usedSector[usedSectors];
+        uint32 portals;
+        LyN_SectorWorldPortal portal[portals]<optimize=false>;
+    }
+    else
+    {
+        isLegacySector = 1;
+        if (ver == 3) uint32 unk;
+        uint32 chk;
+        if (chk < 256) uint32 maxSectors;
+        else local uint maxSectors = 256;
+        LyN_Sector usedSector[maxSectors];
+        if (ver > 5)
+        {
+            uint32 portals;
+            LyN_SectorWorldPortal portal[portals]<optimize=false>;
+        }
+    }
 };
 
 typedef struct LyN_WorldDefineHead
 {
     uint32 magic; //0xC0DEC0DE
-    uint32 ver; //2 (RGH), 4 (JD4), 6 (RLand)
+    uint32 ver; //2 (RGH), 4 (JD4/JDW2), 6 (RLand)
     LyN_HandleKey srcFile; //?
+};
+
+typedef struct LyN_LegacySnapGuide
+{
+    Vector3_F32 pos[2];
+    RGBA_UByte color;
+    if (WorldDefineHead.ver > 1) uint32 flags;
+    if (WorldDefineHead.ver > 2) float width;
 };
 
 struct //WIP!
@@ -117,8 +151,40 @@ struct //WIP!
     LyN_RenderParam RenderParam<optimize=false>;
     LyN_SectorContainer SectorContainer<optimize=false>;
     if (WorldDefineHead.ver > 3) LyN_GuideList GuideList<optimize=false>; //v3+ only
+    else
+    {
+        uint32 snapGuides;
+        LyN_LegacySnapGuide snapGuide[snapGuides];
+    }
     //Idk, according to BIN these end with handle references
-    //LyN_HandleKey modifier<optimize=false>;
+    LyN_HandleKey modifier<optimize=false>; //Seems to be srcFile + 1
+    
+    //The rest idk
+    /*uint32 layerVersion; //1 in JD4?
+    struct
+    {
+        if (layerVersion == 5) //Not in RGH
+        {
+            uint16 ver;
+            uint16 layers;
+            struct
+            {
+                char name[64];
+                uint32 flags;
+                RGBA_UByte color;
+                uint32 id;
+            } Layer[layers];
+            char layerWorld[64];
+            uint32 flags;
+            RGBA_UByte color;
+            uint32 id;
+        }
+        else
+        {
+            uint16 legacyVer;
+            //if (
+        }
+    } LayerContainer;*/
 
     //LyN_HandleKey refs[someCount]<optimize=false>;
 

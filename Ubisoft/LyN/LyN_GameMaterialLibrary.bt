@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+
+struct //ONLY TESTED ON TMNT
+{
+    LittleEndian();
+    uint32 mats;
+    uint32 ver; //1
+    struct
+    {
+        uint32 id;
+        float slide;
+        float rbnd;
+        uint64 dmy;
+        uint32 snd;
+        uint32 param[2];
+        uint32 cross;
+        uint32 bckSkip;
+        float dynFr;
+        float staFr;
+        float rest;
+        float dynFrV;
+        float staFrV;
+        Vector3_F32 anistropy;
+        uint32 flags;
+        uint32 fricCombineMode;
+        uint32 restCombineMode;
+        char name[64];
+        uint32 eFlags;
+        RGBA_UByte color;
+    } GameMaterial[mats]<optimize=false>;
+} LyN_GameMaterialLibrary_GML;

@@ -22,6 +22,7 @@ struct //Appears in MDL and FFBin, VERY WIP
     LyN_HandleKey initFunc[5];
     char filename[128];
     char mdlFactory[128];
+    //In MDL BIN this is different idk why
     char headerVariables[128];
     char structName[128];
 } LyN_ScriptModel_MDL;

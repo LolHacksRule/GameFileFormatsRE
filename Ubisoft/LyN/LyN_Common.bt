@@ -36,7 +36,7 @@ typedef enum <uint32>
    LyN_ScriptVarType_Int32 = 1310720,
    LyN_ScriptVarType_F32 = 1376256,
    LyN_ScriptVarType_Vector = 1441792,
-   LyN_ScriptVarType_Modifier = 1703936,
+   LyN_ScriptVarType_Modifier = 1703936
 } LyN_ScriptVarType;
 
 typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
@@ -239,7 +239,7 @@ typedef struct LyN_Modifier
         uint16 unk;
         uint16 id;
         uint16 modifierVer;
-        if (modifierVer)
+        if (modifierVer > 2)
         {
             int16 pfbOMods;
             //LyN_HandleKey prebOMod[pfbOMods]; //?
@@ -287,15 +287,15 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
             uint32 dtype;
             uint32 dsz;
         }
-        uint32 cpos;
-        uint32 sz;
+        uint32 cpos; //Comment this
+        uint32 sz; //or this for MDL in BIN
         uint32 szd[3];
         uint32 strLen[4];
         uint16 flags;
         ubyte flagByte;
         ubyte saveStrIdx;
         if (ver > 2) ubyte validIdx;
-        uint32 dmy;
+        uint32 fields;
         char name[strLen[0]];
         char name2[strLen[1]];
         char sep[strLen[2]];
@@ -364,7 +364,7 @@ typedef struct LyN_MathCylinder
 typedef struct LyN_CullingRenderParam
 {
     uint32 ver; //5 in JD4
-    float camFarPln;
+    if (ver >= 3) float camFarPln;
     float camNearPln;
     float audoFarCullDistRef;
     float cullDist;
@@ -373,13 +373,20 @@ typedef struct LyN_CullingRenderParam
     ubyte pad[2];
     float spgCutLodDist;
     float spgFarLodDist;
-    float shadowFarMin;
-    float shadowFarMax;
+    if (ver >= 2)
+    {
+        float shadowFarMin;
+        float shadowFarMax;
+    }
+    if (ver == 4)
+    {
+        float unk[2];
+    }
 };
 
 typedef struct LyN_FogRenderParam
 {
-    uint32 id; //1 in JD4 and prob RGH
+    uint32 id; //1 in JD4 and RGH
     uint32 flags;
     uint32 clr;
     float start;
@@ -399,11 +406,35 @@ typedef struct LyN_FogRenderParam
 
 typedef struct LyN_WiiGlowRenderParam
 {
-    uint32 id; //2 in JD4
+    uint32 ver; //2 in JD4 and RGH
     U32_Bool enable;
-    U32_Bool instantFactor;
+    if (ver >= 2) U32_Bool instantFactor;
     float blur;
     float glow;
+};
+
+typedef struct LyN_UVModifier_TileAnimation
+{
+    uint32 ver;
+    uint16 cols;
+    uint16 rows;
+    float speed;
+};
+
+typedef struct LyN_UVModifier_Translation
+{
+    uint32 ver;
+    float du;
+    float dv;
+    uint32 flags;
+};
+
+typedef struct LyN_UVModifier_Scale
+{
+    uint32 ver;
+    float su;
+    float sv;
+    Vector2_F32 pivot;
 };
 
 typedef struct LyN_UVModifier
@@ -411,6 +442,12 @@ typedef struct LyN_UVModifier
     char name[64];
     uint32 dmy; //1
     U32_Bool enable; //1
+    switch (name)
+    {
+        case "K3D_UVModifier_TileAnimation": LyN_UVModifier_TileAnimation UVModifier_TileAnimation; break;
+        case "K3D_UVModifier_Translation": LyN_UVModifier_Translation UVModifier_Translation; break;
+        case "K3D_UVModifier_Scale": LyN_UVModifier_Scale UVModifier_Scale; break;
+    }
 };
 
 typedef struct LyN_UVParamContainer
@@ -420,13 +457,16 @@ typedef struct LyN_UVParamContainer
     ubyte pln;
     ubyte plg;
     ubyte mods;
-    LyN_UVModifier UVModifier[mods];
-    LyN_HandleKey srcIndirTex;
-    uint32 indirUVSrc;
-    if (ver > 9) uint32 indirUVAdd;
-    Vector2_F32 displScl;
-    if (ver >= 8) uint32 flags;
-    if (ver > 9) U32_Bool nrm;
+    LyN_UVModifier UVModifier[mods]<optimize=false>;
+    if (ver >= 7)
+    {
+        LyN_HandleKey srcIndirTex;
+        uint32 indirUVSrc;
+        if (ver > 9) uint32 indirUVAdd;
+        Vector2_F32 displScl;
+        if (ver >= 8) uint32 flags;
+        if (ver > 9) U32_Bool nrm;
+    }
 };
 
 typedef struct LyN_WiiRefraction
@@ -465,41 +505,79 @@ typedef struct LyN_WiiBasicLevelDescription
     ubyte alphaThr;
 };
 
+typedef struct LyN_UVDefine
+{
+    float u;
+    float v;
+};
+
 typedef struct LyN_WiiMultiTexture
 {
-    uint32 ver; //11
+    uint32 ver; //11, 9 in RGHPC
     uint32 levels;
     uint32 rMask;
     uint32 flags;
     float zBias;
-    LyN_WiiBasicLevelDescription WiiBasicLevelDescription[levels];
-    float unlit;
+    struct
+    {
+        LyN_WiiBasicLevelDescription basicLevelDesc;
+        if (ver >= 10) float unlit;
+    } Level[levels]<optimize=true>;
+};
+
+typedef struct LyN_WiiSimpleTexture
+{
+    uint32 ver; //3
+    LyN_WiiMultiTexture mTex;
+};
+
+typedef struct LyN_WiiGlow
+{
+    uint32 ver; //4
+    uint32 template;
+    LyN_WiiMultiTexture mTex;
+};
+
+typedef struct LyN_SimpleSpriteMaterial
+{
+    uint32 ver; //7
+    LyN_HandleKey srcFile;
+    U32_Bool diffuse;
+    RGBA_F32 difffuseColor;
+    U32_Bool diffuseColormult;
+    LyN_UVParamContainer uvParams;
+    int32 blend;
+    LyN_HandleKey sepAlphaSrcFile;
+    if (ver > 6) U32_Bool sepAlpha;
 };
 
 typedef struct LyN_CartoonRenderParam
 {
-    uint32 ver; //2 in JD4
+    uint32 ver; //2 in JD4 and RGH
     uint32 levels;
     RGBA_UByte clr[6]<optimize=false>;
     float lim[5];
-    float lightOff;
+    if (ver > 1) float lightOff;
 };
 
 typedef struct LyN_WiiRenderParam
 {
-    uint32 id; //1 in JD4 and prob RGH
-    uint32 multiplier;
+    uint32 ver; //1 in JD4 and RGH
+    if (ver <= 1) uint32 multiplier;
 };
 
 typedef struct LyN_AORenderParam
 {
-    uint32 id; //3 in JD4
+    uint32 ver; //3 in JD4
     RGBA_UByte clr;
     float factor;
-    uint32 rays;
-    float rayLength;
-    float angleFct;
-    uint32 flags;
+    if (ver >= 2)
+    {
+        uint32 rays;
+        float rayLength;
+        float angleFct;
+    }
+    if (ver >= 3) uint32 flags;
 };
 
 typedef struct LyN_FakeLightingRenderParam
@@ -542,34 +620,67 @@ typedef struct LyN_RenderParam
             ubyte lightMaskOrLGCY;
         }
         if (ver >= 9) float lightCoef[ver >= 12 ? 16 : 8]; //16 in JD4, 8 in RGH? Don't remember
-        if (ver >= 5) LyN_CullingRenderParam CullParam; LyN_FogRenderParam FogParam; LyN_WiiGlowRenderParam WiiGlowParam; LyN_CartoonRenderParam CartoonParam; LyN_WiiRenderParam WiiRenderParam; LyN_AORenderParam AORenderParam; LyN_FakeLightingRenderParam FakeLightingRenderParam;
+        if (ver >= 5)
+        {
+            if (ReadUInt() >= 5) LyN_CullingRenderParam CullParam;
+            LyN_FogRenderParam FogParam;
+            LyN_WiiGlowRenderParam WiiGlowParam;
+            LyN_CartoonRenderParam CartoonParam;
+            LyN_WiiRenderParam WiiRenderParam;
+            //IN RGH THESE AREN'T HERE
+            if (ver >= 10)
+            {
+                LyN_AORenderParam AORenderParam;
+                LyN_FakeLightingRenderParam FakeLightingRenderParam;
+            }
+        }
         //if (ver >= 5) CullParam;
     }
     else //Legacy params
     {
         uint32 unk[8];
-        uint32 lgcyVer;
+        uint32 lgcyBaseVer;
         if (lgcyVer >= 2)
         {
             uint32 unk2[2];
-            if (ver >= 3) uint32 unk3;
-            if (ver >= 6) uint32 unk4;
-            if (ver >= 7) uint32 unk5;
-            if (ver >= 5) uint32 unk6;
-            if (ver >= 12) uint32 unk7;
-            if (ver >= 15) uint32 unk8;
-            if (ver >= 10)
+            if (lgcyBaseVer >= 3) uint32 unk3;
+            if (lgcyBaseVer >= 6) uint32 unk4;
+            if (lgcyBaseVer >= 7) uint32 unk5;
+            if (lgcyBaseVer >= 5) uint32 unk6;
+            if (lgcyBaseVer >= 12) uint32 unk7;
+            if (lgcyBaseVer >= 15) uint32 unk8;
+            if (lgcyBaseVer >= 10)
             {
                 uint32 unk9[7];
-                if (ver >= 11) uint32 unk10[3];
+                if (lgcyBaseVer >= 11) uint32 unk10[3];
                 uint32 unk11[3];
             }
         }
-        if (lgcyVer >= 4)
+        if (lgcyBaseVer >= 4)
         {
             uint32 magic;
-            uint32 newVer;
+            if (magic == 0xC0DEC0DE)
+            {
+                uint32 lgcyVer;
+                uint32 unk12;
+            }
+            else local uint lgcyVer = 0;
+            if (lgcyVer < 2) uint32 unk13;
+            if (lgcyVer)
+            {
+                ubyte unk14[2];
+                uint32 unk15[2];
+                if (lgcyVer >= 3) uint32 unk16;
+            } 
         }
+        if (lgcyBaseVer >= 8)
+        {
+            if (lgcyBaseVer >= 9) uint32 unk17;
+            uint32 unk18[6];
+            uint32 unk19[9];
+        }
+        if (lgcyBaseVer >= 13) uint32 unk20[2];
+        if (lgcyBaseVer >= 14) uint32 unk21[2];
     }
 };
 

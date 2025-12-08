@@ -1,0 +1,75 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+typedef struct LyN_TextDefine
+{
+    uint32 id;
+    uint32 off;
+    if (ver >= 1) float delay;
+    if (ver >= 2) uint32 type;
+    LyN_HandleKey sound;
+    LyN_HandleKey lipsync;
+    LyN_HandleKey expr;
+    if (enableTimeStamps || ReadUInt64() == 0) //Shameful hack, expected to only work on TMNT
+        enableTimeStamps = 1;
+    if (enableTimeStamps) FILETIME lastUpd; //COMMENT THIS UNLESS NEEDED, according to the read function this is here if it exists, there's no real way to tell sadly. In TMNT it's here, in RGH and JD4 it's not
+    FPos = FTell();
+    /*if (off != -1)
+    {
+        FSeek(textContainerOff+off*(ver >= 3 ? 2 : 1));
+        if (ver >= 3) wstring str; else string str;
+    }*/
+    if (DEBUG_PRINT)
+    {
+        Printf("--------STRING DEFINE (%i)------------\n", i);
+        Printf("ID: 0x%LX\nOffset: %i\n", id, off);
+        if (ver >= 1) Printf("Delay: %f\n", delay);
+        if (ver >= 2) Printf("Type: %i\n", type);
+        Printf("Sound: 0x%LX\n", sound);
+        Printf("Lipsync: 0x%LX\n", lipsync);
+        Printf("Expression: 0x%LX\n", expr);
+        //if (off != -1) Printf("Text: %s\n", str);
+        if (enableTimeStamps) Printf("Last Update: %s\n", FileTimeToString(lastUpd));
+        Printf("--------STRING DEFINE END--------\n");
+        i++;
+    }
+    FSeek(FPos);
+};
+
+local uint DEBUG_PRINT <hidden=true> = 1;
+local uint enableTimeStamps <hidden=true> = 0;
+
+struct
+{
+    uint32 ver; //4 in JD4 and TMNT
+    uint32 textStrings;
+    LyN_TextDefine textDefine[textStrings]<optimize=false>;
+    uint32 textContainerSize;
+    /*FPos = FTell();
+    //while (sizeof (text) > textContainerSize * (ver >= 3 ? 2 : 1))
+    struct
+    {
+        if (FPos + textDefine[i].off != -1 && ReadUByte() != 0)
+        {
+            //FSeek(FPos + textDefine[i].off * (ver >= 3 ? 2 : 1));
+            if (ver >= 3) wstring str;
+            else string str;
+            Printf("%i: %s\n", i, str);
+        }
+        i++;
+    } text[textStrings]<optimize=false>;*/
+    //if (ver >= 3) wchar_t text[size];
+    //else char text[size];
+} LyN_TextList_TXL; //Found in 93BIN (RGH PC), 69BIN (JD4), 16BIN (RGH WII)

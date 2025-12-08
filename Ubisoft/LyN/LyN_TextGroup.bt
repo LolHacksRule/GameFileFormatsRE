@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct //TESTED FROM TMNT
+{
+    uint32 ver; //6 in JD4
+    uint32 textStrings;
+    uint16 flags;
+    uint16 group;
+    struct
+    {
+        uint32 id;
+        LyN_HandleKey owner;
+        LyN_HandleKey trg;
+        ubyte prio;
+        ubyte facial;
+        ubyte anim;
+        ubyte pad;
+        if (ver >= 6) ubyte subTitle;
+        char name[64];
+        time_t create[2];
+        time_t upd[2];
+        struct
+        {
+            uint32 commentSz;
+            char comment[commentSz];
+        } Comment[20]<optimize=false>;
+        uint32 oasisDlgId;
+        uint32 oasisLineId;
+        char oasisName[64];
+        RGBA_UByte color;
+        if (ver >= 6) uint32 noExp;
+    } TextString[textStrings]<optimize=false>;
+} LyN_TextGroup_TXG;

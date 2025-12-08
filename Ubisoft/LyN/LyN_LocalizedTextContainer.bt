@@ -17,7 +17,7 @@ struct
 {
     LittleEndian();
     uint32 binSize;
-    while (FPos != EOF) //hack
+    while (FPos != EOF && FTell() != binSize) //hack
     {
         struct
         {
@@ -36,7 +36,7 @@ struct
                     LyN_HandleKey sfx;
                     LyN_HandleKey lip;
                     LyN_HandleKey expr;
-                    //uint32 lud[2];
+                    //FILETIME lud;
                 } Text[texts];
                 uint32 textSize; //2 * this from here is the offset to the next container.
                 byte textChunk[textSize*2];
@@ -44,4 +44,4 @@ struct
         } LyN_LocalizedTextContainer;
         FPos = FTell();
     }
-} LyN_LocalizedText_69F1Bin; //69/F1
+} LyN_LocalizedTextContainer_69F1_EA_RGHPC93Bin; //69/F1/RGHPC93,JD4UEA

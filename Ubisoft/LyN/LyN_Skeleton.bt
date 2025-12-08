@@ -16,15 +16,13 @@
 struct
 {
     LittleEndian();
-    uint16 flags; //1
-    uint16 pad;
-    uint16 ver; //4
-    if (ver <= 4)
+    LyN_Modifier mdf;
+    uint32 flags;
+    if (mdf.ver > 1) LyN_MathBox box;
+    if (mdf.ver > 2)
     {
-        uint16 subRefs;
-        LyN_HandleKey ref[subRefs];
+        uint32 lodFlags;
+        uint32 lodThresholds;
+        uint32 lodThreshold[lodThresholds];
     }
-    //Ok RLand doesn't end here? Uhhhhh
-    while (FTell() != EOF)
-        LyN_Reference ref2;
-} LyN_Material;
+} LyN_Skeleton_SKL;
