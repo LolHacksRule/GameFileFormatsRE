@@ -1,0 +1,37 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+LittleEndian();
+
+struct
+{
+    LyN_Modifier mdf;
+    uint32 nodes;
+    struct
+    {
+        LyN_HandleKey obj;
+        uint32 links;
+        struct
+        {
+            uint32 next;
+            uint32 capacitiesInit;
+        } Link[links];
+    } Node[nodes]<optimize=false>;
+    uint32 mergeID;
+    uint32 pad;
+    if (mdf.ver > 1) uint32 designInit;
+    if (mdf.ver > 1 && FTell() != EOF && ReadUByte()) uint32 color;
+    if (mdf.ver > 2) uint32 rootNode;
+} LyN_Network_NET;

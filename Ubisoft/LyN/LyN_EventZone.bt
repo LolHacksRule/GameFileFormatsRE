@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+LittleEndian();
+
+struct
+{
+    LyN_Modifier mod; //Ver 5 in JD4, 4 in RGH
+    if (mod.ver > 1) uint32 snp;
+    ubyte type;
+    ubyte flags[(mod.ver < 5 && mod.ver > 3) ? 2 : 1];
+    uint32 design;
+    if (mod.ver > 2 && ReadUByte()) RGBA_UByte color;
+    switch (type)
+    {
+        case 0: LyN_MathSphere mathSphere; break;
+        case 1:
+        case 2: LyN_MathBox box; break;
+        case 3: LyN_MathConvexBox box; break;
+    }
+    uint32 mergeID;
+} LyN_EventZoneDefinition;

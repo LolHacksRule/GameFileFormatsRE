@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+LittleEndian();
+
+struct
+{
+    LyN_Modifier mod;
+    uint32 elements;
+    struct
+    {
+        LyN_HandleKey MGF;
+        uint32 unk;
+    } Element[elements];
+} LyN_Magma_MGM;

@@ -39,6 +39,82 @@ typedef enum <uint32>
    LyN_ScriptVarType_Modifier = 1703936
 } LyN_ScriptVarType;
 
+typedef enum <uint16>
+{
+   LyN_ModifierType_ScriptInstance = 0,
+   LyN_ModifierType_DesignStruct,
+   LyN_ModifierType_Message,
+   LyN_ModifierType_Visual,
+   LyN_ModifierType_Group,
+   LyN_ModifierType_Network,
+   LyN_ModifierType_Skeleton,
+   LyN_ModifierType_ObjectTable,
+   LyN_ModifierType_TextList,
+   LyN_ModifierType_Light,
+   LyN_ModifierType_Particle,
+   LyN_ModifierType_Flexi,
+   LyN_ModifierType_Interkinetic3Points,
+   LyN_ModifierType_AnimEvents,
+   LyN_ModifierType_Animation,
+   LyN_ModifierType_Actions,
+   LyN_ModifierType_LookAt,
+   //Dummy?
+   LyN_ModifierType_EffectMiscGfx = 18,
+   LyN_ModifierType_AnimEventZoneDefinition,
+   LyN_ModifierType_CollisionMapBounds,
+   LyN_ModifierType_DynamicPhysics,
+   LyN_ModifierType_SoundBank,
+   LyN_ModifierType_SFXArea,
+   LyN_ModifierType_ViewPoint,
+   LyN_ModifierType_NOX,
+   LyN_ModifierType_Constraint,
+   LyN_ModifierType_AnimLipSync,
+   LyN_ModifierType_GlobalGizmo,
+   LyN_ModifierType_AfterGFX,
+   
+   LyN_ModifierType_LocalGizmo = 31,
+   
+   LyN_ModifierType_VegationGFX = 33,
+   
+   LyN_ModifierType_OccluderGFX = 35,
+   LyN_ModifierType_GlobalZoneGFX,
+   LyN_ModifierType_SavePosition,
+   LyN_ModifierType_Water,
+   LyN_ModifierType_TrailGenerator,
+   LyN_ModifierType_RenderParameters,
+   LyN_ModifierType_SoundLinker,
+   LyN_ModifierType_VisualFarm,
+   
+   LyN_ModifierType_Grid = 44,
+   
+   LyN_ModifierType_BackgroundVideo = 46,
+   
+   LyN_ModifierType_Magma = 48,
+   LyN_ModifierType_SharpShadow,
+   
+   LyN_ModifierType_GraphicBV = 53,
+   
+   LyN_ModifierType_Fire = 56,
+   LyN_ModifierType_SoundPrefetch,
+   
+   LyN_ModifierType_Camera = 61,
+   LyN_ModifierType_Rope,
+   LyN_ModifierType_InstanceList,
+   
+   LyN_ModifierType_LocalRenderParameters = 65,
+   LyN_ModifierType_PFBInstanceParameters,
+   LyN_ModifierType_WiresGenerator,
+   LyN_ModifierType_MotionPhysics,
+   
+   LyN_ModifierType_OutlineGeometryGFX = 71,
+   
+   LyN_ModifierType_FluidGFX = 73,
+   
+   LyN_ModifierType_FakeLight = 75,
+   LyN_ModifierType_MIDIPartitionsBank,
+   LyN_ModifierType_JDLiveMoveBank
+} LyN_ModifierType;
+
 typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
 
 typedef struct LyN_Int64 //Officially I64 but really it's two ints.
@@ -187,13 +263,13 @@ typedef struct LyN_ThreeDShadowTexture
 
 typedef struct LyN_Stock
 {
-    int32 magic; //0xC0DEC0DE
+    uint32 magic; //0xC0DEC0DE
     if (magic == 0xC0DEC0DE)
     {
-        int32 ver;
-        int32 firstInt;
+        uint32 ver;
+        uint32 firstInt;
     }
-    int32 unk[4];
+    uint32 unk[4]; //Read as u32 despite being i32
     float unk2[5];
     LyN_HandleKey obj[5];
     if (magic == 0xC0DEC0DE) LyN_HandleKey modifier[5];
@@ -219,7 +295,7 @@ typedef struct LyN_MathBox
     Vector3_F32 min;
     Vector3_F32 max;
     Vector3_F32 ctr;
-    uint32 flags;
+    uint32 flags; //TEMP, ON WORLD COMMENT THIS OUT
 };
 
 typedef struct LyN_ParticleConstraint
@@ -233,10 +309,10 @@ typedef struct LyN_Modifier
 {
     uint32 flags;
     uint16 ver;
-    uint16 type;
-    if (type == 0xFFFF)
+    uint16 typeID;
+    if (typeID == 0xFFFF)
     {
-        uint16 unk;
+        LyN_ModifierType type;
         uint16 id;
         uint16 modifierVer;
         if (modifierVer > 2)
@@ -285,7 +361,7 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         if (ver > 1)
         {
             uint32 dtype;
-            uint32 dsz;
+            uint32 dsz; //TODO check this
         }
         uint32 cpos; //Comment this
         uint32 sz; //or this for MDL in BIN
@@ -348,8 +424,14 @@ typedef struct LyN_TRMatrix
 
 typedef struct LyN_MathSphere
 {
-    Vector3_F32 ctr;
     float rad;
+    Vector3_F32 ctr;
+    uint32 flags; //TODO check this
+};
+
+typedef struct LyN_MathConvexBox
+{
+    Vector3_F32 pt[8];
     uint32 flags;
 };
 
@@ -595,6 +677,7 @@ typedef struct LyN_GuideList
     {
         uint32 points;
         Vector3_F32 point[points];
+        //TODO check these
         RGBA_UByte color;
         uint32 flags;
         float width;

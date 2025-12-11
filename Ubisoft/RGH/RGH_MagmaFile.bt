@@ -31,7 +31,7 @@ struct
     uint16 ver; //4
     uint32 plats; //2
     uint32 langs; //10
-    char name[64]; //MGB file
+    char name[64]; //MGB file and MGM file
     LyN_MagmaElementIndex platformIdx[plats];
     LyN_MagmaElementIndex languageIdx[langs];
     LyN_HandleKey tableHandleKey[plats*langs];
