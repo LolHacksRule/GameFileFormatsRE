@@ -1,0 +1,30 @@
+get BINSZ LONG
+do
+   get HANDLEKEY LONG
+   get SIZE long
+   savepos OFFSET
+   string NAME p "%d_0x%08X.bin" i HANDLEKEY
+   log NAME OFFSET SIZE
+   math OFFSET + SIZE
+   goto OFFSET
+   math i + 1
+while OFFSET != BINSZ + 4
+
+set i = 0;
+
+#Ok this is for refs, idk atm so
+#if OFFSET == EOF
+#    exit
+#endif
+#do
+#   get HANDLEKEY LONG
+#   get SIZE long
+#   savepos OFFSET
+#   string NAME p "%d_REFERENCE_0x%08X.bin" i HANDLEKEY
+#   log NAME OFFSET SIZE
+#   math OFFSET + SIZE
+#   goto OFFSET
+#   math i + 1
+#while OFFSET != EOF
+
+set i = 0;

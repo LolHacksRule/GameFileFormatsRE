@@ -1,0 +1,10 @@
+get FILES long
+for i = 0 < FILES
+   get HANDLEKEY LONG
+   get SIZE long
+   savepos OFFSET
+   string NAME p "%d_0x%08X.bin" i HANDLEKEY
+   log NAME OFFSET SIZE
+   math OFFSET + SIZE
+   goto OFFSET
+next i
