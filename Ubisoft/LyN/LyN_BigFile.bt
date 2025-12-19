@@ -91,7 +91,7 @@ typedef struct LyN_File //Doesn't match RLand but works :shrug:
             FILETIME time; //This looks like it's filetime.
             LyN_HandleKey handleKey; //In NewLyN this might point to an external bigfile, s*_%i.lin.bf (Wor and Tex).
             LyN_Int64 position;
-            uint16 flags;  // 0: LZO1x split, 1: Shadow, 2: Raw (mostly BIN), 3: Raw reference, 4: LZO1X, 6: LZMA
+            uint16 flags;
             uint16 vFlags;
             uint32 userLen; //File decomp size
             uint16 headFlags;
