@@ -25,9 +25,18 @@ ma*: Array
 mi: Int
 msb: u32 bool
 masz/msaz: char array
+
+Read/binarizing flags (usually DOE [Data of existing]):
+    1: Not in binned data
+    2: ?
+    3: Not in retail game bin
 */
 
 #include "../../LHR/Common.bt"
+
+local uint DEBUG_PRINT <hidden=true> = 0;
+local uint loadedFromBin <hidden=true> = 0;
+local uint isNewLyN <hidden=true> = 0;
 
 typedef enum <uint32>
 {
@@ -112,15 +121,18 @@ typedef enum <uint16>
    
    LyN_ModifierType_FakeLight = 75,
    LyN_ModifierType_MIDIPartitionsBank,
-   LyN_ModifierType_JDLiveMoveBank
+   LyN_ModifierType_JDLiveMoveBank,
+   LyN_ModifierType_Localization,
+   LyN_ModifierType_JDMoveSpace,
+   LyN_ModifierType_PartitionBank,
 } LyN_ModifierType;
 
 typedef int32 LyN_HandleKey; //This is officially u32 but since FF means nothing I'd make it s32
 
-typedef struct LyN_Int64 //Officially I64 but really it's two ints.
+typedef struct LyN_Int64 //Officially I64 but really it's two uints.
 {
-    int high;
-    int low;
+    uint32 high;
+    uint32 low;
 };
 
 typedef struct LyN_Reference
@@ -134,23 +146,6 @@ typedef struct LyN_NestedInt64
 {
     LyN_Int64 nestedI64;
     quad quadVal;
-};
-
-typedef struct LyN_MathCurve //CRV
-{
-    uint32 ver; //4 in JD4
-    Vector2_F32 min;
-    Vector2_F32 max;
-    uint32 samples;
-    if (ver > 2)
-        uint32 type;
-    if (ver)
-        Vector2_F32 grid;
-    //float markers[8];
-    struct
-    {
-    } Sample[samples];
-    //uint32 sample[samples/2]; //?
 };
 
 typedef struct LyN_AuxSendDefine
@@ -213,15 +208,71 @@ typedef struct LyN_LoadingReference
 {
 };
 
-typedef struct LyN_ArchivedFileHeader
+typedef struct LyN_BoundingVolume
 {
-    uint32 archivedFileLen;
-    uint32 userLen;
-    uint32 lenRef;
+    uint32 type;
+    uint32 ver;
     uint32 flags;
-    uint32 rawFileLen;
-    LyN_Int64 nextPosition;
-    LyN_HandleKey fileHandle;
+};
+
+typedef struct LyN_BoundingVolumeBox //also AABox
+{
+    LyN_BoundingVolume bv;
+    uint32 ver;
+    Vector3_F32 ctr;
+    Vector3_F32 halfVec;
+};
+
+typedef struct LyN_BoundingVolumeInfinite
+{
+    LyN_BoundingVolume bv;
+    uint32 ver;
+};
+
+typedef struct LyN_BoundingVolumeSphere
+{
+    LyN_BoundingVolume bv;
+    uint32 ver;
+    Vector3_F32 ctr;
+    float rad;
+};
+
+typedef struct LyN_BoundingVolumePyramid
+{
+    LyN_BoundingVolume bv;
+    uint32 ver; //2
+    if (ver >= 2)
+    {
+        float len;
+        Vector2_F32 halfVec;
+    }
+    else
+    {
+        Vector3_F32 ctr;
+        Vector3_F32 dir;
+        Vector3_F32 top;
+        Vector3_F32 btm;
+        Vector3_F32 halfVec;
+        float unk;
+    }
+};
+
+typedef struct LyN_Octree
+{
+    Vector3_F32 min;
+    Vector3_F32 max;
+    struct
+    {
+        ubyte relMin[3];
+        ubyte relMax[3];
+        uint16 elems;
+        struct
+        {
+            uint16 idx;
+            uint16 tris;
+            uint16 tri[tris];
+        } Element[elems];
+    } Node[nodes]<optimize=false>;
 };
 
 typedef struct LyN_BinHeader //Appears on FF (Map) and FD (SFX) - is that right?
@@ -232,12 +283,12 @@ typedef struct LyN_BinHeader //Appears on FF (Map) and FD (SFX) - is that right?
 
 typedef struct LyN_NewArchivedFileHeader
 {
-    uint32 fileSize;
+    uint32 fileSize[2]; //Why twice? uhhhh
     uint32 refContainerSz;
     uint32 unk; //Ver?
     uint32 unk2;
     uint32 contentType;
-    uint64 unk2;
+    uint32 unk3[2];
 };
 
 typedef struct LyN_ThreeDShadowTexture
@@ -361,10 +412,10 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         if (ver > 1)
         {
             uint32 dtype;
-            uint32 dsz; //TODO check this
+            if (!loadedFromBin) uint32 dsz; //TODO check this, DOE flag 1, not present in BINned scripts
         }
-        uint32 cpos; //Comment this
-        uint32 sz; //or this for MDL in BIN
+        uint32 cpos;
+        uint32 sz;
         uint32 szd[3];
         uint32 strLen[4];
         uint16 flags;
@@ -372,10 +423,10 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         ubyte saveStrIdx;
         if (ver > 2) ubyte validIdx;
         uint32 fields;
-        char name[strLen[0]];
-        char name2[strLen[1]];
-        char sep[strLen[2]];
-        char comment[strLen[3]];
+        char name[strLen[0]]; if (DEBUG_PRINT) Printf("[%i]: Index: %i, Type: %s, Name: %s, Size: %i, Fields: %i\n", i, idx, EnumToString(type), name, sz, fields);
+        if (!loadedFromBin && strLen[1]) char name2[strLen[1]]; //Flag 1, not present in BINned scripts
+        if (!loadedFromBin && strLen[2]) char sep[strLen[2]]; //Flag 1, not present in BINned scripts
+        if (!loadedFromBin && strLen[3]) char comment[strLen[3]]; //Flag 1, not present in BINned scripts
         if (type == 3080192 || (ver > 1 && type == 5046272))
         {
             if (ReadUInt() == 3235823855 || ReadUInt() == 3235823839)
@@ -383,7 +434,9 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
             else
                 uint32 pad; //0xABCD6666
         }
+        i++;
     } Variable[count]<optimize=false>;
+    i = 0;
     uint32 mdlSz;
     uint32 initSz;
     if (ver > 3)
@@ -416,17 +469,32 @@ typedef struct LyN_Matrix44
 
 typedef struct LyN_TRMatrix
 {
-    LyN_Matrix44 T;
+    LyN_Matrix44 TR;
     LyN_Matrix44 R;
     Vector3_F32 T;
     uint32 f;
+};
+
+typedef struct LyN_MathCurve //CRV
+{
+    uint32 ver; //4 in all
+    Vector2_F32 min;
+    Vector2_F32 max;
+    uint32 samples;
+    if (ver > 2)
+        uint32 type;
+    if (ver && !loadedFromBin)
+        Vector2_F32 grid;
+    float sample[samples];
+    local uint colors = 0;
+    if (ver > 3) RGBA_UByte color[(type & 2) != 0 ? samples/5 : 0];
 };
 
 typedef struct LyN_MathSphere
 {
     float rad;
     Vector3_F32 ctr;
-    uint32 flags; //TODO check this
+    if (!loadedFromBin) uint32 flags; //TODO check this
 };
 
 typedef struct LyN_MathConvexBox
