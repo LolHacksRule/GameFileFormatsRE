@@ -1,0 +1,103 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+LittleEndian();
+
+loadedFromBin = 1;
+
+struct
+{
+    if (ReadUInt() != 0xC0DEC0DE)
+        LyN_Modifier mdf; //ver 38 in JD4, 31 in RGH
+    else
+        uint32 newLynVis;
+    uint32 drawMask;
+    if (mdf.ver >= 39) byte dispDeviceMask;
+    LyN_HandleKey visualInstance;
+    LyN_HandleKey material;
+    if (mdf.ver >= 40) float zListOff;
+    ubyte zlist;
+    if (mdf.ver >= 29) ubyte rndrListOrder;
+    if (mdf.ver >= 36) uint16 lMask; else byte lMask;
+    ubyte pRndrMask;
+    if (!loadedFromBin) RGBA_UByte colorObj;
+    float objShadowBias;
+    float autoFarCullingDistanceFct;
+    if (mdf.ver > 28) U32_Bool farFade;
+    if (mdf.ver >= 32)
+    {
+        U32_Bool nearFade;
+        float nearCullingDistanceFade[2]; //In out
+    }
+    if (mdf.ver >= 35)
+    {
+        U32_Bool customFocal;
+        float focale;
+        U32_Bool ignoreMultiplier;
+    }
+    float glowBlurFct;
+    float glowIntFct;
+    uint32 lmpVer;
+    if (lmpVer) LyN_HandleKey lmpTex;
+    float unk;
+    if (!loadedFromBin)
+    {
+        float lmMult;
+        uint32 specFlags;
+    }
+    U32_Bool enableSortingPlane;
+    if (enableSortingPlane)
+    {
+        struct
+        {
+            Vector3_F32 rel;
+            Vector3_F32 nrm;
+            ubyte prio;
+        } SortingPlane;
+    }
+    uint32 rliID[2];
+    float rliFactor[2];
+    float rliBlendAlpha;
+    U32_Bool enableShadow;
+    if (enableShadow)
+    {
+        LyN_HandleKey shadow;
+        uint32 excLightMdf;
+    }
+    uint32 flags;
+    if (!loadedFromBin) uint32 edDrawFlags;
+    if (mdf.ver > 21)
+    {
+        if (mdf.ver >= 23)
+        {
+            int reliVer;
+        }
+        if (mdf.ver <= 27 && mdf.ver >= 25)
+        {
+            uint32 dmy[2];
+            uint32 dying[2];
+        }
+        if (mdf.ver >= 26)
+        {
+            if (mdf.ver == 26) uint32 unk;
+            else if (mdf.ver != 27)
+            {
+                if (mdf.ver >= 27) ubyte pad;
+                else uint32 pad[8];
+                if (mdf.ver >= 27) uint32 computeBlendedRlis;
+            }
+        }
+    }
+} LyN_Visual_VII;

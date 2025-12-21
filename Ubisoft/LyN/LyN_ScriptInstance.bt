@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+loadedFromBin = 0;
+
+DEBUG_PRINT = 0;
+
+struct //Appears in MDL and FFBin
+{
+    LittleEndian();
+    //check for oldlyn header
+    uint32 oldLyNMagicCheck<hidden=true>;
+    FSkip(-4);
+    if (oldLyNMagicCheck != 0xC0DEC0DE)
+    {
+        FSkip(20);
+        char newLynMagicCheck[4]<hidden=true>;
+        FSkip(-24);
+        if (newLynMagicCheck == "SCR")
+        {
+            loadedFromBin = 0;
+            LyN_NewArchivedFileHeader hdr;
+        }
+    }
+    if (ReadUInt() == 0xC0DEC0DE)
+        uint32 magic;
+    else
+    {
+        LyN_Modifier mdf;
+        LyN_HandleKey srcScriptFile; //VAR or MDL, in BIN this is sadly lost.
+    }
+    LyN_ScriptVariableContainer container;
+    if (mdf.ver > 0)
+    {
+        uint32 debugStringBufSz;
+        if (!loadedFromBin) byte dbgStringBuf[debugStringBufSz];
+    }
+} LyN_ScriptInstance_INS;

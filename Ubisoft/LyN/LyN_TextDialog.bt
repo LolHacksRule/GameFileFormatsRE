@@ -1,0 +1,62 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+struct
+{
+    uint32 ver; //9
+    uint32 items;
+    uint32 txgFiles;
+    struct
+    {
+        uint32 id;
+        uint32 attr;
+        ubyte cat;
+        ubyte enableds;
+        ubyte disableds;
+        ubyte linkeds;
+        if (ver >= 6) ubyte variants;
+        float period;
+        if (ver >= 9) uint32 rank;
+        struct
+        {
+            LyN_HandleKey file;
+            LyN_HandleKey id;
+        } TextEntry[4];
+        uint32 enabled[enableds];
+        uint32 disabled[disableds];
+        uint32 linked[linkeds];
+        if (ver >= 6)
+        {
+            uint32 variant[variants];
+            if (!loadedFromBin)
+            {
+                char name[64]; //Cruel.
+                uint32 oasisLineId;
+                uint32 oasisDlgId;
+            }
+        }
+        uint32 testsf[2];
+        uint32 sf[8];
+        uint32 sf2[8];
+        LyN_HandleKey gameObj;
+        if (ver >= 7) ubyte trigger;
+        if (ver > 4)
+        {
+            uint16 userFirst[2];
+            if (ver > 8) uint16 userSecond[2];
+        }
+    } Item[items]<optimize=false>;
+    if (ver > 1 && ver < 4) uint32 unk;
+} LyN_TextDialog;

@@ -1,0 +1,51 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+DEBUG_PRINT = 0;
+loadedFromBin = 0; //Yeah they really did this.
+
+struct
+{
+    LittleEndian();
+    //check for oldlyn header
+    uint32 oldLyNMagicCheck<hidden=true>;
+    FSkip(-4);
+    if (oldLyNMagicCheck != 0xC0DEC0DE)
+    {
+        FSkip(20);
+        char newLynMagicCheck[4]<hidden=true>;
+        FSkip(-24);
+        if (newLynMagicCheck == "EFC_")
+        {
+            isNewLyN = 1;
+            LyN_NewArchivedFileHeader hdr;
+        }
+    }
+    uint32 magic; //0xC0DEC0DE
+    if (magic == 0xC0DEC0DE)
+    {
+        uint32 ver; //1
+        uint32 flags;
+        U32_StringEntry name;
+        if (DEBUG_PRINT) Printf("This file name: %s.efc\n", name.theString);
+    }
+    uint64 pad;
+    LyN_ScriptVariableContainer localVars; //TODO
+    uint32 nodes;
+    uint32 node[nodes]; //TODO this data is unknown.
+    if (FTell() && !loadedFromBin) LyN_HandleKey srcFile; //DOE flag 3
+    if (!loadedFromBin) uint32 dbgNode[nodes]; //TODO this data is unknown.
+    if (FTell() != EOF) LyN_Reference ref; //For RLand
+} LyN_ScriptFunctionContainer_EFC;

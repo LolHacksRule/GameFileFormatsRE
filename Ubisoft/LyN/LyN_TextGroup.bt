@@ -13,7 +13,11 @@
 
 #include "LyN_Common.bt"
 
-struct //TESTED FROM TMNT
+loadedFromBin = 1;
+
+LittleEndian();
+
+struct //TESTED ON TMNT
 {
     uint32 ver; //6 in JD4
     uint32 textStrings;
@@ -29,18 +33,24 @@ struct //TESTED FROM TMNT
         ubyte anim;
         ubyte pad;
         if (ver >= 6) ubyte subTitle;
-        char name[64];
-        time_t create[2];
-        time_t upd[2];
-        struct
+        if (!loadedFromBin)
         {
-            uint32 commentSz;
-            char comment[commentSz];
-        } Comment[20]<optimize=false>;
-        uint32 oasisDlgId;
-        uint32 oasisLineId;
-        char oasisName[64];
-        RGBA_UByte color;
-        if (ver >= 6) uint32 noExp;
+            char name[64]; //Cruel.
+            FILETIME create;
+            FILETIME upd;
+            struct
+            {
+                uint32 commentSz;
+                char comment[commentSz];
+            } Comment[20]<optimize=false>;
+            if (ver > 3)
+            {
+                uint32 oasisDlgId;
+                uint32 oasisLineId;
+                char oasisName[64];
+            }
+            if (ver >= 4) RGBA_UByte color;
+            if (ver >= 5) uint32 noExp;
+        }
     } TextString[textStrings]<optimize=false>;
 } LyN_TextGroup_TXG;

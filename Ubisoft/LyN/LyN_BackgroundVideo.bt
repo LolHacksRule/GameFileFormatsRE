@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "LyN_Common.bt"
+
+loadedFromBin = 1; //This is set to one as there aren't any official samples outside bin files.
+
+LittleEndian();
+
+struct
+{
+    LyN_Modifier mdf;
+    struct
+    {
+        uint32 ver;
+        ubyte readMode;
+        ubyte flags;
+        ubyte dmy[2];
+        if (ver) ubyte binkHandles; else local uint binkHandles = 1;
+        LyN_HandleKey binkHandle[binkHandles];
+    } VideoTex;
+    Vector2_F32 off;
+    Vector2_F32 scale;
+    ubyte sizeMode;
+    if (!mdf.ver) ubyte unk;
+    ubyte viewPorts;
+    if (mdf.ver)
+    {
+        LyN_HandleKey obj;
+        uint32 eventRank;
+    }
+    if (mdf.ver > 2) Byte_Bool foregroundPlay;
+    if (mdf.ver > 3)
+    {
+        uint32 binkKeys;
+        LyN_HandleKey binkKey[binkKeys];
+    }
+    if (mdf.ver >= 4) Byte_Bool runVidInit;
+    if (mdf.ver > 6)
+    {
+        uint32 subtitles;
+        struct
+        {
+            LyN_HandleKey file;
+            uint32 id;
+        } Subtitle[subtitles];
+    }
+} LyN_BackgroundVideo_BVO;

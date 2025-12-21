@@ -13,6 +13,8 @@
 
 #include "LyN_Common.bt"
 
+loadedFromBin = 0;
+
 typedef struct LyN_TextDefine
 {
     uint32 id;
@@ -23,8 +25,8 @@ typedef struct LyN_TextDefine
     LyN_HandleKey lipsync;
     LyN_HandleKey expr;
     if (enableTimeStamps || ReadUInt64() == 0) //Shameful hack, expected to only work on TMNT
-        enableTimeStamps = 1;
-    if (enableTimeStamps) FILETIME lastUpd; //COMMENT THIS UNLESS NEEDED, according to the read function this is here if it exists, there's no real way to tell sadly. In TMNT it's here, in RGH and JD4 it's not
+        loadedFromBin = 0; //We'll assume we're loading this in a map bin
+    if (!loadedFromBin) FILETIME lastUpd; //There's no real way to tell sadly. In pre-binpacked files (like from TMNT) it's here, in RGH and JD4 it's not
     FPos = FTell();
     /*if (off != -1)
     {
@@ -48,7 +50,7 @@ typedef struct LyN_TextDefine
     FSeek(FPos);
 };
 
-local uint DEBUG_PRINT <hidden=true> = 1;
+DEBUG_PRINT = 0;
 local uint enableTimeStamps <hidden=true> = 0;
 
 struct
@@ -72,4 +74,4 @@ struct
     } text[textStrings]<optimize=false>;*/
     //if (ver >= 3) wchar_t text[size];
     //else char text[size];
-} LyN_TextList_TXL; //Found in 93BIN (RGH PC), 69BIN (JD4), 16BIN (RGH WII)
+} LyN_TextList_TXL; //Found in 93BIN (RGH PC), 69BIN (JD4), 16BIN (RGH WII), 88BIN (RRTT)

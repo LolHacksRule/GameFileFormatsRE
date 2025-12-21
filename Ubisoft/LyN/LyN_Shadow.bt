@@ -16,8 +16,8 @@
 struct //RGH or legacy LyN
 {
     BigEndian();
-    string shadowPath;
+    string shadowPath; //Ok so really in RGH (At least on PC, this is all useless, only the handlekey as a plaintext string is read, the data is possibly for internal editor usage)
     string unk; //$hd$ on BIK
-    uint32 fileCRC32;
+    uint32 fileCRC32; //
     byte padding[1024-(sizeof shadowPath+sizeof unk + 4)]; //The rest is just padding.
 } LyN_Shadow;

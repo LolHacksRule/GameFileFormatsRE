@@ -15,7 +15,7 @@
 //https://github.com/RetingencyPlan/le_quickbms_script_compendium/blob/master/sally_bf.bms
 //https://autoit-script.ru/threads/pomogite-rasparsit-tekstovyj-fajl.6525/
 
-//NOTE: This documentation and all templates here is based off content extracted with sally_bf.bms. This may be different if you use a different tool.
+//NOTE: This documentation and all templates here is based off content extracted with sally_bf.bms as that one is the most efficient LyN extraction tool. This may be different if you use a different tool.
 
 //Content here referencing hexes is byteswapped
 
@@ -26,9 +26,9 @@ mi: Int
 msb: u32 bool
 masz/msaz: char array
 
-Read/binarizing flags (usually DOE [Data of existing]):
+Read/binarizing flags:
     1: Not in binned data
-    2: ?
+    2: In all
     3: Not in retail game bin
 */
 
@@ -135,7 +135,7 @@ typedef struct LyN_Int64 //Officially I64 but really it's two uints.
     uint32 low;
 };
 
-typedef struct LyN_Reference
+typedef struct LyN_Reference //For MDL, 3 refs: VAR, FCT, EFC
 {
     LyN_HandleKey handle;
     uint32 privateFlags;
@@ -346,7 +346,7 @@ typedef struct LyN_MathBox
     Vector3_F32 min;
     Vector3_F32 max;
     Vector3_F32 ctr;
-    uint32 flags; //TEMP, ON WORLD COMMENT THIS OUT
+    if (!loadedFromBin) uint32 flags;
 };
 
 typedef struct LyN_ParticleConstraint
@@ -366,7 +366,7 @@ typedef struct LyN_Modifier
         LyN_ModifierType type;
         uint16 id;
         uint16 modifierVer;
-        if (modifierVer > 2)
+        if (modifierVer > 1 && !loadedFromBin)
         {
             int16 pfbOMods;
             //LyN_HandleKey prebOMod[pfbOMods]; //?
@@ -449,7 +449,7 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         local uint32 initInstSz = initSz;
         local uint32 initInstCurSz = initSz;
     }
-    if (mdlSz && initSz) //todo parse of this data, FOR EDA, MDL (MAYBE) YOU CAN UNCOMMENT, THE NESTED ONES DO NOT USE THIS IN MDL, engine officially checks for either of these but both work so :shrug:
+    if (mdlSz && initSz) //todo parse of this data, engine officially checks for either of these but both work so :shrug:
     {
         byte mdl[mdlSz];
     }
@@ -744,12 +744,14 @@ typedef struct LyN_GuideList
     struct
     {
         uint32 points;
-        Vector3_F32 point[points];
-        //TODO check these
-        RGBA_UByte color;
-        uint32 flags;
-        float width;
-        U32_Bool closed;
+        if (!loadedFromBin)
+        {
+            Vector3_F32 point[points];
+            RGBA_UByte color;
+            uint32 flags;
+            float width;
+            U32_Bool closed;
+        }
     } Guide[entries];
 };
 
@@ -911,8 +913,21 @@ Bin:
         RefTable (U32, 12 byte refs):
     FE: Texture container
     FF: Map (can reference text and FE+FD files[?], worlds) [?] Can be referenced in 93, FF and FD?
-        uint32 handlekey; //?
+        uint32 handlekey;
         uint32 fSize;
+        
+        Seems each file has a flag which counts towards fsz, Idk how this works. Tested ON RGH!
+        15/283/437/1865/1938: LyN_ScriptInstance_INS
+        30: LyN_Magma_MGM
+        32: LyN_AnimationAction_ACI
+        36/74: LyN_SoundBank_SNK_SKM or LyN_ObjectTable
+        92: LyN_Skeleton
+        157: LyN_Visual
+        286: LyN_Object_OBJ
+        294: ?
+        772: LyN_World
+        454/1452/9566: RGH_MagmaFile_MGF
+        564: LyN_ScriptModel_MDL
 
     EFC: Track
     EFL: Track

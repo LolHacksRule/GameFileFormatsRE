@@ -15,15 +15,14 @@
 
 loadedFromBin = 1; //This is set to one as there aren't any official samples outside bin files.
 
-LittleEndian();
+DEBUG_PRINT = 0;
 
 struct
 {
     LyN_Modifier mod;
-    uint32 elements;
-    struct
-    {
-        LyN_HandleKey MGF;
-        uint32 unk;
-    } Element[elements];
-} LyN_Magma_MGM;
+    uint32 ver; //4 in JD4 and TMNT
+    uint32 texts;
+    uint32 dialogs;
+    LyN_HandleKey text[texts];
+    LyN_HandleKey dialog[dialogs];
+} LyN_TextListModifier_TXT;

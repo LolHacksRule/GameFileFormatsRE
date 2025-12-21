@@ -13,19 +13,14 @@
 
 #include "LyN_Common.bt"
 
-loadedFromBin = 1;
+loadedFromBin = 0;
 
 struct
 {
     LittleEndian();
-    LyN_Modifier mdf; //ver 1 in RGH
-    LyN_HandleKey actionKit;
-    if (mdf.ver >= 1) LyN_HandleKey morphKit;
-    uint32 end;
-    if (mdf.ver >= 2)
-    {
-        U32_Bool enableMorphVisAngle;
-        float morphVisAngle;
-        uint32 morphVisAngleBoneRankRef;
-    }
-} LyN_AnimationAction_ACI;
+    LyN_Modifier mdf;
+    LyN_HandleKey group;
+    LyN_HandleKey model;
+    uint32 deflt;
+    uint32 pad;
+} LyN_ObjectTable_TBL;
