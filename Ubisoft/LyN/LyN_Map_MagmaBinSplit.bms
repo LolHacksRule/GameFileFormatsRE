@@ -1,10 +1,283 @@
+#LyN map (FF******.bin) binary splitter
+
+set GAME = 0 #0: TMNT, 1: RGH, 2: JDW2, 3: JD4, 4: RRR4
+
 do
-   get HANDLEKEY LONG
-   get SIZE long
-   savepos OFFSET
-   string NAME p "%d_0x%08X.bin" i HANDLEKEY
-   log NAME OFFSET SIZE
-   math OFFSET + SIZE
-   goto OFFSET
-   math i + 1
+	set ext string "bin" #Simply BIN if unknown
+	set FILENAME string "UNKNOWN"
+	get HANDLEKEY LONG
+	get SIZE long
+	savepos OFFSET
+	if SIZE > 0
+		get FLAGS long #No clue what these are for?
+		get MAGIC long
+		if MAGIC == 0
+			set EXT string "mdl"
+			set FILENAME "ScriptModel"
+		else if MAGIC == 3235823838 #Check for common serialize
+			get SERIALIZE long
+			if SERIALIZE == 1 #Seems to be consistent.
+				get DMY long
+				get NAMESZ long
+				getdstring FILENAME NAMESZ
+				set EXT "efc"
+			endif
+			
+			#TODO
+			#else if SERIALIZE >= 2 && SERIALIZE != 16 && SERIALIZE != 14 && SERIALIZE != 13 #4 in JD4U and W2, 5 in RRR4
+			#	set EXT string "wor"
+			#	set FILENAME "World"
+			#else if (((SERIALIZE == 9 && (GAME < 1)) || SIZE == 38) || ((SERIALIZE == 14 && (GAME == 2)) || SIZE == 44) ((SERIALIZE == 15 && (GAME == 3) || SIZE == 40))) #9 in TMNT and RGH (38 bytes) #14 in JDW2 (44 bytes) 15 in JD4U #SERIALIZE => 8 ||
+			#	set EXT string "tex"
+			#	set FILENAME "TextureDefinition"
+			#endif
+			
+		#else if MAGIC == 4
+		#	get FLOATCHECK float
+		#	if FLOATCHECK < 100 && FLOATCHECK > 0
+		#		set EXT string "crv"
+		#		set FILENAME string "MathCurve"
+		#	else #2 in TMNT
+		#		set EXT string "mta"
+		#		set FILENAME "AtomicMaterial"
+		#	endif
+		#else if MAGIC == 5 && GAME == 0
+		#	set EXT string "txg"
+		#	set FILENAME "TextGroup"
+		#else if MAGIC == 8
+		#	set EXT string "txl"
+		#	set FILENAME "TextList"
+		#else if MAGIC == 9 #9 in RGH and JD4U and RRR4, 8 in TMNT
+		#	set EXT string "obj"
+		#	set FILENAME "ObjectDefine"
+
+		#else if MAGIC == 10 #10 in JD4U
+		#	set EXT string "set"
+		#	set FILENAME "SoundSet"
+		#else if MAGIC > 100 #Dance Partition
+		#	get DMY long
+		#	get NAMESZ long
+		#	getdstring FILENAME NAMESZ
+		#	set EXT "bpart"
+		else if MAGIC == 3235823839 || MAGIC == 3235823855 
+			set EXT string "efl"
+			set FILENAME "ProcessList"
+		else if MAGIC == 1163098444 #LySE
+			set FILENAME "SoundHeader"
+		else if MAGIC == 3774863615 #Raw JPG
+			set EXT "jpg"
+			set FILENAME "Image"
+		else if MAGIC == 1179011410 #RIFF
+			set FILENAME "LegacySoundHeader"
+		#todo
+		#else #Check for modifier
+		#	get DMY long
+		#	#print %DMY%
+		#	if DMY == 3235823855
+		#		set EXT string "mdl"
+		#		set FILENAME "ScriptModel"
+		#	else if DMY & 0xFFFF && DMY != 4294967295
+		#		get typeID short #Grab the modifier
+		#		if typeID == 0
+		#			set EXT string "ins"
+		#			set FILENAME "ScriptInstance"
+		#		else if typeID == 1
+		#			set EXT string "dst"
+		#			set FILENAME "DesignStruct"
+		#		else if typeID == 2
+		#			set EXT string "msg"
+		#			set FILENAME "MessageDefine"
+		#		else if typeID == 3
+		#			set EXT string "vii"
+		#			set FILENAME "VisualDefine"
+		#		else if typeID == 4
+		#			set EXT string "InteractiveGroup"
+		#			set FILENAME "igr"
+		#		else if typeID == 5
+		#			set EXT string "net"
+		#			set FILENAME "Network"
+		#		else if typeID == 6
+		#			set EXT string "skl"
+		#			set FILENAME "AnimationSkeleton"
+		#		else if typeID == 7
+		#			set EXT string "tbl"
+		#			set FILENAME "ObjectTable"
+		#		else if typeID == 8
+		#			set EXT string "txt"
+		#			set FILENAME "TextListModifier"
+		#		else if typeID == 9
+		#			set EXT string "lig"
+		#			set FILENAME "LightGFX"
+		#		else if typeID == 10
+		#			set EXT string "par"
+		#			set FILENAME "Particle"
+		#		else if typeID == 11
+		#			set EXT string "tsr" #Officially TSR but not sure what that means
+		#			set FILENAME "Flexible"
+		#		else if typeID == 12
+		#			set EXT string "ik3"
+		#			set FILENAME "IK3Points"
+		#		else if typeID == 13
+		#			set EXT string "eve"
+		#			set FILENAME "AnimationEvents"
+		#		else if typeID == 14
+		#			set EXT string "ani"
+		#			set FILENAME "Animation"
+		#		else if typeID == 15
+		#			set EXT string "aci"
+		#			set FILENAME "AnimationAction"
+		#		else if typeID == 16
+		#			set EXT string "loo"
+		#			set FILENAME "LookAt"
+		#		else if typeID == 18
+		#			set EXT string "gfx"
+		#			set FILENAME "EffectMiscGFX"
+		#		else if typeID == 19
+		#			set EXT string "zde"
+		#			set FILENAME "AnimEventZoneDefinition"
+		#		else if typeID == 20
+		#			set EXT string "cob"
+		#			set FILENAME "CollisionMapBounds"
+		#		else if typeID == 21
+		#			set EXT string "dyn"
+		#			set FILENAME "DynamicPhysics"
+		#		else if typeID == 22
+		#			set EXT string "snk"
+		#			set FILENAME "SoundBank"
+		#		else if typeID == 23
+		#			set EXT string "snf"
+		#			set FILENAME "SFXArea"
+		#		else if typeID == 24
+		#			set EXT string "vp"
+		#			set FILENAME "Viewpoint"
+		#		else if typeID == 25
+		#			set EXT string "nox"
+		#			set FILENAME "Novodex"
+		#		else if typeID == 26
+		#			set EXT string "con"
+		#			set FILENAME "Constraint"
+		#		else if typeID == 27
+		#			set EXT string "lip"
+		#			set FILENAME "AnimLipSync"
+		#		else if typeID == 28
+		#			set EXT string "gg"
+		#			set FILENAME "GlobalGizmo"
+		#		else if typeID == 29
+		#			set EXT string "afx"
+		#			set FILENAME "AfterGFX"
+		#		else if typeID == 30
+		#			set EXT string "lg"
+		#			set FILENAME "LocalGizmo"
+		#		else if typeID == 31
+		#			set EXT string "veg"
+		#			set FILENAME "VegetationGFX"
+		#		else if typeID == 35
+		#			set EXT string "occ"
+		#			set FILENAME "OccluderGFX"
+		#		else if typeID == 36
+		#			set EXT string "gzn"
+		#			set FILENAME "GlobalZoneGFX"
+		#		else if typeID == 37
+		#			set EXT string "sp"
+		#			set FILENAME "SavePosition"
+		#		else if typeID == 38
+		#			set EXT string "wtr"
+		#			set FILENAME "WonderWater"
+		#		else if typeID == 39
+		#			set EXT string "trg"
+		#			set FILENAME "TrailGenerator"
+		#		else if typeID == 40
+		#			set EXT string "rdp"
+		#			set FILENAME "RenderParameters"
+		#		else if typeID == 41
+		#			set EXT string "snl"
+		#			set FILENAME "SoundLinker"
+		#		else if typeID == 42
+		#			set EXT string "vif"
+		#			set FILENAME "VisualFarm"
+		#		else if typeID == 43
+		#			set EXT string "utm"
+		#			set FILENAME "UltiMap"
+		#		else if typeID == 44
+		#			set EXT string "gri"
+		#			set FILENAME "Grid"
+		#		else if typeID == 45
+		#			set EXT string "rep"
+		#			set FILENAME "Replication"
+		#		else if typeID == 46
+		#			set EXT string "bvo"
+		#			set FILENAME "BackgroundVideo"
+		#		else if typeID == 48
+		#			set EXT string "mgm"
+		#			set FILENAME "Magma"
+		#		else if typeID == 49
+		#			set EXT string "shs"
+		#			set FILENAME "SharpShadow"
+		#		else if typeID == 53
+		#			set EXT string "gbv"
+		#			set FILENAME "GraphicBV"
+		#		else if typeID == 56
+		#			set EXT string "fir"
+		#			set FILENAME "Fire"
+		#		else if typeID == 57
+		#			set EXT string "sdp"
+		#			set FILENAME "SoundPrefetch"
+		#		else if typeID == 61
+		#			set EXT string "cam"
+		#			set FILENAME "Camera"
+		#		else if typeID == 62
+		#			set EXT string "rop"
+		#			set FILENAME "Rope"
+		#		else if typeID == 63
+		#			set EXT string "inl"
+		#			set FILENAME "InstanceList"
+		#		else if typeID == 65
+		#			set EXT string "lrp"
+		#			set FILENAME "LocalRenderParams"
+		#		else if typeID == 66
+		#			set EXT string "pnp"
+		#			set FILENAME "PrefabInstanceParameters"
+		#		else if typeID == 67
+		#			set EXT string "wrg"
+		#			set FILENAME "WiresGenerator"
+		#		else if typeID == 68
+		#			set EXT string "mtn"
+		#			set FILENAME "MotionPhysics"
+		#		else if typeID == 71
+		#			set EXT string "otl"
+		#			set FILENAME "OutlineGeometryGFX"
+		#		else if typeID == 73
+		#			set EXT string "fld"
+		#			set FILENAME "FluidGFX"
+		#		else if typeID == 75
+		#			set EXT string "flg"
+		#			set FILENAME "FakeLightGFX"
+		#		else if typeID == 76
+		#			set EXT string "mdk"
+		#			set FILENAME "MidiKeyBank"
+		#		else if typeID == 77
+		#			set EXT string "lmc" #or gesture
+		#			set FILENAME "LiveMoveClassifierKeyBank"
+		#		else if typeID == 78
+		#			set EXT string "loc"
+		#			set FILENAME "Localization"
+		#		else if typeID == 79
+		#			set EXT string "msp"
+		#			set FILENAME "MoveSpaceModifier"
+		#		else if typeID == 80
+		#			set EXT string "ptb"
+		#			set FILENAME "DancePartitionBank"
+		#		else
+		#			#print %typeID%
+		#			set EXT string "mdf"
+		#			set FILENAME "UnknownModifier"
+		#		endif
+		#	endif
+		endif
+	endif
+	string NAME p "%d_%s_0x%08X.%s" i FILENAME HANDLEKEY EXT
+	log NAME OFFSET SIZE
+	math OFFSET + SIZE
+	goto OFFSET
+	math i + 1
 while OFFSET != EOF
