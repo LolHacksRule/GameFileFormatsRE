@@ -24,7 +24,9 @@
 ma*: Array
 mi: Int
 msb: u32 bool
-masz/msaz: char array
+masz/msaz: Char array
+mk: Handle key
+mdf: Modifier
 
 Read/binarizing flags:
     1: Not in binned data
@@ -40,13 +42,1511 @@ local uint isNewLyN <hidden=true> = 0;
 
 typedef enum <uint32>
 {
-   LyN_ScriptVarType_Text = 65544,
-   LyN_ScriptVarType_Dialog = 131080,
-   LyN_ScriptVarType_Int32 = 1310720,
-   LyN_ScriptVarType_F32 = 1376256,
-   LyN_ScriptVarType_Vector = 1441792,
-   LyN_ScriptVarType_Modifier = 1703936
+    LyN_CtrlButton_Cross,
+    LyN_CtrlButton_Circle,
+    LyN_CtrlButton_Square,
+    LyN_CtrlButton_Triangle,
+    LyN_CtrlButton_L1,
+    LyN_CtrlButton_R1,
+    LyN_CtrlButton_L2,
+    LyN_CtrlButton_Select,
+    LyN_CtrlButton_Up,
+    LyN_CtrlButton_Right,
+    LyN_CtrlButton_Down,
+    LyN_CtrlButton_Left,
+    LyN_CtrlButton_Plus,
+    LyN_CtrlButton_2,
+    LyN_CtrlButton_1,
+    LyN_CtrlButton_B,
+    LyN_CtrlButton_A,
+    LyN_CtrlButton_Minus,
+    LyN_CtrlButton_Home,
+} LyN_CtrlButton;
+
+typedef enum <uint32>
+{
+    LyN_WiiCtrlExtension_None,
+    LyN_WiiCtrlExtension_Nunchuk,
+    LyN_WiiCtrlExtension_Classic,
+    LyN_WiiCtrlExtension_WMP,
+    LyN_WiiCtrlExtension_WMPNunchuk,
+    LyN_WiiCtrlExtension_Busy,
+} LyN_WiiCtrlExtension;
+
+typedef enum <uint32> //Ok wow this is big
+{
+	// World Fog?: 2AF8FFFF
+	LyN_ScriptVarType_Variant_STR_Mark = 0x2710,
+	LyN_ScriptVarType_Variant_STR_TrueIndex = 0x4E20,
+	//LyN_ScriptVarType_Variant_STR_F3D_LookAt = 1, //?
+	//LyN_ScriptVarType_Variant_STR_F3D_LookAtSizeZIndependent = 1, //?
+	LyN_ScriptVarType_Variant_Message = 0x10002,
+	LyN_ScriptVarType_Variant_Text = 0x10008,
+	LyN_ScriptVarType_Variant_Dialog = 0x20008,
+	LyN_ScriptVarType_Variant_Void = 0x010000,
+	LyN_ScriptVarType_Variant_Hexadecimal = 0x020000,
+	LyN_ScriptVarType_Variant_UseBin = 0x030000,
+	LyN_ScriptVarType_Variant_UseEnumerator = 0x090000,
+	LyN_ScriptVarType_Variant_Enumerator = 0x0A0000, //int
+	LyN_ScriptVarType_Variant_BitField = 0x0B0000,
+   
+	//LyN_ScriptVarType_Variant_Network = 0x10000,
+	LyN_ScriptVarType_Variant_Int32 = 0x140000,
+	LyN_ScriptVarType_Variant_F32 = 0x150000,
+	LyN_ScriptVarType_Variant_Vector3 = 0x160000,
+	LyN_ScriptVarType_Variant_String = 0x170000,
+	LyN_ScriptVarType_Variant_Track = 0x180000,
+	LyN_ScriptVarType_Variant_Object = 0x190000,
+	LyN_ScriptVarType_Variant_Modifier = 0x1A0000,
+	LyN_ScriptVarType_Variant_ScriptModel = 0x1B0000,
+	LyN_ScriptVarType_Variant_Color = 0x1C0000,
+	LyN_ScriptVarType_Variant_Stock = 0x1D0000,
+	LyN_ScriptVarType_Variant_Key = 0x1E0000,
+	LyN_ScriptVarType_Variant_Material = 0x1F0000,
+	LyN_ScriptVarType_Variant_FunctionList = 0x200000,
+	LyN_ScriptVarType_Variant_Curve = 0x210000,
+	LyN_ScriptVarType_Variant_Transient = 0x220000,
+	LyN_ScriptVarType_Variant_Prefab = 0x230000,
+	//?
+	LyN_ScriptVarType_Variant_Static = 0x280000,
+	LyN_ScriptVarType_Variant_TrackInit = 0x290000,
+	LyN_ScriptVarType_Variant_Private = 0x2A0000,
+	LyN_ScriptVarType_Variant_Reinit = 0x2B0000,
+	LyN_ScriptVarType_Variant_Separator = 0x2C0000,
+	LyN_ScriptVarType_Variant_Save = 0x2D0000,
+	LyN_ScriptVarType_Variant_Struct = 0x2E0000,
+	LyN_ScriptVarType_Variant_UseStruct = 0x2F0000,
+	LyN_ScriptVarType_Variant_Child = 0x300000,
+	LyN_ScriptVarType_Variant_Trigger = 0x310000,
+	
+	LyN_ScriptVarType_Variant_Pause = 0x330000,
+	LyN_ScriptVarType_Variant_TypeRule = 0x340000,
+	LyN_ScriptVarType_Variant_Public = 0x350000,
+	LyN_ScriptVarType_Variant_Virtual = 0x360000,
+	LyN_ScriptVarType_Variant_Morph = 0x370000,
+	LyN_ScriptVarType_Variant_ComponentLinkID = 0x3B0000,
+	LyN_ScriptVarType_Variant_Signal = 0x3C0000,
+	LyN_ScriptVarType_Variant_SpecFlag = 0x3D0000,
+	LyN_ScriptVarType_Variant_Matrix44 = 0x3E0000,
+	LyN_ScriptVarType_Variant_TreeBegin = 0x3F0000,
+	LyN_ScriptVarType_Variant_TreeEnd = 0x400000,
+	LyN_ScriptVarType_Variant_IfSctApply = 0x410000, //?
+	LyN_ScriptVarType_Variant_Matrix4x2 = 0x430000,
+	LyN_ScriptVarType_Variant_Matrix4x3 = 0x440000,
+	LyN_ScriptVarType_Variant_Matrix4x4 = 0x450000,
+	LyN_ScriptVarType_Variant_Vector4 = 0x460000,
+	LyN_ScriptVarType_Variant_Check = 0x470000, //What is this?
+	LyN_ScriptVarType_Variant_Const = 0x480000,
+	LyN_ScriptVarType_Variant_Export = 0x490000,
+	LyN_ScriptVarType_Variant_Effect = 0x4A0000, //Handle key?
+	LyN_ScriptVarType_Variant_LyNByte = 0x4B0000,
+	LyN_ScriptVarType_Variant_TGA = 0x4C0000, //Handle key?
+	LyN_ScriptVarType_Variant_DynamicArray = 0x4D0000,
+	LyN_ScriptVarType_Variant_Replicate = 0x4E0000,
+	LyN_ScriptVarType_Variant_Unreliable = 0x4F0000,
+	LyN_ScriptVarType_Variant_UponRequest = 0x500000,
+	LyN_ScriptVarType_Variant_Shorter = 0x510000,
+	LyN_ScriptVarType_Variant_Shortest = 0x520000,
+	LyN_ScriptVarType_Variant_Unichar = 0x530000,
+	LyN_ScriptVarType_Variant_Spy = 0x540000,
+	LyN_ScriptVarType_Variant_DataSetRefString = 0x550000,
+	LyN_ScriptVarType_Variant_IntPtr = 0x560000,
+	LyN_ScriptVarType_Variant_FloatPtr = 0x570000,
+	LyN_ScriptVarType_Variant_U16Ptr = 0x580000, //Officially pint16
+	LyN_ScriptVarType_Variant_Inline = 0x590000,
+	LyN_ScriptVarType_Variant_ObjectRef = 0x5A0000,
+	LyN_ScriptVarType_Variant_ModifierRef = 0x5B0000,
+	LyN_ScriptVarType_Variant_SizedDebugString = 0x5C0000,
+	LyN_ScriptVarType_Variant_DLLDeclaration = 0x5D0000,
+	LyN_ScriptVarType_Variant_DLLHeader = 0x5E0000,
+	LyN_ScriptVarType_Variant_SizedWString = 0x5F0000,
+	LyN_ScriptVarType_Variant_WChar = 0x600000,
+	LyN_ScriptVarType_Variant_U64 = 0x610000, //Officially longint
+	LyN_ScriptVarType_Variant_ArrayStart = 0x620000,
+	LyN_ScriptVarType_Variant_ArrayTerminate = 0x630000,
+	LyN_ScriptVarType_Variant_Buffer = 0x640000,
+	LyN_ScriptVarType_Variant_StringID = 0x650000,
+	LyN_ScriptVarType_Variant_VirtualParent = 0x660000,
+	LyN_ScriptVarType_Variant_VirtualChild = 0x670000,
+	LyN_ScriptVarType_Variant_Portal = 0x680000,
+	LyN_ScriptVarType_Variant_JPEG = 0x690000, //Handle key?
+	LyN_ScriptVarType_Variant_FixedBuffer = 0x6A0000,
+	LyN_ScriptVarType_Variant_Watch = 0x6B0000,
+
+    //Fields
+    LyN_ScriptVarType_Field_I32_1 = 0xFD20000,
+    LyN_ScriptVarType_Field_I32_2 = 0xFD30000,
+    LyN_ScriptVarType_Field_I32_3 = 0xFD40000,
+    LyN_ScriptVarType_Field_F32_1 = 0xFD50000,
+    LyN_ScriptVarType_Field_F32_2 = 0xFD60000,
+    LyN_ScriptVarType_Field_F32_3 = 0xFD70000,
+    LyN_ScriptVarType_Field_Object_1 = 0xFD80000,
+    LyN_ScriptVarType_Field_Object_2 = 0xFD90000,
+    LyN_ScriptVarType_Field_Object_3 = 0xFDA0000,
+    LyN_ScriptVarType_Field_Vector_1 = 0xFDB0000,
+    LyN_ScriptVarType_Field_Vector_2 = 0xFDC0000,
+    LyN_ScriptVarType_Field_Vector_3 = 0xFDD0000,
+    LyN_ScriptVarType_Field_Modifier_1 = 0xFDE0000,
+    LyN_ScriptVarType_Field_Modifier_2 = 0xFDF0000,
+    LyN_ScriptVarType_Field_Modifier_3 = 0xFE00000,
+    LyN_ScriptVarType_Field_I32_4 = 0xFE60000,
+    LyN_ScriptVarType_Field_I32_5 = 0xFE70000,
+    LyN_ScriptVarType_Field_F32_4 = 0xFE80000,
+    LyN_ScriptVarType_Field_F32_5 = 0xFE90000,
+    LyN_ScriptVarType_Field_Object_4 = 0xFEA0000,
+    LyN_ScriptVarType_Field_Object_5 = 0xFEB0000,
+    LyN_ScriptVarType_Field_Vector_4 = 0xFEC0000,
+    LyN_ScriptVarType_Field_Vector_5 = 0xFED0000,
+    LyN_ScriptVarType_Field_Modifier_4 = 0xFEE0000,
+    LyN_ScriptVarType_Field_Modifier_5 = 0xFEF0000,
+    LyN_ScriptVarType_Field_Modifier_Vector3_F32_X = 0x1040000,
+    LyN_ScriptVarType_Field_Modifier_Vector3_F32_Y = 0x1050000,
+    LyN_ScriptVarType_Field_Modifier_Vector3_F32_Z = 0x1060000,
+    LyN_ScriptVarType_Field_Modifier_Vector4_F32_X = 0x1070000,
+    LyN_ScriptVarType_Field_Modifier_Vector4_F32_Y = 0x1080000,
+    LyN_ScriptVarType_Field_Modifier_Vector4_F32_Z = 0x1090000,
+    LyN_ScriptVarType_Field_Modifier_Vector4_F32_W = 0x10A0000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_IX = 0x100E000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_IY = 0x100F000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_IZ = 0x1010000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_JX = 0x1012000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_JY = 0x1013000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_JZ = 0x1014000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_KX = 0x1015000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_KY = 0x1016000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_KZ = 0x1017000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_SX = 0x1018000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_SY = 0x1019000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_SZ = 0x101A000,
+	LyN_ScriptVarType_Field_Modifier_Matrix44_F32_W = 0x101B000,
+    LyN_ScriptVarType_Field_Modifier_Matrix44_F32_T = 0x101C000,
+	//LyN_ScriptVarType_Test = 0x6A00002,
+    
+    //Engine Functions, THESE MAY BE DIFFERENT IN OTHER GAMES
+    //UNSORTED
+    LyN_ScriptVarType_EngineFunction_DBG_TraceEOL = 0x17710000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceInt = 0x17720000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceKey = 0x17730000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceFloat = 0x17740000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceVector = 0x17750000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceString = 0x17760000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceObj = 0x17770000,
+    LyN_ScriptVarType_EngineFunction_DBG_Error = 0x17780000,
+    LyN_ScriptVarType_EngineFunction_DBG_Breakpoint = 0x17790000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderVector = 0x177A0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderCircle = 0x177B0000,
+    LyN_ScriptVarType_EngineFunction_DBG_Assert = 0x177C0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderSphere = 0x177D0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderOOBBox = 0x177E0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderAABBox = 0x177F0000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceError = 0x17800000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderCone = 0x17810000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderCylinder = 0x17820000,
+    LyN_ScriptVarType_EngineFunction_DBG_DeleteSpecialRender = 0x17830000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderCapsule = 0x17840000,
+    LyN_ScriptVarType_EngineFunction_DBG_RasterStart = 0x17850000,
+    LyN_ScriptVarType_EngineFunction_DBG_RasterStop = 0x17860000,
+    LyN_ScriptVarType_EngineFunction_DBG_UpdateLogString = 0x17870000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderDisc = 0x17880000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceMdf = 0x17890000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceClear = 0x178A0000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceColorSet = 0x178B0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderTriangle = 0x178C0000,
+    LyN_ScriptVarType_EngineFunction_DBG_CheckMemory = 0x178D0000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceHexa = 0x178E0000,
+    LyN_ScriptVarType_EngineFunction_DBG_SelectedObjectsGet = 0x178F0000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceKeyName = 0x17900000,
+    LyN_ScriptVarType_EngineFunction_DBG_GlobalRenderVector = 0x17910000,
+    LyN_ScriptVarType_EngineFunction_DBG_GlobalRenderSegments = 0x17920000,
+    LyN_ScriptVarType_EngineFunction_DBG_LogLineError = 0x17930000,
+    LyN_ScriptVarType_EngineFunction_DBG_GlobalRenderSpline = 0x17940000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceWString = 0x17950000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceMatrix = 0x17960000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceStringID = 0x17970000,
+    LyN_ScriptVarType_EngineFunction_DBG_CopyVarsCurrentToInit = 0x17980000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderMatrixOrientedBox = 0x17990000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrCreate = 0x17A20000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendText = 0x17A30000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendInt = 0x17A40000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendHexa = 0x17A50000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendFloat = 0x17A60000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendVector = 0x17A70000,
+    LyN_ScriptVarType_EngineFunction_DBG_StrAppendObj = 0x17A80000,
+    LyN_ScriptVarType_EngineFunction_STR_MaterialSet = 0x17AC0000,
+    LyN_ScriptVarType_EngineFunction_STR_GroupOnOff = 0x17AD0000,
+    LyN_ScriptVarType_EngineFunction_STR_GroupDebugOnOff = 0x17AE0000,
+    LyN_ScriptVarType_EngineFunction_STR_Display = 0x17B60000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplayGroup = 0x17B70000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplayViewport = 0x17B80000,
+    LyN_ScriptVarType_EngineFunction_STR_InsText = 0x17B90000,
+    LyN_ScriptVarType_EngineFunction_STR_InsInt = 0x17BA0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsHexa = 0x17BB0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsFloat = 0x17BC0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsVector = 0x17BD0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsGaoKey = 0x17BE0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsGaoName = 0x17BF0000,
+    LyN_ScriptVarType_EngineFunction_STR_Set3D = 0x17C00000,
+    LyN_ScriptVarType_EngineFunction_STR_SetView = 0x17C10000,
+    LyN_ScriptVarType_EngineFunction_STR_Show = 0x17C20000,
+    LyN_ScriptVarType_EngineFunction_STR_Del = 0x17C30000,
+    LyN_ScriptVarType_EngineFunction_STR_InsStrID = 0x17C40000,
+    LyN_ScriptVarType_EngineFunction_STR_SetOrder = 0x17C50000,
+    LyN_ScriptVarType_EngineFunction_STR_InsKeyName = 0x17C60000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplaySegment = 0x17CA0000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplaySegmentGroup = 0x17CB0000,
+    LyN_ScriptVarType_EngineFunction_STR_Display_W = 0x17CC0000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplayGroup_W = 0x17CD0000,
+    LyN_ScriptVarType_EngineFunction_STR_DisplayViewport_W = 0x17CE0000,
+    LyN_ScriptVarType_EngineFunction_STR_InsText_W = 0x17CF0000,
+    LyN_ScriptVarType_EngineFunction_STR_InitArray = 0x17D00000,
+    LyN_ScriptVarType_EngineFunction_STR_StringGet_W = 0x17D10000,
+    LyN_ScriptVarType_EngineFunction_SF_Set = 0x17D40000,
+    LyN_ScriptVarType_EngineFunction_SF_Reset = 0x17D50000,
+    LyN_ScriptVarType_EngineFunction_SF_Swap = 0x17D60000,
+    LyN_ScriptVarType_EngineFunction_SF_Test = 0x17D70000,
+    LyN_ScriptVarType_EngineFunction_SF_IsNull = 0x17D80000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackChange = 0x1BBC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackCurChange = 0x1BBD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackCurChangeNow = 0x1BBE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackStop = 0x1BBF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackCurStop = 0x1BC00000,
+    LyN_ScriptVarType_EngineFunction_SCR_ObjMe = 0x1BC10000,
+    LyN_ScriptVarType_EngineFunction_SCR_MdfMe = 0x1BC20000,
+    LyN_ScriptVarType_EngineFunction_SCR_MainActorSet = 0x1BC50000,
+    LyN_ScriptVarType_EngineFunction_SCR_MainActorClear = 0x1BC60000,
+    LyN_ScriptVarType_EngineFunction_SCR_MainActorGet = 0x1BC70000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBAdd = 0x1BC80000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBDel = 0x1BC90000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalIntSet = 0x1BCA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalFloatSet = 0x1BCB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalVectorSet = 0x1BCC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalIntGet = 0x1BCD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalFloatGet = 0x1BCE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_GlobalVectorGet = 0x1BCF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_AddFilter = 0x1BD00000,
+    LyN_ScriptVarType_EngineFunction_SCR_ObjByKeyGet = 0x1BD10000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackCurIdxGet = 0x1BD20000,
+    LyN_ScriptVarType_EngineFunction_SCR_GetObjFromTrigger = 0x1BD90000,
+    LyN_ScriptVarType_EngineFunction_SCR_RuleUnPause = 0x1BDA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_RulePause = 0x1BDB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_IsModel = 0x1BDC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_HasLib = 0x1BDD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_CallTrigger = 0x1BDE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_IsValidTrigger = 0x1BDF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackCurGet = 0x1BE00000,
+    LyN_ScriptVarType_EngineFunction_SCR_RulePauseMe = 0x1BE10000,
+    LyN_ScriptVarType_EngineFunction_SCR_ReinitByFlag = 0x1BE20000,
+    LyN_ScriptVarType_EngineFunction_SCR_TriggerSetSignal = 0x1BE30000,
+    LyN_ScriptVarType_EngineFunction_SCR_TriggerSetStock = 0x1BE40000,
+    LyN_ScriptVarType_EngineFunction_SCR_TriggerGetStock = 0x1BE50000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBCall = 0x1BE60000,
+    LyN_ScriptVarType_EngineFunction_SCR_CallSignal = 0x1BE70000,
+    LyN_ScriptVarType_EngineFunction_SCR_ResetStock = 0x1BE80000,
+    LyN_ScriptVarType_EngineFunction_SCR_ArrayToString = 0x1BE90000,
+    LyN_ScriptVarType_EngineFunction_SCR_ModelKeyGet = 0x1BEA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBGlobalAdd = 0x1BEB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackGet = 0x1BEC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBGlobalDel = 0x1BED0000,
+    LyN_ScriptVarType_EngineFunction_TIME_Get = 0x1BEE0000,
+    LyN_ScriptVarType_EngineFunction_TIME_GetDT = 0x1BEF0000,
+    LyN_ScriptVarType_EngineFunction_TIME_Elapsed = 0x1BF00000,
+    LyN_ScriptVarType_EngineFunction_TIME_Suspend = 0x1BF10000,
+    LyN_ScriptVarType_EngineFunction_TIME_Set = 0x1BF20000,
+    LyN_ScriptVarType_EngineFunction_TIME_SetFactor = 0x1BF30000,
+    LyN_ScriptVarType_EngineFunction_TIME_GetFactor = 0x1BF40000,
+    LyN_ScriptVarType_EngineFunction_TIME_FloatDtDiminution = 0x1BF50000,
+    LyN_ScriptVarType_EngineFunction_TIME_FloatDtCoefDiminution = 0x1BF60000,
+    LyN_ScriptVarType_EngineFunction_TIME_RealGet = 0x1BF70000,
+    LyN_ScriptVarType_EngineFunction_TIME_RealElapsed = 0x1BF80000,
+    LyN_ScriptVarType_EngineFunction_TIME_SecondGet = 0x1BF90000,
+    LyN_ScriptVarType_EngineFunction_TIME_MinuteGet = 0x1BFA0000,
+    LyN_ScriptVarType_EngineFunction_TIME_HourGet = 0x1BFB0000,
+    LyN_ScriptVarType_EngineFunction_TIME_DayGet = 0x1BFC0000,
+    LyN_ScriptVarType_EngineFunction_TIME_MonthGet = 0x1BFD0000,
+    LyN_ScriptVarType_EngineFunction_TIME_YearGet = 0x1BFE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_IsValidSignal = 0x1C020000,
+    LyN_ScriptVarType_EngineFunction_SCR_SignalInvalidSet = 0x1C030000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBGlobalCall = 0x1C040000,
+    LyN_ScriptVarType_EngineFunction_SCR_IntToPortal = 0x1C1B0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TrackTestTransition = 0x1C1C0000,
+    LyN_ScriptVarType_EngineFunction_SCR_IsUnivActive = 0x1C1D0000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBTypeGet = 0x1C1E0000,
+    LyN_ScriptVarType_EngineFunction_SCR_CBDllCall = 0x1C1F0000,
+    LyN_ScriptVarType_EngineFunction_COLOR_SetRGBA = 0x1C200000,
+    LyN_ScriptVarType_EngineFunction_COLOR_GetRed = 0x1C210000,
+    LyN_ScriptVarType_EngineFunction_COLOR_GetGreen = 0x1C220000,
+    LyN_ScriptVarType_EngineFunction_COLOR_GetBlue = 0x1C230000,
+    LyN_ScriptVarType_EngineFunction_COLOR_GetAlpha = 0x1C240000,
+    LyN_ScriptVarType_EngineFunction_COLOR_Blend = 0x1C250000,
+    LyN_ScriptVarType_EngineFunction_COLOR_White = 0x1C260000,
+    LyN_ScriptVarType_EngineFunction_COLOR_Black = 0x1C270000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewMatrixSet = 0x1C840000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewFocalSet = 0x1C850000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewVecLocalToGlobal = 0x1C870000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewRectSet = 0x1C880000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewFlagsSet = 0x1C890000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewFlagsGet = 0x1C8A0000,
+    LyN_ScriptVarType_EngineFunction_DBG_CamViewFlagsGet = 0x1C8B0000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewHorizonGet = 0x1C8D0000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewSightGet = 0x1C8E0000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewBankingGet = 0x1C8F0000,
+    LyN_ScriptVarType_EngineFunction_CAM_View2Dto3D = 0x1C900000,
+    LyN_ScriptVarType_EngineFunction_CAM_View3Dto2D = 0x1C910000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewPosGet = 0x1C920000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewFocalGet = 0x1C940000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewIsoZoomSet = 0x1C950000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewIsoZoomGet = 0x1C960000,
+    LyN_ScriptVarType_EngineFunction_CAM_NearPlaneSet = 0x1C970000,
+    LyN_ScriptVarType_EngineFunction_CAM_View2Dto3DOnCamObject = 0x1C980000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientToCreate = 0x1CE80000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientToDestroy = 0x1CE90000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientToAimSet = 0x1CEA0000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientToFrameSet = 0x1CEB0000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientToBlendSet = 0x1CEC0000,
+    LyN_ScriptVarType_EngineFunction_CAM_OrientTo = 0x1CED0000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleCreate = 0x1CEE0000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleDestroy = 0x1CEF0000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleFrequenciesSet = 0x1CF00000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleAmplitudesSet = 0x1CF10000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleBeginEndSet = 0x1CF20000,
+    LyN_ScriptVarType_EngineFunction_CAM_RumbleRandomNoiseSet = 0x1CF30000,
+    LyN_ScriptVarType_EngineFunction_CAM_Rumble = 0x1CF40000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeCreate = 0x1CF50000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeDestroy = 0x1CF60000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeParamsSet = 0x1CF70000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeFrequenciesSet = 0x1CF80000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeAmplitudesSet = 0x1CF90000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeRandomSet = 0x1CFA0000,
+    LyN_ScriptVarType_EngineFunction_CAM_ShakeAxisSet = 0x1CFB0000,
+    LyN_ScriptVarType_EngineFunction_CAM_Shake = 0x1CFC0000,
+    LyN_ScriptVarType_EngineFunction_CAM_ForceRatio = 0x1CFD0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SaveSlot = 0x1E140000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReadSlot = 0x1E150000,
+    LyN_ScriptVarType_EngineFunction_SAV_Validate = 0x1E160000,
+    LyN_ScriptVarType_EngineFunction_SAV_Unvalidate = 0x1E170000,
+    LyN_ScriptVarType_EngineFunction_SAV_UpdateValid = 0x1E180000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotData = 0x1E190000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotUserData = 0x1E1A0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotName = 0x1E1B0000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotName = 0x1E1C0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SaveSlotEx = 0x1E1D0000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReadSlotEx = 0x1E1E0000,
+    LyN_ScriptVarType_EngineFunction_SAV_ValidateEx = 0x1E1F0000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotDataEx = 0x1E200000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotUserDataEx = 0x1E210000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotNameEx = 0x1E220000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotNameEx = 0x1E230000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetStructureMaxSize = 0x1E240000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetMaxPhotosPerSlot = 0x1E250000,
+    LyN_ScriptVarType_EngineFunction_SAV_InitSystem = 0x1E260000,
+    LyN_ScriptVarType_EngineFunction_SAV_DeleteSlot = 0x1E270000,
+    LyN_ScriptVarType_EngineFunction_SAV_DeleteSlotEx = 0x1E280000,
+    LyN_ScriptVarType_EngineFunction_SAV_Step = 0x1E290000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReturnCommand = 0x1E2A0000,
+    LyN_ScriptVarType_EngineFunction_SAV_UnvalidateEx = 0x1E2B0000,
+    LyN_ScriptVarType_EngineFunction_SAV_IsEnabled = 0x1E2C0000,
+    LyN_ScriptVarType_EngineFunction_SAV_ValidateExPart = 0x1E2D0000,
+    LyN_ScriptVarType_EngineFunction_SAV_InstallChannel = 0x1E2E0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotNameW = 0x1E2F0000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotNameW = 0x1E300000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotNameWEx = 0x1E310000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotNameWEx = 0x1E320000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotUserBuffer = 0x1E330000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotUserBuffer = 0x1E340000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotUserBufferEx = 0x1E350000,
+    LyN_ScriptVarType_EngineFunction_SAV_GetSlotUserBufferEx = 0x1E360000,
+    LyN_ScriptVarType_EngineFunction_SAV_End = 0x1E370000,
+    LyN_ScriptVarType_EngineFunction_SAV_UpdateValidEx = 0x1E380000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetUserBufferSize = 0x1E390000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReadSlotHeader = 0x1E3A0000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReadSlotHeaderEx = 0x1E3B0000,
+    LyN_ScriptVarType_EngineFunction_SAV_IsChannelInstalled = 0x1E3C0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotsMerge = 0x1E3D0000,
+    LyN_ScriptVarType_EngineFunction_SAV_IsFirstBoot = 0x1E3E0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetStructureShared = 0x1E3F0000,
+    LyN_ScriptVarType_EngineFunction_SAV_isStructureShared = 0x1E400000,
+    LyN_ScriptVarType_EngineFunction_SAV_NeedFirstBoot = 0x1E410000,
+    LyN_ScriptVarType_EngineFunction_SAV_SaveSlotHeader = 0x1E420000,
+    LyN_ScriptVarType_EngineFunction_SAV_SaveSlotHeaderEx = 0x1E430000,
+    LyN_ScriptVarType_EngineFunction_SAV_ChannelInstallNbBlocks = 0x1E440000,
+    LyN_ScriptVarType_EngineFunction_SAV_ReadSlotValidity = 0x1E450000,
+    LyN_ScriptVarType_EngineFunction_SAV_ForceProgressMessage_Start = 0x1E460000,
+    LyN_ScriptVarType_EngineFunction_SAV_ForceProgressMessage_End = 0x1E470000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComEmitter = 0x1E780000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComReceiver = 0x1E790000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComGetReceiverMdf = 0x1E7A0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComGetEmitterMdf = 0x1E7B0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComInvalidateLink = 0x1E7C0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComChannelDecideMax = 0x1E7E0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComReceiverTo = 0x1E7F0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComGetConcurrentMdf = 0x1E800000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComGetReceiverParam = 0x1E810000,
+    LyN_ScriptVarType_EngineFunction_SCR_ComGetEmitterParam = 0x1E820000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskAdd = 0x1EAA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskReset = 0x1EAB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_HasTask = 0x1EAC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskNbGet = 0x1EAD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskCurGet = 0x1EAF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskAddErrorGet = 0x1EB00000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskIDGet = 0x1EB10000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskComLinkGet = 0x1EB20000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskComLinkSet = 0x1EB30000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskDBGNameSet = 0x1EB40000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskHasChild = 0x1EB50000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskStockGet = 0x1EB60000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskStockSet = 0x1EB70000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskIsValid = 0x1EB80000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskPathIDGet = 0x1EB90000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskPathIDSet = 0x1EBA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskDeleteAllChilds = 0x1EBB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskSubTreeStateGet = 0x1EBC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskIsChildOf = 0x1EBD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskMotherGet = 0x1EBE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskAddErrorTaskGet = 0x1EBF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskEvalTimerSet = 0x1EC00000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskCommandSet = 0x1EC10000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskAdderMdfGet = 0x1EC20000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskChildMustMaintain = 0x1EC30000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskUserIntsMaxSet = 0x1EC40000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskUserIntsMaxGet = 0x1EC50000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskUserIntsSet = 0x1EC60000,
+    LyN_ScriptVarType_EngineFunction_SCR_TaskUserIntsGet = 0x1EC70000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecDotProduct = 0x1FD60000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecCrossProduct = 0x1FD70000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecNorm = 0x1FD80000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecNormalize = 0x1FD90000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSetNormalize = 0x1FDA0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSetHorzNormalize = 0x1FDB0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecNull = 0x1FDC0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSetNorm = 0x1FDD0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSetNull = 0x1FDE0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecBlend = 0x1FDF0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecBlendRotate = 0x1FE00000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecLocalToGlobal = 0x1FE10000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecGlobalToLocal = 0x1FE20000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSqrNorm = 0x1FE30000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecAngle = 0x1FE40000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecAbsAngle = 0x1FE50000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecRotate = 0x1FE60000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSetRound = 0x1FE70000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecInCone = 0x1FE80000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecDistance = 0x1FE90000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecProjSegmentOnPlan = 0x1FEA0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecProjSegmentOnSegment = 0x1FEB0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecNullEpsilon = 0x1FEC0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecNullToler = 0x1FED0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecIsValid = 0x1FEE0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecHorzSet_SqrNormGet = 0x1FEF0000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecDtBlendSet = 0x1FF00000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecDtBlendRotateSet = 0x1FF10000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatRatioGet = 0x1FF20000,
+    LyN_ScriptVarType_EngineFunction_MTH_INT_TriangleAABBox = 0x1FF30000,
+    LyN_ScriptVarType_EngineFunction_MTH_INT_PointInTriangle = 0x1FF40000,
+    LyN_ScriptVarType_EngineFunction_MTH_AvgInit = 0x1FF50000,
+    LyN_ScriptVarType_EngineFunction_MTH_AvgUpdate = 0x1FF60000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecSqrDistance = 0x1FF70000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecLocalToGlobalNoScale = 0x1FF80000,
+    LyN_ScriptVarType_EngineFunction_MTH_VecGlobalToLocalNoScale = 0x1FF90000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatTan = 0x20070000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatSin = 0x20080000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCos = 0x20090000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatAbs = 0x200A0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatSign = 0x200B0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatSqrt = 0x200C0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatBlend = 0x200D0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatRand = 0x200E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatMin = 0x200F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatMax = 0x20100000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatMid = 0x20110000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatLimit = 0x201B0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatRound = 0x201C0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatASin = 0x201D0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatACos = 0x201E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatATan = 0x201F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatExp = 0x20200000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatLn = 0x20210000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatTanH = 0x20220000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatPow = 0x20230000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurve = 0x20240000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatNullToler = 0x20250000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatTrunc = 0x20260000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMinXGet = 0x20270000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMinYGet = 0x20280000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMaxXGet = 0x20290000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMaxYGet = 0x202A0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatNullEpsilon = 0x202B0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatIsValid = 0x202C0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurvePointGet = 0x202D0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMarkerSet = 0x202E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_ColorCurve = 0x202F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatModulo = 0x20300000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatATan2 = 0x20310000,
+    LyN_ScriptVarType_EngineFunction_MTH_FloatCurveMarkerColorSet = 0x20320000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntRand = 0x203A0000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntAbs = 0x203B0000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntMin = 0x203C0000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntMax = 0x203D0000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntSign = 0x203E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_IntModulo = 0x203F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_UIntShiftL = 0x20400000,
+    LyN_ScriptVarType_EngineFunction_MTH_UIntShiftR = 0x20410000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitChange = 0x206C0000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitSet = 0x206D0000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitClear = 0x206E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitTest = 0x206F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitSetRange = 0x20700000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitClearRange = 0x20710000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitAnd = 0x20720000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntBitOr = 0x20730000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayReset = 0x20740000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayIntReset = 0x20750000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayFloatReset = 0x20760000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayVectorReset = 0x20770000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayObjectReset = 0x20780000,
+    LyN_ScriptVarType_EngineFunction_MTH_ArrayModifierReset = 0x20790000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44Invert = 0x209E0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44Mul = 0x209F0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44SetIdentity = 0x20A00000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44PositionGet = 0x20A10000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44PositionSet = 0x20A20000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44RotationGet = 0x20A30000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44RotationSet = 0x20A40000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44FromRotation = 0x20A50000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44FromEulerAngles = 0x20A60000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44EulerAnglesGet = 0x20A70000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44TargetGeneral = 0x20A80000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44HorizonGet = 0x20A90000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44SightGet = 0x20AA0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44BankingGet = 0x20AB0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44HorizonSet = 0x20AC0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44SightSet = 0x20AD0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44BankingSet = 0x20AE0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44Blend = 0x20AF0000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44TransformVector = 0x20B00000,
+    LyN_ScriptVarType_EngineFunction_MTH_M44TransformVertex = 0x20B10000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Take = 0x20D00000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TakePNG = 0x20D10000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_SetRect = 0x20D20000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_SetMax = 0x20D30000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Exist = 0x20D40000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Delete = 0x20D50000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Copy = 0x20D60000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Move = 0x20D70000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_Dump = 0x20D80000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_NewPhoto = 0x20D90000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_GetData = 0x20DA0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_GetNextId = 0x20DB0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_ViewpointSet = 0x20DC0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_ViewpointReset = 0x20DD0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_MaxSizeSet = 0x20DE0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureGet = 0x20EE0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureSetData = 0x20EF0000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureRefresh = 0x20F00000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureSetPhotoId = 0x20F10000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureGetPhotoId = 0x20F20000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureBorderSet = 0x20F30000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureMosaicSet = 0x20F40000,
+    LyN_ScriptVarType_EngineFunction_PHOTO_TextureMosaicCellSet = 0x20F50000,
+    LyN_ScriptVarType_EngineFunction_TGA_WidthGet = 0x21340000,
+    LyN_ScriptVarType_EngineFunction_TGA_HeightGet = 0x21350000,
+    LyN_ScriptVarType_EngineFunction_TGA_ColorGet = 0x21360000,
+    LyN_ScriptVarType_EngineFunction_TGA_ColorSet = 0x21370000,
+    LyN_ScriptVarType_EngineFunction_SCR_strcpy = 0x21980000,
+    LyN_ScriptVarType_EngineFunction_SCR_strcat = 0x21990000,
+    LyN_ScriptVarType_EngineFunction_SCR_strlen = 0x219A0000,
+    LyN_ScriptVarType_EngineFunction_SCR_string2unichar = 0x219B0000,
+    LyN_ScriptVarType_EngineFunction_SCR_strformat_i = 0x219C0000,
+    LyN_ScriptVarType_EngineFunction_SCR_strformat_f = 0x219D0000,
+    LyN_ScriptVarType_EngineFunction_SCR_unichar2string = 0x219E0000,
+    LyN_ScriptVarType_EngineFunction_SCR_strappend_i = 0x219F0000,
+    LyN_ScriptVarType_EngineFunction_SCR_strappend_f = 0x21A00000,
+    LyN_ScriptVarType_EngineFunction_SCR_strappend_s = 0x21A10000,
+    LyN_ScriptVarType_EngineFunction_SCR_IntToString = 0x21A20000,
+    LyN_ScriptVarType_EngineFunction_SCR_StringToInt = 0x21A30000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcscpy = 0x21CA0000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcscat = 0x21CB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcslen = 0x21CC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_wstring2widechar = 0x21CD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcsformat_i = 0x21CE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcsformat_f = 0x21CF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_widechar2wstring = 0x21D00000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcsappend_i = 0x21D10000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcsappend_f = 0x21D20000,
+    LyN_ScriptVarType_EngineFunction_SCR_wcsappend_ws = 0x21D30000,
+    LyN_ScriptVarType_EngineFunction_SCR_IntToWString = 0x21D40000,
+    LyN_ScriptVarType_EngineFunction_SCR_WStringToInt = 0x21D50000,
+    LyN_ScriptVarType_EngineFunction_SCR_string2wstring = 0x21D60000,
+    LyN_ScriptVarType_EngineFunction_SCR_wstring2string = 0x21D70000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetIdGet = 0x21FC0000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetFloatGet = 0x21FD0000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetIntGet = 0x21FE0000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetVectorGet = 0x21FF0000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetNameGet = 0x22000000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetCurveGet = 0x22010000,
+    LyN_ScriptVarType_EngineFunction_SCR_DataSetIsValid = 0x22020000,
+    LyN_ScriptVarType_EngineFunction_SCR_ObjRefResolve = 0x222E0000,
+    LyN_ScriptVarType_EngineFunction_SCR_MdfRefResolve = 0x222F0000,
+    LyN_ScriptVarType_EngineFunction_OBJ_ObjRefGet = 0x22300000,
+    LyN_ScriptVarType_EngineFunction_SCR_MdfSetValuesFrom = 0x22310000,
+    LyN_ScriptVarType_EngineFunction_SCR_stringdbg2string = 0x22600000,
+    LyN_ScriptVarType_EngineFunction_SCR_stringdbg2wstring = 0x22610000,
+    LyN_ScriptVarType_EngineFunction_SCR_vector2stringID = 0x226A0000,
+    LyN_ScriptVarType_EngineFunction_SCR_StringIDIsEqual = 0x226B0000,
+    LyN_ScriptVarType_EngineFunction_SCR_StringIDIsValid = 0x226C0000,
+    LyN_ScriptVarType_EngineFunction_SCR_BypassNodesLimit = 0x226D0000,
+    LyN_ScriptVarType_EngineFunction_BUF_Reset = 0x22920000,
+    LyN_ScriptVarType_EngineFunction_BUF_Compress = 0x22930000,
+    LyN_ScriptVarType_EngineFunction_BUF_IntAdd = 0x22940000,
+    LyN_ScriptVarType_EngineFunction_BUF_FloatAdd = 0x22950000,
+    LyN_ScriptVarType_EngineFunction_BUF_StringAdd = 0x22960000,
+    LyN_ScriptVarType_EngineFunction_BUF_VectorAdd = 0x22970000,
+    LyN_ScriptVarType_EngineFunction_BUF_ColorAdd = 0x22980000,
+    LyN_ScriptVarType_EngineFunction_BUF_WStringAdd = 0x22990000,
+    LyN_ScriptVarType_EngineFunction_BUF_MatrixAdd = 0x229A0000,
+    LyN_ScriptVarType_EngineFunction_BUF_Append = 0x229C0000,
+    LyN_ScriptVarType_EngineFunction_BUF_Extract = 0x229D0000,
+    LyN_ScriptVarType_EngineFunction_BUF_SaveAdd = 0x229E0000,
+    LyN_ScriptVarType_EngineFunction_BUF_JpegAdd = 0x229F0000,
+    LyN_ScriptVarType_EngineFunction_BUF_PhotoAdd = 0x22A00000,
+    LyN_ScriptVarType_EngineFunction_BUF_FixedBufferAdd = 0x22A10000,
+    LyN_ScriptVarType_EngineFunction_BUF_LoadFromFile = 0x23060000,
+    LyN_ScriptVarType_EngineFunction_BUF_Decompress = 0x22A50000,
+    LyN_ScriptVarType_EngineFunction_BUF_IntGet = 0x22A60000,
+    LyN_ScriptVarType_EngineFunction_BUF_FloatGet = 0x22A70000,
+    LyN_ScriptVarType_EngineFunction_BUF_StringGet = 0x22A80000,
+    LyN_ScriptVarType_EngineFunction_BUF_VectorGet = 0x22A90000,
+    LyN_ScriptVarType_EngineFunction_BUF_ColorGet = 0x22AA0000,
+    LyN_ScriptVarType_EngineFunction_BUF_WStringGet = 0x22AB0000,
+    LyN_ScriptVarType_EngineFunction_BUF_MatrixGet = 0x22AC0000,
+    LyN_ScriptVarType_EngineFunction_BUF_Copy = 0x22AD0000,
+    LyN_ScriptVarType_EngineFunction_BUF_SizeGet = 0x22AE0000,
+    LyN_ScriptVarType_EngineFunction_BUF_SaveGet = 0x22AF0000,
+    LyN_ScriptVarType_EngineFunction_BUF_FixedBufferGet = 0x22B00000,
+    LyN_ScriptVarType_EngineFunction_JPG_MaxSizeSet = 0x22C40000,
+    LyN_ScriptVarType_EngineFunction_JPG_Begin = 0x22C50000,
+    LyN_ScriptVarType_EngineFunction_JPG_End = 0x22C60000,
+    LyN_ScriptVarType_EngineFunction_JPG_TextureToBuffer = 0x22C70000,
+    LyN_ScriptVarType_EngineFunction_JPG_BufferToTexture = 0x22C80000,
+    LyN_ScriptVarType_EngineFunction_JPG_AlignToMaxSize = 0x22C90000,
+    LyN_ScriptVarType_EngineFunction_JPG_JpegToTexture = 0x22CA0000,
+    LyN_ScriptVarType_EngineFunction_JPG_PhotoToTexture = 0x22CB0000,
+    LyN_ScriptVarType_EngineFunction_JPG_TextureToFixedBuffer = 0x22CC0000,
+    LyN_ScriptVarType_EngineFunction_JPG_FixedBufferToTexture = 0x22CD0000,
+    LyN_ScriptVarType_EngineFunction_JPG_FixedBufferToTexture_RGBA = 0x22CE0000,
+    LyN_ScriptVarType_EngineFunction_JPG_IsEnabled = 0x22CF0000,
+    LyN_ScriptVarType_EngineFunction_JPG_ForceTransparentBorder = 0x22D00000,
+    LyN_ScriptVarType_EngineFunction_FBUF_Init = 0x22F60000,
+    LyN_ScriptVarType_EngineFunction_FBUF_Reset = 0x22F70000,
+    LyN_ScriptVarType_EngineFunction_FBUF_IntAdd = 0x22F80000,
+    LyN_ScriptVarType_EngineFunction_FBUF_FloatAdd = 0x22F90000,
+    LyN_ScriptVarType_EngineFunction_FBUF_StringAdd = 0x22FA0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_VectorAdd = 0x22FB0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_ColorAdd = 0x22FC0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_WStringAdd = 0x22FD0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_MatrixAdd = 0x22FE0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_Append = 0x23000000,
+    LyN_ScriptVarType_EngineFunction_FBUF_Extract = 0x23010000,
+    LyN_ScriptVarType_EngineFunction_FBUF_JpegAdd = 0x23020000,
+    LyN_ScriptVarType_EngineFunction_FBUF_PhotoAdd = 0x23030000,
+    LyN_ScriptVarType_EngineFunction_FBUF_IntGet = 0x230A0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_FloatGet = 0x230B0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_StringGet = 0x230C0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_VectorGet = 0x230D0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_ColorGet = 0x230E0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_WStringGet = 0x230F0000,
+    LyN_ScriptVarType_EngineFunction_FBUF_MatrixGet = 0x23100000,
+    LyN_ScriptVarType_EngineFunction_FBUF_FixedSizeGet = 0x23110000,
+    LyN_ScriptVarType_EngineFunction_FBUF_SizeGet = 0x23120000,
+    LyN_ScriptVarType_EngineFunction_FBUF_BufferAdd = 0x23130000,
+    LyN_ScriptVarType_EngineFunction_FBUF_BufferGet = 0x23140000,
+    LyN_ScriptVarType_EngineFunction_FBUF_Copy = 0x23150000,
+    //Debug
+    LyN_ScriptVarType_EngineFunction_DBG_BreakPoint = 0x17790000,
+    LyN_ScriptVarType_EngineFunction_DBG_TraceTrack = 0x17870000,
+    LyN_ScriptVarType_EngineFunction_DBG_IsPlaySessionOn = 0x179A0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderSegment = 0x179B0000,
+    LyN_ScriptVarType_EngineFunction_DBG_BreakpointMsg = 0x179C0000,
+    LyN_ScriptVarType_EngineFunction_DBG_RenderSplineArrow = 0x179D0000,
+    //?
+    LyN_ScriptVarType_EngineFunction_DBG_ScryError = 0x179F0000,
+    LyN_ScriptVarType_EngineFunction_DBG_ScryWarning = 0x17A00000,
+    LyN_ScriptVarType_EngineFunction_DBG_BreakpointDisable = 0x17A10000,
+    LyN_ScriptVarType_EngineFunction_DBG_GetActualMemorySize = 0x17A90000,
+    LyN_ScriptVarType_EngineFunction_DBG_GetTotalMemorySize = 0x17AA0000,
+    LyN_ScriptVarType_EngineFunction_DBG_MementoReport = 0x17AB0000,
+    //String
+    LyN_ScriptVarType_EngineFunction_STR_GetSize = 0x17C70000,
+    LyN_ScriptVarType_EngineFunction_STR_Ins_W = 0x17CF0000, //Wide
+    LyN_ScriptVarType_EngineFunction_STR_GetStringWidth = 0x17D20000,
+    LyN_ScriptVarType_EngineFunction_STR_FitStringToWidth = 0x17D30000,
+    //SpecialFlag
+    //SCR (Scripting)
+    LyN_ScriptVarType_EngineFunction_SCR_ObjRootCaller = 0x1B580000,
+    LyN_ScriptVarType_EngineFunction_SCR_MdfRootCaller = 0x1B580000,
+    LyN_ScriptVarType_EngineFunction_SCR_ResetFilter = 0x1BBB0000,
+    LyN_ScriptVarType_EngineFunction_SCR_ObjCaller = 0x1BC30000,
+    LyN_ScriptVarType_EngineFunction_SCR_MdfCaller = 0x1BC40000,
+    LyN_ScriptVarType_EngineFunction_SCR_ObjByKeyTryGet = 0x1BD30000,
+    LyN_ScriptVarType_EngineFunction_SCR_HasBeenApplied = 0x1BD40000,
+    LyN_ScriptVarType_EngineFunction_SCR_CurApplyGet = 0x1BD50000,
+    LyN_ScriptVarType_EngineFunction_SCR_UniverseGet = 0x1BD70000,
+    //Ok the ordering is unofficial but I'd rather group every type together
+    //Fixed Buffer
+    LyN_ScriptVarType_EngineFunction_SCR_FBUF_Reset = 0x22F70000,
+    //Color
+    //Camera
+    LyN_ScriptVarType_EngineFunction_CAM_ViewIsoGet = 0x1C950000,
+    LyN_ScriptVarType_EngineFunction_CAM_View3Dto2DOnCamObject = 0x1C990000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewSet = 0x1CA20000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewShiftSet = 0x1CA30000,
+    LyN_ScriptVarType_EngineFunction_CAM_ViewRatioGet = 0x1CA40000,
+    LyN_ScriptVarType_EngineFunction_CAM_DeviceSet = 0x1CA50000,
+    //Scripting Save
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotData = 0x1E1A0000,
+    LyN_ScriptVarType_EngineFunction_SAV_SetSlotDataEx = 0x1E210000,
+    LyN_ScriptVarType_EngineFunction_SAV_SaveExists = 0x1E410000,
+    LyN_ScriptVarType_EngineFunction_SAV_PacketStart = 0x1E460000,
+    LyN_ScriptVarType_EngineFunction_SAV_PacketEnd = 0x1E470000,
+    LyN_ScriptVarType_EngineFunction_SAV_PacketStartEx = 0x1E480000,
+    LyN_ScriptVarType_EngineFunction_SAV_NeedScale = 0x1E490000,
+    LyN_ScriptVarType_EngineFunction_SAV_IsInProgress = 0x1E4A0000,
+    LyN_ScriptVarType_EngineFunction_SAV_ResetScale = 0x1E4B0000,
+    //Time
+    LyN_ScriptVarType_EngineFunction_TIME_GetPreciseDT = 0x1BFF0000,
+    //FIRe
+	LyN_ScriptVarType_EngineFunction_FIR_TrackActivate = 0x050000,
+	LyN_ScriptVarType_EngineFunction_FIR_TrackDeActivate = 0x060000,
+    //Message
+    LyN_ScriptVarType_EngineFunction_MSSG_Push = 0x00660000,
+    //Input/Output    
+    LyN_ScriptVarType_EngineFunction_IO_KeyboardKeyPressed = 0x64FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_KeyboardKeyJustPressed = 0x65FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_KeyboardKeyJustReleased = 0x66FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickAnyButtonPressed = 0x6DFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickButtonPressed = 0x6EFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickButtonJustPressed = 0x6FFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickButtonJustReleased = 0x70FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickMove = 0x71FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickSetButtonMask = 0x72FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickStickEnable = 0x73FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickHere = 0x74FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickEnableAimingMode = 0x75FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseMove = 0x78FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseSensitivityGet = 0x79FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseSensitivitySet = 0x7AFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseButtonMaskSet = 0x7BFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseButtonMaskGet = 0x7CFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseEnable = 0x7DFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseButtonPressed = 0x7EFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseButtonJustPressed = 0x7FFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseButtonJustReleased = 0x80FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MousePos = 0x81FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickIsAccelEnable = 0x82FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickGetAccelMax = 0x83FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickGetAccel = 0x84FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickGetPointer = 0x85FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickGetPointerState = 0x86FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickRumbleSet = 0x87FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickTypeGet = 0x88FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickTypeEnableSet = 0x89FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickStickGet = 0x8CFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MousePosGet = 0x8DFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_MouseMoveGet = 0x8EFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickButtonMaskSet = 0x8FFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickAccelMaxGet = 0x96FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickAccelGet = 0x97FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerGet = 0x98FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerStateGet = 0x99FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickBatteryStateGet = 0x92FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickWiimoteSensibilitySet = 0x9AFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickSampleNumberGet = 0x9BFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickStickSampleGet = 0x9CFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickAccelSampleGet = 0x9DFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerSampleGet = 0x9EFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerStateSampleGet = 0x9FFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickRequired = 0xA0FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickDisconnectionAlert = 0xA1FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickExtensionRequired = 0xA2FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerStateSet = 0xA3FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickEnableHomeButton = 0xA4FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickSensorBarPositionGet = 0xA5FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickHorizonGet = 0xA6FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickExtensionGet = 0xA7FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickPointerShiftSet = 0xA8FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickCheckLastError = 0xA9FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_JoystickDPDValidGet = 0xB2FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileOpenRead = 0xB4FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileClose = 0xB5FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileGetC = 0xB6FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileOpenWrite = 0xB7FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FilePutC = 0xB8FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FilePutI = 0xB9FFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileGetI = 0xBAFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FilePutF = 0xBBFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileGetF = 0xBCFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileEOF = 0xBDFFFF,
+    LyN_ScriptVarType_EngineFunction_IO_FileOpen = 0xBEFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkPause = 0x12CFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkGoto = 0x12DFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkPlay = 0x12EFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkLengthGet = 0x12FFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkPauseCurrentVideo = 0x130FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkGotoCurrentVideo = 0x131FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkLengthGetCurrentVideo = 0x132FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkStopCurrentVideo = 0x133FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkIsRunning = 0x134FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkCancelPreload = 0x135FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkPreload = 0x136FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkIsPreloadFinished = 0x137FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkIsPreloading = 0x138FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkGetPreloadedBinkKey = 0x139FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkForcePlay = 0x13AFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkSwitchToKey = 0x13BFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkStopIfRunning = 0x13CFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkSwitch = 0x13DFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_BinkIsInPause = 0x13EFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_RatioSet = 0x1F4FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_RatioGet = 0x1F5FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_WidthGet = 0x1F6FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_HeightGet = 0x1F7FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_ColorPickRequest = 0x1F8FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_LastPickedColorGet = 0x1F9FFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_ForceNoLod = 0x1FAFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_Is3DRendered = 0x1FBFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_SetRender3D = 0x1FCFFFF,
+    LyN_ScriptVarType_EngineFunction_K3D_SetVisibilityOptim = 0x1FDFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_CastWorld = 0x6A4FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_CastObject = 0x6A5FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_PosGet = 0x6A6FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_NormalGet = 0x6A7FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_ElementGet = 0x6A8FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_GMat_Getf = 0x6A9FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_GMat_Geti = 0x6AAFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_TriangleGet = 0x6ABFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaper = 0x6ACFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_NodeGet = 0x6ADFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_ShapeGet = 0x6AEFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperCast = 0x6AFFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperParamSetF = 0x6B0FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperParamSetI = 0x6B1FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_ReaperCast = 0x6B2FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_ReaperParamSetF = 0x6B3FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_ReaperParamSetI = 0x6B4FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MatIdGet = 0x6B5FFFF,
+    LyN_ScriptVarType_EngineFunction_COL_TriangleIntersect = 0x6B6FFFF,
+    LyN_ScriptVarType_EngineFunction_COL_SphereIntersect = 0x6B7FFFF,
+    LyN_ScriptVarType_EngineFunction_COL_BoxIntersect = 0x6B8FFFF,
+    LyN_ScriptVarType_EngineFunction_COB_SetRaycastSensitive = 0x6B9FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperPosGet = 0x6D6FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperNormalGet = 0x6D7FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperNextNormalGet = 0x6D8FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperEdgePointAGet = 0x6D9FFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperEdgePointBGet = 0x6DAFFFF,
+    LyN_ScriptVarType_EngineFunction_RAY_MeshReaperNodeGet = 0x6DBFFFF,
+    LyN_ScriptVarType_EngineFunction_FIND_SearchAABB = 0x6EAFFFF,
+    LyN_ScriptVarType_EngineFunction_FIND_FirstGet = 0x6EBFFFF,
+    LyN_ScriptVarType_EngineFunction_FIND_NextGet = 0x6ECFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_RegisterVariable = 0x708FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_UnregisterVariable = 0x709FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_ObjCountGet = 0x73AFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_ObjGetAt = 0x73BFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_EditorViewModeSet = 0x744FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_CamLock = 0x745FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_EditorHasFocus = 0x746FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_PauseAllButMe = 0x747FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_UnPauseAll = 0x748FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoIsRender = 0x76CFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoIsApply = 0x76DFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoUpdateApply = 0x76EFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoByPosGet = 0x76FFFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_PlatformCurrentGet = 0x770FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoAddApply = 0x771FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoSetInvisible = 0x772FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_SectoSetPortalOpen = 0x773FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_OutputDirGet = 0x774FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_InputFileGet = 0x775FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_CloseBF = 0x776FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_IsRetailVersion = 0x777FFFF,
+    LyN_ScriptVarType_EngineFunction_SCR_int2string = 0x79EFFFF,
+    LyN_ScriptVarType_EngineFunction_SCR_string2int = 0x79FFFFF,
+    LyN_ScriptVarType_EngineFunction_SCR_int2wstring = 0x7A0FFFF,
+    LyN_ScriptVarType_EngineFunction_SCR_wstring2int = 0x7A1FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_NoxModeGet = 0x7D0FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_MenuGameCursorMove = 0x802FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_MenuGameCursorDown = 0x803FFFF,
+    LyN_ScriptVarType_EngineFunction_ViD_MenuGameCursorUp = 0x804FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_PushMouseCursor = 0x805FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_BindMagmaBoutonToJoystick = 0x806FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetActiveController = 0x807FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetIntProperty = 0x808FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetFloatProperty = 0x809FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetStringProperty = 0x80AFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetWStringProperty = 0x80BFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetIntProperty = 0x80CFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetFloatProperty = 0x80DFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetGenericObjectIDFromString = 0x80EFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetObjectIDFromString = 0x80FFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_PushPageFromID = 0x810FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_PushPageFromName = 0x811FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_PopPage = 0x812FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_FindAndSetAreaVisibility = 0x813FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetActive = 0x814FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetVisibility = 0x815FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetViewportWidth = 0x816FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetViewportHeight = 0x817FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_PopMouseCursor = 0x818FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_SetTo30fps = 0x819FFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_IsAt30fps = 0x81AFFFF,
+    LyN_ScriptVarType_EngineFunction_MGM_GetTopLevelPageID = 0x81BFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Prepare = 0x898FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_RetryResultGet = 0x899FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Cancel = 0x89AFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_RecipientAdd = 0x89BFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_SubjectSet = 0x89CFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_TextSet = 0x89DFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_PhotoAdd = 0x89EFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_LedPatternSet = 0x89FFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Send = 0x8A0FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_ErrorCodeGet = 0x8A1FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_FriendGet = 0x8A2FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Begin = 0x8A3FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_End = 0x8A4FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_MaxNbFriendsGet = 0x8A5FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_NewMsgIsArrived = 0x8A6FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Filter = 0x8A7FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_SenderGet = 0x8A8FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_SubjectGet = 0x8A9FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_TextGet = 0x8AAFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_Delete = 0x8ACFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_TypeSet = 0x8AFFFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_IsReady = 0x8B0FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_MyIdGet = 0x8B1FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_BufferAdd = 0x8B2FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_BufferGet = 0x8B3FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_CharactersAllowedSet = 0x8B4FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_RecipientAdd2 = 0x8B5FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_FriendGet2 = 0x8B6FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_MyIdGet2 = 0x8B7FFFF,
+    LyN_ScriptVarType_EngineFunction_Mail_CharactersAllowedFontSet = 0x8B8FFFF,
+    LyN_ScriptVarType_EngineFunction_VKBD_Open = 0x8FCFFFF,
+    LyN_ScriptVarType_EngineFunction_VKBD_IsClosed = 0x8FDFFFF,
+    LyN_ScriptVarType_EngineFunction_WII_RegionGet = 0x910FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_ResetSystem = 0x911FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_GetResetCode = 0x912FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_LaunchAppDisk = 0x914FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_ReturnToMenu = 0x915FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_PCCheckRestriction = 0x916FFFF,
+    LyN_ScriptVarType_EngineFunction_WII_PCCheckPassword = 0x917FFFF,
+    //World
+    LyN_ScriptVarType_EngineFunction_WOR_LoadList = 0x2710FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_Reinit = 0x2711FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_GetKey = 0x2712FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_AmbiantSet = 0x2715FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_AmbiantGet = 0x2716FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_Ambiant2Set = 0x2717FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_Ambiant2Get = 0x2718FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_BackColorSet = 0x2719FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_BackColorGet = 0x271AFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_FogSet = 0x271BFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_FogGet = 0x271CFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_PauseApply = 0x271DFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_UnpauseApply = 0x271EFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_IsLoading = 0x271FFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_CountGet = 0x2720FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_LoadListMask = 0x2721FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_PauseRender = 0x2722FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_UnPauseRender = 0x2723FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_RenderParamWorldChange = 0x2724FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_MaxAsyncDelObjSet = 0x2725FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_PauseRenderForKey = 0x2726FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_UnPauseRenderForKey = 0x2727FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_PreloadList = 0x2728FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_FlushList = 0x2729FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_Show = 0x272AFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_Hide = 0x272BFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LoadGroup = 0x272CFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_PreloadGroup = 0x272DFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LoadCancel = 0x272EFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LoadGroupMask = 0x272FFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_PreloadListMask = 0x2730FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_PreloadGroupMask = 0x2731FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_GetLoadingStats = 0x2732FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_SetLoadingThrottle = 0x2733FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LoadWogs = 0x2734FFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LRPPosSet = 0x27EFFFFF,    
+    LyN_ScriptVarType_EngineFunction_WOR_LRPPosGet = 0x27FFFFFF,    
+    //NAND, originally in WOR class
+    LyN_ScriptVarType_EngineFunction_NAND_Preload = 0x2738FFFF,    
+    LyN_ScriptVarType_EngineFunction_NAND_Unpreload = 0x2739FFFF,    
+    LyN_ScriptVarType_EngineFunction_NAND_UnpreloadAll = 0x273AFFFF,    
+    LyN_ScriptVarType_EngineFunction_NAND_PreloadCancel = 0x273BFFFF,    
+    LyN_ScriptVarType_EngineFunction_NAND_PreloadCancelAll = 0x273CFFFF,
+    LyN_ScriptVarType_EngineFunction_NAND_IsPreload = 0x273DFFFF,
+    //DLC, originally in WOR class as well
+    LyN_ScriptVarType_EngineFunction_DLC_GetWogList = 0x274CFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_GetWogNum = 0x274DFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_GetWogKey = 0x274EFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_GetWogName = 0x274FFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtExist = 0x2750FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetNum = 0x2751FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGet = 0x2752FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtPrepare = 0x2753FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetPreparedWogList = 0x2754FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetPreparedWogName = 0x2755FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetPreparedId = 0x2756FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetDlcIdFromWogKey = 0x2757FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtExternalize = 0x2758FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsExternalizable = 0x2759FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsTransfer = 0x275AFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtTransferProgress = 0x275BFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtCancelTransfer = 0x275CFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetTransferId = 0x275DFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetLastTransferResult = 0x275EFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtGetFreeSDUserBlocks = 0x275FFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtRestore = 0x2760FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtSDErase = 0x2761FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtMove2SD = 0x2762FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtMove2NAND = 0x2763FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_GetBlocks = 0x2764FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_NANDErase = 0x2765FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsWogKeyInCache = 0x2766FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsOutofDate = 0x2767FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtValid = 0x2768FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsWriteProtected = 0x2769FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_SetLastErrorContentID = 0x276AFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_IsContentIDInCache = 0x276BFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_EraseContentIDFromCache = 0x276CFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtInserted = 0x276DFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_SetContext = 0x276EFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtValidContent = 0x276FFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ComputeUserBlocks = 0x277FFFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_GetContext = 0x2771FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtIsContentListInvalidated = 0x2772FFFF,
+    LyN_ScriptVarType_EngineFunction_DLC_ExtMountAllNewMiniBigfiles = 0x2773FFFF,
+    LyN_ScriptVarType_EngineFunction_LOGGER_AddEvent = 0x2780FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_ControlApplySet = 0x3A9AFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_ControlRenderSet = 0x3A9BFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Seti = 0x3A9CFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Geti = 0x3A9DFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Setf = 0x3A9EFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Getf = 0x3A9FFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Setv = 0x3AA0FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Getv = 0x3AA1FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Setmat = 0x3AA2FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_OwnerGet = 0x3AA3FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_GetType = 0x3AA4FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_GetSnP = 0x3AA5FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_SetSnP = 0x3AA6FFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_MDFGetByIndex = 0x3AA7FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_IsRender = 0x3AA8FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_IsApply = 0x3AA9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MDFGetByID = 0x3AAAFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_MDFGetByID = 0x3AABFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_IDGet = 0x3AACFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MDFGet = 0x3AADFFFF,
+    LyN_ScriptVarType_EngineFunction_WOR_MDFGet = 0x3AAEFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_IDSet = 0x3AAFFFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_Reinit = 0x3AB0FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_ApplyDistSet = 0x3AB1FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_IsDying = 0x3AB2FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_MdfRefGet = 0x3AB3FFFF,
+    LyN_ScriptVarType_EngineFunction_MDF_ChangeReference = 0x3AB4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_PosGet = 0x189CFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_PosInitGet = 0x189DFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RestoreInitPos = 0x189EFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_PosSetDyn = 0x189FFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_PosSet = 0x18A0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_PosSetCut = 0x18A1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HorizonGet = 0x18A2FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SightGet = 0x18A3FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BankingGet = 0x18A4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HorizonInitGet = 0x18A5FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SightInitGet = 0x18A6FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BankingInitGet = 0x18A7FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HorizonSet = 0x18A8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SightSet = 0x18A9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BankingSet = 0x18AAFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieSetFather = 0x18ABFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieResetFather = 0x18ACFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieGetFather = 0x18ADFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieWaypointGet = 0x18AEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieForceSnPSet = 0x18AFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_GetKey = 0x18B0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_KeyGet = 0x18B1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Dist = 0x18CEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SqrDist = 0x18CFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SqrHorzDist = 0x18D0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_StatusGet = 0x1900FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlGet = 0x1901FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlApplySet = 0x1902FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlRenderSet = 0x1903FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlOldPosSet = 0x1904FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_IsRender = 0x1905FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_IsApply = 0x1906FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ArrayFilter = 0x1964FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Duplicate = 0x19C8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Destroy = 0x19C9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfMerge = 0x19CAFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfMergeReplace = 0x19CBFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfMergeReset = 0x19CCFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DestroyWithDelay = 0x19CDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_IsDying = 0x19CEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DestroyRequest = 0x19CFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_OldPosSet = 0x19D0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_CustomBitsSet = 0x1B58FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_CustomBitsGet = 0x1B59FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_CustomBitsTest = 0x1B5AFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_CustomBitsNot = 0x1B5BFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateLocal = 0x1BBCFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateGlobal = 0x1BBDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateAroundLocalAxis = 0x1BBEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_OrientTo = 0x1BBFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Rejoin = 0x1BC0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RejoinAndOrient = 0x1BC1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateLocalX = 0x1BC2FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateLocalY = 0x1BC3FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateLocalZ = 0x1BC4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateGlobalX = 0x1BC5FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateGlobalY = 0x1BC6FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotateGlobalZ = 0x1BC7FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ScaleSet = 0x1BC8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ZoomSet = 0x1BC9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_UpdateCullingDistance = 0x1BCAFFFF,
+    LyN_ScriptVarType_EngineFunction_DBG_ObjSetType = 0x1BCCFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DriveModeSet = 0x1BCDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotationGetM44 = 0x1BCEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RotationSetM44 = 0x1BCFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ScaleGetM44 = 0x1BD0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ScaleSetM44 = 0x1BD1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_AnimTuningBlend = 0x1BD2FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Rotate_FromToBlend = 0x1BD3FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Rotate_FromTo = 0x1BD4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ScaleGlobalSet = 0x1BD5FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ApplyRankSet = 0x1BD6FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RenderRankSet = 0x1BD7FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ApplyRankGet = 0x1BD8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_RenderRankGet = 0x1BD9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ResetLocalScale = 0x1BDAFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlSet = 0x1BDBFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ChildrenGet = 0x1BDCFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_OldPosGet = 0x1BDDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ControlTest = 0x1BDEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfCreate = 0x1BDFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoGet = 0x1BE0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoSet = 0x1BE1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BVView3Dto2DRect = 0x1BE2FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BVMaxGet = 0x1BE3FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BVMinGet = 0x1BE4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BVCenterGet = 0x1BE5FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BVGet = 0x1BE6FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_WakeUpSet = 0x1BE7FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_local_PosGet = 0x1BE8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_local_PosSet = 0x1BE9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DuplicateID = 0x1BEAFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DynIDIsValid = 0x1BEBFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DynIDGet = 0x1BECFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BoneFlagsGet = 0x1BEDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_BoneFlagsSet = 0x1BEEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_Resurrect = 0x1BEFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_IsDuplicated = 0x1BF0FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfByRankGet = 0x1BF1FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MdfCountGet = 0x1BF2FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_WorldAssign = 0x1BF3FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_LocalPosGet = 0x1BF4FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_LocalPosSet = 0x1BF5FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoSetMask = 0x1BF6FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_HieGetFatherInit = 0x1BF7FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoGetMask = 0x1BF8FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ListGet = 0x1BF9FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ListSet = 0x1BFAFFFF,
+    LyN_ScriptVarType_EngineFunction_LST_ObjectNbGet = 0x1BFBFFFF,
+    LyN_ScriptVarType_EngineFunction_LST_ObjectGet = 0x1BFCFFFF,
+    LyN_ScriptVarType_EngineFunction_LST_ObjectSearch = 0x1BFDFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_M44Get = 0x1BFEFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MatrixGetM44 = 0x1BFFFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_MatrixSetM44 = 0x1C00FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ShadowFollowMB = 0x1C20FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ShadowFollowBone = 0x1C21FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_TraceSet = 0x1C22FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DuplicatePosSet = 0x1C23FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_DuplicatePosSetSectoMask = 0x1C24FFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoExceptionNumberGet = 0x1C2AFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoExceptionNumberSet = 0x1C2BFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoExceptionGet = 0x1C2CFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_SectoExceptionSet = 0x1C2DFFFF,
+    LyN_ScriptVarType_EngineFunction_OBJ_ExportToZPR = 0x1C2EFFFF,
+    //Keywords
+	LyN_ScriptVarType_Keyword_If = 0x7D00000,
+	LyN_ScriptVarType_Keyword_Else = 0x7D10000,
+	LyN_ScriptVarType_Keyword_While = 0x7D20000,
+	LyN_ScriptVarType_Keyword_Switch = 0x7D30000,
+	LyN_ScriptVarType_Keyword_Case = 0x7D40000,
+	LyN_ScriptVarType_Keyword_Default = 0x7D50000,
+	LyN_ScriptVarType_Keyword_GoTo = 0x7D60000,
+	LyN_ScriptVarType_Keyword_Do = 0x7D70000,
+	LyN_ScriptVarType_Keyword_DebugStart = 0x7D80000,
+	LyN_ScriptVarType_Keyword_DebugEnd = 0x7D90000,
+	LyN_ScriptVarType_Keyword_Init = 0x7DA0000,
+	LyN_ScriptVarType_Keyword_DebugNext = 0x7DB0000,
+	LyN_ScriptVarType_Keyword_AbstractScriptModel = 0x7FF0000,
+	LyN_ScriptVarType_Keyword_MetaBreak = 0x8000000,
+	LyN_ScriptVarType_Keyword_Continue = 0x8010000,
+	LyN_ScriptVarType_Keyword_Break = 0x8020000,
+	LyN_ScriptVarType_Keyword_For = 0x8030000,
+	LyN_ScriptVarType_Keyword_Function = 0x8040000,
+	LyN_ScriptVarType_Keyword_Inherit = 0x8050000,
+	LyN_ScriptVarType_Keyword_External = 0x8060000,
+	LyN_ScriptVarType_Keyword_FunctionGlobalTrigger = 0x8070000,
+	LyN_ScriptVarType_Keyword_FunctionLocalTrigger = 0x8080000,
+	LyN_ScriptVarType_Keyword_FirstInit = 0x8090000,
+	LyN_ScriptVarType_Keyword_LastInit = 0x80A0000,
+	LyN_ScriptVarType_Keyword_Rule = 0x80B0000,
+	LyN_ScriptVarType_Keyword_UltraObject = 0x80C0000,
+	LyN_ScriptVarType_Keyword_UltraModifier = 0x80D0000,
+	LyN_ScriptVarType_Keyword_UltraUniverse = 0x80F0000, //Simply calls the universe variable model.
+	LyN_ScriptVarType_Keyword_Ultras_S = 0x8100000, //?
+	LyN_ScriptVarType_Keyword_Ultras_SV = 0x8110000, //?
+	LyN_ScriptVarType_Keyword_RuleGroup = 0x8120000, //?
+	LyN_ScriptVarType_Keyword_Return = 0x8160000,
+	LyN_ScriptVarType_Keyword_ReturnScriptTrack = 0x8170000,
+	LyN_ScriptVarType_Keyword_ReturnScriptInstance = 0x8180000,
+	LyN_ScriptVarType_Keyword_WaitWhile = 0x8190000,
+	LyN_ScriptVarType_Keyword_DuringInit = 0x81A0000,
+	LyN_ScriptVarType_Keyword_WaitDuring = 0x81B0000,
+	LyN_ScriptVarType_Keyword_WaitTime = 0x81C0000,
+	LyN_ScriptVarType_Keyword_CFloat = 0x81D0000, //?
+	LyN_ScriptVarType_Keyword_CInt = 0x81E0000, //?
+	LyN_ScriptVarType_Keyword_ExecuteAnimTrack = 0x81F0000, //?
+	LyN_ScriptVarType_Keyword_CVector = 0x8200000, //?
+	LyN_ScriptVarType_Keyword_PopProcess = 0x8210000,
+	LyN_ScriptVarType_Keyword_Call = 0x8220000,
+	LyN_ScriptVarType_Keyword_InProcessStack = 0x8230000,
+	LyN_ScriptVarType_Keyword_OutProcessStack = 0x8240000,
+	LyN_ScriptVarType_Keyword_Field = 0x8280000,
+	LyN_ScriptVarType_Keyword_Field_A1 = 0x8290000, //?
+	LyN_ScriptVarType_Keyword_Field_A2 = 0x82A0000, //?
+	LyN_ScriptVarType_Keyword_Field_A3 = 0x82B0000, //?
+	LyN_ScriptVarType_Keyword_WaitTrue = 0x82F0000,
+	LyN_ScriptVarType_Keyword_WaitFalse = 0x8300000,
+	LyN_ScriptVarType_Keyword_VirtualCall = 0x8310000,
+	LyN_ScriptVarType_Keyword_MethodCall = 0x8320000, //?
+	LyN_ScriptVarType_Keyword_CVector4 = 0x8330000, //?
+	LyN_ScriptVarType_Keyword_JumpFalseSp = 0x8340000,
+	LyN_ScriptVarType_Keyword_Jump = 0x8350000,
+	LyN_ScriptVarType_Keyword_JumpFalse = 0x8360000,
+	LyN_ScriptVarType_Keyword_JumpTrue = 0x8370000,
+	LyN_ScriptVarType_Keyword_JumpOff = 0x8380000,
+	LyN_ScriptVarType_Keyword_JumpTrueSp = 0x8390000,
+	LyN_ScriptVarType_Keyword_CObject = 0x83A0000, //?
+	LyN_ScriptVarType_Keyword_CObjectRef = 0x83B0000, //?
+	LyN_ScriptVarType_Keyword_CModifier = 0x83C0000, //?
+	LyN_ScriptVarType_Keyword_ShiftLeft = 0x9CE0000, //<<
+	LyN_ScriptVarType_Keyword_ShiftRight = 0x9CF0000, //>>
+	LyN_ScriptVarType_Keyword_OROperator = 0x9D00000, //|
+	LyN_ScriptVarType_Keyword_AndOperator = 0x9D10000, //&&
+	LyN_ScriptVarType_Keyword_ModulusOperator = 0x9D20000, //%%
+	LyN_ScriptVarType_Keyword_XOROperator = 0x9D30000, //^
+	LyN_ScriptVarType_Keyword_Invert = 0x9D40000,
+	LyN_ScriptVarType_Keyword_ShiftLeftAffect = 0x9D50000,
+	LyN_ScriptVarType_Keyword_ShiftRightAffect = 0x9D60000,
+	LyN_ScriptVarType_Keyword_OROperatorAffect = 0x9D70000,
+	LyN_ScriptVarType_Keyword_AndOperatorAffect = 0x9D80000,
+	LyN_ScriptVarType_Keyword_ModulusOperatorAffect = 0x9D90000,
+	LyN_ScriptVarType_Keyword_XOROperatorAffect = 0x9DA0000,
+	LyN_ScriptVarType_Keyword_Affect4 = 0x9F60000,
+	LyN_ScriptVarType_Keyword_AffectX = 0x9F70000,
+	//Int actions
+	LyN_ScriptVarType_Keyword_IntMinus = 0xA280000,
+	LyN_ScriptVarType_Keyword_IntPlus = 0xA290000,
+	LyN_ScriptVarType_Keyword_IntMultiply = 0xA2A0000,
+	LyN_ScriptVarType_Keyword_IntDivide = 0xA2B0000,
+	LyN_ScriptVarType_Keyword_IntNot = 0xA2C0000,
+	LyN_ScriptVarType_Keyword_IntNeg = 0xA2D0000,
+	LyN_ScriptVarType_Keyword_IntPlusAffect = 0xA2E0000,
+	LyN_ScriptVarType_Keyword_IntIncrementAffect = 0xA2F0000,
+	LyN_ScriptVarType_Keyword_IntMinusAffect = 0xA300000,
+	LyN_ScriptVarType_Keyword_IntDecrementAffect = 0xA310000,
+	LyN_ScriptVarType_Keyword_IntMultiplyAffect = 0xA320000,
+	LyN_ScriptVarType_Keyword_IntDivideAffect = 0xA330000,
+	LyN_ScriptVarType_Keyword_IntEqual = 0xA460000, //==
+	LyN_ScriptVarType_Keyword_IntDifferent = 0xA470000, //!=
+	LyN_ScriptVarType_Keyword_IntGreaterEqual = 0xA480000, //>=
+	LyN_ScriptVarType_Keyword_IntGreater = 0xA490000, //>
+	LyN_ScriptVarType_Keyword_IntLessEqual = 0xA4A0000, //<=
+	LyN_ScriptVarType_Keyword_IntLess = 0xA4B0000, //<
+	//Float actions
+	LyN_ScriptVarType_Keyword_FloatMinus = 0xA8C0000,
+	LyN_ScriptVarType_Keyword_FloatPlus = 0xA8D0000,
+	LyN_ScriptVarType_Keyword_FloatMultiply = 0xA8E0000,
+	LyN_ScriptVarType_Keyword_FloatDivide = 0xA8F0000,
+	LyN_ScriptVarType_Keyword_FloatNot = 0xA900000,
+	LyN_ScriptVarType_Keyword_FloatNeg = 0xA910000,
+	LyN_ScriptVarType_Keyword_FloatPlusAffect = 0xA920000,
+	LyN_ScriptVarType_Keyword_FloatIncrementAffect = 0xA930000,
+	LyN_ScriptVarType_Keyword_FloatMinusAffect = 0xA940000,
+	LyN_ScriptVarType_Keyword_FloatDecrementAffect = 0xA950000,
+	LyN_ScriptVarType_Keyword_FloatMultiplyAffect = 0xA960000,
+	LyN_ScriptVarType_Keyword_FloatDivideAffect = 0xA970000,
+	LyN_ScriptVarType_Keyword_FloatEqual = 0xAAA0000, //=
+	LyN_ScriptVarType_Keyword_FloatDifferent = 0xAAB0000, //!=
+	LyN_ScriptVarType_Keyword_FloatGreaterEqual = 0xAAC0000, //>=
+	LyN_ScriptVarType_Keyword_FloatGreater = 0xAAD0000, //>
+	LyN_ScriptVarType_Keyword_FloatLessEqual = 0xAAE0000, //<=
+	LyN_ScriptVarType_Keyword_FloatLess = 0xAAF0000, //<
+	//Vector actions
+	LyN_ScriptVarType_Keyword_VectorEqual = 0xAF00000, //=
+	LyN_ScriptVarType_Keyword_VectorDifferent = 0xAF10000, //!=
+	LyN_ScriptVarType_Keyword_VectorMinus = 0xAF20000,
+	LyN_ScriptVarType_Keyword_VectorPlus = 0xAF30000,
+	LyN_ScriptVarType_Keyword_VectorMultiply = 0xAF40000,
+	LyN_ScriptVarType_Keyword_VectorMultiply2 = 0xAF50000,
+	LyN_ScriptVarType_Keyword_VectorDivide = 0xAF60000,
+	LyN_ScriptVarType_Keyword_VectorNeg = 0xAF70000,
+	LyN_ScriptVarType_Keyword_VectorAffect = 0xAF80000,
+	LyN_ScriptVarType_Keyword_VectorPlusAffect = 0xAF90000,
+	LyN_ScriptVarType_Keyword_VectorMinusAffect = 0xAFA0000,
+	LyN_ScriptVarType_Keyword_VectorMultiplyAffect = 0xAFB0000,
+	LyN_ScriptVarType_Keyword_VectorDivideAffect = 0xAFC0000,
+	LyN_ScriptVarType_Keyword_MMCall = 0xAFD0000,
+	LyN_ScriptVarType_Keyword_VecMultiply3 = 0xAFE0000,
+	LyN_ScriptVarType_Keyword_LocalVar = 0xBBA0000,
+	LyN_ScriptVarType_Keyword_LocalVar_A1 = 0xBBB0000,
+	LyN_ScriptVarType_Keyword_LocalVar_A2 = 0xBBC0000,
+	LyN_ScriptVarType_Keyword_LocalVar_A3 = 0xBBD0000,
+	LyN_ScriptVarType_Keyword_FunctionVar = 0xBEC0000,
+	LyN_ScriptVarType_Keyword_FunctionVar_A1 = 0xBED0000,
+	LyN_ScriptVarType_Keyword_FunctionVar_A2 = 0xBEE0000,
+	LyN_ScriptVarType_Keyword_FunctionVar_A3 = 0xBEF0000,
+	LyN_ScriptVarType_Keyword_InitVar = 0xBFE0000,
+	LyN_ScriptVarType_Keyword_InitVar_A1 = 0xBFF0000,
+	LyN_ScriptVarType_Keyword_InitVar_A2 = 0xC000000,
+	LyN_ScriptVarType_Keyword_InitVar_A3 = 0xC010000,
+	LyN_ScriptVarType_Keyword_ScriptModelVar = 0xC080000,
+	LyN_ScriptVarType_Keyword_ScriptModelVar_A1 = 0xC090000,
+	LyN_ScriptVarType_Keyword_ScriptModelVar_A2 = 0xC0A0000,
+	LyN_ScriptVarType_Keyword_ScriptModelVar_A3 = 0xC0B0000,
+	LyN_ScriptVarType_Keyword_GlobalVar = 0xC1E0000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A1 = 0xC1F0000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A2 = 0xC200000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A3 = 0xC210000,
+	LyN_ScriptVarType_Keyword_GlobalVarEX = 0xC280000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A1EX = 0xC290000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A2EX = 0xC2A0000,
+	LyN_ScriptVarType_Keyword_GlobalVar_A3EX = 0xC2B0000,
+	LyN_ScriptVarType_Keyword_In = 0xC2C0000,
+	LyN_ScriptVarType_Keyword_Out = 0xC2D0000,
+	LyN_ScriptVarType_Keyword_CSignal = 0xC2E0000, //?
+	LyN_ScriptVarType_Keyword_Matrix44Affect = 0xC2F0000,
+	LyN_ScriptVarType_Keyword_ReturnPP = 0xC300000,
+	LyN_ScriptVarType_Keyword_CVector000 = 0xC310000,
+	LyN_ScriptVarType_Keyword_CVector001 = 0xC320000,
+	LyN_ScriptVarType_Keyword_CVector002 = 0xC330000,
+	LyN_ScriptVarType_Keyword_IntMinusCast = 0xC340000,
+	LyN_ScriptVarType_Keyword_IntPlusCast = 0xC350000,
+	LyN_ScriptVarType_Keyword_IntMulCast = 0xC360000,
+	LyN_ScriptVarType_Keyword_ShiftLeftCast = 0xC370000,
+	LyN_ScriptVarType_Keyword_ShiftRightCast = 0xC380000,
+	LyN_ScriptVarType_Keyword_OrOperatorCast = 0xC390000,
+	LyN_ScriptVarType_Keyword_AndOperatorCast = 0xC3A0000,
+	LyN_ScriptVarType_Keyword_ModulusOperatorCast = 0xC3B0000,
+	LyN_ScriptVarType_Keyword_XOROperatorCast = 0xC3C0000,
+	LyN_ScriptVarType_Keyword_FloatMinusCast = 0xC3D0000,
+	LyN_ScriptVarType_Keyword_FloatPlusCast = 0xC3E0000,
+	LyN_ScriptVarType_Keyword_FloatMultiplyCast = 0xC3F0000,
+	LyN_ScriptVarType_Keyword_IntMinusAffectCast = 0xC400000,
+	LyN_ScriptVarType_Keyword_IntPlusAffectCast = 0xC410000,
+	LyN_ScriptVarType_Keyword_IntMultiplyAffectCast = 0xC420000,
+	LyN_ScriptVarType_Keyword_ShiftLeftAffectCast = 0xC430000,
+	LyN_ScriptVarType_Keyword_ShiftRightAffectCast = 0xC440000,
+	LyN_ScriptVarType_Keyword_OROperatorAffectCast = 0xC450000,
+	LyN_ScriptVarType_Keyword_AndOperatorAffectCast = 0xC460000,
+	LyN_ScriptVarType_Keyword_ModulusAffectCast = 0xC470000,
+	LyN_ScriptVarType_Keyword_XORAffectCast = 0xC480000,
+	LyN_ScriptVarType_Keyword_FloatMinusAffectCast = 0xC490000,
+	LyN_ScriptVarType_Keyword_FloatPlusAffectCast = 0xC4A0000,
+	LyN_ScriptVarType_Keyword_FloatMultiplyAffectCast = 0xC4B0000,
+	LyN_ScriptVarType_Keyword_LocalVarIntIncrementAffect = 0xC4C0000,
+	LyN_ScriptVarType_Keyword_LocalVarIntDecrementAffect = 0xC4D0000,
+	LyN_ScriptVarType_Keyword_LocalUltraModifier = 0xC4E0000,
+	LyN_ScriptVarType_Keyword_GlobalUltraModifier = 0xC4F0000,
+	LyN_ScriptVarType_Keyword_LocalUltraObject = 0xC500000,
+	LyN_ScriptVarType_Keyword_GloballUltraObject = 0xC510000,
+	LyN_ScriptVarType_Keyword_DeclareVirtualTrack = 0xC520000,
+	LyN_ScriptVarType_Keyword_ExecuteTrackSuper = 0xC530000,
+	LyN_ScriptVarType_Keyword_DeclareTrackWantsSingleExit = 0xC540000,
+	LyN_ScriptVarType_Keyword_Ultras1 = 0xC580000, //?
+	LyN_ScriptVarType_Keyword_Ultras2 = 0xC590000, //?
+	LyN_ScriptVarType_Keyword_Ultras3 = 0xC5A0000, //?
+	LyN_ScriptVarType_Keyword_JumpAnd = 0xC5B0000,
+	LyN_ScriptVarType_Keyword_JumpOr = 0xC5C0000,
+	LyN_ScriptVarType_Keyword_JumpTestEnd = 0xC5D0000,
+	LyN_ScriptVarType_Keyword_ExternalRule = 0xC5E0000,
+	LyN_ScriptVarType_Keyword_ClearDynamicArray = 0xC600000,
+	LyN_ScriptVarType_Keyword_DynamicArray = 0xC610000,
+	LyN_ScriptVarType_Keyword_DynamicArrayAdd = 0xC620000,
+	LyN_ScriptVarType_Keyword_DynamicArrayGetNumber = 0xC630000,
+	LyN_ScriptVarType_Keyword_DynamicArrayGetAt = 0xC640000,
+	LyN_ScriptVarType_Keyword_DynamicArraySetGranularScale = 0xC650000,
+	LyN_ScriptVarType_Keyword_DynamicArrayRemoveAt = 0xC660000,
+	LyN_ScriptVarType_Keyword_DynamicArraySetAt = 0xC670000,
+	LyN_ScriptVarType_Keyword_DynamicArrayInsertAt = 0xC680000,
+	LyN_ScriptVarType_Keyword_DataSet = 0xC800000,
+	//Ptr actions
+	LyN_ScriptVarType_Keyword_MakeAddress = 0xCB10000,
+	LyN_ScriptVarType_Keyword_IntPtrSet = 0xCB20000,
+	LyN_ScriptVarType_Keyword_IntPtrGet = 0xCB30000,
+	LyN_ScriptVarType_Keyword_IntPtrAdd = 0xCB40000,
+	LyN_ScriptVarType_Keyword_FloatPtrSet = 0xCBC0000,
+	LyN_ScriptVarType_Keyword_FloatPtrGet = 0xCBD0000,
+	LyN_ScriptVarType_Keyword_FloatPtrAdd = 0xCBE0000,
+	LyN_ScriptVarType_Keyword_Int16PtrSet = 0xCBF0000,
+	LyN_ScriptVarType_Keyword_Int16PtrGet = 0xCC00000,
+	LyN_ScriptVarType_Keyword_Int16PtrAdd = 0xCC10000,
 } LyN_ScriptVarType;
+
+void printOfficialScriptVar(LyN_ScriptVarType type, int separatorType) //WIP
+{
+    switch (type)
+    {
+        //case LyN_ScriptVarType_Keyword_Call: Printf("%s", ReadString(node); break;
+        case LyN_ScriptVarType_Keyword_OROperator: Print("|"); break;
+        case LyN_ScriptVarType_Keyword_IntIncrementAffect:
+        case LyN_ScriptVarType_Keyword_LocalVarIntIncrementAffect:
+        case LyN_ScriptVarType_Keyword_FloatIncrementAffect: Printf("++"); break;
+        case LyN_ScriptVarType_Keyword_ShiftLeft: Printf("<<"); break;
+        case LyN_ScriptVarType_Keyword_ShiftRight: Printf(">>"); break;
+        case LyN_ScriptVarType_Keyword_XOROperator: Printf("^"); break;
+        case LyN_ScriptVarType_Keyword_IntNot:
+        case LyN_ScriptVarType_Keyword_FloatNot: Printf("!"); break;
+        case LyN_ScriptVarType_Keyword_IntDifferent:
+        case LyN_ScriptVarType_Keyword_VectorDifferent:
+        case LyN_ScriptVarType_Keyword_FloatDifferent: Printf("!="); break;
+        case LyN_ScriptVarType_Keyword_IntEqual:
+        case LyN_ScriptVarType_Keyword_VectorEqual:
+        case LyN_ScriptVarType_Keyword_FloatEqual: Printf("=="); break;
+        case LyN_ScriptVarType_Keyword_IntGreaterEqual:
+        case LyN_ScriptVarType_Keyword_FloatGreaterEqual: Printf("=>"); break;
+        case LyN_ScriptVarType_Keyword_IntLessEqual:
+        case LyN_ScriptVarType_Keyword_FloatLessEqual: Printf("<="); break;
+        case LyN_ScriptVarType_Keyword_IntLess:
+        case LyN_ScriptVarType_Keyword_FloatLess: Printf("<"); break;
+        case LyN_ScriptVarType_Keyword_IntGreater:
+        case LyN_ScriptVarType_Keyword_FloatGreater: Printf(">"); break;
+        case LyN_ScriptVarType_Variant_Int32: Printf("int"); break;
+        case LyN_ScriptVarType_Keyword_ReturnPP: Printf("return"); break;
+        case LyN_ScriptVarType_Keyword_WaitTime: Printf("wait_time"); break;
+        case LyN_ScriptVarType_EngineFunction_K3D_BinkPlay: Printf("K3D_BinkPlay"); break;
+        case LyN_ScriptVarType_EngineFunction_IO_JoystickDisconnectionAlert: Printf("IO_JoystickDisconnectionAlert"); break;
+        case LyN_ScriptVarType_EngineFunction_SCR_TrackCurChange: Printf("SCR_TrackCurChange"); break;
+        case LyN_ScriptVarType_Keyword_UltraUniverse: Printf("@u"); break;
+        default: Printf("0x%X", type); break; //Handlekey or misc
+    }
+    switch (separatorType)
+    {
+        case 1: Printf("\n"); break; //newline
+        case 2: Printf(" "); break; //space
+    }
+}
 
 typedef enum <uint16>
 {
@@ -61,7 +1561,7 @@ typedef enum <uint16>
    LyN_ModifierType_TextList,
    LyN_ModifierType_Light,
    LyN_ModifierType_Particle,
-   LyN_ModifierType_Flexi,
+   LyN_ModifierType_FlexiblePhysics,
    LyN_ModifierType_Interkinetic3Points,
    LyN_ModifierType_AnimEvents,
    LyN_ModifierType_Animation,
@@ -93,10 +1593,11 @@ typedef enum <uint16>
    LyN_ModifierType_RenderParameters,
    LyN_ModifierType_SoundLinker,
    LyN_ModifierType_VisualFarm,
-   
-   LyN_ModifierType_Grid = 44,
-   
-   LyN_ModifierType_BackgroundVideo = 46,
+   LyN_ModifierType_UltiMap,
+   LyN_ModifierType_Grid,
+   LyN_ModifierType_Replication,
+   LyN_ModifierType_BackgroundVideo,
+   LyN_ModifierType_Terrain,
    
    LyN_ModifierType_Magma = 48,
    LyN_ModifierType_SharpShadow,
@@ -106,12 +1607,14 @@ typedef enum <uint16>
    LyN_ModifierType_Fire = 56,
    LyN_ModifierType_SoundPrefetch,
    
+   
+   
    LyN_ModifierType_Camera = 61,
    LyN_ModifierType_Rope,
    LyN_ModifierType_InstanceList,
    
    LyN_ModifierType_LocalRenderParameters = 65,
-   LyN_ModifierType_PFBInstanceParameters,
+   LyN_ModifierType_PrefabInstanceParameters,
    LyN_ModifierType_WiresGenerator,
    LyN_ModifierType_MotionPhysics,
    
@@ -271,7 +1774,7 @@ typedef struct LyN_Octree
             uint16 idx;
             uint16 tris;
             uint16 tri[tris];
-        } Element[elems];
+        } Element[elems]<optimize=false>;
     } Node[nodes]<optimize=false>;
 };
 
@@ -288,8 +1791,30 @@ typedef struct LyN_NewArchivedFileHeader
     uint32 unk; //Ver?
     uint32 unk2;
     uint32 contentType;
-    uint32 unk3[2];
+    uint32 unk3[2]; //Maybe the final var is the amount of data with the last being the ref container?
 };
+
+void checkForNewLyN() //This function simply checks for the special LyN header for the newer engine used in alive and kicking and later games, it's in a struct so it won't be mad if we check twice
+{
+    if (FSize > 32)
+    {
+        //FSkip(4);
+        uint32 oldLyNMagicCheck<hidden=true>;
+        FSkip(-4);
+        if (oldLyNMagicCheck != 0xC0DEC0DE)
+        {
+            FSkip(20);
+            char newLynMagicCheck[4]<hidden=true>;
+            FSkip(-24);
+            if (newLynMagicCheck == "EFL_" || newLynMagicCheck == "EFG_" || newLynMagicCheck == "SCR" || newLynMagicCheck == "FEU_" || newLynMagicCheck == "WOR" || newLynMagicCheck == "ACI" || newLynMagicCheck == "MDL_" || newLynMagicCheck == "MAT_" || newLynMagicCheck == "MTA" || newLynMagicCheck == "TEX_" || newLynMagicCheck == "LG" || newLynMagicCheck == "OBJ_" || newLynMagicCheck == "SKN_" || newLynMagicCheck == "VIS" || newLynMagicCheck == "SHP_" || newLynMagicCheck == "VISU" || newLynMagicCheck == "PAM_" || newLynMagicCheck == "PAR" || newLynMagicCheck == "WOR_" || newLynMagicCheck == "ZDE" || newLynMagicCheck == "Flex" || newLynMagicCheck == "TRL_" || newLynMagicCheck == "SNK_" || newLynMagicCheck == "SMP_" || newLynMagicCheck == "SKN_" || newLynMagicCheck == "SKL" || newLynMagicCheck == "SET_" || newLynMagicCheck == "RDP" || newLynMagicCheck == "MPK") //There's prob a better way to do this but idk
+            {
+                isNewLyN = 1;
+                loadedFromBin = 0;
+                LyN_NewArchivedFileHeader newLyNHeader;
+            }
+        }
+    }
+}
 
 typedef struct LyN_ThreeDShadowTexture
 {
@@ -356,6 +1881,62 @@ typedef struct LyN_ParticleConstraint
     //uint32 u32Params[16]; //Unused
 };
 
+typedef enum <uint32>
+{
+    /*LyN_HLSLInstanceVarType_Start = 0xC0DE0005,
+    LyN_HLSLInstanceVarType_End,
+    LyN_HLSLInstanceVarType_Model,
+    LyN_HLSLInstanceVarType_ModelEnd,
+    LyN_HLSLInstanceVarType_AllVars,
+    LyN_HLSLInstanceVarType_AllVarsEnd,
+    LyN_HLSLInstanceVarType_VarBuffer,
+    LyN_HLSLInstanceVarType_VarBufferEnd,
+    LyN_HLSLInstanceVarType_StoreBuffer,
+    LyN_HLSLInstanceVarType_StoreBufferEnd,
+    LyN_HLSLInstanceVarType_ShaderName = 0xC0DE0010,
+    LyN_HLSLInstanceVarType_ShaderNameEnd,
+    LyN_HLSLInstanceVarType_SaveModelVars = 0xC0DE0012,
+    LyN_HLSLInstanceVarType_SaveModelVarsEnd,
+    LyN_HLSLInstanceVarType_FXType = 0xC0DE0016,*/
+} LyN_HLSLInstanceVarType;
+
+typedef struct LyN_ScriptNodeContainer
+{
+    LyN_ScriptVarType id;
+    if (DEBUG_PRINT) printOfficialScriptVar(id, 2); //Printf("%s\n", EnumToString(id));
+    if (!loadedFromBin)
+    {
+        LyN_ScriptVarType tk;
+        if (DEBUG_PRINT)
+        {
+            printOfficialScriptVar(tk, 2);
+        }
+    }
+};
+
+typedef struct LyN_HLSLInstance
+{
+    LyN_HLSLInstanceVarType magic; //0xC0DE0005
+    uint32 unk;
+    while (ReadInt() != 0xC0DE0006)
+    {
+        struct
+        {
+            LyN_HLSLInstanceVarType magic;
+            switch (magic)
+            {
+                case 0xC0DE0007: uint32 size; LyN_HandleKey model; uint32 tech; break;
+                case 0xC0DE0010: uint32 size; U32_StringEntry str; uint32 tech; break;
+                case 0xC0DE0009: uint32 size; ubyte data[size];  break; //What is the data?
+                case 0xC0DE000B: uint32 size; ubyte data[size]; /*uint32 saveVar; uint32 end;*/ break;
+                case 0xC0DE0012: uint32 size; ubyte data[size]; /*uint32 saveVar; uint32 end;*/ break;
+                case 0xC0DE0016: uint32 fxType; break;
+            }
+        } Code;
+    }
+    LyN_HLSLInstanceVarType end;
+};
+
 typedef struct LyN_Modifier
 {
     uint32 flags;
@@ -366,8 +1947,9 @@ typedef struct LyN_Modifier
         LyN_ModifierType type;
         uint16 id;
         uint16 modifierVer;
-        if (modifierVer > 1 && !loadedFromBin)
+        if (modifierVer > 1 && !loadedFromBin && FTell() != EOF) //Detect 0xFFFF, this seems to detect TMNT's data fine
         {
+            loadedFromBin = 0;
             int16 pfbOMods;
             //LyN_HandleKey prebOMod[pfbOMods]; //?
             uint32 pfbOModKeys;
@@ -376,7 +1958,7 @@ typedef struct LyN_Modifier
     }
 };
 
-typedef struct LyN_ScriptVariableContainer //VERY WIP
+typedef struct LyN_ScriptVariableContainer
 {
     uint32 id; //0xC0DEC0DE OR 0xC0DEC0DF (Not in JD4) OR 0xC0DEC0EF (Not in RLand)
     
@@ -398,6 +1980,7 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         uint32 firstMdl;
         uint32 firstInit;
         uint32 firstCur;
+        local uint count = 0;
     }
     else if (id == 0xC0DEC0DF) //MDL or nested in EFC, EFG and EFL in RLand, TMNT EFL
     {
@@ -405,37 +1988,41 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         uint32 count;
         uint32 ver; //2 in TMNT
     }
-    struct
+    if (count)
     {
-        uint32 idx;
-        LyN_ScriptVarType type;
-        if (ver > 1)
+        struct
         {
-            uint32 dtype;
-            if (!loadedFromBin) uint32 dsz; //TODO check this, DOE flag 1, not present in BINned scripts
-        }
-        uint32 cpos;
-        uint32 sz;
-        uint32 szd[3];
-        uint32 strLen[4];
-        uint16 flags;
-        ubyte flagByte;
-        ubyte saveStrIdx;
-        if (ver > 2) ubyte validIdx;
-        uint32 fields;
-        char name[strLen[0]]; if (DEBUG_PRINT) Printf("[%i]: Index: %i, Type: %s, Name: %s, Size: %i, Fields: %i\n", i, idx, EnumToString(type), name, sz, fields);
-        if (!loadedFromBin && strLen[1]) char name2[strLen[1]]; //Flag 1, not present in BINned scripts
-        if (!loadedFromBin && strLen[2]) char sep[strLen[2]]; //Flag 1, not present in BINned scripts
-        if (!loadedFromBin && strLen[3]) char comment[strLen[3]]; //Flag 1, not present in BINned scripts
-        if (type == 3080192 || (ver > 1 && type == 5046272))
-        {
-            if (ReadUInt() == 3235823855 || ReadUInt() == 3235823839)
-                struct LyN_ScriptVariableContainer nestedVarContainer;
-            else
-                uint32 pad; //0xABCD6666
-        }
-        i++;
-    } Variable[count]<optimize=false>;
+            uint32 idx;
+            LyN_ScriptVarType type;
+            if (ver > 1)
+            {
+                LyN_ScriptVarType dtype;
+                if (!loadedFromBin) uint32 dsz; //Not present in BINned scripts
+            }
+            else local LyN_ScriptVarType dtype = 0;
+            uint32 cpos;
+            uint32 sz;
+            uint32 szd[3];
+            uint32 strLen[4];
+            uint16 flags; //0x05: trigger global func (?), 0x0100: Private
+            ubyte flagByte;
+            ubyte saveStrIdx;
+            if (ver > 2) ubyte validIdx;
+            uint32 fields;
+            char name[strLen[0]]; if (DEBUG_PRINT) Printf("[%i]: Index: %i, Type: %s, Data Type: %s, Name: %s, Size: %i, Fields: %i\n", i, idx, EnumToString(type), EnumToString(dtype), name, sz, fields);
+            if (!loadedFromBin && strLen[1]) char name2[strLen[1]]; //Flag 1, not present in BINned scripts
+            if (!loadedFromBin && strLen[2]) char sep[strLen[2]]; //Flag 1, not present in BINned scripts
+            if (!loadedFromBin && strLen[3]) char comment[strLen[3]]; //Flag 1, not present in BINned scripts
+            if (type == LyN_ScriptVarType_Variant_UseStruct || (ver > 1 && type == LyN_ScriptVarType_Variant_DynamicArray))
+            {
+                if (ReadUInt() == 3235823855 || ReadUInt() == 3235823839)
+                    struct LyN_ScriptVariableContainer nestedVarContainer;
+                else
+                    uint32 pad; //0xABCD6666
+            }
+            i++;
+        } Variable[count]<optimize=false>;
+    }
     i = 0;
     uint32 mdlSz;
     uint32 initSz;
@@ -449,9 +2036,31 @@ typedef struct LyN_ScriptVariableContainer //VERY WIP
         local uint32 initInstSz = initSz;
         local uint32 initInstCurSz = initSz;
     }
-    if (mdlSz && initSz) //todo parse of this data, engine officially checks for either of these but both work so :shrug:
+    if (mdlSz && initSz) //todo parse of this data. Nested structs do not have this defined, engine officially checks for either of these but both work so :shrug:
     {
-        byte mdl[mdlSz];
+        /*for (i = 0; i < count; i++)
+        {
+            byte mdl[Variable[i].sz];
+        }*/
+        //TODO nested structs are parsed first like
+        //var (struct)
+            //var
+        //var2
+        //etc
+        struct //Getting closer
+        {
+            local string name = Variable[Variable[i].idx].name; //This is there for research purposes.
+            switch (Variable[i].type)
+            {
+                //case LyN_ScriptVarType_Variant_Int32: uint32 i32[Variable[i].sz/4]; break;
+                //case LyN_ScriptVarType_Variant_U64: uint64 u64[Variable[i].sz/8]; break;
+                //case LyN_ScriptVarType_Variant_UseStruct: struct ModelData mdlData; break;
+                default: byte mdl[Variable[i].sz]; break;
+            }
+            //byte mdl[Variable[i].sz];
+            i++;
+        } ModelData[count]<optimize=false>;
+        //byte mdl[mdlSz];
     }
 };
 
@@ -863,9 +2472,10 @@ GrpRef: Refs to libs (FCG+EFG)
     TriggerBunnyLib
 
 Reference:
+    WOG.references: WOL (FFBin), WOR, WOR
     0x00: BigFileRef (in WOG, 25100DD8 (PC) = _basic_ForMaps_GPP.wog, in GRP, 3 u32s, the last two being padding, in)
     
-    Mdl Ref:
+    Mdl Ref: VAR, FCT, EFC
 
     JD4:
         SoundMixer: Curve reference, unknown flags.

@@ -11,46 +11,17 @@
 //   History: 
 //------------------------------------------------
 
-typedef struct Field
-{
-    uint16 type;
-    switch (type) //What a mess
-    {
-        //I32s
-        case 2:
-        case 12:
-        case 13: int32 value; break;
-        //U32s
-        case 1:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 17:
-        case 18:
-        case 19:
-        case 20:
-        case 21:
-        case 23:
-        case 24: uint32 value; break;
-        //F32s
-        case 14:
-        case 25:
-        case 26: float value; break;
-        //I16s
-        case 15: short value; break;
-        //U16s
-        case 16:
-        case 22: uint16 value; break;
-    }
-};
+#include "LyN_Common.bt"
 
-typedef struct FileDescriptor
+loadedFromBin = 1;
+
+LittleEndian();
+checkForNewLyN();
+
+typedef struct LyN_SoundSetFileDescriptor
 {
+    uint16 id;
+    uint32 tag;
     float blank;
     float chance;
     float delay;
@@ -59,78 +30,304 @@ typedef struct FileDescriptor
     uint32 flags;
 };
 
-typedef struct InsertSet
+
+typedef struct LyN_SoundSetInsertUser
 {
-    Field insert;
-    //if ((insert.value : 24) == 1)) //EXTREMELY WIP, COPIED FROM INSERTPAN NO CLUE IF IT'S CONSISTENT
-    uint32 flags;
-    float staticpan[2*8];
-    float factor[2];
-    float minPan[2];
-    float maxPan[2];
-    float scale[2];
-    float margeNear;
-    float margeFar;
-    uint32 channels[8];
-    float random[4];
+    uint16 ver;
+    uint32 userInsertFlag;
+    LyN_HandleKey curve;
+    float fadeTime;
+    float fadeVal;
+    if (!loadedFromBin && ver >= 0x1001) 
+    {
+        float xTest;
+        char comment[512];
+    }
+    if (ver >= 1003) uint32 insertFlag;
 };
 
-#include "LyN_Common.bt"
+typedef struct LyN_SoundSetInsertPan
+{
+    uint16 ver;
+    uint32 flags;
+    if (ver >= 0x1000) local uint channels = 8;
+    else if (ver <= 0x1004) uint32 channels;
+    else local uint channels = 0;
+    struct
+    {
+        float staticpan[channels];
+        float factor;
+        float minPan;
+        float maxPan;
+        float scale;
+    } Data[2]<optimize=false>;
+    float margeNear;
+    float margeFar;
+    if (ver >= 0x1000)
+    {
+        if (ver >= 0x1001)
+        {
+            if (ver < 0x1004) uint32 unk;
+            uint32 channelFlag[channels];
+            if (ver == 0x1002)
+            {
+                struct
+                {
+                    int32 unk[7];
+                    int32 sends[5];
+                } Channel[channels];
+            }
+            if (ver >= 0x1003)
+            {
+                if (ver < 0x1006)
+                {
+                    struct
+                    {
+                        int32 send[5];
+                    } Channel2[channels];
+                }
+                if (ver >= 0x1005)
+                {
+                    float panMax[2];
+                    float panMin[2];
+                }
+            }
+        }
+    }
+};
+
+
+typedef struct LyN_SoundSetVolumeDefine
+{
+    uint16 id;
+    int32 vol;
+};
+
+typedef struct LyN_SoundSetGroupDefine
+{
+    uint16 id;
+    uint32 group;
+};
+
+typedef struct LyN_SoundSetModelDefine
+{
+    uint16 id;
+    LyN_HandleKey mdl;
+};
+
+typedef struct LyN_SoundSetFileCountDefine
+{
+    uint16 id;
+    uint32 files;
+};
+
+typedef struct LyN_SoundSetPlayModeDefine
+{
+    uint16 id;
+    uint32 mode;
+};
+
+typedef struct LyN_SoundSetFileLoopStartDefine
+{
+    uint16 id;
+    uint32 start;
+};
+
+typedef struct LyN_SoundSetFileLoopEndDefine
+{
+    uint16 id;
+    uint32 end;
+};
+
+typedef struct LyN_SoundSetFileLoopsCountDefine
+{
+    uint16 id;
+    uint32 count;
+};
+
+typedef struct LyN_SoundSetModeFlagsDefine
+{
+    uint16 id;
+    uint32 flags;
+};
+
+typedef struct LyN_SoundSetVolumeRandomMaxDefine
+{
+    uint16 id;
+    if (ver >= 5) int32 max; else float max;
+};
+
+typedef struct LyN_SoundSetVolumeRandomMinDefine
+{
+    uint16 id;
+    if (ver >= 5) int32 min; else float min;
+};
+
+typedef struct LyN_SoundSetPriorityScaleDefine
+{
+    uint16 id;
+    float scale;
+};
+
+typedef struct LyN_SoundSetPriorityDefine
+{
+    uint16 id;
+    int16 prio;
+};
+
+typedef struct LyN_SoundSetInstanciationMaxDefine
+{
+    uint16 id;
+    uint16 maxPlaying;
+};
+
+typedef struct LyN_SoundSetInstanciationLimitDefine
+{
+    uint16 id;
+    uint32 limit;
+};
+
+typedef struct LyN_SoundSetInsertPitch
+{
+    uint16 ver;
+    float pitch;
+    float randomMax;
+    float randomMin;
+};
+
+typedef struct LyN_SoundSetInsertPresentDefine
+{
+    uint16 id;
+    uint16 type;
+    switch (type)
+    {
+        case 1: LyN_SoundSetInsertPitch insertPitch; break;
+        case 5: LyN_SoundSetInsertPan insertPan; break; //Insert
+        //case 6: LyN_SoundSetInsert3DVolume insert3DVolume; break;
+        //case 26: LyN_SoundSetInsert3DCone insert3DCone; break; //Insert
+        //case 27: LyN_SoundSetInsertDirectionalMicrophone insertDirMicrophone; break; //Insert
+        //case 28: LyN_SoundSetInsertExtraOutput insertExtraOutput; break; //Insert
+        default: LyN_SoundSetInsertUser insertUser; break; //8 or 0x17
+    }
+};
+
+typedef struct LyN_SoundSetInsertAbsentDefine
+{
+    uint16 ver;
+    uint16 id;
+    uint32 tag;
+};
+
+typedef struct LyN_SoundSetAuxSendPresentDefine
+{
+    uint16 id;
+    uint32 unk;
+    uint32 ver;
+    uint32 flags;
+    uint32 level;
+    if (ver < 2) int32 unk;
+    LyN_HandleKey curve;
+    if (ver < 2) uint32 unk2;
+};
+
+typedef struct LyN_SoundSetAuxSendAbsentDefine
+{
+    uint16 id;
+    uint32 tag;
+};
+
+typedef struct LyN_SoundSetSoundFileFlagsDefine
+{
+    uint16 id;
+    uint16 flags;
+};
+
+typedef struct LyN_SoundSetLangFileDescriptor
+{
+    uint16 id;
+    uint32 tag;
+};
+
+typedef struct LyN_SoundSetCategoryDefine
+{
+    uint16 id;
+    uint32 categID;
+};
+
+typedef struct LyN_SoundSetCrossFadeDefine
+{
+    uint16 id;
+    float crossFade;
+};
+
+typedef struct LyN_SoundSetCrossFadeCurveDefine
+{
+    uint16 id;
+    uint32 crossFadeCrv;
+};
 
 struct
 {
-    LittleEndian();
-    uint32 ver; //10 in JD4, 15 in RLand
-    //TODO V1 parse
-    Field saveCode;
-    if (ReadUShort() == 22) Field soundFileFlags;
-    Field playMode;
-    Field files;
-    Field loopBegin;
-    Field loopEnd;
-    Field loops;
-    Field modeFlags;
-    Field volume;
-    Field volumeRandMax;
-    Field volumeRandMin;
-    Field prioScale;
-    Field prio;
-    Field playingMax;
-    Field playingLimit;
-    Field group;
-    Field categID;
-    if (ReadUShort() == 25)
-    {
-        Field crossfade;
-        if (ReadShort == 26)
+    uint32 ver; //7 in RGH, 10 in JD4, 15 in RLand
+    
+    //if (ver > 1)
+    {    
+        while (ReadUShort() != 0)
         {
-            Field crossfadeRefField;
+            switch (ReadUShort())
+            {
+                case 1: LyN_SoundSetFileDescriptor SoundSetFileDescriptor; break;
+                case 2: LyN_SoundSetVolumeDefine SoundSetVolumeDefine; break;
+                case 4: LyN_SoundSetGroupDefine SoundSetGroupDefine; break;
+                case 5: LyN_SoundSetModelDefine SoundSetModelDefine; break;
+                case 6: LyN_SoundSetFileCountDefine SoundSetFileCountDefine; break;
+                case 7: LyN_SoundSetPlayModeDefine SoundSetPlayModeDefine; break;
+                case 8: LyN_SoundSetFileLoopStartDefine SoundSetFileLoopStartDefine; break;
+                case 9: LyN_SoundSetFileLoopEndDefine SoundSetFileLoopEndDefine; break;
+                case 10: LyN_SoundSetFileLoopsCountDefine SoundSetFileLoopsCountDefine; break;
+                case 11: LyN_SoundSetModeFlagsDefine SoundSetModeFlagsDefine; break;
+                case 12: LyN_SoundSetVolumeRandomMaxDefine SoundSetVolumeRandomMaxDefine; break;
+                case 13: LyN_SoundSetVolumeRandomMinDefine SoundSetVolumeRandomMinDefine; break;
+                case 14: LyN_SoundSetPriorityScaleDefine SoundSetPriorityScaleDefine; break;
+                case 15: LyN_SoundSetPriorityDefine SoundSetPriorityDefine; break;
+                case 16: LyN_SoundSetInstanciationMaxDefine SoundSetInstanciationMaxDefine; break;
+                case 17: LyN_SoundSetInstanciationLimitDefine SoundSetInstanciationLimitDefine; break;
+                case 18: LyN_SoundSetInsertPresentDefine SoundSetInsertPresentDefine; break;
+                case 19: LyN_SoundSetInsertAbsentDefine SoundSetInsertAbsentDefine; break;
+                //case 20: LyN_SoundSetAuxSendPresentDefine SoundSetAuxSendPresentDefine; break; //TODO
+                case 21: LyN_SoundSetAuxSendAbsentDefine SoundSetAuxSendAbsentDefine; break;
+                case 22: LyN_SoundSetSoundFileFlagsDefine SoundSetSoundFileFlagsDefine; break;
+                case 23: LyN_SoundSetLangFileDescriptor SoundSetLangFileDescriptor; break;
+                case 24: LyN_SoundSetCategoryDefine SoundSetCategoryDefine; break;
+                case 25: LyN_SoundSetCrossFadeDefine SoundSetCrossFadeDefine; break;
+                case 26: LyN_SoundSetCrossFadeCurveDefine SoundSetCrossFadeCurveDefine; break;
+                //WILL LOOP ON RLAND
+                case 27: ubyte unk[3]; break; //TEMPORARY IDK WHAT THIS IS
+                //case 28: ubyte unk[6]; break; //?
+            }
         }
+        uint16 dmy; //Terminate SoundSetDefineSearch
     }
-    //TODO
-    if (ReadUShort() == 18) InsertSet insertSet;
-    if (ReadUShort() == 19) Field insertField;
-    if (ReadUShort() == 18)
+    /*else //TODO
     {
-        struct
+        uint32 files;
+        uint32 playMode;
+        uint32 loopStart;
+        uint32 loopEnd;
+        uint32 loops;
+        uint32 modeFlags;
+        while (ReadUInt() != 0) uint32 insertID;
+        while (ReadUInt() != 0) uint32 auxID;
+        while (ReadUInt() != 0)
         {
-            Field auxSend;
-            if (auxSend.value == 20) LyN_AuxSendDefine AuxSendDefine; 
-        } AuxSendDefineSet[4]<optimize=false>;
-    }
-    if (ReadUShort() == 23 || ReadUShort() == 1)
-    {
-        struct
-        {
-            Field fileField;
-            FileDescriptor fileDesc;
-        } FileDescriptorSet[files.value]<optimize=false>;
-    }
-    uint16 dmy;
-    if (ver >= 4)
+            if (ReadUInt() == 3) LyN_AuxSendDefine auxSendDefine;
+        }
+    }*/
+    uint32 refs; //RGH and JD4?
+    if (ver >= 4 && !loadedFromBin) //Theorhetically you'd load this from bin or NewLyN
     {
         uint32 eChannel;
         uint32 eChannelMask;
     }
-    LyN_HandleKey fileRef[files.value];
+    LyN_Reference fileRef[refs]; //Ref to sound header and data
 } LyN_SoundSet;
