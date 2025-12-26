@@ -15,12 +15,16 @@
 
 //In bin the u32 after the bin chunk header before the data is matching
 
+loadedFromBin = 1;
+
+LittleEndian();
+checkForNewLyN();
+
 struct
 {
-    LittleEndian();
-    uint32 ver; //4, 2 and 3 in RGH, 2 in TMNT
+    uint32 ver; //4, 2 and 3 in RGH, 2 in TMNT, 3 in Rabbids Land? Why?
     uint16 flags; //pc in RGH
-    uint32 constant;
+    if (!isNewLyN) uint32 constant;
     float shadowBias;
     uint32 rMsk;
     if (ver > 1)

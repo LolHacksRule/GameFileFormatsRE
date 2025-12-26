@@ -15,14 +15,17 @@ local uint isGTX <hidden=true> = 0;
 
 #include "LyN_Common.bt"
 
+//On x360 the tex data off is always 14
+
 struct
 {
     LittleEndian();
     uint32 ver;
     LyN_TexPixelFormat pixelFormat;
-    ubyte levels;
+    ubyte levels; //Not true on X360
     ubyte flags; //Would flags & 8 be GTX?
     ubyte type;
+    //uint16 help; //On X360 uncomment
     //In BIN fsr the hk and padding is excluded, the version makes no difference either
     if (ver >= 2 && ReadUShort() == 0 || flags & 8) //Would flags & 8 be GTX? It seems to be consistent in TDT samples from RLand patch?
     {
@@ -36,7 +39,7 @@ struct
         else
         {
             FSkip(-6);
-            LyN_HandleKey thisKey;
+            LyN_HandleKey thisKey; //In bin this isn't here regardless of the version
         }
     }
     else
@@ -69,6 +72,6 @@ struct
                     //case 6: uint32 texData
                 }
             } Level[levels];
-        } Texture[(flags & 1) ? 6 : 1]<optimize=false>;
+        } Texture[(flags & 1) != 0 ? 6 : 1]<optimize=false>;
     }
 } LyN_TextureData_TDT;

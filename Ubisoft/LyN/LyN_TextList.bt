@@ -59,6 +59,8 @@ struct
     uint32 textStrings;
     LyN_TextDefine textDefine[textStrings]<optimize=false>;
     uint32 textContainerSize;
+    byte text[textContainerSize* ver > 4 ? 2 : 1];
+    if (loadedFromBin && FTell() != EOF) LyN_HandleKey thisFile; //This makes up the file so we'll include it.
     /*FPos = FTell();
     //while (sizeof (text) > textContainerSize * (ver >= 3 ? 2 : 1))
     struct

@@ -28,7 +28,7 @@ local uint isEmptyBF <hidden=true> = 0;
 typedef enum <uint32>
 {
     LyN_ArchivedFileFlags_SplitLZO1X,
-    //?
+    LyN_ArchivedFileFlags_Shadow_Legacy, //?
     LyN_ArchivedFileFlags_Raw = 2, //Usually BIN
     LyN_ArchivedFileFlags_Shadow, 
     LyN_ArchivedFileFlags_LZO1X, //Usually BIN
@@ -114,7 +114,7 @@ typedef struct LyN_File //Doesn't match RLand but works :shrug:
                 if (ArchivedFileHeader.flags & LyN_ArchivedFileFlags_LZO1X) //WIP
                 {
                     LyN_CompressedBin CompressedBin;
-                    if (DEBUG_PRINT)
+                    /*if (DEBUG_PRINT)
                     {
                         Printf(" | Version: %i | Bin Blocks: %i", CompressedBin.ver, CompressedBin.blocks);
                         for (i = 0; i < CompressedBin.blocks; i++)
@@ -122,26 +122,30 @@ typedef struct LyN_File //Doesn't match RLand but works :shrug:
                             Printf(" | %i | Block Size: %i", i, CompressedBin.size[i]);
                         }
                         i = 0;
-                    }
+                    }*/
                 }
                 else if (ArchivedFileHeader.archivedFileLen) byte ArchivedFile[ArchivedFileHeader.archivedFileLen]<bgcolor=cGreen>; //Maybe
                 if (ArchivedFileHeader.lenRef) byte Reference[ArchivedFileHeader.lenRef]<bgcolor=cRed>;
-                if (Define.diskLen != (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader))) ubyte Padding[Define.diskLen - (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader))]<bgcolor=cRed>; //Useless BUT maybe
+                if (Define.diskLen != (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader))) ubyte Padding[Define.diskLen - (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader))]<bgcolor=cRed>; //byte padEnd; //Useless BUT maybe
                 if (DEBUG_PRINT) Printf(" | Archived File Size: %i | Reference Size: %i | Archived File Flags: %s | Padding Size: %i", LyN_FileData.ArchivedFileHeader.archivedFileLen, LyN_FileData.ArchivedFileHeader.lenRef, EnumToString(LyN_FileData.ArchivedFileHeader.flags), Define.diskLen - (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader)));
                 //totalPadding += Define.diskLen - (ArchivedFileHeader.archivedFileLen + ArchivedFileHeader.lenRef + sizeof(ArchivedFileHeader));
-                //if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle ID: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Archived File Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner Client: %s | Write Time: %s\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.flags, Define.vFlags, LyN_FileData.ArchivedFileHeader.flags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.ownerClientName, FileTimeToString(Define.time));
-                //if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle ID: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Archived File Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner Client: %s | Write Time: %s\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.flags, Define.vFlags, LyN_FileData.ArchivedFileHeader.flags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.ownerClientName, FileTimeToString(Define.time));
-                //if (DEBUG_PRINT) Printf("\t\t%s = 0x%LX\n", Define.name, Define.handleKey); //Dump handlekeys
-                //if (DEBUG_PRINT) Printf("\t\t%s (0x%X) = %s\n", Define.name, Define.handleKey, FileTimeToString(Define.time)); //Dump dates
-                //if (DEBUG_PRINT) Printf("\t\t%s = %s\n", Define.name, FileTimeToString(Define.time)); //Dump dates no key
+                
+                //OLD STUFF
+                //if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle Key: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Archived File Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner Client: %s | Write Time: %s\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.flags, Define.vFlags, LyN_FileData.ArchivedFileHeader.flags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.ownerClientName, FileTimeToString(Define.time));
+                //if (DEBUG_PRINT) Printf("\t\t%s | Archived File Size: %i | Decompresed File Size: %i | Reference Size: %i | Handle Key: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Archived File Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner Client: %s | Write Time: %s\n", Define.name, LyN_FileData.ArchivedFileHeader.archivedFileLen, Define.userLen, LyN_FileData.ArchivedFileHeader.lenRef, Define.handleKey, Define.flags, Define.vFlags, LyN_FileData.ArchivedFileHeader.flags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.ownerClientName, FileTimeToString(Define.time));
+                //OLD STUFF END
             }
             else
             {
                 byte RawFile[Define.diskLen]<bgcolor=cPurple>;
                 //if (DEBUG_PRINT) Printf("\t\t%s | Raw File Size: %i | Directory ID: %i | Offset: 0x%lx\n", Define.name, Define.diskLen, Define.handleParentDirectory, Define.position.low);
             }
-            //TODO SECOND PRINT
-            if (DEBUG_PRINT) Printf(" | Disk Write File Size: %i | Standalone File Size: %i | Handle ID: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner: %s | Owner Client: %s | Write Time: %s\n", Define.diskLen, Define.userLen, Define.handleKey, Define.flags, Define.vFlags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.owner, Define.ownerClientName, FileTimeToString(Define.time));
+            
+            if (DEBUG_PRINT) Printf(" | Disk Write File Size: %u | Standalone File Size: %u | Handle Key: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner: %s | Owner Client: %s | Private Revision: %u | Checksums: 0x%X, 0x%X | Revision: %u | Write Time: %s\n", Define.diskLen, Define.userLen, Define.handleKey, Define.flags, Define.vFlags, Define.headFlags, Define.handleParentDirectory, Define.position.low, Define.owner, Define.ownerClientName, Define.privateRevision, Define.checksum[0], Define.checksum[1], Define.rev, FileTimeToString(Define.time));
+            
+            //if (DEBUG_PRINT) Printf(" | Handle Key: 0x%X | Owner: %s | Owner Client: %s | Write Time: %s\n", Define.handleKey, Define.owner, Define.ownerClientName, FileTimeToString(Define.time));
+            //if (DEBUG_PRINT) Printf(" (0x%X) = %s\n", Define.handleKey, FileTimeToString(Define.time)); //Dump dates and handlekeys
+            //if (DEBUG_PRINT) Printf(" (%s)\n", FileTimeToString(Define.time)); //Dump dates
         } LyN_FileData<hidden=false>;
         FSeek(FPos);
     }
@@ -224,7 +228,7 @@ typedef struct LyN_ConnectUser
     uint32 perms;
 };
 
-//ONLY TESTED ON RABBIDS GO HOME (PERFECT), ZOMBIU, JUST DANCE 4 AND RABBIDS LAND (MISALIGNED HEADER, 5184 bytes)
+//ONLY TESTED ON RABBIDS GO HOME (PERFECT), ZOMBIU, JUST DANCE 3, JUST DANCE 4 AND RABBIDS LAND (MISALIGNED HEADER, 5184 bytes)
 
 struct
 {
@@ -274,11 +278,11 @@ struct
             LyN_HandleKey handleFirstFreeDirectory;
             //In RLand this is broken
             LyN_Int64 firstFreePos;
-            
+            LyN_HandleKey config; //They call this simply param officially, why            
             //P4 data, this "padding data" probably for LyN's editor is surprisingly needed or else the BigFile loading breaks, why is this in public engine builds idk
-            uint32 param[4]; //P4 related?
+            uint32 param[3]; //P4 related?
             LyN_ConnectUser user[SERVER_USERS_MAX]<optimize=false>; //Only in main content bigfile.
-            //These three are not in RLand or JD3 Wii
+            //These three are not in RLand or JD3 Wii or TMNT
             //if (param[0] || ReadUByte() == 0) //TODO PROPER CHECK
             {
                 char p4ClientName[P4_CLIENT_NAME_MAX]; //If you remove one byte the engine will still load it
@@ -293,13 +297,14 @@ struct
                 char p4ClientLastAccess[P4_CLIENT_LASTACCESS_MAX];
                 if (DEBUG_PRINT)
                 {
+                    Printf("Config Handle Key: 0x%X\n", config);
                     Printf("Perforce Information:\n");
                     Printf("\tParams:");
-                    Printf(" 0x%LX,%i,%i,%i\n", param[0], param[1], param[2], param[3]);
+                    Printf(" 0x%LX,0x%LX,0x%LX\n", param[0], param[1], param[2]);
                     Printf("\tUser Names:\n");
                     for (i = 0; i < SERVER_USERS_MAX; i++)
                         if (user[i].name != "")
-                            Printf("\t\t%s | Permissions: 0x%lx\n", user[i].name, user[i].perms);
+                            Printf("\t\t%s | Permissions: 0x%LX\n", user[i].name, user[i].perms);
                     i = 0;
                     Printf("\tUser Names End\n");
                     if (p4ClientName != "") Printf("\tClient Name: %s\n", p4ClientName);
@@ -321,37 +326,74 @@ struct
     FSeek(Header.firstFatFilePos.low);
     if (DEBUG_PRINT) Printf("Files:\n");
     LyN_FileFat FirstFileFAT<optimize=false>;
-    if (DEBUG_PRINT) Printf("Files End\n");
     FSeek(Header.firstFatDirectoryPos.low);
     if (DEBUG_PRINT) Printf("Directories:\n");
     LyN_DirectoryFat FirstDirectoryFAT<optimize=false, bgcolor=cPurple>;
-    if (DEBUG_PRINT) Printf("Directories End\n");
+    
+    //TODO DUMP DIRECTORIES
+    
+    //for (i = 0; i < FirstFileFAT.FATDescriptor.entries; i++)
+    //for (i = 0; i < 50; i++)
+    /*{
+        if (FirstFileFAT.File[i].Define.name != "")
+        {
+            Printf("%s/", FirstDirectoryFAT.Directory[0].name); //Print root
+            i2 = 0;
+            //if (FirstDirectoryFAT.Directory[i].handleParentDirectory != -1)
+            {
+                while (FirstDirectoryFAT.Directory[i2].handleParentDirectory != -1)
+                {
+                    Printf("%s/", FirstDirectoryFAT.Directory[i2].name);
+                    i2++;
+                }
+            }
+            for (i2 = 1; i2 < FirstFileFAT.File[i].Define.handleParentDirectory; i2++) 
+            {
+                while (FirstDirectoryFAT.Directory[i2].handleParentDirectory != -1)
+                {
+                    Printf("%s/", FirstDirectoryFAT.Directory[i2].name);
+                    //Printf("%s/", FirstDirectoryFAT.Directory[FirstDirectoryFAT.Directory[i2].handleParentDirectory]);
+                }
+            }
+            i2 = 0;
+            //for (i2 = 0; i2 < FirstFileFAT.File[i].Define.handleParentDirectory+1; i2++) 
+            if (FirstFileFAT.File[i].Define.handleParentDirectory != -1)
+            {
+                for (i2 = 0; i2 < FirstFileFAT.File[i].Define.handleParentDirectory; i2++) 
+                {
+                    if (FirstFileFAT.File[i].Define.handleParentDirectory)
+                    {
+                        if (FirstDirectoryFAT.Directory[i2].name != "") Printf("%s/", FirstDirectoryFAT.Directory[i2].name);
+                    }
+                }
+            }
+            Printf("%s\n", FirstFileFAT.File[i].Define.name);
+            //Printf("%s | Disk Write File Size: %i | Standalone File Size: %i | Handle Key: 0x%X | Flags: 0x%X | Volatile Flags: 0x%X | Header Flags: 0x%X | Directory ID: %i | Offset: 0x%lx | Owner: %s | Owner Client: %s | Write Time: %s\n", FirstFileFAT.File[i].Define.name, FirstFileFAT.File[i].Define.diskLen, FirstFileFAT.File[i].Define.userLen, FirstFileFAT.File[i].Define.handleKey, FirstFileFAT.File[i].Define.flags, FirstFileFAT.File[i].Define.vFlags, FirstFileFAT.File[i].Define.headFlags, FirstFileFAT.File[i].Define.handleParentDirectory, FirstFileFAT.File[i].Define.position.low, FirstFileFAT.File[i].Define.owner, FirstFileFAT.File[i].Define.ownerClientName, FileTimeToString(FirstFileFAT.File[i].Define.time));
+        }
+    }*/
+       
     if (isZombiU)
     {
         if (DEBUG_PRINT) Printf("Chunks:\n");
         FSeek(Header.firstChunkPos.low);
         LyN_ChunkFat ChunkFAT<optimize=false, bgcolor=cRed>;
-        if (DEBUG_PRINT) Printf("Chunks End\n");
     }
     if (FirstDirectoryFAT.FATDescriptor.nextFatPos.high != -1 && FirstDirectoryFAT.FATDescriptor.nextFatPos.low != 2139062143 && !isZombiU) //TEMP IDK IF THIS IS PERFECT, NOT IN ZU
     {
         if (DEBUG_PRINT) Printf("SubDirectories:\n");
         FSeek(FirstDirectoryFAT.FATDescriptor.nextFatPos.low);
         LyN_DirectoryFat SubDirectoryFAT<optimize=false>;
-        if (DEBUG_PRINT) Printf("SubDirectories End\n");
     }
     if (FirstFileFAT.FATDescriptor.nextFatPos.high != -1 && FirstFileFAT.FATDescriptor.nextFatPos.low != 2139062143 && FirstFileFAT.FATDescriptor.nextFatPos.low != -1) //TEMP IDK IF THIS IS PERFECT
     {
         if (DEBUG_PRINT) Printf("SubFiles:\n");
         FSeek(FirstFileFAT.FATDescriptor.nextFatPos.low);
         LyN_FileFat SubFileFAT<optimize=false>;
-        if (DEBUG_PRINT) Printf("SubFiles End\n");
     }
     if (isZombiU) //ZU seems to read perfectly here
     {
         if (DEBUG_PRINT) Printf("SubChunks:\n");
         FSeek(ChunkFAT.FATDescriptor.nextFatPos.low);
         LyN_ChunkFat SubChunkFAT<optimize=false, bgcolor=cRed>;
-        if (DEBUG_PRINT) Printf("SubChunks End\n");
     }
 } LyN_BigFile;

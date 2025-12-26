@@ -16,23 +16,11 @@
 DEBUG_PRINT = 0;
 loadedFromBin = 0; //Yeah they really did this.
 
+LittleEndian();
+checkForNewLyN();
+
 struct
 {
-    LittleEndian();
-    //check for oldlyn header
-    uint32 oldLyNMagicCheck<hidden=true>;
-    FSkip(-4);
-    if (oldLyNMagicCheck != 0xC0DEC0DE)
-    {
-        FSkip(20);
-        char newLynMagicCheck[4]<hidden=true>;
-        FSkip(-24);
-        if (newLynMagicCheck == "EFC_")
-        {
-            isNewLyN = 1;
-            LyN_NewArchivedFileHeader hdr;
-        }
-    }
     uint32 magic; //0xC0DEC0DE
     if (magic == 0xC0DEC0DE)
     {
@@ -42,10 +30,21 @@ struct
         if (DEBUG_PRINT) Printf("This file name: %s.efc\n", name.theString);
     }
     uint64 pad;
-    LyN_ScriptVariableContainer localVars; //TODO
+    LyN_ScriptVariableContainer localVars;
     uint32 nodes;
-    uint32 node[nodes]; //TODO this data is unknown.
+    LyN_ScriptVarType node[nodes]; //TODO this data is unknown. It looks like something you read one by one and print it out as best as possible.
+    if (DEBUG_PRINT)
+    {
+        Printf("NODE DATA\n");
+        for (i = 0; i < nodes; i++)
+        {
+            printOfficialScriptVar(node[i], 2);
+            Printf("\n");
+        }
+        Printf("NODE DATA END");
+    }
+    //uint32 node[nodes]; //TODO this data is unknown. It looks like something you read one by one and print it out as best as possible.
     if (FTell() && !loadedFromBin) LyN_HandleKey srcFile; //DOE flag 3
     if (!loadedFromBin) uint32 dbgNode[nodes]; //TODO this data is unknown.
-    if (FTell() != EOF) LyN_Reference ref; //For RLand
+    while (FTell() != EOF) LyN_Reference ref; //For RLand
 } LyN_ScriptFunctionContainer_EFC;

@@ -15,13 +15,27 @@
 
 loadedFromBin = 0;
 
+local uint ver = 0;
+
+LittleEndian();
+checkForNewLyN();
+
 struct
 {
-    LittleEndian();
-    LyN_Modifier mdf;
+    if (isNewLyN) //Data does read for rland but is it correct?
+    {
+        uint32 unk;
+        uint16 unk2[2];
+        uint32 ver;
+    }
+    else
+    {
+        LyN_Modifier mdf;
+        ver = mdf.ver;
+    }
     LyN_HandleKey sknRef;
-    if (mdf.ver > 1) LyN_MathBox box;
-    if (mdf.ver > 2)
+    if (ver > 1) LyN_MathBox box;
+    if (ver > 2)
     {
         uint32 lodFlags;
         uint32 lodThresholds;

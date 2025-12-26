@@ -13,9 +13,12 @@
 
 #include "LyN_Common.bt"
 
+LittleEndian();
+
+checkForNewLyN();
+
 struct
 {
-    LittleEndian();
     uint16 flags; //1
     uint16 pad;
     uint16 ver; //4
@@ -24,7 +27,5 @@ struct
         uint16 subRefs;
         LyN_HandleKey aMtrl[subRefs]; //Atomic material (MTA) file
     }
-    //Ok RLand doesn't end here? Uhhhhh
-    while (FTell() != EOF)
-        LyN_Reference ref2;
-} LyN_Material;
+} LyN_Material_MAT;
+if (isNewLyN) LyN_Reference ref2[newLyNHeader.refContainerSz/12];

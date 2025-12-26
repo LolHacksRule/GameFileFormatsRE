@@ -13,17 +13,11 @@
 
 #include "LyN_Common.bt"
 
-loadedFromBin = 1; //This is set to one as there aren't any official samples outside bin files.
-
-LittleEndian();
-
 struct
 {
-    LyN_Modifier mod;
-    uint32 elements;
-    struct
-    {
-        LyN_HandleKey MGF;
-        uint32 unk;
-    } Element[elements]; //First is common mgb
-} LyN_Magma_MGM;
+    LittleEndian();
+    uint32 sz;
+    LyN_HandleKey unk;
+    uint32 unk2;
+    uint32 one;
+} LyN_LiveMove; //Can also contain WAV headers

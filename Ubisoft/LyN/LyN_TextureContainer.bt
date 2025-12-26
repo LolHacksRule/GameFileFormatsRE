@@ -13,13 +13,13 @@
 
 #include "LyN_Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+DEBUG_PRINT = 0;
 
 struct //30 bytes, RGH and JD4 (Wii) textures are DXT1/CMPR (or N64_CMPR in imageheat), L8 (N64_I8 in imageheat)
 {
     LittleEndian();
     uint16 textures;
-    struct 
+    struct
     {
         LyN_HandleKey tex;
         LyN_HandleKey file;

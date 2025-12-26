@@ -13,7 +13,7 @@
 
 #include "LyN_Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+DEBUG_PRINT = 0;
 
 struct
 {
@@ -23,22 +23,44 @@ struct
     Vector2_F32 scale; //Normally 1x1
     uint16 letters;
     uint16 hashChars;
+    if (DEBUG_PRINT)
+    {
+        Printf("Font Ver: %i\n", ver);
+        Printf("Scale: %f x %f\n", scale.X, scale.Y);
+        Printf("HASH CHARS\n");
+    }
     struct
     {
         uint16 key; //Are these wchar_t?
         uint16 val;
-    } HashChar[hashChars];
+        if (DEBUG_PRINT) Printf("\t[%u]: Key, %u, Value: %u\n", i, key, val);
+        i++;
+    } HashChar[hashChars]<optimize=false>;
+    i = 0;
+    if (DEBUG_PRINT)
+    {
+        Printf("HASH CHARS END\n");
+        Printf("LETTERS BEGIN\n");
+    }
     struct
     {
         uint16 idx;
         float u[2];
         float v[2];
+        if (DEBUG_PRINT)
+        {
+            Printf("\t[%u]: Index: %u, U: %f x %f, V: %f x %f", i, idx, u[0], u[1], v[0], v[1]);
+        }
         if (ver >= 3)
         {
             float paddingLeft;
             float paddingTop;
             float paddingRight;
             float paddingBottom;
+            Printf("Left Padding: %f, Top Padding: %f, Right Padding: %f, Bottom Padding: %f", paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
+        Printf("\n");
+        i++;
     } Letter[letters]<optimize=false>;
+    if (DEBUG_PRINT) Printf("LETTERS END\n");
 } LyN_FontDescriptor;

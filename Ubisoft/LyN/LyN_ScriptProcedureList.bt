@@ -13,31 +13,13 @@
 
 #include "LyN_Common.bt"
 
-loadedFromBin = 0;
+loadedFromBin = 1;
 DEBUG_PRINT = 0;
 
-typedef struct LyN_ScriptNodeContainer
-{
-    uint32 id;
-    if (!loadedFromBin) uint32 tk;
-};
+checkForNewLyN();
 
 typedef struct LyN_ScriptProcedureList
 {
-    //check for oldlyn header
-    uint32 oldLyNMagicCheck<hidden=true>;
-    FSkip(-4);
-    if (oldLyNMagicCheck != 0xC0DEC0DE)
-    {
-        FSkip(20);
-        char newLynMagicCheck[4]<hidden=true>;
-        FSkip(-24);
-        if (newLynMagicCheck == "SCR")
-        {
-            loadedFromBin = 1;
-            LyN_NewArchivedFileHeader hdr;
-        }
-    }
     if (ReadUShort() == 0xABCD)
     {
         uint16 id; //0xABCD
@@ -55,12 +37,17 @@ typedef struct LyN_ScriptProcedureList
         uint32 nodes;
         if (DEBUG_PRINT)
         {
-            Printf("function %s %s(", EnumToString(returnType), name.theString);
+            //Printf("function %s %s(", EnumToString(returnType), name.theString);
+            Printf("function ");
+            if (!loadedFromBin && DEBUG_PRINT) printOfficialScriptVar(returnType, 2);
+            else Printf("?");
+            Printf("%s(", name.theString);
             //if (flags & 4) Printf("
             Printf(")\n");
         }
-        LyN_ScriptNodeContainer scriptNodeContainer[nodes]<optimize=false>; //The first two def aren't correct.
-    } Process[count]<optimize=false>;
+        if (nodes) LyN_ScriptNodeContainer scriptNodeContainer[nodes]<optimize=false>; //The first two def aren't correct.
+        if (DEBUG_PRINT) Printf("\n");
+    } Procedure[count]<optimize=false>;
 };
 
 //VERY WIP, READS:
@@ -94,25 +81,12 @@ struct
         uint32 dmy[8];
     }*/
     
-    //check for oldlyn header
-    uint32 oldLyNMagicCheck<hidden=true>;
-    FSkip(-4);
-    if (oldLyNMagicCheck != 0xC0DEC0DE)
-    {
-        FSkip(20);
-        char newLynMagicCheck[4]<hidden=true>;
-        FSkip(-24);
-        if (newLynMagicCheck == "EFL_")
-        {
-            loadedFromBin = 0;
-            LyN_NewArchivedFileHeader hdr;
-        }
-    }
+    checkForNewLyN();
     
     LyN_ScriptVariableContainer procVars;
-    LyN_ScriptProcedureList ScriptProcessList<optimize=false>;
+    LyN_ScriptProcedureList ScriptProcedureList<optimize=false>;
     if (FTell() != EOF) //At EOF of EFG (or EFL for TMNT) the handle key of this file is here.
         LyN_HandleKey globalFileRef;
     
     if (FTell() != EOF && !loadedFromBin) LyN_Reference ref[hdr.refContainerSz/12]; //For RLand
-} LyN_ProcessList_EFG_EFL; //Also in FFBin
+} LyN_ProcedureList_EFG_EFL; //Also in FFBin

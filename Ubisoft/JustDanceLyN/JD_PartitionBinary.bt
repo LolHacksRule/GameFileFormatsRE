@@ -1,0 +1,271 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../LHR/Common.bt"
+
+typedef enum <uint32>
+{
+    JD_LayerType_Movement,
+    JD_LayerType_Pictogram,
+    JD_LayerType_Lyric,
+    JD_LayerType_Event,
+    JD_LayerType_StoryBoard,
+    JD_LayerType_Kinect360
+} JD_LayerType;
+
+typedef enum <uint32>
+{
+    JD_ModelType_Lyric,
+    JD_ModelType_Pictogram,
+    JD_ModelType_Movement,
+    JD_ModelType_Event,
+    JD_ModelType_Sequence,
+    JD_ModelType_Kinect360Movement
+} JD_ModelType;
+
+typedef enum <uint32>
+{
+    JD_InstanceType_Lyric,
+    JD_InstanceType_Pictogram,
+    JD_InstanceType_Movement,
+    JD_InstanceType_Event,
+    JD_InstanceType_Kinect360Movement = 5
+} JD_InstanceType;
+
+typedef struct JD_FormattedString
+{
+    uint16 len;
+    uint16 type;
+    switch (type)
+    {
+        case 0: char str[len]; break;
+        case 1: wchar_t str[len/2]; break;
+    }
+};
+
+typedef struct JD_LyricInstance
+{
+    JD_FormattedString formattedString;
+};
+
+typedef struct JD_MovementInstance
+{
+    if (Header.ver >= 3) uint32 goldMove;
+    if (Header.ver >= 8) int32 sweatIntensity;
+    if (Header.ver >= 14) uint32 uiAchAndQuest;
+    //uint32 uiOffSubDivs;
+};
+
+typedef enum <uint32>
+{
+    JD_EventInstanceParamType_I32,
+    JD_EventInstanceParamType_U32,
+    JD_EventInstanceParamType_F32,
+    JD_EventInstanceParamType_Str,
+    JD_EventInstanceParamType_Enum
+} JD_EventInstanceParamType;
+
+typedef struct JD_EventInstance
+{
+    uint32 params;
+    if (params)
+    {
+        struct
+        {
+            JD_EventInstanceParamType type;
+            switch (type)
+            {
+                case JD_EventInstanceParamType_I32: int val; break;
+                case JD_EventInstanceParamType_U32: uint32 val; break; 
+                case JD_EventInstanceParamType_F32: float val; break;
+                case JD_EventInstanceParamType_Str: U32_StringEntry val; break;
+                case JD_EventInstanceParamType_Enum: uint32 val; break;
+            }
+        } Param[params]<optimize=false>;
+    }
+};
+
+typedef enum <uint32>
+{
+    JD_EventParamType_I32,
+    JD_EventParamType_U32,
+    JD_EventParamType_F32,
+    JD_EventParamType_Str
+} JD_EventParamType;
+
+typedef struct JD_Event
+{
+    uint32 params;
+    if (params)
+    {
+        struct
+        {
+            JD_EventParamType eventParamType;
+            I32_StringEntry name;
+        } Param[params]<optimize=false>;
+    }
+};
+
+typedef struct JD_Movement
+{
+    float lvmMul;
+    float lvmAdd;
+    if (Header.ver >= 3)
+    {
+        float slack;
+        float cap;
+        float stability;
+    }
+    if (Header.ver >= 5)
+    {
+        uint32 evalEnergy;
+        uint32 evalTiming;
+        uint32 customI32s;
+        if (customI32s) uint32 customI32[customI32s];
+        uint32 customF32s;
+        if (customF32s) float customF32[customF32s];
+    }
+    if (Header.ver >= 2)
+    {
+        uint32 scoreSteps;
+        if (scoreSteps) uint32 scoreStep[scoreSteps];
+    }
+};
+
+typedef enum <int32>
+{
+    JD_Kinect360ScoreMode_Normal,
+    JD_Kinect360ScoreMode_Special
+} JD_Kinect360ScoreMode;
+
+typedef struct JD_Kinect360Movement
+{
+    JD_Movement moveBase;
+    float bias;
+    float scale;
+    if (Header.ver >= 11) float scoreSmoothing;
+    if (Header.ver >= 12) JD_Kinect360ScoreMode scoringMode;
+};
+
+//LyN JD games DO support loading this data as an official unbinarized XML instead via PartitionReader::XML_Reader. I don't really modify JD but just in case.
+
+struct
+{
+    LittleEndian();
+    uint32 totalSz;
+    struct
+    {
+        uint32 headerSz;
+        struct
+        {
+            float ver; //15 in JD4
+            U32_StringEntry songName;
+            uint32 beatPM;
+            uint32 firstBeat;
+            //Haven't seen other versions but is in the reader so
+            if (ver >= 5) float bpm;
+            if (ver >= 3) int32 samplesFreq;
+            if (ver >= 7) int32 waveSamples;
+            if (ver >= 4) I32_Bool customScoreSteps;
+            if (ver >= 2)
+            {
+                uint32 scoreSteps;
+                struct
+                {
+                    U32_StringEntry scoreName;
+                    uint32 value;
+                } ScoreStep[scoreSteps]<optimize=false>;
+            }
+            if (ver == 15)
+            {
+                uint32 bitfieldHalf[2]; //High, Low
+            }
+            if (ver > 6)
+            {
+                SYSTEMTIME tme[2];
+            }
+            uint32 markerDataSz;
+        } Header;
+        struct
+        {
+            if (Header.ver >= 5) U32_Bool virtualFirstMarker;
+            uint32 markers;
+            struct
+            {
+                uint32 sampleOff;
+                float date;
+                U32_StringEntry name;
+            } Marker[markers]<optimize=false>;
+            uint32 dbnkSz;
+        } MarkerList;
+        struct
+        {
+            uint32 models;
+            struct
+            {
+                uint32 sz;
+                struct
+                {
+                    JD_ModelType modelType;
+                    U32_StringEntry name;
+                    if (sz > 4)
+                    {
+                        switch (modelType)
+                        {
+                            case JD_ModelType_Event: if (Header.ver >= 4) JD_Event Event; break;
+                            case JD_ModelType_Movement: JD_Movement Movement; break;
+                            case JD_ModelType_Kinect360Movement: JD_Kinect360Movement Kinect360Movement; break;
+                        }
+                    }
+                } ModelDefine;
+            } Model[models]<optimize=false>;
+            uint32 layerContainerSz;
+        } DataBank;
+        struct
+        {
+            uint32 layers;
+            struct
+            {
+                uint32 layerSize;
+                struct
+                {
+                    JD_LayerType ayerType;
+                    uint32 instances;
+                    U32_StringEntry name;
+                    struct
+                    {
+                        uint32 size;
+                        if (size)
+                        {
+                            struct
+                            {
+                                JD_InstanceType InstanceType;
+                                float pos;
+                                if (InstanceType != JD_InstanceType_Lyric) uint32 mdlId;
+                                if (Header.ver >= 4 && InstanceType != JD_InstanceType_Pictogram) float len;
+                                switch (InstanceType)
+                                {
+                                    case JD_InstanceType_Lyric: JD_LyricInstance LyricInstance; break;
+                                    case JD_InstanceType_Event: if (Header.ver >= 4) JD_EventInstance EventInstance; break;
+                                    case JD_InstanceType_Kinect360Movement:
+                                    case JD_InstanceType_Movement: JD_MovementInstance MovementInstance; break;
+                                }
+                                
+                            } InstanceDefine;
+                        }
+                    } Instance[instances]<optimize=false>;
+                } LayerDefine;
+            } Layer[layers]<optimize=false>;
+        } LayerContainer;
+    } Partition;
+} JD_PartitionBinary;

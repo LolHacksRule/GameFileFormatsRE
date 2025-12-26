@@ -13,7 +13,7 @@
 
 #include "LyN_Common.bt"
 
-local uint DEBUG_PRINT <hidden=true> = 0;
+DEBUG_PRINT = 0;
 
 struct
 {

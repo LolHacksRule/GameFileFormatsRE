@@ -13,17 +13,14 @@
 
 #include "LyN_Common.bt"
 
-loadedFromBin = 1; //This is set to one as there aren't any official samples outside bin files.
-
 LittleEndian();
+
+loadedFromBin = 1;
 
 struct
 {
-    LyN_Modifier mod;
-    uint32 elements;
-    struct
-    {
-        LyN_HandleKey MGF;
-        uint32 unk;
-    } Element[elements]; //First is common mgb
-} LyN_Magma_MGM;
+    LyN_Modifier mdf;
+    uint32 aiLives;
+    LyN_HandleKey aiLive[aiLives];
+    LyN_HandleKey dancePartition;
+} LyNJD_LiveMoveKeyBank_LMK; //Official extension found in retail executable
