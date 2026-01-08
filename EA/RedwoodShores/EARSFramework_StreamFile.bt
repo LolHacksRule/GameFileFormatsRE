@@ -14,7 +14,7 @@
 local uint i <hidden=true> = 0; //Todo move to LHR
 
 //https://github.com/misternebula/Visceral-File-Formats/wiki/Storage-File
-//https://github.com/misternebula/TSGFileViewer/blob/3a000bb4c38d2422c4c1c61890ef685f741bfdae/Assets/Scripts/EAStreamFile.cs
+//https://github.com/misternebula/TSGFileViewer/blob/main/Assets/Scripts/EAStreamFile.cs
 //https://aluigi.altervista.org/bms/simpsons_str.bms
 //https://github.com/gibbed/Gibbed.Visceral/
 //https://github.com/Greavesy1899/VisceralToolkit
@@ -69,7 +69,7 @@ struct
             uint32 compressor;
             uint32 size;
             uint32 allocSz;
-            uint32 readSz;
+            uint32 readSz; //Chunk size
             uint32 readOff;
         } SectionArray[Header.sections];
         
@@ -79,35 +79,41 @@ struct
         
         struct
         {
-            if (ReadUShort() == 0x1607) //Raw
+            //while (sizeof (Section) < SectionArray[i].readSz)
             {
-                uint16 chunkType;
-                uint32 size; //This isn't padding. Modifying this breaks TSG.
-                ubyte unk[6]; //What's all this?
-                uint32 hSz;
-                if (hSz)
+                struct
                 {
-                    struct
+                    if (ReadUShort() == 0x1607) //Raw
                     {
-                        uint32 nameSz;
-                        char name[nameSz]; //Source name?
-                        GUID uid;
-                        uint32 resTypeSz;
-                        char resType[resTypeSz];
-                        uint32 pathSz;
-                        char path[pathSz];
-                        uint32 unkSz;
-                        char unk[unkSz];
-                        uint32 unk2;
-                        uint32 fileSize;
-                        ubyte pad[hSz - (nameSz + 4 + 16 + resTypeSz + 4 + pathSz + 4 + unkSz + 4) - 8];
-                    } ArchivedFileHeader;
-                }
-                ubyte file[ArchivedFileHeader.fileSize];
+                        uint16 chunkType;
+                        uint32 size; //This isn't padding. Modifying this breaks TSG.
+                        ubyte unk[6]; //What's all this?
+                        uint32 hSz;
+                        if (hSz)
+                        {
+                            struct
+                            {
+                                uint32 nameSz;
+                                char name[nameSz]; //Source name?
+                                GUID uid;
+                                uint32 resTypeSz;
+                                char resType[resTypeSz];
+                                uint32 pathSz;
+                                char path[pathSz];
+                                uint32 unkSz;
+                                char unk[unkSz];
+                                uint32 unk2;
+                                uint32 fileSize;
+                                ubyte pad[hSz - (nameSz + 4 + 16 + resTypeSz + 4 + pathSz + 4 + unkSz + 4) - 8];
+                            } ArchivedFileHeader;
+                        }
+                        ubyte file[ArchivedFileHeader.fileSize];
+                    }
+                    //else if (ReadUShort() == 0x2207) //Unk
+                    
+                    else byte refpack[SectionArray[i].readSz]; //10FB most likely
+                } Section;
             }
-            else if (ReadUShort() == 0x2207) //Unk
-            
-            else byte refpack[SectionArray[i].readSz]; //10FB most likely
             i++;
             if (i < Header.sections)
             {
